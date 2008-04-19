@@ -39,8 +39,11 @@ class Metadata {
 		~Metadata();
 
 		/* methods */
-		string getValue(string key);
-		void setValue(string key, string value);
+		double compareMetadata(Metadata target);
+		bool equalMBID(Metadata target);
+		bool equalMetadata(Metadata target);
+		string getValue(const string key);
+		void setValue(const string key, const string value);
 
 	private:
 		/* variables */
@@ -49,7 +52,7 @@ class Metadata {
 		int matrix_size;
 
 		/* methods */
-		void resize(int size);
-		double similarity(string source, string target);
+		void resize(const int size);
+		double similarity(const string source, const string target);
 };
 #endif

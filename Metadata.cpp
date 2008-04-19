@@ -19,7 +19,42 @@ Metadata::~Metadata() {
 }
 
 /* methods */
-string Metadata::getValue(string key) {
+double Metadata::compareMetadata(Metadata target) {
+	/* TODO */
+	return 0.0;
+}
+
+bool Metadata::equalMBID(Metadata target) {
+	if (getValue(MUSICBRAINZ_ALBUMARTISTID) != target.getValue(MUSICBRAINZ_ALBUMARTISTID))
+		return false;
+	if (getValue(MUSICBRAINZ_ALBUMID) != target.getValue(MUSICBRAINZ_ALBUMID))
+		return false;
+	if (getValue(MUSICBRAINZ_ARTISTID) != target.getValue(MUSICBRAINZ_ARTISTID))
+		return false;
+	if (getValue(MUSICBRAINZ_TRACKID) != target.getValue(MUSICBRAINZ_TRACKID))
+		return false;
+	return true;
+}
+
+bool Metadata::equalMetadata(Metadata target) {
+	if (getValue(ALBUM) != target.getValue(ALBUM))
+		return false;
+	if (getValue(ALBUMARTIST) != target.getValue(ALBUMARTIST))
+		return false;
+	if (getValue(ALBUMARTISTSORT) != target.getValue(ALBUMARTISTSORT))
+		return false;
+	if (getValue(ARTIST) != target.getValue(ARTIST))
+		return false;
+	if (getValue(ARTISTSORT) != target.getValue(ARTISTSORT))
+		return false;
+	if (getValue(TITLE) != target.getValue(TITLE))
+		return false;
+	if (getValue(TRACKNUMBER) != target.getValue(TRACKNUMBER))
+		return false;
+	return true;
+}
+
+string Metadata::getValue(const string key) {
 	for (list<Entry>::iterator e = entries.begin(); e != entries.end(); ) {
 		if (e->key == key)
 			return e->value;
@@ -28,7 +63,7 @@ string Metadata::getValue(string key) {
 	return NULL;
 }
 
-void Metadata::setValue(string key, string value) {
+void Metadata::setValue(const string key, const string value) {
 	bool found = false;
 	for (list<Entry>::iterator e = entries.begin(); e != entries.end(); ) {
 		if (e->key != key) {
@@ -52,7 +87,7 @@ void Metadata::setValue(string key, string value) {
 }
 
 /* private methods */
-void Metadata::resize(int size) {
+void Metadata::resize(const int size) {
 	/* resize the matrix */
 	for (int a = 0; a < matrix_size; ++a)
 		delete [] matrix[a];
