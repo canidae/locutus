@@ -1,27 +1,78 @@
 #include "Metadata.h"
 
 /* constructors */
-Metadata::Metadata() {
-	matrix_size = 64;
-	matrix = new int*[matrix_size];
-	for (int a = 0; a < matrix_size; ++a) {
-		matrix[a] = new int[matrix_size];
-		matrix[a][0] = a;
-		matrix[0][a] = a;
-	}
+Metadata::Metadata(string filename, int duration) {
+	this->filename = filename;
+	this->duration = duration;
+	createMatrix(MATRIX_SIZE);
 }
 
 /* destructors */
 Metadata::~Metadata() {
-	for (int a = 0; a < matrix_size; ++a)
-		delete [] matrix[a];
-	delete [] matrix;
+	deleteMatrix();
 }
 
 /* methods */
 double Metadata::compareMetadata(Metadata target) {
+	/* compare this metadata with target */
+	double score = 0.0;
+	list<string> source = createMetadataList();
+	double match[5][source.size()];
+	for (int a = 0; a < 5; ++a) {
+		for (list<string>::size_type b = 0; b < source.size(); ++b)
+			match[a][b] = 0.0;
+	}
+	int pos;
+	/* album */
+	pos = 0;
+	for (list<string>::iterator s = source.begin(); s != source.end(); ) {
+		match[0][pos] = similarity(target.getValue(ALBUM), *s);
+		++pos;
+		++s;
+	}
+	/* artist */
+	pos = 0;
+	for (list<string>::iterator s = source.begin(); s != source.end(); ) {
+		match[1][pos] = similarity(target.getValue(ALBUM), *s);
+		++pos;
+		++s;
+	}
+	/* title */
+	pos = 0;
+	for (list<string>::iterator s = source.begin(); s != source.end(); ) {
+		match[2][pos] = similarity(target.getValue(ALBUM), *s);
+		++pos;
+		++s;
+	}
+	/* tracknumber */
+	pos = 0;
+	for (list<string>::iterator s = source.begin(); s != source.end(); ) {
+		//match[3][pos] = similarity(target.getValue(ALBUM), *s);
+		++pos;
+		++s;
+	}
+	/* duration */
+	pos = 0;
+	for (list<string>::iterator s = source.begin(); s != source.end(); ) {
+		//match[4][pos] = similarity(target.getValue(ALBUM), *s);
+		++pos;
+		++s;
+	}
 	/* TODO */
-	return 0.0;
+	return score;
+}
+
+list<string> Metadata::createMetadataList() {
+	/* create a list of the values we wish to compare with */
+	list<string> data;
+	/* filename */
+	/* metadata */
+	data.push_back(getValue(ALBUM));
+	data.push_back(getValue(ALBUMARTIST));
+	data.push_back(getValue(ARTIST));
+	data.push_back(getValue(TITLE)); // might have to be tokenized (" - ", etc)
+	data.push_back(getValue(TRACKNUMBER));
+	return data;
 }
 
 bool Metadata::equalMBID(Metadata target) {
@@ -87,11 +138,7 @@ void Metadata::setValue(const string key, const string value) {
 }
 
 /* private methods */
-void Metadata::resize(const int size) {
-	/* resize the matrix */
-	for (int a = 0; a < matrix_size; ++a)
-		delete [] matrix[a];
-	delete [] matrix;
+void Metadata::createMatrix(const int size) {
 	matrix_size = size;
 	matrix = new int*[matrix_size];
 	for (int a = 0; a < matrix_size; ++a) {
@@ -99,6 +146,18 @@ void Metadata::resize(const int size) {
 		matrix[a][0] = a;
 		matrix[0][a] = a;
 	}
+}
+
+void Metadata::deleteMatrix() {
+	for (int a = 0; a < matrix_size; ++a)
+		delete [] matrix[a];
+	delete [] matrix;
+}
+
+void Metadata::resizeMatrix(const int size) {
+	/* resize the matrix */
+	deleteMatrix();
+	createMatrix(size);
 }
 
 double Metadata::similarity(const string source, const string target) {
@@ -109,7 +168,7 @@ double Metadata::similarity(const string source, const string target) {
 		return 0.0;
 	const int size = max(sl, tl);
 	if (size + 1 > matrix_size)
-		resize(size + 1);
+		resizeMatrix(size + 1);
 
 	for (int a = 1; a <= sl; ++a) {
 		const char s = source[a - 1];

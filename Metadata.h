@@ -1,6 +1,17 @@
 #ifndef METADATA_H
 /* defines */
 #define METADATA_H
+/* stuff that should be dynamical (eg. stored in database)
+ * FIXME TODO XXX */
+#define LIST_SIMILARITY_THRESHOLD 0.85
+#define ALBUM_WEIGHT 42
+#define ARTIST_WEIGHT 42
+#define TITLE_WEIGHT 42
+#define TRACKNUMBER_WEIGHT 42
+#define DURATION_WEIGHT 42
+#define DURATION_LIMIT 10
+/* start size matrix */
+#define MATRIX_SIZE 64
 /* keys */
 #define ALBUM "ALBUM"
 #define ALBUMARTIST "ALBUMARTIST"
@@ -31,15 +42,18 @@ struct Entry {
 class Metadata {
 	public:
 		/* variables */
+		string filename;
+		int duration;
 
 		/* constructors */
-		Metadata();
+		Metadata(string filename, int duration);
 
 		/* destructors */
 		~Metadata();
 
 		/* methods */
 		double compareMetadata(Metadata target);
+		list<string> createMetadataList();
 		bool equalMBID(Metadata target);
 		bool equalMetadata(Metadata target);
 		string getValue(const string key);
@@ -52,7 +66,9 @@ class Metadata {
 		int matrix_size;
 
 		/* methods */
-		void resize(const int size);
+		void createMatrix(const int size);
+		void deleteMatrix();
+		void resizeMatrix(const int size);
 		double similarity(const string source, const string target);
 };
 #endif
