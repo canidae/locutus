@@ -10,12 +10,11 @@
 #define TRACKNUMBER_WEIGHT 42
 #define DURATION_WEIGHT 42
 #define DURATION_LIMIT 10
-/* start size matrix */
-#define MATRIX_SIZE 64
 
 /* includes */
 #include <list>
 #include <string>
+#include "Levenshtein.h"
 #include "Metadata.h"
 
 /* namespaces */
@@ -28,7 +27,7 @@ class FileMetadata : public Metadata {
 		string filename;
 
 		/* constructors */
-		FileMetadata(string filename, int duration);
+		FileMetadata(Levenshtein *levenshtein, string filename, int duration);
 
 		/* destructors */
 		~FileMetadata();
@@ -38,14 +37,9 @@ class FileMetadata : public Metadata {
 
 	private:
 		/* variables */
-		int **matrix;
-		int matrix_size;
+		Levenshtein *levenshtein;
 
 		/* methods */
 		list<string> createMetadataList();
-		void createMatrix(const int size);
-		void deleteMatrix();
-		void resizeMatrix(const int size);
-		double similarity(const string source, const string target);
 };
 #endif

@@ -17,6 +17,7 @@
 /* includes */
 #include <list>
 #include <string>
+#include "Levenshtein.h"
 
 /* namespaces */
 using namespace std;
@@ -45,10 +46,8 @@ class Metadata {
 		string getValue(const string key);
 		void setValue(const string key, const string value);
 
-	private:
+	protected:
 		/* variables */
 		list<Entry> entries;
-
-		/* methods */
 };
 #endif

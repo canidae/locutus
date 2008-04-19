@@ -41,28 +41,24 @@ bool Metadata::equalMetadata(Metadata target) {
 }
 
 string Metadata::getValue(const string key) {
-	for (list<Entry>::iterator e = entries.begin(); e != entries.end(); ) {
+	for (list<Entry>::iterator e = entries.begin(); e != entries.end(); ++e) {
 		if (e->key == key)
 			return e->value;
-		++e;
 	}
 	return NULL;
 }
 
 void Metadata::setValue(const string key, const string value) {
 	bool found = false;
-	for (list<Entry>::iterator e = entries.begin(); e != entries.end(); ) {
-		if (e->key != key) {
-			++e;
+	for (list<Entry>::iterator e = entries.begin(); e != entries.end(); ++e) {
+		if (e->key != key)
 			continue;
-		}
 		if (found) {
 			entries.erase(e);
 		} else {
 			e->value = value;
 			found = true;
 		}
-		++e;
 	}
 	if (!found) {
 		Entry entry;
