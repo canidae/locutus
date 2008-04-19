@@ -31,7 +31,6 @@ struct Entry {
 class Metadata {
 	public:
 		/* variables */
-		list<Entry> entries;
 
 		/* constructors */
 		Metadata();
@@ -45,7 +44,12 @@ class Metadata {
 
 	private:
 		/* variables */
+		list<Entry> entries;
+		int **matrix;
+		int matrix_size;
 
 		/* methods */
+		void resize(int size);
+		double similarity(string source, string target);
 };
 #endif

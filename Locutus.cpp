@@ -2,13 +2,11 @@
 
 /* constructors */
 Locutus::Locutus() {
-	matcher = new Matcher();
 	webservice = new WebService();
 }
 
 /* destructors */
 Locutus::~Locutus() {
-	delete matcher;
 	delete webservice;
 }
 

@@ -4,7 +4,6 @@
 
 /* includes */
 #include <iostream>
-#include "Matcher.h"
 #include "WebService.h"
 
 /* namespace */
@@ -14,7 +13,6 @@ using namespace std;
 class Locutus {
 	public:
 		/* variables */
-		Matcher *matcher;
 		WebService *webservice;
 
 		/* constructors */
