@@ -12,6 +12,7 @@ Levenshtein::~Levenshtein() {
 
 /* methods */
 double Levenshtein::similarity(const string source, const string target) {
+	/* futex wait here */
 	const int sl = source.length();
 	const int tl = target.length();
 	if (sl == 0 || tl == 0)
@@ -42,7 +43,9 @@ double Levenshtein::similarity(const string source, const string target) {
 			matrix[a][b] = cell;
 		}
 	}
-	return 1.0 - (double) matrix[sl][tl] / (double) size;                                                                                           
+	double value = 1.0 - (double) matrix[sl][tl] / (double) size;
+	/* futex wake here */
+	return value;
 }
 
 /* private methods */
