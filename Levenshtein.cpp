@@ -2,17 +2,19 @@
 
 /* constructors */
 Levenshtein::Levenshtein() {
+	pthread_mutex_init(&mutex, NULL);
 	createMatrix(MATRIX_SIZE);
 }
 
 /* destructors */
 Levenshtein::~Levenshtein() {
+	pthread_mutex_destroy(&mutex);
 	deleteMatrix();
 }
 
 /* methods */
 double Levenshtein::similarity(const string source, const string target) {
-	/* futex wait here */
+	pthread_mutex_lock(&mutex);
 	const int sl = source.length();
 	const int tl = target.length();
 	if (sl == 0 || tl == 0)
@@ -44,7 +46,7 @@ double Levenshtein::similarity(const string source, const string target) {
 		}
 	}
 	double value = 1.0 - (double) matrix[sl][tl] / (double) size;
-	/* futex wake here */
+	pthread_mutex_unlock(&mutex);
 	return value;
 }
 

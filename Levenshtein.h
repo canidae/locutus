@@ -28,6 +28,7 @@ class Levenshtein {
 		/* variables */
 		int **matrix;
 		int matrix_size;
+		pthread_mutex_t mutex;
 
 		/* methods */
 		void createMatrix(const int size);
