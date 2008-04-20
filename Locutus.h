@@ -4,6 +4,7 @@
 
 /* includes */
 #include <iostream>
+#include "Database.h"
 #include "FileMetadata.h"
 #include "Levenshtein.h"
 #include "Metadata.h"
