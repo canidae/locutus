@@ -4,6 +4,9 @@
 
 /* includes */
 #include <iostream>
+#include "FileMetadata.h"
+#include "Levenshtein.h"
+#include "Metadata.h"
 #include "WebService.h"
 
 /* namespace */
@@ -13,6 +16,7 @@ using namespace std;
 class Locutus {
 	public:
 		/* variables */
+		Levenshtein *levenshtein;
 		WebService *webservice;
 
 		/* constructors */

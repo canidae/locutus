@@ -11,13 +11,17 @@ Metadata::~Metadata() {
 
 /* methods */
 bool Metadata::equalMBID(Metadata target) {
-	if (getValue(MUSICBRAINZ_ALBUMARTISTID) != target.getValue(MUSICBRAINZ_ALBUMARTISTID))
+	string value = getValue(MUSICBRAINZ_ALBUMARTISTID);
+	if (value != "" && value != target.getValue(MUSICBRAINZ_ALBUMARTISTID))
 		return false;
-	if (getValue(MUSICBRAINZ_ALBUMID) != target.getValue(MUSICBRAINZ_ALBUMID))
+	value = getValue(MUSICBRAINZ_ALBUMID);
+	if (value != "" && value != target.getValue(MUSICBRAINZ_ALBUMID))
 		return false;
-	if (getValue(MUSICBRAINZ_ARTISTID) != target.getValue(MUSICBRAINZ_ARTISTID))
+	value = getValue(MUSICBRAINZ_ARTISTID);
+	if (value != "" && value != target.getValue(MUSICBRAINZ_ARTISTID))
 		return false;
-	if (getValue(MUSICBRAINZ_TRACKID) != target.getValue(MUSICBRAINZ_TRACKID))
+	value = getValue(MUSICBRAINZ_TRACKID);
+	if (value != "" && value != target.getValue(MUSICBRAINZ_TRACKID))
 		return false;
 	return true;
 }
@@ -45,10 +49,12 @@ string Metadata::getValue(const string key) {
 		if (e->key == key)
 			return e->value;
 	}
-	return NULL;
+	return "";
 }
 
 void Metadata::setValue(const string key, const string value) {
+	if (key == "" || value == "")
+		return;
 	bool found = false;
 	for (list<Entry>::iterator e = entries.begin(); e != entries.end(); ++e) {
 		if (e->key != key)
