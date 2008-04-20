@@ -27,10 +27,8 @@ bool Database::query(char *query) {
 	int resultstatus = PQresultStatus(pg_result);
 	if (resultstatus == PGRES_COMMAND_OK || resultstatus == PGRES_TUPLES_OK)
 		return true;
-	else {  
-		cout << PQresultErrorMessage(pg_result) << "Query: " << query << endl;
-		return false;
-	}
+	cout << PQresultErrorMessage(pg_result) << "Query: " << query << endl;
+	return false;
 }
 
 double Database::getDouble(int row, int col) {
