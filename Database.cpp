@@ -2,6 +2,7 @@
 
 /* constructors */
 Database::Database() {
+	pthread_mutex_init(&mutex, NULL);
 	query_sent = false;
 	pg_connection = PQconnectdb(CONNECTION_STRING);
 	if (!pg_connection) {
@@ -12,23 +13,16 @@ Database::Database() {
 
 /* destructors */
 Database::~Database() {
-	if (query_sent)
-		PQclear(pg_result);
+	clear();
 	PQfinish(pg_connection);
+	pthread_mutex_destroy(&mutex);
 }
 
 /* methods */
-bool Database::query(char *query) {
+void Database::clear() {
 	if (query_sent)
 		PQclear(pg_result);
-	else
-		query_sent = true;
-	pg_result = PQexec(pg_connection, query);
-	int resultstatus = PQresultStatus(pg_result);
-	if (resultstatus == PGRES_COMMAND_OK || resultstatus == PGRES_TUPLES_OK)
-		return true;
-	cout << PQresultErrorMessage(pg_result) << "Query: " << query << endl;
-	return false;
+	pthread_mutex_unlock(&mutex);
 }
 
 double Database::getDouble(int row, int col) {
@@ -45,4 +39,15 @@ int Database::getRows() {
 
 string Database::getString(int row, int col) {
 	return PQgetvalue(pg_result, row, col);
+}
+
+bool Database::query(char *query) {
+	pthread_mutex_lock(&mutex);
+	query_sent = true;
+	pg_result = PQexec(pg_connection, query);
+	int resultstatus = PQresultStatus(pg_result);
+	if (resultstatus == PGRES_COMMAND_OK || resultstatus == PGRES_TUPLES_OK)
+		return true;
+	cout << PQresultErrorMessage(pg_result) << "Query: " << query << endl;
+	return false;
 }

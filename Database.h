@@ -23,6 +23,7 @@ class Database {
 		~Database();
 
 		/* methods */
+		void clear();
 		double getDouble(int row, int col);
 		int getInt(int row, int col);
 		int getRows();
@@ -31,6 +32,7 @@ class Database {
 
 	private:
 		/* variables */
+		pthread_mutex_t mutex;
 		bool query_sent;
 		PGconn *pg_connection;
 		PGresult *pg_result;
