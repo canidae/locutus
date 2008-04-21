@@ -2,6 +2,9 @@
 /* defines */
 #define LOCUTUS_H
 
+/* forward declare */
+class Locutus;
+
 /* includes */
 #include <iostream>
 #include "Database.h"
@@ -17,6 +20,7 @@ using namespace std;
 class Locutus {
 	public:
 		/* variables */
+		Database *database;
 		Levenshtein *levenshtein;
 		WebService *webservice;
 

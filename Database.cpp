@@ -25,11 +25,15 @@ void Database::clear() {
 	pthread_mutex_unlock(&mutex);
 }
 
-double Database::getDouble(int row, int col) {
+bool Database::getBool(const int row, const int col) {
+	return PQgetvalue(pg_result, row, col)[0] == 't';
+}
+
+double Database::getDouble(const int row, const int col) {
 	return atof(PQgetvalue(pg_result, row, col));
 }
 
-int Database::getInt(int row, int col) {
+int Database::getInt(const int row, const int col) {
 	return atoi(PQgetvalue(pg_result, row, col));
 }
 
@@ -37,17 +41,21 @@ int Database::getRows() {
 	return PQntuples(pg_result);
 }
 
-string Database::getString(int row, int col) {
+string Database::getString(const int row, const int col) {
 	return PQgetvalue(pg_result, row, col);
 }
 
-bool Database::query(char *query) {
+bool Database::query(const string q) {
+	return query(q.c_str());
+}
+
+bool Database::query(const char *q) {
 	pthread_mutex_lock(&mutex);
 	query_sent = true;
-	pg_result = PQexec(pg_connection, query);
+	pg_result = PQexec(pg_connection, q);
 	int resultstatus = PQresultStatus(pg_result);
 	if (resultstatus == PGRES_COMMAND_OK || resultstatus == PGRES_TUPLES_OK)
 		return true;
-	cout << PQresultErrorMessage(pg_result) << "Query: " << query << endl;
+	cerr << PQresultErrorMessage(pg_result) << "Query: " << q << endl;
 	return false;
 }

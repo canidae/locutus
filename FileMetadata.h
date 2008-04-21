@@ -1,20 +1,26 @@
 #ifndef FILEMETADATA_H
 /* defines */
 #define FILEMETADATA_H
-/* stuff that should be dynamical (eg. stored in database)
- * FIXME TODO XXX */
-#define LIST_SIMILARITY_THRESHOLD 0.85
-#define ALBUM_WEIGHT 42
-#define ARTIST_WEIGHT 42
-#define TITLE_WEIGHT 42
-#define TRACKNUMBER_WEIGHT 42
-#define DURATION_WEIGHT 42
-#define DURATION_LIMIT 10
+/* default values */
+#define ALBUM_WEIGHT_KEY "album_weight"
+#define ALBUM_WEIGHT_VALUE 100.0
+#define ARTIST_WEIGHT_KEY "artist_weight"
+#define ARTIST_WEIGHT_VALUE 100.0
+#define COMBINE_THRESHOLD_KEY "combine_threshold"
+#define COMBINE_THRESHOLD_VALUE 0.80
+#define DURATION_LIMIT_KEY "duration_limit"
+#define DURATION_LIMIT_VALUE 15.0
+#define DURATION_WEIGHT_KEY "duration_weight"
+#define DURATION_WEIGHT_VALUE 100.0
+#define TITLE_WEIGHT_KEY "title_weight"
+#define TITLE_WEIGHT_VALUE 100.0
+#define TRACKNUMBER_WEIGHT_KEY "tracknumber_weight"
+#define TRACKNUMBER_WEIGHT_VALUE 100.0
 
 /* includes */
 #include <list>
 #include <string>
-#include "Levenshtein.h"
+#include "Locutus.h"
 #include "Metadata.h"
 
 /* namespaces */
@@ -27,7 +33,7 @@ class FileMetadata : public Metadata {
 		string filename;
 
 		/* constructors */
-		FileMetadata(Levenshtein *levenshtein, string filename, int duration);
+		FileMetadata(Locutus *locutus, string filename, int duration);
 
 		/* destructors */
 		~FileMetadata();
@@ -37,9 +43,18 @@ class FileMetadata : public Metadata {
 
 	private:
 		/* variables */
-		Levenshtein *levenshtein;
+		Locutus *locutus;
+		double album_weight;
+		double artist_weight;
+		double combine_threshold;
+		double duration_weight;
+		double duration_limit;
+		double title_weight;
+		double tracknumber_weight;
 
 		/* methods */
 		list<string> createMetadataList();
+		void loadSettings();
+		double loadSettingsHelper(int, string, double);
 };
 #endif

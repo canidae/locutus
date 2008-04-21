@@ -2,12 +2,14 @@
 
 /* constructors */
 Locutus::Locutus() {
+	database = new Database();
 	levenshtein = new Levenshtein();
 	webservice = new WebService();
 }
 
 /* destructors */
 Locutus::~Locutus() {
+	delete database;
 	delete levenshtein;
 	delete webservice;
 }
@@ -27,7 +29,7 @@ void Locutus::run() {
 	t2.setValue(TRACKNUMBER, "1");
 	cout << t1.equalMetadata(t2) << endl;
 
-	FileMetadata t3(levenshtein, "FIXME", 38);
+	FileMetadata t3(this, "FIXME", 38);
 	t3.setValue(ARTIST, "The Final Countdown");
 	t3.setValue(ALBUM, "The Final Countdown");
 	t3.setValue(TITLE, "The Final Countdown");

@@ -21,19 +21,20 @@ class WebService : public URLStream, public XMLStream {
 		~WebService();
 
 		/* methods */
-		void fetchRelease(const char *mbid);
+		void fetchAlbum(const char *mbid);
+		void searchMetadata(const char *query);
+		void searchPUID(const char *puid);
 
 	private:
 		/* variables */
 		URLStream::Error status;
 
 		/* methods */
-		int read(unsigned char *buffer, size_t len);
-		void startDocument();
-		void endDocument();
 		void characters(const unsigned char *text, size_t len);
-		void startElement(const unsigned char *name, const unsigned char **attr);
-		void endElement(const unsigned char *name);
 		void close();
+		void endElement(const unsigned char *name);
+		bool fetch(const char *url);
+		int read(unsigned char *buffer, size_t len);
+		void startElement(const unsigned char *name, const unsigned char **attr);
 };
 #endif

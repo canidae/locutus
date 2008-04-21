@@ -7,6 +7,7 @@
 /* includes */
 #include <iostream>
 #include <libpq-fe.h>
+#include <string>
 
 /* namespaces */
 using namespace std;
@@ -24,11 +25,13 @@ class Database {
 
 		/* methods */
 		void clear();
-		double getDouble(int row, int col);
-		int getInt(int row, int col);
+		bool getBool(const int row, const int col);
+		double getDouble(const int row, const int col);
+		int getInt(const int row, const int col);
 		int getRows();
-		string getString(int row, int col);
-		bool query(char *query);
+		string getString(const int row, const int col);
+		bool query(const string q);
+		bool query(const char *q);
 
 	private:
 		/* variables */
