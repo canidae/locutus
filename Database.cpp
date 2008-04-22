@@ -3,7 +3,7 @@
 /* constructors */
 Database::Database() {
 	pthread_mutex_init(&mutex, NULL);
-	query_sent = false;
+	got_result = false;
 	pg_connection = PQconnectdb(CONNECTION_STRING);
 	if (!pg_connection) {
 		cout << "Unable to connect to the database" << endl;
@@ -20,8 +20,9 @@ Database::~Database() {
 
 /* methods */
 void Database::clear() {
-	if (query_sent)
+	if (got_result)
 		PQclear(pg_result);
+	got_result = false;
 	pthread_mutex_unlock(&mutex);
 }
 
@@ -51,10 +52,10 @@ bool Database::query(const string q) {
 
 bool Database::query(const char *q) {
 	pthread_mutex_lock(&mutex);
-	query_sent = true;
+	got_result = true;
 	pg_result = PQexec(pg_connection, q);
-	int resultstatus = PQresultStatus(pg_result);
-	if (resultstatus == PGRES_COMMAND_OK || resultstatus == PGRES_TUPLES_OK)
+	int status = PQresultStatus(pg_result);
+	if (status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK)
 		return true;
 	cerr << PQresultErrorMessage(pg_result) << "Query: " << q << endl;
 	return false;

@@ -36,7 +36,7 @@ class Database {
 	private:
 		/* variables */
 		pthread_mutex_t mutex;
-		bool query_sent;
+		bool got_result;
 		PGconn *pg_connection;
 		PGresult *pg_result;
 

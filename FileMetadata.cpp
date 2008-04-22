@@ -107,18 +107,18 @@ void FileMetadata::loadSettings() {
 		exit(1);
 	int setting_class_id = locutus->database->getInt(0, 0);
 	locutus->database->clear();
-	album_weight = loadSettingsHelper(setting_class_id, ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE);
-	artist_weight = loadSettingsHelper(setting_class_id, ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE);
-	combine_threshold = loadSettingsHelper(setting_class_id, COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE);
-	duration_limit = loadSettingsHelper(setting_class_id, DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE);
-	duration_weight = loadSettingsHelper(setting_class_id, DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE);
-	title_weight = loadSettingsHelper(setting_class_id, TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE);
-	tracknumber_weight = loadSettingsHelper(setting_class_id, TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE);
+	album_weight = loadSettingsHelper(setting_class_id, ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
+	artist_weight = loadSettingsHelper(setting_class_id, ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
+	combine_threshold = loadSettingsHelper(setting_class_id, COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
+	duration_limit = loadSettingsHelper(setting_class_id, DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
+	duration_weight = loadSettingsHelper(setting_class_id, DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
+	title_weight = loadSettingsHelper(setting_class_id, TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
+	tracknumber_weight = loadSettingsHelper(setting_class_id, TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 }
 
-double FileMetadata::loadSettingsHelper(int setting_class_id, string key, double default_value) {
+double FileMetadata::loadSettingsHelper(int setting_class_id, string key, double default_value, string description) {
 	double back = default_value;
-	char query[128];
+	char query[1024];
 	sprintf(query, "SELECT value, user_changed FROM setting WHERE setting_class_id = %d AND key = '%s'", setting_class_id, key.c_str());
 	if (!locutus->database->query(query))
 		exit(1);
@@ -128,14 +128,14 @@ double FileMetadata::loadSettingsHelper(int setting_class_id, string key, double
 			/* user has not changed value and default value has changed.
 			 * update database */
 			locutus->database->clear();
-			sprintf(query, "UPDATE setting SET value = '%lf' WHERE setting_class_id = %d AND key = '%s'", default_value, setting_class_id, key.c_str());
+			sprintf(query, "UPDATE setting SET value = '%lf', description = '%s' WHERE setting_class_id = %d AND key = '%s'", default_value, description.c_str(), setting_class_id, key.c_str());
 			if (!locutus->database->query(query))
 				exit(1);
 		}
 	} else {
 		/* this key is missing, add it */
 		locutus->database->clear();
-		sprintf(query, "INSERT INTO setting(setting_class_id, key, value) VALUES (%d, '%s', '%lf')", setting_class_id, key.c_str(), default_value);
+		sprintf(query, "INSERT INTO setting(setting_class_id, key, value, description) VALUES (%d, '%s', '%lf', '%s')", setting_class_id, key.c_str(), default_value, description.c_str());
 		if (!locutus->database->query(query))
 			exit(1);
 	}
