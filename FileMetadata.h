@@ -23,15 +23,35 @@
 #define TRACKNUMBER_WEIGHT_KEY "tracknumber_weight"
 #define TRACKNUMBER_WEIGHT_VALUE 100.0
 #define TRACKNUMBER_WEIGHT_DESCRIPTION ""
+/* file types */
+#define FILETYPE_OGG_VORBIS 1
+#define FILETYPE_OGG_FLAC 2
+#define FILETYPE_OGG_SPEEX 3
+#define FILETYPE_FLAC 4
+#define FILETYPE_MPEG 5
+#define FILETYPE_MPC 6
+#define FILETYPE_WAVPACK 7
+#define FILETYPE_TRUEAUDIO 8
 
 /* includes */
 #include <list>
 #include <string>
+#include <tfile.h>
+#include <tstring.h>
+
+#include <fileref.h>
+#include <mpegfile.h>
+#include <vorbisfile.h>
+#include <flacfile.h>
+#include <oggflacfile.h>
+#include <mpcfile.h>
+
 #include "Locutus.h"
 #include "Metadata.h"
 
 /* namespaces */
 using namespace std;
+using namespace TagLib;
 
 /* FileMetadata */
 class FileMetadata : public Metadata {
@@ -58,10 +78,12 @@ class FileMetadata : public Metadata {
 		double duration_limit;
 		double title_weight;
 		double tracknumber_weight;
+		int type;
 
 		/* methods */
 		list<string> createMetadataList();
 		void loadSettings();
 		double loadSettingsHelper(int setting_class_id, string key, double default_value, string description);
+		void parseXiphComment(Ogg::XiphComment *tag);
 };
 #endif

@@ -4,6 +4,51 @@
 FileMetadata::FileMetadata(Locutus *locutus, string filename, int duration) : Metadata(duration) {
 	this->locutus = locutus;
 	this->filename = filename;
+	type = 0;
+	/*
+	if (filename.size() >= 3) {
+		if (s.substr(s.size() - 3, 3).upper() == ".WV")
+			return new WavPack::File(fileName, readAudioProperties, audioPropertiesStyle);
+	} else if (filename.size() >= 4) {
+		if (s.substr(s.size() - 4, 4).upper() == ".OGG")
+			return new Ogg::Vorbis::File(fileName, readAudioProperties, audioPropertiesStyle);
+		else if (s.substr(s.size() - 4, 4).upper() == ".MP3")
+			return new MPEG::File(fileName, readAudioProperties, audioPropertiesStyle);
+		else if (s.substr(s.size() - 4, 4).upper() == ".MPC")
+			return new MPC::File(fileName, readAudioProperties, audioPropertiesStyle);
+		else if (s.substr(s.size() - 4, 4).upper() == ".OGA")
+			return new Ogg::FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
+		else if (s.substr(s.size() - 4, 4).upper() == ".SPX")
+			return new Ogg::Speex::File(fileName, readAudioProperties, audioPropertiesStyle);
+		else if (s.substr(s.size() - 4, 4).upper() == ".TTA")
+			return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
+	} else if (filename.size() >= 5) {
+		if (s.substr(s.size() - 5, 5).upper() == ".FLAC")
+	}
+	FIXME
+	FLAC::File *flac_file;
+	Ogg::Vorbis::File *vorbis_file;
+	Ogg::FLAC::File *oggflac_file;
+	Ogg::XiphComment *tag;
+	if (type == FILETYPE_FLAC) {
+		*flac_file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+		tag = flac_file->xiphComment();
+	} else if (type == FILETYPE_OGG_VORBIS) {
+		*vorbis_file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
+		tag = vorbis_file->tag();
+	} else if (type == FILETYPE_OGG_FLAC) {
+		*oggflac_file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+		tag = oggflac_file->tag();
+	} else {
+		return;
+	}
+	if (type == FILETYPE_FLAC)
+		delete flac_file;
+	else if (type == FILETYPE_OGG_VORBIS)
+		delete vorbis_file;
+	else if (type == FILETYPE_OGG_FLAC)
+		delete oggflac_file;
+	*/
 }
 
 /* destructors */
@@ -141,4 +186,7 @@ double FileMetadata::loadSettingsHelper(int setting_class_id, string key, double
 	}
 	locutus->database->clear();
 	return back;
+}
+
+void FileMetadata::parseXiphComment(Ogg::XiphComment *tag) {
 }
