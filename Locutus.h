@@ -34,5 +34,9 @@ class Locutus {
 
 		/* methods */
 		void run();
+
+	private:
+		/* variables */
+		FileReader *filereader;
 };
 #endif

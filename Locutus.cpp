@@ -5,6 +5,7 @@ Locutus::Locutus() {
 	database = new Database();
 	levenshtein = new Levenshtein();
 	webservice = new WebService();
+	filereader = new FileReader(this);
 }
 
 /* destructors */
@@ -12,6 +13,7 @@ Locutus::~Locutus() {
 	delete database;
 	delete levenshtein;
 	delete webservice;
+	delete filereader;
 }
 
 /* methods */
@@ -35,12 +37,6 @@ void Locutus::run() {
 	t3.setValue(TITLE, "The Final Countdown");
 	t3.setValue(TRACKNUMBER, "1");
 	cout << t3.compareWithMetadata(t1) << endl;
-
-	FileReader *fr = new FileReader(this);
-	fr->start();
-	sleep(1);
-	fr->stop();
-	cout << "yay" << endl;
 }
 
 /* main */

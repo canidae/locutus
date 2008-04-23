@@ -2,8 +2,13 @@
 /* defines */
 #define FILEREADER_H
 
+/* forward declare */
+class FileReader;
+
 /* includes */
 #include <cc++/thread.h>
+#include <list>
+#include <string>
 #include "Locutus.h"
 
 /* namespaces */
@@ -29,7 +34,11 @@ class FileReader : public Thread {
 		/* variables */
 		Locutus *locutus;
 		bool active;
+		list<string> dir_queue;
+		list<string> file_queue;
 
 		/* methods */
+		bool parseDirectory();
+		bool parseFile();
 };
 #endif
