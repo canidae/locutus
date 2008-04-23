@@ -6,8 +6,8 @@
 #include <cc++/common.h>
 
 /* namespaces */
-using namespace std;
 using namespace ost;
+using namespace std;
 
 /* WebService */
 class WebService : public URLStream, public XMLStream {

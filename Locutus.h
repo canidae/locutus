@@ -14,6 +14,7 @@ class Locutus;
 #include "WebService.h"
 
 /* namespace */
+using namespace ost;
 using namespace std;
 
 /* Locutus */
