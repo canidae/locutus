@@ -35,6 +35,12 @@ void Locutus::run() {
 	t3.setValue(TITLE, "The Final Countdown");
 	t3.setValue(TRACKNUMBER, "1");
 	cout << t3.compareWithMetadata(t1) << endl;
+
+	FileReader *fr = new FileReader(this);
+	fr->start();
+	sleep(1);
+	fr->stop();
+	cout << "yay" << endl;
 }
 
 /* main */

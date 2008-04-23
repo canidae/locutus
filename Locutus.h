@@ -9,6 +9,7 @@ class Locutus;
 #include <iostream>
 #include "Database.h"
 #include "FileMetadata.h"
+#include "FileReader.h"
 #include "Levenshtein.h"
 #include "Metadata.h"
 #include "WebService.h"
