@@ -45,6 +45,9 @@
 #include <flacfile.h>
 #include <oggflacfile.h>
 #include <mpcfile.h>
+#include <apetag.h>
+#include <id3v1tag.h>
+#include <id3v2tag.h>
 
 #include "Locutus.h"
 #include "Metadata.h"
@@ -84,6 +87,7 @@ class FileMetadata : public Metadata {
 		list<string> createMetadataList();
 		void loadSettings();
 		double loadSettingsHelper(int setting_class_id, string key, double default_value, string description);
-		void parseXiphComment(Ogg::XiphComment *tag);
+		void readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1);
+		void readXiphComment(Ogg::XiphComment *tag);
 };
 #endif

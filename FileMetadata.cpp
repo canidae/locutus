@@ -5,50 +5,55 @@ FileMetadata::FileMetadata(Locutus *locutus, string filename, int duration) : Me
 	this->locutus = locutus;
 	this->filename = filename;
 	type = 0;
-	/*
-	if (filename.size() >= 3) {
-		if (s.substr(s.size() - 3, 3).upper() == ".WV")
-			return new WavPack::File(fileName, readAudioProperties, audioPropertiesStyle);
-	} else if (filename.size() >= 4) {
-		if (s.substr(s.size() - 4, 4).upper() == ".OGG")
-			return new Ogg::Vorbis::File(fileName, readAudioProperties, audioPropertiesStyle);
-		else if (s.substr(s.size() - 4, 4).upper() == ".MP3")
-			return new MPEG::File(fileName, readAudioProperties, audioPropertiesStyle);
-		else if (s.substr(s.size() - 4, 4).upper() == ".MPC")
-			return new MPC::File(fileName, readAudioProperties, audioPropertiesStyle);
-		else if (s.substr(s.size() - 4, 4).upper() == ".OGA")
-			return new Ogg::FLAC::File(fileName, readAudioProperties, audioPropertiesStyle);
-		else if (s.substr(s.size() - 4, 4).upper() == ".SPX")
-			return new Ogg::Speex::File(fileName, readAudioProperties, audioPropertiesStyle);
-		else if (s.substr(s.size() - 4, 4).upper() == ".TTA")
-			return new TrueAudio::File(fileName, readAudioProperties, audioPropertiesStyle);
-	} else if (filename.size() >= 5) {
-		if (s.substr(s.size() - 5, 5).upper() == ".FLAC")
+	string::size_type pos = filename.find_last_of('.');
+	if (pos != string::npos) {
+		string ext = filename.substr(pos);
+		for (string::size_type a = 0; a < ext.size(); ++a) {
+			if (ext[a] >= 97 && ext[a] <= 122)
+				ext[a] -= 32;
+		}
+		if (ext == ".OGG") {
+			type = FILETYPE_OGG_VORBIS;
+			Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
+			readXiphComment(file->tag());
+			delete file;
+		} else if (ext == ".MP3") {
+			type = FILETYPE_MPEG;
+			MPEG::File *file = new MPEG::File(filename.c_str(), true, AudioProperties::Accurate);
+			readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+			delete file;
+		} else if (ext == ".FLAC") {
+			type = FILETYPE_FLAC;
+			FLAC::File *file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+			readXiphComment(file->xiphComment());
+			delete file;
+		} else if (ext == ".MPC") {
+			type = FILETYPE_MPC;
+			MPC::File *file = new MPC::File(filename.c_str(), true, AudioProperties::Accurate);
+			readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+			delete file;
+		} else if (ext == ".OGA") {
+			type = FILETYPE_OGG_FLAC;
+			Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+			readXiphComment(file->tag());
+			delete file;
+		} else if (ext == ".WV") {
+			type = FILETYPE_WAVPACK;
+			//WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
+			//readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+			//delete file;
+		} else if (ext == ".SPX") {
+			type = FILETYPE_OGG_SPEEX;
+			//Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
+			//readXiphComment(file->tag());
+			//delete file;
+		} else if (ext == ".TTA") {
+			type = FILETYPE_TRUEAUDIO;
+			//TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
+			//readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+			//delete file;
+		}
 	}
-	FIXME
-	FLAC::File *flac_file;
-	Ogg::Vorbis::File *vorbis_file;
-	Ogg::FLAC::File *oggflac_file;
-	Ogg::XiphComment *tag;
-	if (type == FILETYPE_FLAC) {
-		*flac_file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
-		tag = flac_file->xiphComment();
-	} else if (type == FILETYPE_OGG_VORBIS) {
-		*vorbis_file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
-		tag = vorbis_file->tag();
-	} else if (type == FILETYPE_OGG_FLAC) {
-		*oggflac_file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
-		tag = oggflac_file->tag();
-	} else {
-		return;
-	}
-	if (type == FILETYPE_FLAC)
-		delete flac_file;
-	else if (type == FILETYPE_OGG_VORBIS)
-		delete vorbis_file;
-	else if (type == FILETYPE_OGG_FLAC)
-		delete oggflac_file;
-	*/
 }
 
 /* destructors */
@@ -188,5 +193,74 @@ double FileMetadata::loadSettingsHelper(int setting_class_id, string key, double
 	return back;
 }
 
-void FileMetadata::parseXiphComment(Ogg::XiphComment *tag) {
+void FileMetadata::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1) {
+	/* first fetch id3v1 */
+	if (!id3v1->album().isEmpty())
+		setValue(ALBUM, id3v1->album().to8Bit(true));
+	if (!id3v1->artist().isEmpty())
+		setValue(ARTIST, id3v1->artist().to8Bit(true));
+	if (!id3v1->title().isEmpty())
+		setValue(TITLE, id3v1->title().to8Bit(true));
+	int tracknum = id3v1->track();
+	if (tracknum > 0) {
+		char track[32];
+		sprintf(track, "%d", tracknum);
+		setValue(TRACKNUMBER, string(track));
+	}
+	/* overwrite with id3v2 */
+	if (!id3v2->album().isEmpty())
+		setValue(ALBUM, id3v2->album().to8Bit(true));
+	if (!id3v2->artist().isEmpty())
+		setValue(ARTIST, id3v2->artist().to8Bit(true));
+	if (!id3v2->title().isEmpty())
+		setValue(TITLE, id3v2->title().to8Bit(true));
+	tracknum = id3v2->track();
+	if (tracknum > 0) {
+		char track[32];
+		sprintf(track, "%d", tracknum);
+		setValue(TRACKNUMBER, string(track));
+	}
+	const ID3v2::FrameListMap map = id3v2->frameListMap();
+	ID3v2::FrameList frames = map["TXXX"];
+	for (TagLib::uint a = 0; a < frames.size(); ++a) {
+		/* MusicBrainz Album Id
+		 * MusicBrainz Artist Id
+		 * MusicBrainz Album Artist Id
+		 * MusicIP PUID
+		 * ALBUMARTISTSORT */
+	}
+	frames = map["UFID"];
+	for (TagLib::uint a = 0; a < frames.size(); ++a) {
+		/* http://musicbrainz.org */
+	}
+	frames = map["TSOP"];
+	if (!frames.isEmpty())
+		setValue(ARTISTSORT, frames.front()->toString().to8Bit(true));
+	/* overwrite with ape */
+}
+
+void FileMetadata::readXiphComment(Ogg::XiphComment *tag) {
+	const Ogg::FieldListMap map = tag->fieldListMap();
+	if (!map[ALBUM].isEmpty())
+		setValue(ALBUM, map[ALBUM].front().to8Bit(true));
+	if (!map[ALBUMARTIST].isEmpty())
+		setValue(ALBUMARTIST, map[ALBUMARTIST].front().to8Bit(true));
+	if (!map[ALBUMARTISTSORT].isEmpty())
+		setValue(ALBUMARTISTSORT, map[ALBUMARTISTSORT].front().to8Bit(true));
+	if (!map[ARTIST].isEmpty())
+		setValue(ARTIST, map[ARTIST].front().to8Bit(true));
+	if (!map[ARTISTSORT].isEmpty())
+		setValue(ARTISTSORT, map[ARTISTSORT].front().to8Bit(true));
+	if (!map[MUSICBRAINZ_ALBUMARTISTID].isEmpty())
+		setValue(MUSICBRAINZ_ALBUMARTISTID, map[MUSICBRAINZ_ALBUMARTISTID].front().to8Bit(true));
+	if (!map[MUSICBRAINZ_ALBUMID].isEmpty())
+		setValue(MUSICBRAINZ_ALBUMID, map[MUSICBRAINZ_ALBUMID].front().to8Bit(true));
+	if (!map[MUSICBRAINZ_ARTISTID].isEmpty())
+		setValue(MUSICBRAINZ_ARTISTID, map[MUSICBRAINZ_ARTISTID].front().to8Bit(true));
+	if (!map[MUSICBRAINZ_TRACKID].isEmpty())
+		setValue(MUSICBRAINZ_TRACKID, map[MUSICBRAINZ_TRACKID].front().to8Bit(true));
+	if (!map[TITLE].isEmpty())
+		setValue(TITLE, map[TITLE].front().to8Bit(true));
+	if (!map[TRACKNUMBER].isEmpty())
+		setValue(TRACKNUMBER, map[TRACKNUMBER].front().to8Bit(true));
 }
