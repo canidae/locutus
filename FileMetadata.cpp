@@ -195,48 +195,77 @@ double FileMetadata::loadSettingsHelper(int setting_class_id, string key, double
 
 void FileMetadata::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1) {
 	/* first fetch id3v1 */
-	if (!id3v1->album().isEmpty())
-		setValue(ALBUM, id3v1->album().to8Bit(true));
-	if (!id3v1->artist().isEmpty())
-		setValue(ARTIST, id3v1->artist().to8Bit(true));
-	if (!id3v1->title().isEmpty())
-		setValue(TITLE, id3v1->title().to8Bit(true));
-	int tracknum = id3v1->track();
-	if (tracknum > 0) {
-		char track[32];
-		sprintf(track, "%d", tracknum);
-		setValue(TRACKNUMBER, string(track));
+	if (id3v1 != NULL) {
+		if (!id3v1->album().isEmpty())
+			setValue(ALBUM, id3v1->album().to8Bit(true));
+		if (!id3v1->artist().isEmpty())
+			setValue(ARTIST, id3v1->artist().to8Bit(true));
+		if (!id3v1->title().isEmpty())
+			setValue(TITLE, id3v1->title().to8Bit(true));
+		int tracknum = id3v1->track();
+		if (tracknum > 0) {
+			char track[32];
+			sprintf(track, "%d", tracknum);
+			setValue(TRACKNUMBER, string(track));
+		}
 	}
 	/* overwrite with id3v2 */
-	if (!id3v2->album().isEmpty())
-		setValue(ALBUM, id3v2->album().to8Bit(true));
-	if (!id3v2->artist().isEmpty())
-		setValue(ARTIST, id3v2->artist().to8Bit(true));
-	if (!id3v2->title().isEmpty())
-		setValue(TITLE, id3v2->title().to8Bit(true));
-	tracknum = id3v2->track();
-	if (tracknum > 0) {
-		char track[32];
-		sprintf(track, "%d", tracknum);
-		setValue(TRACKNUMBER, string(track));
+	if (id3v2 != NULL) {
+		if (!id3v2->album().isEmpty())
+			setValue(ALBUM, id3v2->album().to8Bit(true));
+		if (!id3v2->artist().isEmpty())
+			setValue(ARTIST, id3v2->artist().to8Bit(true));
+		if (!id3v2->title().isEmpty())
+			setValue(TITLE, id3v2->title().to8Bit(true));
+		int tracknum = id3v2->track();
+		if (tracknum > 0) {
+			char track[32];
+			sprintf(track, "%d", tracknum);
+			setValue(TRACKNUMBER, string(track));
+		}
+		const ID3v2::FrameListMap map = id3v2->frameListMap();
+		ID3v2::FrameList frames = map["TXXX"];
+		for (TagLib::uint a = 0; a < frames.size(); ++a) {
+			/* MusicBrainz Album Id
+			 * MusicBrainz Artist Id
+			 * MusicBrainz Album Artist Id
+			 * MusicIP PUID
+			 * ALBUMARTISTSORT */
+		}
+		frames = map["UFID"];
+		for (TagLib::uint a = 0; a < frames.size(); ++a) {
+			/* http://musicbrainz.org */
+		}
+		frames = map["TSOP"];
+		if (!frames.isEmpty())
+			setValue(ARTISTSORT, frames.front()->toString().to8Bit(true));
 	}
-	const ID3v2::FrameListMap map = id3v2->frameListMap();
-	ID3v2::FrameList frames = map["TXXX"];
-	for (TagLib::uint a = 0; a < frames.size(); ++a) {
-		/* MusicBrainz Album Id
-		 * MusicBrainz Artist Id
-		 * MusicBrainz Album Artist Id
-		 * MusicIP PUID
-		 * ALBUMARTISTSORT */
-	}
-	frames = map["UFID"];
-	for (TagLib::uint a = 0; a < frames.size(); ++a) {
-		/* http://musicbrainz.org */
-	}
-	frames = map["TSOP"];
-	if (!frames.isEmpty())
-		setValue(ARTISTSORT, frames.front()->toString().to8Bit(true));
 	/* overwrite with ape */
+	if (ape != NULL) {
+		const APE::ItemListMap map = ape->itemListMap();
+		if (!map[ALBUM].isEmpty())
+			setValue(ALBUM, map[ALBUM].toString().to8Bit(true));
+		if (!map[ALBUMARTIST].isEmpty())
+			setValue(ALBUMARTIST, map[ALBUMARTIST].toString().to8Bit(true));
+		if (!map[ALBUMARTISTSORT].isEmpty())
+			setValue(ALBUMARTISTSORT, map[ALBUMARTISTSORT].toString().to8Bit(true));
+		if (!map[ARTIST].isEmpty())
+			setValue(ARTIST, map[ARTIST].toString().to8Bit(true));
+		if (!map[ARTISTSORT].isEmpty())
+			setValue(ARTISTSORT, map[ARTISTSORT].toString().to8Bit(true));
+		if (!map[MUSICBRAINZ_ALBUMARTISTID].isEmpty())
+			setValue(MUSICBRAINZ_ALBUMARTISTID, map[MUSICBRAINZ_ALBUMARTISTID].toString().to8Bit(true));
+		if (!map[MUSICBRAINZ_ALBUMID].isEmpty())
+			setValue(MUSICBRAINZ_ALBUMID, map[MUSICBRAINZ_ALBUMID].toString().to8Bit(true));
+		if (!map[MUSICBRAINZ_ARTISTID].isEmpty())
+			setValue(MUSICBRAINZ_ARTISTID, map[MUSICBRAINZ_ARTISTID].toString().to8Bit(true));
+		if (!map[MUSICBRAINZ_TRACKID].isEmpty())
+			setValue(MUSICBRAINZ_TRACKID, map[MUSICBRAINZ_TRACKID].toString().to8Bit(true));
+		if (!map[TITLE].isEmpty())
+			setValue(TITLE, map[TITLE].toString().to8Bit(true));
+		if (!map[TRACKNUMBER].isEmpty())
+			setValue(TRACKNUMBER, map[TRACKNUMBER].toString().to8Bit(true));
+	}
 }
 
 void FileMetadata::readXiphComment(Ogg::XiphComment *tag) {
