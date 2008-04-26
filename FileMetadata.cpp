@@ -132,13 +132,13 @@ double FileMetadata::compareWithMetadata(Metadata target) {
 list<string> FileMetadata::createMetadataList() {
 	/* create a list of the values we wish to compare with */
 	list<string> data;
-	/* filename */
 	/* metadata */
 	data.push_back(getValue(ALBUM));
 	data.push_back(getValue(ALBUMARTIST));
 	data.push_back(getValue(ARTIST));
 	data.push_back(getValue(TITLE)); // might have to be tokenized (" - ", etc)
 	data.push_back(getValue(TRACKNUMBER));
+	/* filename */
 	return data;
 }
 
