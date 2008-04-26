@@ -13,6 +13,7 @@ class Locutus;
 #include "FileReader.h"
 #include "Levenshtein.h"
 #include "Metadata.h"
+#include "Settings.h"
 #include "WebService.h"
 
 /* namespace */
@@ -26,6 +27,7 @@ class Locutus {
 		Database *database;
 		FileMetadataConstants *fmconst;
 		Levenshtein *levenshtein;
+		Settings *settings;
 		WebService *webservice;
 
 		/* constructors */

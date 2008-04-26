@@ -1,6 +1,11 @@
 #ifndef FILEREADER_H
 /* defines */
 #define FILEREADER_H
+/* music locations */
+#define MUSIC_SORTED_KEY "sorted_directory"
+#define MUSIC_SORTED_VALUE "/music/sorted/"
+#define MUSIC_UNSORTED_KEY "unsorted_directory"
+#define MUSIC_UNSORTED_VALUE "/music/unsorted/"
 
 /* forward declare */
 class FileReader;
@@ -36,8 +41,10 @@ class FileReader : public Thread {
 		bool active;
 		list<string> dir_queue;
 		list<string> file_queue;
+		int setting_class_id;
 
 		/* methods */
+		bool loadSettings();
 		bool parseDirectory();
 		bool parseFile();
 };

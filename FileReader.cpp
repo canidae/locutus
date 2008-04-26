@@ -28,6 +28,10 @@ void FileReader::stop() {
 }
 
 /* private methods */
+bool FileReader::loadSettings() {
+	return true;
+}
+
 bool FileReader::parseDirectory() {
 	if (dir_queue.size() <= 0)
 		return false;

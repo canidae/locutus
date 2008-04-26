@@ -1,6 +1,9 @@
 #ifndef FILEMETADATACONSTANTS_H
 /* defines */
 #define FILEMETADATACONSTANTS_H
+/* setting class */
+#define FILEMETADATA_CLASS "FileMetadata"
+#define FILEMETADATA_CLASS_DESCRIPTION "TODO"
 /* default values */
 #define ALBUM_WEIGHT_KEY "album_weight"
 #define ALBUM_WEIGHT_VALUE 100.0
@@ -58,9 +61,5 @@ class FileMetadataConstants {
 		/* variables */
 		Locutus *locutus;
 		int setting_class_id;
-
-		/* methods */
-		double loadSettingsHelper(string key, double default_value, string description);
-
 };
 #endif

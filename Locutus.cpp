@@ -5,6 +5,7 @@ Locutus::Locutus() {
 	database = new Database();
 	levenshtein = new Levenshtein();
 	webservice = new WebService();
+	settings = new Settings(this);
 	filereader = new FileReader(this);
 	fmconst = new FileMetadataConstants(this);
 }
@@ -14,6 +15,7 @@ Locutus::~Locutus() {
 	delete database;
 	delete levenshtein;
 	delete webservice;
+	delete settings;
 	delete filereader;
 	delete fmconst;
 }
