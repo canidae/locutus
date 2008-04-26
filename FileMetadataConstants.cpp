@@ -17,7 +17,7 @@ FileMetadataConstants::~FileMetadataConstants() {
 }
 
 /* methods */
-bool FileMetadataConstants::loadSettings() {
+void FileMetadataConstants::loadSettings() {
 	setting_class_id = locutus->settings->loadClassID(FILEMETADATA_CLASS, FILEMETADATA_CLASS_DESCRIPTION);
 	album_weight = locutus->settings->loadSetting(setting_class_id, ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
 	artist_weight = locutus->settings->loadSetting(setting_class_id, ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
@@ -26,5 +26,4 @@ bool FileMetadataConstants::loadSettings() {
 	duration_weight = locutus->settings->loadSetting(setting_class_id, DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
 	title_weight = locutus->settings->loadSetting(setting_class_id, TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
 	tracknumber_weight = locutus->settings->loadSetting(setting_class_id, TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
-	return true;
 }

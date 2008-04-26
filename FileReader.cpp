@@ -28,8 +28,10 @@ void FileReader::stop() {
 }
 
 /* private methods */
-bool FileReader::loadSettings() {
-	return true;
+void FileReader::loadSettings() {
+	setting_class_id = locutus->settings->loadClassID(FILEREADER_CLASS, FILEREADER_CLASS_DESCRIPTION);
+	input_dir = locutus->settings->loadSetting(setting_class_id, MUSIC_SORTED_KEY, MUSIC_SORTED_VALUE, MUSIC_SORTED_DESCRIPTION);
+	output_dir = locutus->settings->loadSetting(setting_class_id, MUSIC_UNSORTED_KEY, MUSIC_UNSORTED_VALUE, MUSIC_UNSORTED_DESCRIPTION);
 }
 
 bool FileReader::parseDirectory() {

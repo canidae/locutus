@@ -55,7 +55,7 @@ class FileMetadataConstants {
 		~FileMetadataConstants();
 
 		/* methods */
-		bool loadSettings();
+		void loadSettings();
 
 	private:
 		/* variables */
