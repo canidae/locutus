@@ -6,6 +6,7 @@ Locutus::Locutus() {
 	levenshtein = new Levenshtein();
 	webservice = new WebService();
 	filereader = new FileReader(this);
+	fmconst = new FileMetadataConstants(this);
 }
 
 /* destructors */
@@ -14,6 +15,7 @@ Locutus::~Locutus() {
 	delete levenshtein;
 	delete webservice;
 	delete filereader;
+	delete fmconst;
 }
 
 /* methods */

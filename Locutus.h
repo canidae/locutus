@@ -9,6 +9,7 @@ class Locutus;
 #include <iostream>
 #include "Database.h"
 #include "FileMetadata.h"
+#include "FileMetadataConstants.h"
 #include "FileReader.h"
 #include "Levenshtein.h"
 #include "Metadata.h"
@@ -23,6 +24,7 @@ class Locutus {
 	public:
 		/* variables */
 		Database *database;
+		FileMetadataConstants *fmconst;
 		Levenshtein *levenshtein;
 		WebService *webservice;
 

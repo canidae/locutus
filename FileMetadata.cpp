@@ -115,16 +115,16 @@ double FileMetadata::compareWithMetadata(Metadata target) {
 		++c1;
 	}
 	if (best > 0.0) {
-		score += match[0][p[0]] * ALBUM_WEIGHT_VALUE;
-		score += match[1][p[1]] * ARTIST_WEIGHT_VALUE;
-		score += match[2][p[2]] * TITLE_WEIGHT_VALUE;
-		score += match[3][p[3]] * TRACKNUMBER_WEIGHT_VALUE;
+		score += match[0][p[0]] * locutus->fmconst->album_weight;
+		score += match[1][p[1]] * locutus->fmconst->artist_weight;
+		score += match[2][p[2]] * locutus->fmconst->title_weight;
+		score += match[3][p[3]] * locutus->fmconst->tracknumber_weight;
 	}
 	int durationdiff = abs(target.duration - duration);
-	if (durationdiff < DURATION_LIMIT_VALUE) {
-		score += (1.0 - durationdiff / DURATION_LIMIT_VALUE) * DURATION_WEIGHT_VALUE;
+	if (durationdiff < locutus->fmconst->duration_limit) {
+		score += (1.0 - durationdiff / locutus->fmconst->duration_limit) * locutus->fmconst->duration_weight;
 	}
-	score /= ALBUM_WEIGHT_VALUE + ARTIST_WEIGHT_VALUE + TITLE_WEIGHT_VALUE + TRACKNUMBER_WEIGHT_VALUE + DURATION_WEIGHT_VALUE;
+	score /= locutus->fmconst->album_weight + locutus->fmconst->artist_weight + locutus->fmconst->title_weight + locutus->fmconst->tracknumber_weight + locutus->fmconst->duration_weight;
 	return score;
 }
 
@@ -140,57 +140,6 @@ list<string> FileMetadata::createMetadataList() {
 	data.push_back(getValue(TRACKNUMBER));
 	/* filename */
 	return data;
-}
-
-void FileMetadata::loadSettings() {
-	if (!locutus->database->query("SELECT setting_class_id FROM setting_class WHERE name = 'FileMetadata'"))
-		exit(1);
-	if (locutus->database->getRows() <= 0) {
-		/* hmm, no entry for FileMetadata */
-		locutus->database->clear();
-		locutus->database->query("INSERT INTO setting_class(name, description) VALUES ('FileMetadata', '')");
-		locutus->database->clear();
-		if (!locutus->database->query("SELECT setting_class_id FROM setting_class WHERE name = 'FileMetadata'"))
-			exit(1);
-	}
-	if (locutus->database->getRows() <= 0)
-		exit(1);
-	int setting_class_id = locutus->database->getInt(0, 0);
-	locutus->database->clear();
-	album_weight = loadSettingsHelper(setting_class_id, ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
-	artist_weight = loadSettingsHelper(setting_class_id, ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
-	combine_threshold = loadSettingsHelper(setting_class_id, COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
-	duration_limit = loadSettingsHelper(setting_class_id, DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
-	duration_weight = loadSettingsHelper(setting_class_id, DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
-	title_weight = loadSettingsHelper(setting_class_id, TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
-	tracknumber_weight = loadSettingsHelper(setting_class_id, TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
-}
-
-double FileMetadata::loadSettingsHelper(int setting_class_id, string key, double default_value, string description) {
-	double back = default_value;
-	char query[1024];
-	sprintf(query, "SELECT value, user_changed FROM setting WHERE setting_class_id = %d AND key = '%s'", setting_class_id, key.c_str());
-	if (!locutus->database->query(query))
-		exit(1);
-	if (locutus->database->getRows() > 0) {
-		back = locutus->database->getDouble(0, 0);
-		if (!locutus->database->getBool(0, 1) && back != default_value) {
-			/* user has not changed value and default value has changed.
-			 * update database */
-			locutus->database->clear();
-			sprintf(query, "UPDATE setting SET value = '%lf', description = '%s' WHERE setting_class_id = %d AND key = '%s'", default_value, description.c_str(), setting_class_id, key.c_str());
-			if (!locutus->database->query(query))
-				exit(1);
-		}
-	} else {
-		/* this key is missing, add it */
-		locutus->database->clear();
-		sprintf(query, "INSERT INTO setting(setting_class_id, key, value, description) VALUES (%d, '%s', '%lf', '%s')", setting_class_id, key.c_str(), default_value, description.c_str());
-		if (!locutus->database->query(query))
-			exit(1);
-	}
-	locutus->database->clear();
-	return back;
 }
 
 void FileMetadata::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1) {
@@ -231,10 +180,12 @@ void FileMetadata::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id
 			 * MusicBrainz Album Artist Id
 			 * MusicIP PUID
 			 * ALBUMARTISTSORT */
+			cout << frames[a] << endl;
 		}
 		frames = map["UFID"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
 			/* http://musicbrainz.org */
+			cout << frames[a] << endl;
 		}
 		frames = map["TSOP"];
 		if (!frames.isEmpty())
