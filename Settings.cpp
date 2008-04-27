@@ -30,10 +30,10 @@ int Settings::loadClassID(string name, string description) {
 			locutus->database->clear();
 			return -1;
 		}
-	}
-	if (locutus->database->getRows() <= 0) {
-		locutus->database->clear();
-		return -1;
+		if (locutus->database->getRows() <= 0) {
+			locutus->database->clear();
+			return -1;
+		}
 	}
 	int class_id = locutus->database->getInt(0, 0);
 	locutus->database->clear();
@@ -53,8 +53,10 @@ int Settings::loadSetting(int class_id, string key, int default_value, string de
 }
 
 string Settings::loadSetting(int class_id, string key, string default_value, string description) {
+	if (key.size() + default_value.size() + description.size() > 3900)
+		return default_value;
 	string back = default_value;
-	char query[1024];
+	char query[4096];
 	sprintf(query, "SELECT value, user_changed FROM setting WHERE setting_class_id = %d AND key = '%s'", class_id, key.c_str());
 	if (!locutus->database->query(query)) {
 		locutus->database->clear();

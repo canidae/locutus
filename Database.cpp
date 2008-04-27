@@ -26,6 +26,11 @@ void Database::clear() {
 	pthread_mutex_unlock(&mutex);
 }
 
+size_t Database::escapeString(char *to, const char *from, size_t length) {
+	int *error;
+	return PQescapeStringConn(pg_connection, to, from, length, error);
+}
+
 bool Database::getBool(const int row, const int col) {
 	return PQgetvalue(pg_result, row, col)[0] == 't';
 }
