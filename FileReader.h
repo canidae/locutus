@@ -40,6 +40,7 @@ class FileReader : public Thread {
 		~FileReader();
 
 		/* methods */
+		void loadSettings();
 		void quit();
 		void run();
 		void scanFiles();
@@ -56,7 +57,6 @@ class FileReader : public Thread {
 		string output_dir;
 
 		/* methods */
-		void loadSettings();
 		bool parseDirectory();
 		bool parseFile();
 };

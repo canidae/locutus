@@ -38,6 +38,7 @@ class WebService : public URLStream, public XMLStream {
 
 		/* methods */
 		bool fetchAlbum(string mbid);
+		void loadSettings();
 		bool searchMetadata(string query);
 		bool searchPUID(string puid);
 
@@ -55,7 +56,6 @@ class WebService : public URLStream, public XMLStream {
 		void close();
 		void endElement(const unsigned char *name);
 		bool fetch(const char *url);
-		void loadSettings();
 		int read(unsigned char *buffer, size_t len);
 		void startElement(const unsigned char *name, const unsigned char **attr);
 };

@@ -4,10 +4,10 @@
 Locutus::Locutus() {
 	database = new Database();
 	levenshtein = new Levenshtein();
-	webservice = new WebService(this);
 	settings = new Settings(this);
-	filereader = new FileReader(this);
 	fmconst = new FileMetadataConstants(this);
+	webservice = new WebService(this);
+	filereader = new FileReader(this);
 }
 
 /* destructors */
@@ -48,9 +48,17 @@ void Locutus::run() {
 	filereader->quit();
 }
 
+/* private methods */
+void Locutus::loadSettings() {
+	fmconst->loadSettings();
+	filereader->loadSettings();
+	webservice->loadSettings();
+}
+
 /* main */
 int main() {
 	Locutus locutus;
+	locutus.loadSettings();
 	locutus.run();
 	return 0;
 }

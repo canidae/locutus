@@ -3,13 +3,6 @@
 /* constructors */
 FileMetadataConstants::FileMetadataConstants(Locutus *locutus) {
 	this->locutus = locutus;
-	album_weight = ALBUM_WEIGHT_VALUE;
-	artist_weight = ARTIST_WEIGHT_VALUE;
-	combine_threshold = COMBINE_THRESHOLD_VALUE;
-	duration_limit = DURATION_LIMIT_VALUE;
-	duration_weight = DURATION_WEIGHT_VALUE;
-	title_weight = TITLE_WEIGHT_VALUE;
-	tracknumber_weight = TRACKNUMBER_WEIGHT_VALUE;
 }
 
 /* destructors */

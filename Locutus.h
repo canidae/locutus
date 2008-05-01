@@ -40,6 +40,7 @@ class Locutus {
 		~Locutus();
 
 		/* methods */
+		void loadSettings();
 		void run();
 
 	private:
