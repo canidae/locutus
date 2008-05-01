@@ -1,9 +1,12 @@
 #include "FileMetadata.h"
 
 /* constructors */
-FileMetadata::FileMetadata(Locutus *locutus, string filename, int duration) : Metadata(duration) {
+FileMetadata::FileMetadata(Locutus *locutus, string filename) {
 	this->locutus = locutus;
 	this->filename = filename;
+	bitrate = 0;
+	channels = 0;
+	samplerate = 0;
 	type = 0;
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos) {
@@ -16,41 +19,49 @@ FileMetadata::FileMetadata(Locutus *locutus, string filename, int duration) : Me
 			type = FILETYPE_OGG_VORBIS;
 			Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
 			readXiphComment(file->tag());
+			readAudioProperties(file->audioProperties());
 			delete file;
 		} else if (ext == ".MP3") {
 			type = FILETYPE_MPEG;
 			MPEG::File *file = new MPEG::File(filename.c_str(), true, AudioProperties::Accurate);
 			readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+			readAudioProperties(file->audioProperties());
 			delete file;
 		} else if (ext == ".FLAC") {
 			type = FILETYPE_FLAC;
 			FLAC::File *file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
 			readXiphComment(file->xiphComment());
+			readAudioProperties(file->audioProperties());
 			delete file;
 		} else if (ext == ".MPC") {
 			type = FILETYPE_MPC;
 			MPC::File *file = new MPC::File(filename.c_str(), true, AudioProperties::Accurate);
 			readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+			readAudioProperties(file->audioProperties());
 			delete file;
 		} else if (ext == ".OGA") {
 			type = FILETYPE_OGG_FLAC;
 			Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
 			readXiphComment(file->tag());
+			readAudioProperties(file->audioProperties());
 			delete file;
 		} else if (ext == ".WV") {
 			type = FILETYPE_WAVPACK;
 			//WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
 			//readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+			//readAudioProperties(file->audioProperties());
 			//delete file;
 		} else if (ext == ".SPX") {
 			type = FILETYPE_OGG_SPEEX;
 			//Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
 			//readXiphComment(file->tag());
+			//readAudioProperties(file->audioProperties());
 			//delete file;
 		} else if (ext == ".TTA") {
 			type = FILETYPE_TRUEAUDIO;
 			//TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
 			//readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+			//readAudioProperties(file->audioProperties());
 			//delete file;
 		}
 	}
@@ -128,6 +139,23 @@ double FileMetadata::compareWithMetadata(Metadata target) {
 	return score;
 }
 
+string FileMetadata::getGroup() {
+	/* returns either album, last directory name or ""
+	 * used for grouping tracks that possibly are from the same album */
+	string back = getValue(ALBUM);
+	if (back.size() > 0)
+		return back;
+	string::size_type pos = filename.find_last_of('/');
+	if (pos != string::npos && pos > 0) {
+		string::size_type pos2 = filename.find_last_of('/', pos - 1);
+		if (pos2 != string::npos) {
+			++pos2;
+			return filename.substr(pos2, pos - pos2);
+		}
+	}
+	return "";
+}
+
 /* private methods */
 list<string> FileMetadata::createMetadataList() {
 	/* create a list of the values we wish to compare with */
@@ -140,6 +168,13 @@ list<string> FileMetadata::createMetadataList() {
 	data.push_back(getValue(TRACKNUMBER));
 	/* filename */
 	return data;
+}
+
+void FileMetadata::readAudioProperties(AudioProperties *ap) {
+	bitrate = ap->bitrate();
+	channels = ap->channels();
+	duration = ap->length();
+	samplerate = ap->sampleRate();
 }
 
 void FileMetadata::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1) {

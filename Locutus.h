@@ -7,6 +7,8 @@ class Locutus;
 
 /* includes */
 #include <iostream>
+#include <map>
+#include <vector>
 #include "Database.h"
 #include "FileMetadata.h"
 #include "FileMetadataConstants.h"
@@ -29,6 +31,7 @@ class Locutus {
 		Levenshtein *levenshtein;
 		Settings *settings;
 		WebService *webservice;
+		map<string, vector<FileMetadata> > files;
 
 		/* constructors */
 		Locutus();

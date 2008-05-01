@@ -58,6 +58,7 @@ bool FileReader::parseFile() {
 		return false;
 	string filename(*file_queue.begin());
 	file_queue.pop_front();
-	/* do taglib magic here */
+	FileMetadata file(locutus, filename);
+	locutus->files[file.getGroup()].push_back(file);
 	return true;
 }

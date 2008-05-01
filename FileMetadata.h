@@ -11,6 +11,9 @@
 #define FILETYPE_WAVPACK 7
 #define FILETYPE_TRUEAUDIO 8
 
+/* forward declare */
+class FileMetadata;
+
 /* includes */
 #include <apetag.h>
 #include <fileref.h>
@@ -37,15 +40,19 @@ class FileMetadata : public Metadata {
 	public:
 		/* variables */
 		string filename;
+		int bitrate;
+		int channels;
+		int samplerate;
 
 		/* constructors */
-		FileMetadata(Locutus *locutus, string filename, int duration);
+		FileMetadata(Locutus *locutus, string filename);
 
 		/* destructors */
 		~FileMetadata();
 
 		/* methods */
 		double compareWithMetadata(Metadata target);
+		string getGroup();
 
 	private:
 		/* variables */
@@ -54,6 +61,7 @@ class FileMetadata : public Metadata {
 
 		/* methods */
 		list<string> createMetadataList();
+		void readAudioProperties(AudioProperties *ap);
 		void readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1);
 		void readXiphComment(Ogg::XiphComment *tag);
 };

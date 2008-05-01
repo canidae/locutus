@@ -27,7 +27,7 @@ void Database::clear() {
 }
 
 size_t Database::escapeString(char *to, const char *from, size_t length) {
-	int *error;
+	int *error = NULL;
 	return PQescapeStringConn(pg_connection, to, from, length, error);
 }
 

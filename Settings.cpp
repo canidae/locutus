@@ -13,7 +13,14 @@ Settings::~Settings() {
 int Settings::loadClassID(string name, string description) {
 	if (name.size() + description.size() > 3900)
 		return -1;
-	char query[4096];
+	char escaped[8192];
+	locutus->database->escapeString(escaped, name.c_str(), name.size());
+	name = escaped;
+	locutus->database->escapeString(escaped, description.c_str(), description.size());
+	description = escaped;
+	if (name.size() + description.size() > 3900)
+		return -1;
+	char query[8192];
 	sprintf(query, "SELECT setting_class_id FROM setting_class WHERE name = '%s'", name.c_str());
 	if (!locutus->database->query(query)) {
 		locutus->database->clear();
@@ -55,8 +62,17 @@ int Settings::loadSetting(int class_id, string key, int default_value, string de
 string Settings::loadSetting(int class_id, string key, string default_value, string description) {
 	if (key.size() + default_value.size() + description.size() > 3900)
 		return default_value;
+	char escaped[8192];
+	locutus->database->escapeString(escaped, key.c_str(), key.size());
+	key = escaped;
+	locutus->database->escapeString(escaped, default_value.c_str(), default_value.size());
+	string escaped_value = escaped;
+	locutus->database->escapeString(escaped, description.c_str(), description.size());
+	description = escaped;
+	if (key.size() + escaped_value.size() + description.size() > 3900)
+		return default_value;;
 	string back = default_value;
-	char query[4096];
+	char query[8192];
 	sprintf(query, "SELECT value, user_changed FROM setting WHERE setting_class_id = %d AND key = '%s'", class_id, key.c_str());
 	if (!locutus->database->query(query)) {
 		locutus->database->clear();
@@ -69,7 +85,7 @@ string Settings::loadSetting(int class_id, string key, string default_value, str
 			 * update database */
 			locutus->database->clear();
 			back = default_value;
-			sprintf(query, "UPDATE setting SET value = '%s', description = '%s' WHERE setting_class_id = %d AND key = '%s'", default_value.c_str(), description.c_str(), class_id, key.c_str());
+			sprintf(query, "UPDATE setting SET value = '%s', description = '%s' WHERE setting_class_id = %d AND key = '%s'", escaped_value.c_str(), description.c_str(), class_id, key.c_str());
 			if (!locutus->database->query(query)) {
 				locutus->database->clear();
 				return back;
@@ -78,7 +94,7 @@ string Settings::loadSetting(int class_id, string key, string default_value, str
 	} else {
 		/* this key is missing, add it */
 		locutus->database->clear();
-		sprintf(query, "INSERT INTO setting(setting_class_id, key, value, description) VALUES (%d, '%s', '%s', '%s')", class_id, key.c_str(), default_value.c_str(), description.c_str());
+		sprintf(query, "INSERT INTO setting(setting_class_id, key, value, description) VALUES (%d, '%s', '%s', '%s')", class_id, key.c_str(), escaped_value.c_str(), description.c_str());
 		if (!locutus->database->query(query)) {
 			locutus->database->clear();
 			return back;

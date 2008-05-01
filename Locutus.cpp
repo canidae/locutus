@@ -35,7 +35,7 @@ void Locutus::run() {
 	t2.setValue(TRACKNUMBER, "1");
 	cout << t1.equalMetadata(t2) << endl;
 
-	FileMetadata t3(this, "FIXME", 38);
+	FileMetadata t3(this, "FIXME");
 	t3.setValue(ARTIST, "The Final Countdown");
 	t3.setValue(ALBUM, "The Final Countdown");
 	t3.setValue(TITLE, "The Final Countdown");

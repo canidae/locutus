@@ -1,6 +1,10 @@
 #include "Metadata.h"
 
 /* constructors */
+Metadata::Metadata() {
+	this->duration = 0;
+}
+
 Metadata::Metadata(int duration) {
 	this->duration = duration;
 }

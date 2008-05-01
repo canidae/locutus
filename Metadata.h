@@ -35,6 +35,7 @@ class Metadata {
 		int duration;
 
 		/* constructors */
+		Metadata();
 		Metadata(int duration);
 
 		/* destructors */
