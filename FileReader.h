@@ -11,6 +11,9 @@
 #define MUSIC_UNSORTED_KEY "unsorted_directory"
 #define MUSIC_UNSORTED_VALUE "/music/unsorted/"
 #define MUSIC_UNSORTED_DESCRIPTION "Input directory"
+#define MUSIC_DUPLICATE_KEY "duplicate_directory"
+#define MUSIC_DUPLICATE_VALUE "/music/duplicates/"
+#define MUSIC_DUPLICATE_DESCRIPTION "Directory for duplicate files"
 
 /* forward declare */
 class FileReader;
@@ -37,8 +40,9 @@ class FileReader : public Thread {
 		~FileReader();
 
 		/* methods */
-		void stop();
+		void quit();
 		void run();
+		void scanFiles();
 
 	private:
 		/* variables */
@@ -47,6 +51,7 @@ class FileReader : public Thread {
 		list<string> dir_queue;
 		list<string> file_queue;
 		int setting_class_id;
+		string duplicate_dir;
 		string input_dir;
 		string output_dir;
 

@@ -23,6 +23,7 @@ Locutus::~Locutus() {
 /* methods */
 void Locutus::run() {
 	//webservice->fetchRelease("blahblahblah");
+	/*
 	Metadata t1(42);
 	Metadata t2(40);
 	t1.setValue(ARTIST, "Europe");
@@ -41,6 +42,10 @@ void Locutus::run() {
 	t3.setValue(TITLE, "The Final Countdown");
 	t3.setValue(TRACKNUMBER, "1");
 	cout << t3.compareWithMetadata(t1) << endl;
+	*/
+	filereader->scanFiles();
+	sleep(60);
+	filereader->quit();
 }
 
 /* main */

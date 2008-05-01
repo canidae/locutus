@@ -5,8 +5,8 @@ Database::Database() {
 	pthread_mutex_init(&mutex, NULL);
 	got_result = false;
 	pg_connection = PQconnectdb(CONNECTION_STRING);
-	if (!pg_connection) {
-		cout << "Unable to connect to the database" << endl;
+	if (PQstatus(pg_connection) != CONNECTION_OK) {
+		cerr << "Unable to connect to the database" << endl;
 		exit(1);
 	}
 }
@@ -63,5 +63,7 @@ bool Database::query(const char *q) {
 	if (status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK)
 		return true;
 	cerr << PQresultErrorMessage(pg_result) << "Query: " << q << endl;
+	cerr << "Status: " << status << endl;
+	cerr << "Error: " << PQresultErrorMessage(pg_result) << endl;
 	return false;
 }
