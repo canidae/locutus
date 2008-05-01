@@ -65,10 +65,12 @@ bool FileReader::parseDirectory() {
 		if (ford[ford.size() - 1] != '/')
 			ford.append("/");
 		ford.append(entityname);
-		if (entity->d_type == DT_REG)
-			file_queue.push_back(ford);
-		else if (entity->d_type == DT_DIR)
+		/* why isn't always "entity->d_type == DT_DIR" when the entity is a directory? */
+		DIR *tmpdir = opendir(ford.c_str());
+		if (tmpdir != NULL)
 			dir_queue.push_back(ford);
+		else
+			file_queue.push_back(ford);
 	}
 	closedir(dir);
 	return true;
@@ -81,6 +83,11 @@ bool FileReader::parseFile() {
 	cout << "Checking file " << filename << endl;
 	file_queue.pop_front();
 	FileMetadata file(locutus, filename);
+	list<Entry>::iterator ei = file.entries.begin();
+	while (ei != file.entries.end()) {
+		cout << ei->key << ": " << ei->value << endl;
+		++ei;
+	}
 	locutus->files[file.getGroup()].push_back(file);
 	return true;
 }

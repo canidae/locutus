@@ -34,6 +34,7 @@ class Metadata {
 	public:
 		/* variables */
 		int duration;
+		list<Entry> entries;
 
 		/* constructors */
 		Metadata();
@@ -50,6 +51,5 @@ class Metadata {
 
 	protected:
 		/* variables */
-		list<Entry> entries;
 };
 #endif

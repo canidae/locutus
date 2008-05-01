@@ -227,8 +227,27 @@ void FileMetadata::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id
 		frames = map["UFID"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
 			ID3v2::UniqueFileIdentifierFrame *ufid = (ID3v2::UniqueFileIdentifierFrame *) frames[a];
-			if (ufid->owner() == ID3_UFID_MUSICBRAINZ_TRACKID)
-				setValue(MUSICBRAINZ_TRACKID, ufid->identifier().data());
+			if (ufid->owner() == ID3_UFID_MUSICBRAINZ_TRACKID) {
+				/* there's a bug here. sometimes it returns more than 36 chars,
+				 * and it doesn't help specifying a range <mid(0, 36)> either.
+				 * it seems like this is fixed in taglib 1.5 */
+				/*
+				char *hmm = ufid->identifier().data();
+				cout << "1: " << hmm << endl;
+				cout << "2: ";
+				for (TagLib::uint a = 0; a < ufid->identifier().size(); ++a)
+					cout << hmm[a];
+				cout << endl;
+				string hmm2(ufid->identifier().data());
+				cout << "3: " << hmm2 << endl;
+				cout << "4: " << ufid->identifier().data() << endl;
+				*/
+				string mbti(ufid->identifier().data());
+				/* FIXME
+				 * resize shouldn't be necessary. need taglib 1.5(?) */
+				mbti.resize(36);
+				setValue(MUSICBRAINZ_TRACKID, mbti);
+			}
 		}
 		frames = map["TSOP"];
 		if (!frames.isEmpty())
