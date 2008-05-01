@@ -4,7 +4,7 @@
 Locutus::Locutus() {
 	database = new Database();
 	levenshtein = new Levenshtein();
-	webservice = new WebService();
+	webservice = new WebService(this);
 	settings = new Settings(this);
 	filereader = new FileReader(this);
 	fmconst = new FileMetadataConstants(this);
@@ -44,7 +44,7 @@ void Locutus::run() {
 	cout << t3.compareWithMetadata(t1) << endl;
 	*/
 	filereader->scanFiles();
-	sleep(60);
+	sleep(3);
 	filereader->quit();
 }
 

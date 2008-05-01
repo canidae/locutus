@@ -71,6 +71,7 @@ bool FileReader::parseDirectory() {
 			dir_queue.push_back(ford);
 		else
 			file_queue.push_back(ford);
+		closedir(tmpdir);
 	}
 	closedir(dir);
 	return true;
