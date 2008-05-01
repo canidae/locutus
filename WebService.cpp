@@ -11,6 +11,7 @@ WebService::~WebService() {
 
 /* methods */
 bool WebService::fetchAlbum(string mbid) {
+	/* check if it's in database and updated recently first */
 	string url = release_lookup_url;
 	url.append(mbid);
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
@@ -25,6 +26,7 @@ bool WebService::searchMetadata(string query) {
 }
 
 bool WebService::searchPUID(string puid) {
+	/* check if it's in database and updated recently first */
 	string url = puid_search_url;
 	url.append("?type=xml&puid=");
 	url.append(puid);

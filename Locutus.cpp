@@ -44,7 +44,7 @@ void Locutus::run() {
 	cout << t3.compareWithMetadata(t1) << endl;
 	*/
 	filereader->scanFiles();
-	sleep(3);
+	usleep(180000000);
 	filereader->quit();
 }
 

@@ -32,8 +32,8 @@ void FileReader::run() {
 		/* then directories */
 		if (parseDirectory())
 			continue;
-		cout << "done?" << endl;
-		sleep(60);
+		cout << "done" << endl;
+		usleep(60000000);
 	}
 }
 
