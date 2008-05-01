@@ -10,6 +10,13 @@
 #define FILETYPE_MPC 6
 #define FILETYPE_WAVPACK 7
 #define FILETYPE_TRUEAUDIO 8
+/* id3 crap */
+#define ID3_TXXX_ALBUMARTISTSORT "ALBUMARTISTSORT"
+#define ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID "MusicBrainz Album Artist Id"
+#define ID3_TXXX_MUSICBRAINZ_ALBUMID "MusicBrainz Album Id"
+#define ID3_TXXX_MUSICBRAINZ_ARTISTID "MusicBrainz Artist Id"
+#define ID3_TXXX_MUSICIP_PUID "MusicIP PUID"
+#define ID3_UFID_MUSICBRAINZ_TRACKID "http://musicbrainz.org"
 
 /* forward declare */
 class FileMetadata;
@@ -25,8 +32,10 @@ class FileMetadata;
 #include <mpegfile.h>
 #include <oggflacfile.h>
 #include <string>
+#include <textidentificationframe.h>
 #include <tfile.h>
 #include <tstring.h>
+#include <uniquefileidentifierframe.h>
 #include <vorbisfile.h>
 #include "Locutus.h"
 #include "Metadata.h"

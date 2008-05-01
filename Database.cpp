@@ -58,6 +58,7 @@ bool Database::query(const string q) {
 bool Database::query(const char *q) {
 	pthread_mutex_lock(&mutex);
 	got_result = true;
+	cout << "Query: " << q << endl;
 	pg_result = PQexec(pg_connection, q);
 	int status = PQresultStatus(pg_result);
 	if (status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK)

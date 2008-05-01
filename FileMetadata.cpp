@@ -171,6 +171,8 @@ list<string> FileMetadata::createMetadataList() {
 }
 
 void FileMetadata::readAudioProperties(AudioProperties *ap) {
+	if (ap == NULL)
+		return;
 	bitrate = ap->bitrate();
 	channels = ap->channels();
 	duration = ap->length();
@@ -210,17 +212,23 @@ void FileMetadata::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id
 		const ID3v2::FrameListMap map = id3v2->frameListMap();
 		ID3v2::FrameList frames = map["TXXX"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
-			/* MusicBrainz Album Id
-			 * MusicBrainz Artist Id
-			 * MusicBrainz Album Artist Id
-			 * MusicIP PUID
-			 * ALBUMARTISTSORT */
-			cout << frames[a] << endl;
+			ID3v2::UserTextIdentificationFrame *txxx = (ID3v2::UserTextIdentificationFrame *) frames[a];
+			if (txxx->description().to8Bit(true) == ID3_TXXX_ALBUMARTISTSORT)
+				setValue(ALBUMARTISTSORT, txxx->fieldList()[0].to8Bit(true));
+			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID)
+				setValue(MUSICBRAINZ_ALBUMARTISTID, txxx->fieldList()[0].to8Bit(true));
+			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICBRAINZ_ALBUMID)
+				setValue(MUSICBRAINZ_ALBUMID, txxx->fieldList()[0].to8Bit(true));
+			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICBRAINZ_ARTISTID)
+				setValue(MUSICBRAINZ_ARTISTID, txxx->fieldList()[0].to8Bit(true));
+			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICIP_PUID)
+				setValue(MUSICIP_PUID, txxx->fieldList()[0].to8Bit(true));
 		}
 		frames = map["UFID"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
-			/* http://musicbrainz.org */
-			cout << frames[a] << endl;
+			ID3v2::UniqueFileIdentifierFrame *ufid = (ID3v2::UniqueFileIdentifierFrame *) frames[a];
+			if (ufid->owner() == ID3_UFID_MUSICBRAINZ_TRACKID)
+				setValue(MUSICBRAINZ_TRACKID, ufid->identifier().data());
 		}
 		frames = map["TSOP"];
 		if (!frames.isEmpty())

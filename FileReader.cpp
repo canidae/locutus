@@ -26,6 +26,7 @@ void FileReader::run() {
 		/* then directories */
 		if (parseDirectory())
 			continue;
+		cout << "done?" << endl;
 		sleep(60);
 	}
 }
@@ -54,13 +55,20 @@ bool FileReader::parseDirectory() {
 	dir_queue.pop_front();
 	DIR *dir = opendir(directory.c_str());
 	if (dir == NULL)
-		return false;
+		return true;
 	dirent *entity;
 	while ((entity = readdir(dir)) != NULL) {
+		string entityname = entity->d_name;
+		if (entityname == "." || entityname == "..")
+			continue;
+		string ford = directory;
+		if (ford[ford.size() - 1] != '/')
+			ford.append("/");
+		ford.append(entityname);
 		if (entity->d_type == DT_REG)
-			file_queue.push_back(string(entity->d_name));
+			file_queue.push_back(ford);
 		else if (entity->d_type == DT_DIR)
-			dir_queue.push_back(string(entity->d_name));
+			dir_queue.push_back(ford);
 	}
 	closedir(dir);
 	return true;
