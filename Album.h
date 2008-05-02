@@ -31,6 +31,7 @@ class Album {
 		~Album();
 
 		/* methods */
+		void clear();
 
 	private:
 		/* variables */

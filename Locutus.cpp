@@ -44,6 +44,7 @@ void Locutus::run() {
 	cout << t3.compareWithMetadata(t1) << endl;
 	*/
 	filereader->scanFiles();
+	webservice->fetchAlbum("4e0d7112-28cc-429f-ab55-6a495ce30192");
 	usleep(180000000);
 	filereader->quit();
 }

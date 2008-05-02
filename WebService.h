@@ -19,11 +19,23 @@ class WebService;
 
 /* includes */
 #include <cc++/common.h>
+#include <map>
+#include <string>
+#include <vector>
+#include "Album.h"
 #include "Locutus.h"
+#include "Metadata.h"
 
 /* namespaces */
 using namespace ost;
 using namespace std;
+
+struct XMLNode {
+	XMLNode *parent;
+	map<string, vector<XMLNode> > children;
+	string key;
+	string value;
+};
 
 /* WebService */
 class WebService : public URLStream, public XMLStream {
@@ -37,25 +49,30 @@ class WebService : public URLStream, public XMLStream {
 		~WebService();
 
 		/* methods */
-		bool fetchAlbum(string mbid);
+		Album fetchAlbum(string mbid);
 		void loadSettings();
-		bool searchMetadata(string query);
-		bool searchPUID(string puid);
+		vector<Metadata> searchMetadata(string query);
+		vector<Metadata> searchPUID(string puid);
 
 	private:
 		/* variables */
 		Locutus *locutus;
 		URLStream::Error status;
+		pthread_mutex_t mutex;
 		int setting_class_id;
 		string metadata_search_url;
 		string puid_search_url;
 		string release_lookup_url;
+		XMLNode root;
+		XMLNode *curnode;
 
 		/* methods */
 		void characters(const unsigned char *text, size_t len);
 		void close();
+		void uniteChildrenWithParent(XMLNode *parent, string key);
 		void endElement(const unsigned char *name);
 		bool fetch(const char *url);
+		void printXML(XMLNode *startnode);
 		int read(unsigned char *buffer, size_t len);
 		void startElement(const unsigned char *name, const unsigned char **attr);
 };

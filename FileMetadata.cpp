@@ -175,7 +175,7 @@ void FileMetadata::readAudioProperties(AudioProperties *ap) {
 		return;
 	bitrate = ap->bitrate();
 	channels = ap->channels();
-	duration = ap->length();
+	duration = ap->length() * 1000; // returned in seconds, we want ms
 	samplerate = ap->sampleRate();
 }
 

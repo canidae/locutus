@@ -19,8 +19,10 @@ void FileReader::loadSettings() {
 }
 
 void FileReader::quit() {
-	active = false;
-	join();
+	if (active) {
+		active = false;
+		join();
+	}
 }
 
 void FileReader::run() {
