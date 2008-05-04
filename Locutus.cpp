@@ -30,35 +30,36 @@ long Locutus::run() {
 	loadSettings();
 	/* start up puid thread thingy */
 	puidgen->start();
-	/* start up web thread thingy? */
+	/* start up web thread thingy */
 	webfetcher->start();
 	/* parse sorted directory */
+	filereader->scanFiles(filereader->output_dir);
 	/* wait for puid thread & web thread to finish */
+	while (no_puid_files.size() > 0 && puid_files.size() > 0)
+		usleep(10000000);
 	/* save changes */
 	/* clear data */
+	puid_files.clear();
+	no_puid_files.clear();
+	grouped_files.clear();
+	files.clear();
 	/* parse unsorted directory */
+	filereader->scanFiles(filereader->input_dir);
 	/* wait for puid thread & web thread to finish */
+	while (no_puid_files.size() > 0 && puid_files.size() > 0)
+		usleep(10000000);
 	/* save changes */
 	/* stop puid thread thingy */
 	puidgen->quit();
 	/* stop web thread thingy */
 	webfetcher->quit();
+	/* submit new puids? */
 	/* return */
+	return 10000;
 
-	//webservice->fetchRelease("blahblahblah");
+	/* old */
+	//webservice->fetchAlbum("4e0d7112-28cc-429f-ab55-6a495ce30192");
 	/*
-	Metadata t1(42);
-	Metadata t2(40);
-	t1.setValue(ARTIST, "Europe");
-	t1.setValue(ALBUM, "The Final Countdown");
-	t1.setValue(TITLE, "The Final Countdown");
-	t1.setValue(TRACKNUMBER, "1");
-	t2.setValue(ARTIST, "Europe");
-	t2.setValue(ALBUM, "The Final Countdown");
-	t2.setValue(TITLE, "The Final Countdown");
-	t2.setValue(TRACKNUMBER, "1");
-	cout << t1.equalMetadata(t2) << endl;
-
 	FileMetadata t3(this, "FIXME");
 	t3.setValue(ARTIST, "The Final Countdown");
 	t3.setValue(ALBUM, "The Final Countdown");
@@ -66,10 +67,6 @@ long Locutus::run() {
 	t3.setValue(TRACKNUMBER, "1");
 	cout << t3.compareWithMetadata(t1) << endl;
 	*/
-	//filereader->scanFiles();
-	webservice->fetchAlbum("4e0d7112-28cc-429f-ab55-6a495ce30192");
-	//usleep(180000000);
-	return 10000;
 }
 
 /* private methods */

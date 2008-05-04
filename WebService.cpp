@@ -13,11 +13,13 @@ WebService::~WebService() {
 
 /* methods */
 Album WebService::fetchAlbum(string mbid) {
+	Album album;
+	if (mbid == "")
+		return album;
 	/* check if it's in database and updated recently first */
 	string url = release_lookup_url;
 	url.append(mbid);
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
-	Album album;
 	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
 		XMLNode release = root.children["metadata"][0].children["release"][0];
 		album.mbid = release.children["id"][0].value;
@@ -50,6 +52,8 @@ void WebService::loadSettings() {
 }
 
 vector<Metadata> WebService::searchMetadata(string query) {
+	if (query == "")
+		return vector<Metadata>();
 	string url = metadata_search_url;
 	url.append("?type=xml&");
 	url.append(query);
@@ -77,6 +81,8 @@ vector<Metadata> WebService::searchMetadata(string query) {
 }
 
 vector<Metadata> WebService::searchPUID(string puid) {
+	if (puid == "")
+		return vector<Metadata>();
 	/* check if it's in database and updated recently first */
 	string query = "puid=";
 	query.append(puid);

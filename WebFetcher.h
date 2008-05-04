@@ -40,5 +40,6 @@ class WebFetcher : public Thread {
 		int setting_class_id;
 
 		/* methods */
+		bool lookup();
 };
 #endif

@@ -25,8 +25,19 @@ void WebFetcher::quit() {
 void WebFetcher::run() {
 	active = true;
 	while (active) {
-		usleep(60000000);
+		if (lookup())
+			continue;
+		usleep(10000000);
 	}
 }
 
 /* private methods */
+bool WebFetcher::lookup() {
+	if (locutus->puid_files.size() <= 0)
+		return false;
+	FileMetadata fm = locutus->files[locutus->puid_files[0]];
+	if (fm.getValue(MUSICIP_PUID) != "") {
+		vector<Metadata> tracks = locutus->webservice->searchPUID(fm.getValue(MUSICIP_PUID));
+	}
+	return true;
+}
