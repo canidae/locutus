@@ -8,28 +8,41 @@ Locutus::Locutus() {
 	fmconst = new FileMetadataConstants(this);
 	webservice = new WebService(this);
 	filereader = new FileReader(this);
+	puidgen = new PUIDGenerator(this);
+	webfetcher = new WebFetcher(this);
 }
 
 /* destructors */
 Locutus::~Locutus() {
-	delete database;
-	delete levenshtein;
+	delete puidgen;
+	delete webfetcher;
 	delete webservice;
 	delete settings;
 	delete filereader;
 	delete fmconst;
+	delete levenshtein;
+	delete database;
 }
 
 /* methods */
-void Locutus::run() {
+long Locutus::run() {
+	/* load settings */
+	loadSettings();
 	/* start up puid thread thingy */
+	puidgen->start();
 	/* start up web thread thingy? */
+	webfetcher->start();
 	/* parse sorted directory */
 	/* wait for puid thread & web thread to finish */
 	/* save changes */
+	/* clear data */
 	/* parse unsorted directory */
 	/* wait for puid thread & web thread to finish */
 	/* save changes */
+	/* stop puid thread thingy */
+	puidgen->quit();
+	/* stop web thread thingy */
+	webfetcher->quit();
 	/* return */
 
 	//webservice->fetchRelease("blahblahblah");
@@ -53,10 +66,10 @@ void Locutus::run() {
 	t3.setValue(TRACKNUMBER, "1");
 	cout << t3.compareWithMetadata(t1) << endl;
 	*/
-	filereader->scanFiles();
+	//filereader->scanFiles();
 	webservice->fetchAlbum("4e0d7112-28cc-429f-ab55-6a495ce30192");
-	usleep(180000000);
-	filereader->quit();
+	//usleep(180000000);
+	return 10000;
 }
 
 /* private methods */
@@ -64,12 +77,17 @@ void Locutus::loadSettings() {
 	fmconst->loadSettings();
 	filereader->loadSettings();
 	webservice->loadSettings();
+	puidgen->loadSettings();
+	webfetcher->loadSettings();
 }
 
 /* main */
 int main() {
-	Locutus locutus;
-	locutus.loadSettings();
-	locutus.run();
+	while (true) {
+		Locutus *locutus = new Locutus();
+		long sleeptime = locutus->run();
+		delete locutus;
+		sleep(sleeptime);
+	}
 	return 0;
 }

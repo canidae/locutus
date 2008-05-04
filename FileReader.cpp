@@ -18,33 +18,18 @@ void FileReader::loadSettings() {
 	duplicate_dir = locutus->settings->loadSetting(setting_class_id, MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
 }
 
-void FileReader::quit() {
-	if (active) {
-		active = false;
-		join();
-	}
-}
-
-void FileReader::run() {
+void FileReader::scanFiles(string directory) {
+	dir_queue.push_back(directory);
 	active = true;
-	while (active) {
+	while (dir_queue.size() > 0 || file_queue.size() > 0) {
 		/* first files */
 		if (parseFile())
 			continue;
 		/* then directories */
 		if (parseDirectory())
 			continue;
-		cout << "done" << endl;
-		usleep(60000000);
 	}
-}
-
-void FileReader::scanFiles() {
-	dir_queue.push_back(input_dir);
-	dir_queue.push_back(output_dir);
-	dir_queue.push_back(duplicate_dir);
-	if (!active)
-		this->start();
+	active = false;
 }
 
 /* private methods */

@@ -19,19 +19,21 @@
 class FileReader;
 
 /* includes */
-#include <cc++/thread.h>
 #include <list>
 #include <string>
 #include "Locutus.h"
 
 /* namespaces */
-using namespace ost;
 using namespace std;
 
 /* FileReader */
-class FileReader : public Thread {
+class FileReader {
 	public:
 		/* variables */
+		bool active;
+		string duplicate_dir;
+		string input_dir;
+		string output_dir;
 
 		/* constructors */
 		FileReader(Locutus *locutus);
@@ -41,20 +43,14 @@ class FileReader : public Thread {
 
 		/* methods */
 		void loadSettings();
-		void quit();
-		void run();
-		void scanFiles();
+		void scanFiles(string directory);
 
 	private:
 		/* variables */
 		Locutus *locutus;
-		bool active;
 		list<string> dir_queue;
 		list<string> file_queue;
 		int setting_class_id;
-		string duplicate_dir;
-		string input_dir;
-		string output_dir;
 
 		/* methods */
 		bool parseDirectory();

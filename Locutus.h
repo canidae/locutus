@@ -15,7 +15,9 @@ class Locutus;
 #include "FileReader.h"
 #include "Levenshtein.h"
 #include "Metadata.h"
+#include "PUIDGenerator.h"
 #include "Settings.h"
+#include "WebFetcher.h"
 #include "WebService.h"
 
 /* namespace */
@@ -44,10 +46,12 @@ class Locutus {
 
 		/* methods */
 		void loadSettings();
-		void run();
+		long run();
 
 	private:
 		/* variables */
 		FileReader *filereader;
+		PUIDGenerator *puidgen;
+		WebFetcher *webfetcher;
 };
 #endif
