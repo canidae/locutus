@@ -18,7 +18,26 @@ Album WebService::fetchAlbum(string mbid) {
 	url.append(mbid);
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
 	Album album;
-	if (fetch(url.c_str())) {
+	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
+		XMLNode release = root.children["metadata"][0].children["release"][0];
+		album.mbid = release.children["id"][0].value;
+		album.type = release.children["type"][0].value;
+		album.title = release.children["title"][0].value;
+		album.artist_mbid = release.children["artist"][0].children["id"][0].value;
+		album.artist_type = release.children["artist"][0].children["type"][0].value;
+		album.artist_name = release.children["artist"][0].children["name"][0].value;
+		album.artist_sortname = release.children["artist"][0].children["sort-name"][0].value;
+		for (vector<XMLNode>::size_type a = 0; a < release.children["track-list"][0].children["track"].size(); ++a) {
+			Metadata track;
+			track.setValue(MUSICBRAINZ_TRACKID, release.children["track-list"][0].children["track"][a].children["id"][0].value);
+			track.setValue(TITLE, release.children["track-list"][0].children["track"][a].children["title"][0].value);
+			track.duration = atoi(release.children["track-list"][0].children["track"][a].children["duration"][0].value.c_str());
+			if (release.children["track-list"][0].children["track"][a].children["artist"].size() > 0) {
+				track.setValue(MUSICBRAINZ_ARTISTID, release.children["track-list"][0].children["track"][a].children["artist"][0].children["id"][0].value);
+				track.setValue(ARTIST, release.children["track-list"][0].children["track"][a].children["artist"][0].children["name"][0].value);
+				track.setValue(ARTISTSORT, release.children["track-list"][0].children["track"][a].children["artist"][0].children["sort-name"][0].value);
+			}
+		}
 	}
 	pthread_mutex_unlock(&mutex);
 	return album;
@@ -27,7 +46,6 @@ Album WebService::fetchAlbum(string mbid) {
 void WebService::loadSettings() {
 	setting_class_id = locutus->settings->loadClassID(WEBSERVICE_CLASS, WEBSERVICE_CLASS_DESCRIPTION);
 	metadata_search_url = locutus->settings->loadSetting(setting_class_id, METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
-	puid_search_url = locutus->settings->loadSetting(setting_class_id, PUID_SEARCH_URL_KEY, PUID_SEARCH_URL_VALUE, PUID_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = locutus->settings->loadSetting(setting_class_id, RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 }
 
@@ -36,7 +54,23 @@ vector<Metadata> WebService::searchMetadata(string query) {
 	url.append("?type=xml&");
 	url.append(query);
 	vector<Metadata> tracks;
-	if (fetch(url.c_str())) {
+	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
+		XMLNode tracklist = root.children["metadata"][0].children["track-list"][0];
+		for (vector<XMLNode>::size_type a = 0; a < root.children["metadata"][0].children["track-list"][0].children["track"].size(); ++a) {
+			XMLNode tracknode = root.children["metadata"][0].children["track-list"][0].children["track"][a];
+			Metadata track;
+			track.setValue(MUSICBRAINZ_TRACKID, tracknode.children["id"][0].value);
+			track.setValue(TITLE, tracknode.children["title"][0].value);
+			track.duration = atoi(tracknode.children["duration"][0].value.c_str());
+			track.setValue(MUSICBRAINZ_ARTISTID, tracknode.children["artist"][0].children["id"][0].value);
+			track.setValue(ARTIST, tracknode.children["artist"][0].children["artist"][0].value);
+			track.setValue(MUSICBRAINZ_ALBUMID, tracknode.children["release-list"][0].children["release"][0].children["id"][0].value);
+			track.setValue(ALBUM, tracknode.children["release-list"][0].children["release"][0].children["title"][0].value);
+			string offset = tracknode.children["release-list"][0].children["release"][0].children["track-list"][0].children["offset"][0].value;
+			stringstream meh;
+			meh << atoi(offset.c_str()) + 1;
+			track.setValue(TRACKNUMBER, meh.str());
+		}
 	}
 	pthread_mutex_unlock(&mutex);
 	return tracks;
@@ -44,20 +78,14 @@ vector<Metadata> WebService::searchMetadata(string query) {
 
 vector<Metadata> WebService::searchPUID(string puid) {
 	/* check if it's in database and updated recently first */
-	string url = puid_search_url;
-	url.append("?type=xml&puid=");
-	url.append(puid);
-	vector<Metadata> tracks;
-	if (fetch(url.c_str())) {
-	}
-	pthread_mutex_unlock(&mutex);
-	return tracks;
+	string query = "puid=";
+	query.append(puid);
+	return searchMetadata(query);
 }
 
 /* private methods */
 void WebService::characters(const unsigned char *text, size_t len) {
 	curnode->value = string((char *) text, len);
-	cout << "DATA: " << curnode->value << endl;
 }
 
 void WebService::close() {
@@ -65,7 +93,6 @@ void WebService::close() {
 }
 
 void WebService::endElement(const unsigned char *name) {
-	cout << "</" << name << ">" << endl;
 	if (curnode != NULL)
 		curnode = curnode->parent;
 }
@@ -79,7 +106,6 @@ bool WebService::fetch(const char *url) {
 		close();
 		return false;
 	}
-	cout << "Parsing..." << endl;
 	root.parent = NULL;
 	root.children.clear();
 	root.key = "root";
@@ -111,7 +137,6 @@ int WebService::read(unsigned char *buffer, size_t len) {
 }
 
 void WebService::startElement(const unsigned char *name, const unsigned char **attr) {
-	cout << "<" << name << ">" << endl;
 	XMLNode childnode;
 	childnode.parent = curnode;
 	childnode.key = (char *) name;

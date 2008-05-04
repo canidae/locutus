@@ -23,6 +23,10 @@ class Album {
 		string title;
 		string released;
 		string asin;
+		string artist_mbid;
+		string artist_type;
+		string artist_name;
+		string artist_sortname;
 
 		/* constructors */
 		Album();
