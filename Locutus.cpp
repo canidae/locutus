@@ -22,6 +22,16 @@ Locutus::~Locutus() {
 
 /* methods */
 void Locutus::run() {
+	/* start up puid thread thingy */
+	/* start up web thread thingy? */
+	/* parse sorted directory */
+	/* wait for puid thread & web thread to finish */
+	/* save changes */
+	/* parse unsorted directory */
+	/* wait for puid thread & web thread to finish */
+	/* save changes */
+	/* return */
+
 	//webservice->fetchRelease("blahblahblah");
 	/*
 	Metadata t1(42);

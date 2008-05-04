@@ -31,7 +31,10 @@ class Locutus {
 		Levenshtein *levenshtein;
 		Settings *settings;
 		WebService *webservice;
-		map<string, vector<FileMetadata> > files;
+		vector<FileMetadata> files;
+		map<string, vector<int> > grouped_files; // album/directory, files
+		vector<int> no_puid_files; // files missing puid
+		vector<int> puid_files; // files with puid
 
 		/* constructors */
 		Locutus();
