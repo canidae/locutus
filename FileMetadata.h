@@ -61,6 +61,7 @@ class FileMetadata : public Metadata {
 
 		/* methods */
 		double compareWithMetadata(Metadata target);
+		list<string> createMetadataList();
 		string getGroup();
 
 	private:
@@ -69,7 +70,6 @@ class FileMetadata : public Metadata {
 		int type;
 
 		/* methods */
-		list<string> createMetadataList();
 		void readAudioProperties(AudioProperties *ap);
 		void readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1);
 		void readXiphComment(Ogg::XiphComment *tag);

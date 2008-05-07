@@ -35,18 +35,18 @@ long Locutus::run() {
 	/* parse sorted directory */
 	filereader->scanFiles(filereader->output_dir);
 	/* wait for puid thread & web thread to finish */
-	while (no_puid_files.size() > 0 && puid_files.size() > 0)
+	while (gen_puid_queue.size() > 0 && lookup_puid_queue.size() > 0)
 		usleep(10000000);
 	/* save changes */
 	/* clear data */
-	puid_files.clear();
-	no_puid_files.clear();
+	lookup_puid_queue.clear();
+	gen_puid_queue.clear();
 	grouped_files.clear();
 	files.clear();
 	/* parse unsorted directory */
 	filereader->scanFiles(filereader->input_dir);
 	/* wait for puid thread & web thread to finish */
-	while (no_puid_files.size() > 0 && puid_files.size() > 0)
+	while (gen_puid_queue.size() > 0 && lookup_puid_queue.size() > 0)
 		usleep(10000000);
 	/* save changes */
 	/* stop puid thread thingy */

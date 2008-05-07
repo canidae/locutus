@@ -25,7 +25,7 @@ class Database {
 
 		/* methods */
 		void clear();
-		size_t escapeString(char *to, const char *from, size_t length);
+		string escapeString(string str);
 		bool getBool(const int row, const int col);
 		double getDouble(const int row, const int col);
 		int getInt(const int row, const int col);

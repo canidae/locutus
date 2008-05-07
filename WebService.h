@@ -10,6 +10,9 @@
 #define RELEASE_LOOKUP_URL_KEY "release_url"
 #define RELEASE_LOOKUP_URL_VALUE "http://musicbrainz.org/ws/1/release/"
 #define RELEASE_LOOKUP_URL_DESCRIPTION "URL to lookup a release"
+#define ALBUM_CACHE_LIFETIME_KEY "album_cache_lifetime"
+#define ALBUM_CACHE_LIFETIME_VALUE 3
+#define ALBUM_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
 
 /* forward declare */
 class WebService;
@@ -59,6 +62,7 @@ class WebService : public URLStream, public XMLStream {
 		int setting_class_id;
 		string metadata_search_url;
 		string release_lookup_url;
+		int album_cache_lifetime;
 		XMLNode root;
 		XMLNode *curnode;
 

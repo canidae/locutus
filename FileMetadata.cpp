@@ -139,6 +139,19 @@ double FileMetadata::compareWithMetadata(Metadata target) {
 	return score;
 }
 
+list<string> FileMetadata::createMetadataList() {
+	/* create a list of the values we wish to compare with */
+	list<string> data;
+	/* metadata */
+	data.push_back(getValue(ALBUM));
+	data.push_back(getValue(ALBUMARTIST));
+	data.push_back(getValue(ARTIST));
+	data.push_back(getValue(TITLE)); // might have to be tokenized (" - ", etc)
+	data.push_back(getValue(TRACKNUMBER));
+	/* filename */
+	return data;
+}
+
 string FileMetadata::getGroup() {
 	/* returns either album, last directory name or ""
 	 * used for grouping tracks that possibly are from the same album */
@@ -157,19 +170,6 @@ string FileMetadata::getGroup() {
 }
 
 /* private methods */
-list<string> FileMetadata::createMetadataList() {
-	/* create a list of the values we wish to compare with */
-	list<string> data;
-	/* metadata */
-	data.push_back(getValue(ALBUM));
-	data.push_back(getValue(ALBUMARTIST));
-	data.push_back(getValue(ARTIST));
-	data.push_back(getValue(TITLE)); // might have to be tokenized (" - ", etc)
-	data.push_back(getValue(TRACKNUMBER));
-	/* filename */
-	return data;
-}
-
 void FileMetadata::readAudioProperties(AudioProperties *ap) {
 	if (ap == NULL)
 		return;

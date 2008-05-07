@@ -35,8 +35,8 @@ class Locutus {
 		WebService *webservice;
 		vector<FileMetadata> files;
 		map<string, vector<int> > grouped_files; // album/directory, files
-		vector<int> no_puid_files; // files missing puid
-		vector<int> puid_files; // files with puid
+		vector<int> gen_puid_queue; // files missing puid
+		vector<int> lookup_puid_queue; // files with puid
 
 		/* constructors */
 		Locutus();

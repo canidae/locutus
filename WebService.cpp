@@ -14,9 +14,18 @@ WebService::~WebService() {
 /* methods */
 Album WebService::fetchAlbum(string mbid) {
 	Album album;
-	if (mbid == "")
+	if (mbid.size() != 36)
 		return album;
 	/* check if it's in database and updated recently first */
+	ostringstream query;
+	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << mbid << "' AND album_updated + INTERVAL '" << album_cache_lifetime << " months'";
+	if (locutus->database->query(query.str()) && locutus->database->getRows() > 0) {
+		/* cool, we got this album in our "cache" */
+		locutus->database->clear();
+		return album;
+	}
+	locutus->database->clear();
+	/* if not, then check web */
 	string url = release_lookup_url;
 	url.append(mbid);
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
@@ -49,6 +58,7 @@ void WebService::loadSettings() {
 	setting_class_id = locutus->settings->loadClassID(WEBSERVICE_CLASS, WEBSERVICE_CLASS_DESCRIPTION);
 	metadata_search_url = locutus->settings->loadSetting(setting_class_id, METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = locutus->settings->loadSetting(setting_class_id, RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
+	album_cache_lifetime = locutus->settings->loadSetting(setting_class_id, ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
 }
 
 vector<Metadata> WebService::searchMetadata(string query) {

@@ -25,17 +25,28 @@ void WebFetcher::quit() {
 void WebFetcher::run() {
 	active = true;
 	while (active) {
-		if (lookup())
+		if (lookupPUID())
 			continue;
 		usleep(10000000);
 	}
 }
 
 /* private methods */
-bool WebFetcher::lookup() {
-	if (locutus->puid_files.size() <= 0)
+bool WebFetcher::lookupMetadata() {
+	if (locutus->gen_puid_queue.size() > 0)
 		return false;
-	FileMetadata fm = locutus->files[locutus->puid_files[0]];
+	/* try mbid */
+	/* finally try metadata */
+	return true;
+}
+
+bool WebFetcher::lookupPUID() {
+	if (locutus->lookup_puid_queue.size() <= 0)
+		return false;
+	int file = locutus->lookup_puid_queue[0];
+	locutus->lookup_puid_queue.erase(locutus->lookup_puid_queue.begin());
+	FileMetadata fm = locutus->files[file];
+	/* first look up using puid */
 	if (fm.getValue(MUSICIP_PUID) != "") {
 		vector<Metadata> tracks = locutus->webservice->searchPUID(fm.getValue(MUSICIP_PUID));
 	}

@@ -78,8 +78,6 @@ bool FileReader::parseFile() {
 	locutus->files.push_back(file);
 	locutus->grouped_files[file.getGroup()].push_back(locutus->files.size() - 1);
 	if (file.getValue(MUSICIP_PUID) == "")
-		locutus->no_puid_files.push_back(locutus->files.size() - 1);
-	else
-		locutus->puid_files.push_back(locutus->files.size() - 1);
+		locutus->gen_puid_queue.push_back(locutus->files.size() - 1);
 	return true;
 }

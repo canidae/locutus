@@ -10,7 +10,9 @@ class WebFetcher;
 
 /* includes */
 #include <cc++/thread.h>
+#include <list>
 #include <string>
+#include "Album.h"
 #include "Locutus.h"
 
 /* namespaces */
@@ -40,6 +42,7 @@ class WebFetcher : public Thread {
 		int setting_class_id;
 
 		/* methods */
-		bool lookup();
+		bool lookupMetadata();
+		bool lookupPUID();
 };
 #endif
