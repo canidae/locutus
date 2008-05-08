@@ -21,12 +21,13 @@ SET default_with_oids = false;
 CREATE TABLE album (
     album_id integer NOT NULL,
     artist_id integer NOT NULL,
-    album_mbid character(36) NOT NULL,
+    mbid character(36) NOT NULL,
     type character varying NOT NULL,
     title character varying NOT NULL,
     released date,
-    asin character varying,
-    custom_artist character varying
+    custom_artist_sortname character varying,
+    updated date DEFAULT now() NOT NULL,
+    loaded boolean DEFAULT false NOT NULL
 );
 
 
@@ -38,10 +39,10 @@ ALTER TABLE public.album OWNER TO canidae;
 
 CREATE TABLE artist (
     artist_id integer NOT NULL,
-    artist_mbid character(36) NOT NULL,
-    type character varying NOT NULL,
+    mbid character(36) NOT NULL,
     name character varying NOT NULL,
-    sortname character varying NOT NULL
+    sortname character varying NOT NULL,
+    loaded boolean DEFAULT false NOT NULL
 );
 
 
@@ -81,6 +82,19 @@ CREATE TABLE metadata (
 ALTER TABLE public.metadata OWNER TO canidae;
 
 --
+-- Name: puid; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+--
+
+CREATE TABLE puid (
+    puid_id integer NOT NULL,
+    track_id integer NOT NULL,
+    puid character(36) NOT NULL
+);
+
+
+ALTER TABLE public.puid OWNER TO canidae;
+
+--
 -- Name: setting; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
 --
 
@@ -116,14 +130,25 @@ ALTER TABLE public.setting_class OWNER TO canidae;
 CREATE TABLE track (
     track_id integer NOT NULL,
     album_id integer NOT NULL,
-    artist_id integer,
-    track_mbid character(36) NOT NULL,
+    artist_id integer NOT NULL,
+    mbid character(36) NOT NULL,
     title character varying NOT NULL,
-    duration integer
+    duration integer,
+    tracknumber integer NOT NULL
 );
 
 
 ALTER TABLE public.track OWNER TO canidae;
+
+--
+-- Name: v_album_lookup; Type: VIEW; Schema: public; Owner: canidae
+--
+
+CREATE VIEW v_album_lookup AS
+    SELECT aa.mbid AS albumartist_mbid, aa.name AS albumartist_name, COALESCE(al.custom_artist_sortname, aa.sortname) AS albumartist_sortname, al.mbid AS album_mbid, al.type AS album_type, al.updated AS album_updated, al.title AS album_title, al.released AS album_released, tr.mbid AS track_mbid, tr.title AS track_title, tr.duration AS track_duration, tr.tracknumber AS track_tracknumber, ar.mbid AS artist_mbid, ar.name AS artist_name, ar.sortname AS artist_sortname FROM (((artist aa JOIN album al ON ((aa.artist_id = al.artist_id))) JOIN track tr ON ((al.album_id = tr.album_id))) LEFT JOIN artist ar ON ((tr.artist_id = ar.artist_id)));
+
+
+ALTER TABLE public.v_album_lookup OWNER TO canidae;
 
 --
 -- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
@@ -238,11 +263,38 @@ SELECT pg_catalog.setval('metadata_metadata_id_seq', 1, false);
 
 
 --
+-- Name: puid_puid_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
+--
+
+CREATE SEQUENCE puid_puid_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.puid_puid_id_seq OWNER TO canidae;
+
+--
+-- Name: puid_puid_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
+--
+
+ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
+
+
+--
+-- Name: puid_puid_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
+--
+
+SELECT pg_catalog.setval('puid_puid_id_seq', 1, false);
+
+
+--
 -- Name: setting_class_setting_class_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
 --
 
 CREATE SEQUENCE setting_class_setting_class_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -262,7 +314,7 @@ ALTER SEQUENCE setting_class_setting_class_id_seq OWNED BY setting_class.setting
 -- Name: setting_class_setting_class_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('setting_class_setting_class_id_seq', 1, false);
+SELECT pg_catalog.setval('setting_class_setting_class_id_seq', 3, true);
 
 
 --
@@ -270,7 +322,6 @@ SELECT pg_catalog.setval('setting_class_setting_class_id_seq', 1, false);
 --
 
 CREATE SEQUENCE setting_setting_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -290,7 +341,7 @@ ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
 -- Name: setting_setting_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('setting_setting_id_seq', 1, false);
+SELECT pg_catalog.setval('setting_setting_id_seq', 13, true);
 
 
 --
@@ -350,6 +401,13 @@ ALTER TABLE metadata ALTER COLUMN metadata_id SET DEFAULT nextval('metadata_meta
 
 
 --
+-- Name: puid_id; Type: DEFAULT; Schema: public; Owner: canidae
+--
+
+ALTER TABLE puid ALTER COLUMN puid_id SET DEFAULT nextval('puid_puid_id_seq'::regclass);
+
+
+--
 -- Name: setting_id; Type: DEFAULT; Schema: public; Owner: canidae
 --
 
@@ -374,7 +432,7 @@ ALTER TABLE track ALTER COLUMN track_id SET DEFAULT nextval('track_track_id_seq'
 -- Data for Name: album; Type: TABLE DATA; Schema: public; Owner: canidae
 --
 
-COPY album (album_id, artist_id, album_mbid, type, title, released, asin, custom_artist) FROM stdin;
+COPY album (album_id, artist_id, mbid, type, title, released, custom_artist_sortname, updated, loaded) FROM stdin;
 \.
 
 
@@ -382,7 +440,7 @@ COPY album (album_id, artist_id, album_mbid, type, title, released, asin, custom
 -- Data for Name: artist; Type: TABLE DATA; Schema: public; Owner: canidae
 --
 
-COPY artist (artist_id, artist_mbid, type, name, sortname) FROM stdin;
+COPY artist (artist_id, mbid, name, sortname, loaded) FROM stdin;
 \.
 
 
@@ -403,10 +461,31 @@ COPY metadata (metadata_id, file_id, key, value) FROM stdin;
 
 
 --
+-- Data for Name: puid; Type: TABLE DATA; Schema: public; Owner: canidae
+--
+
+COPY puid (puid_id, track_id, puid) FROM stdin;
+\.
+
+
+--
 -- Data for Name: setting; Type: TABLE DATA; Schema: public; Owner: canidae
 --
 
 COPY setting (setting_id, setting_class_id, key, value, user_changed, description) FROM stdin;
+1	1	sorted_directory	/media/music/sortert/	t	Output directory
+2	1	unsorted_directory	/media/music/usortert/	t	Input directory
+3	1	duplicate_directory	/media/music/duplikater/	t	Directory for duplicate files
+4	2	metadata_search_url	http://musicbrainz.org/ws/1/track/	f	URL to search after metadata
+5	2	puid_search_url	http://musicbrainz.org/ws/1/track/	f	URL to search after puid
+6	2	release_url	http://musicbrainz.org/ws/1/release/	f	URL to lookup a release
+7	3	album_weight	100.000000	f	
+8	3	artist_weight	100.000000	f	
+9	3	combine_threshold	0.800000	f	
+10	3	duration_limit	15.000000	f	
+11	3	duration_weight	100.000000	f	
+12	3	title_weight	100.000000	f	
+13	3	tracknumber_weight	100.000000	f	
 \.
 
 
@@ -415,6 +494,9 @@ COPY setting (setting_id, setting_class_id, key, value, user_changed, descriptio
 --
 
 COPY setting_class (setting_class_id, name, description) FROM stdin;
+1	FileReader	TODO
+2	WebService	Settings for looking up data on a WebService
+3	FileMetadata	TODO
 \.
 
 
@@ -422,7 +504,7 @@ COPY setting_class (setting_class_id, name, description) FROM stdin;
 -- Data for Name: track; Type: TABLE DATA; Schema: public; Owner: canidae
 --
 
-COPY track (track_id, album_id, artist_id, track_mbid, title, duration) FROM stdin;
+COPY track (track_id, album_id, artist_id, mbid, title, duration, tracknumber) FROM stdin;
 \.
 
 
@@ -431,7 +513,7 @@ COPY track (track_id, album_id, artist_id, track_mbid, title, duration) FROM std
 --
 
 ALTER TABLE ONLY album
-    ADD CONSTRAINT album_album_mbid_key UNIQUE (album_mbid);
+    ADD CONSTRAINT album_album_mbid_key UNIQUE (mbid);
 
 
 --
@@ -447,7 +529,7 @@ ALTER TABLE ONLY album
 --
 
 ALTER TABLE ONLY artist
-    ADD CONSTRAINT artist_artist_mbid_key UNIQUE (artist_mbid);
+    ADD CONSTRAINT artist_artist_mbid_key UNIQUE (mbid);
 
 
 --
@@ -480,6 +562,14 @@ ALTER TABLE ONLY file
 
 ALTER TABLE ONLY metadata
     ADD CONSTRAINT metadata_pkey PRIMARY KEY (metadata_id);
+
+
+--
+-- Name: puid_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+--
+
+ALTER TABLE ONLY puid
+    ADD CONSTRAINT puid_pkey PRIMARY KEY (puid_id);
 
 
 --
@@ -527,7 +617,7 @@ ALTER TABLE ONLY track
 --
 
 ALTER TABLE ONLY track
-    ADD CONSTRAINT track_track_mbid_key UNIQUE (track_mbid);
+    ADD CONSTRAINT track_track_mbid_key UNIQUE (mbid);
 
 
 --
@@ -543,7 +633,7 @@ ALTER TABLE ONLY album
 --
 
 ALTER TABLE ONLY file
-    ADD CONSTRAINT file_track_id_fkey FOREIGN KEY (track_id) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT file_track_id_fkey FOREIGN KEY (track_id) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -552,6 +642,14 @@ ALTER TABLE ONLY file
 
 ALTER TABLE ONLY metadata
     ADD CONSTRAINT metadata_file_id_fkey FOREIGN KEY (file_id) REFERENCES file(file_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: puid_track_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+--
+
+ALTER TABLE ONLY puid
+    ADD CONSTRAINT puid_track_id_fkey FOREIGN KEY (track_id) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

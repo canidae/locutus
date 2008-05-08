@@ -51,7 +51,7 @@ class WebService : public URLStream, public XMLStream {
 		/* methods */
 		Album fetchAlbum(string mbid);
 		void loadSettings();
-		vector<Metadata> searchMetadata(string query);
+		vector<Metadata> searchMetadata(string wsquery);
 		vector<Metadata> searchPUID(string puid);
 
 	private:
