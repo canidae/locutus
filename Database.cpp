@@ -56,6 +56,10 @@ string Database::getString(const int row, const int col) {
 	return PQgetvalue(pg_result, row, col);
 }
 
+bool Database::isNull(const int row, const int col) {
+	return (PQgetisnull(pg_result, row, col) != 0);
+}
+
 bool Database::query(const string q) {
 	return query(q.c_str());
 }

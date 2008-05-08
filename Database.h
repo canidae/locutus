@@ -31,6 +31,7 @@ class Database {
 		int getInt(const int row, const int col);
 		int getRows();
 		string getString(const int row, const int col);
+		bool isNull(const int row, const int col);
 		bool query(const string q);
 		bool query(const char *q);
 
