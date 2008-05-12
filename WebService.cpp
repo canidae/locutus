@@ -145,7 +145,7 @@ Album WebService::fetchAlbum(string mbid) {
 			locutus->database->clear();
 			if (queries_ok) {
 				query.str("");
-				query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), type = '" << atypee << "', title = '" << atitlee << "', released = " << areleasede << ", loaded = true WHERE mbid = '" << aambide << "'";
+				query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), type = '" << atypee << "', title = '" << atitlee << "', released = " << areleasede << ", loaded = true, updated = now() WHERE mbid = '" << aambide << "'";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
 				locutus->database->clear();
@@ -305,11 +305,11 @@ vector<Metadata> WebService::searchPUID(string puid) {
 	/* first see if we got this puid in database, and if it's recently updated(?) */
 	string epuid = locutus->database->escapeString(puid);
 	ostringstream query;
-	/*
+	/* FIXME?
 	query << "SELECT * FROM puid WHERE puid = '" << epuid << "'";
 	if (locutus->database->query(query.str()) && locutus->database->getRows() > 0) {
 		Metadata track;
-		// TODO
+		// TODO?
 		tracks.push_back(track);
 		return tracks;
 	}
