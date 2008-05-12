@@ -12,11 +12,11 @@ Album::~Album() {
 /* methods */
 void Album::clear() {
 	tracks.clear();
+	artist_mbid = "";
+	artist_name = "";
+	artist_sortname = "";
 	mbid = "";
-	type = "";
-	title = "";
 	released = "";
-	asin = "";
+	title = "";
+	type = "";
 }
-
-/* private methods */

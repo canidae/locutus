@@ -14,15 +14,13 @@ class Album {
 	public:
 		/* variables */
 		vector<Metadata> tracks;
-		string mbid;
-		string type;
-		string title;
-		string released;
-		string asin;
 		string artist_mbid;
-		string artist_type;
 		string artist_name;
 		string artist_sortname;
+		string mbid;
+		string released;
+		string title;
+		string type;
 
 		/* constructors */
 		Album();

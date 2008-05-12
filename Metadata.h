@@ -14,6 +14,7 @@
 #define MUSICIP_PUID "MUSICIP_PUID"
 #define TITLE "TITLE"
 #define TRACKNUMBER "TRACKNUMBER"
+#define YEAR "YEAR"
 
 /* includes */
 #include <list>

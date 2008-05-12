@@ -33,6 +33,9 @@ class Locutus {
 		Levenshtein *levenshtein;
 		Settings *settings;
 		WebService *webservice;
+		FileReader *filereader;
+		PUIDGenerator *puidgen;
+		WebFetcher *webfetcher;
 		vector<FileMetadata> files;
 		map<string, vector<int> > grouped_files; // album/directory, files
 		vector<int> gen_puid_queue; // files missing puid
@@ -47,11 +50,5 @@ class Locutus {
 		/* methods */
 		void loadSettings();
 		long run();
-
-	private:
-		/* variables */
-		FileReader *filereader;
-		PUIDGenerator *puidgen;
-		WebFetcher *webfetcher;
 };
 #endif

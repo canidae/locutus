@@ -30,7 +30,7 @@ using namespace std;
 class FileReader {
 	public:
 		/* variables */
-		bool active;
+		bool ready;
 		string duplicate_dir;
 		string input_dir;
 		string output_dir;

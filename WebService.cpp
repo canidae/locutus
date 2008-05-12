@@ -27,9 +27,9 @@ Album WebService::fetchAlbum(string mbid) {
 		album.artist_sortname = locutus->database->getString(0, 2);
 		album.mbid = locutus->database->getString(0, 3);
 		album.type = locutus->database->getString(0, 4);
-		// 0, 6 is album_updated, not needed
+		// 0, 5 is album_updated, not needed
 		album.title = locutus->database->getString(0, 6);
-		// 0, 8 is released. hmm, TODO?
+		album.released = locutus->database->getString(0, 7);
 		for (int r = 0; r < locutus->database->getRows(); ++r) {
 			Metadata track;
 			track.setValue(MUSICBRAINZ_TRACKID, locutus->database->getString(r, 8));
@@ -63,11 +63,47 @@ Album WebService::fetchAlbum(string mbid) {
 		string aanamee = locutus->database->escapeString(album.artist_name);
 		album.artist_sortname = release.children["artist"][0].children["sort-name"][0].value;
 		string aasortnamee = locutus->database->escapeString(album.artist_sortname);
-		album.released = ""; // TODO
-		string areleasede = locutus->database->escapeString(album.released);
+		if (release.children["release-event-list"].size() > 0) {
+			album.released = release.children["released-event-list"][0].children["event"][0].children["date"][0].value;
+			bool ok = false;
+			if (album.released.size() == 10) {
+				ok = true;
+				for (int a = 0; a < 10 && ok; ++a) {
+					if (a == 4 || a == 6 || a == 8) {
+						if (album.released[a] != '-')
+							ok = false;
+					} else {
+						if (album.released[a] < '0' || album.released[a] > '9')
+							ok = false;
+					}
+				}
+			}
+			if (!ok) {
+				if (album.released.size() >= 4) {
+					bool yearok = true;
+					for (int a = 0; a < 4 && yearok; ++a) {
+						if (album.released[a] < '0' || album.released[a] > '9')
+							yearok = false;
+					}
+					if (yearok)
+						album.released = album.released.substr(0, 4);
+					else
+						album.released = "";
+				} else {
+					album.released = "";
+				}
+			}
+		}
+		string areleasede;
+		if (album.released == "") {
+			areleasede = "NULL";
+		} else {
+			areleasede = "'";
+			areleasede.append(locutus->database->escapeString(album.released));
+			areleasede.append("'");
+		}
 		query.clear();
 		bool queries_ok = true;
-		query << "BEGIN";
 		if (!locutus->database->query(query.str()))
 			queries_ok = false;
 		locutus->database->clear();
@@ -87,13 +123,13 @@ Album WebService::fetchAlbum(string mbid) {
 		}
 		if (queries_ok) {
 			query.clear();
-			query << "INSERT INTO album(artist_id, mbid, type, title, released, loaded) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), '" << ambide << "', '" << atypee << "', '" << atitlee << "', '" << areleasede << "', true WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << ambide << "')";
+			query << "INSERT INTO album(artist_id, mbid, type, title, released, loaded) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), '" << ambide << "', '" << atypee << "', '" << atitlee << "', " << areleasede << ", true WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << ambide << "')";
 			if (!locutus->database->query(query.str()))
 				queries_ok = false;
 			locutus->database->clear();
 			if (queries_ok) {
 				query.clear();
-				query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), type = '" << atypee << "', title = '" << atitlee << "', released = '" << areleasede << "', loaded = true WHERE mbid = '" << aambide << "'";
+				query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), type = '" << atypee << "', title = '" << atitlee << "', released = " << areleasede << ", loaded = true WHERE mbid = '" << aambide << "'";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
 				locutus->database->clear();
@@ -153,17 +189,6 @@ Album WebService::fetchAlbum(string mbid) {
 				}
 			}
 		}
-		if (queries_ok) {
-			query.clear();
-			query << "COMMIT";
-			locutus->database->query(query.str());
-			locutus->database->clear();
-		} else {
-			query.clear();
-			query << "ROLLLBACK";
-			locutus->database->query(query.str());
-			locutus->database->clear();
-		}
 	}
 	pthread_mutex_unlock(&mutex);
 	return album;
@@ -208,7 +233,6 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 			track.setValue(TRACKNUMBER, num.str());
 			bool queries_ok = true;
 			ostringstream query;
-			query << "BEGIN";
 			if (!locutus->database->query(query.str()))
 				queries_ok = false;
 			locutus->database->clear();

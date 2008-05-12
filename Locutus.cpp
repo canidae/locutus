@@ -28,15 +28,10 @@ Locutus::~Locutus() {
 long Locutus::run() {
 	/* load settings */
 	loadSettings();
-	/* start up puid thread thingy */
-	puidgen->start();
-	/* start up web thread thingy */
-	webfetcher->start();
 	/* parse sorted directory */
 	filereader->scanFiles(filereader->output_dir);
-	/* wait for puid thread & web thread to finish */
-	while (gen_puid_queue.size() > 0 && lookup_puid_queue.size() > 0)
-		usleep(10000000);
+	/* generate puids */
+	/* lookup */
 	/* save changes */
 	/* clear data */
 	lookup_puid_queue.clear();
@@ -45,14 +40,9 @@ long Locutus::run() {
 	files.clear();
 	/* parse unsorted directory */
 	filereader->scanFiles(filereader->input_dir);
-	/* wait for puid thread & web thread to finish */
-	while (gen_puid_queue.size() > 0 && lookup_puid_queue.size() > 0)
-		usleep(10000000);
+	/* generate puids */
+	/* lookup */
 	/* save changes */
-	/* stop puid thread thingy */
-	puidgen->quit();
-	/* stop web thread thingy */
-	webfetcher->quit();
 	/* submit new puids? */
 	/* return */
 	return 10000;

@@ -9,16 +9,14 @@
 class PUIDGenerator;
 
 /* includes */
-#include <cc++/thread.h>
 #include <string>
 #include "Locutus.h"
 
 /* namespaces */
-using namespace ost;
 using namespace std;
 
 /* PUIDGenerator */
-class PUIDGenerator : public Thread {
+class PUIDGenerator {
 	public:
 		/* variables */
 
@@ -36,9 +34,6 @@ class PUIDGenerator : public Thread {
 	private:
 		/* variables */
 		Locutus *locutus;
-		bool active;
 		int setting_class_id;
-
-		/* methods */
 };
 #endif

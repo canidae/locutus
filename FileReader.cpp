@@ -3,7 +3,6 @@
 /* constructors */
 FileReader::FileReader(Locutus *locutus) {
 	this->locutus = locutus;
-	active = false;
 }
 
 /* destructors */
@@ -20,7 +19,6 @@ void FileReader::loadSettings() {
 
 void FileReader::scanFiles(string directory) {
 	dir_queue.push_back(directory);
-	active = true;
 	while (dir_queue.size() > 0 || file_queue.size() > 0) {
 		/* first files */
 		if (parseFile())
@@ -29,7 +27,6 @@ void FileReader::scanFiles(string directory) {
 		if (parseDirectory())
 			continue;
 	}
-	active = false;
 }
 
 /* private methods */
