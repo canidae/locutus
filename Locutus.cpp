@@ -28,6 +28,8 @@ Locutus::~Locutus() {
 long Locutus::run() {
 	/* load settings */
 	loadSettings();
+	/* clean cache */
+	webservice->cleanCache();
 	/* parse sorted directory */
 	scanDirectory(filereader->output_dir);
 	/* parse unsorted directory */

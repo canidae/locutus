@@ -12,6 +12,25 @@ WebService::~WebService() {
 }
 
 /* methods */
+void WebService::cleanCache() {
+	/* delete old data from database */
+	ostringstream query;
+	/* album */
+	query << "DELETE FROM album WHERE updated + INTERVAL '" << album_cache_lifetime << " months' < now()";
+	locutus->database->query(query.str());
+	locutus->database->clear();
+	/* puid_track */
+	query.str("");
+	query << "DELETE FROM puid_track WHERE updated + INTERVAL '" << puid_cache_lifetime << " months' < now()";
+	locutus->database->query(query.str());
+	locutus->database->clear();
+	/* artist */
+	query.str("");
+	query << "DELETE FROM artist WHERE artist_id NOT IN (SELECT artist_id FROM album UNION SELECT artist_id FROM track)";
+	locutus->database->query(query.str());
+	locutus->database->clear();
+}
+
 Album WebService::fetchAlbum(string mbid) {
 	Album album;
 	if (mbid.size() != 36)
@@ -19,7 +38,7 @@ Album WebService::fetchAlbum(string mbid) {
 	/* check if it's in database and updated recently first */
 	mbid = locutus->database->escapeString(mbid);
 	ostringstream query;
-	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << mbid << "' AND album_updated + INTERVAL '" << album_cache_lifetime << " months' < now()";
+	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << mbid << "'";
 	if (locutus->database->query(query.str()) && locutus->database->getRows() > 0) {
 		/* cool, we got this album in our "cache" */
 		album.artist_mbid = locutus->database->getString(0, 0);
@@ -104,9 +123,6 @@ Album WebService::fetchAlbum(string mbid) {
 		}
 		query.str("");
 		bool queries_ok = true;
-		if (!locutus->database->query(query.str()))
-			queries_ok = false;
-		locutus->database->clear();
 		if (queries_ok) {
 			query.str("");
 			query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << aambide << "', '" << aanamee << "', '" << aasortnamee << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << aambide << "')";
@@ -199,6 +215,7 @@ void WebService::loadSettings() {
 	metadata_search_url = locutus->settings->loadSetting(setting_class_id, METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = locutus->settings->loadSetting(setting_class_id, RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 	album_cache_lifetime = locutus->settings->loadSetting(setting_class_id, ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
+	puid_cache_lifetime = locutus->settings->loadSetting(setting_class_id, PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
 }
 
 vector<Metadata> WebService::searchMetadata(string wsquery) {
@@ -228,14 +245,11 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 			string altitlee = locutus->database->escapeString(track.getValue(ALBUM));
 			string offset = tracknode.children["release-list"][0].children["release"][0].children["track-list"][0].children["offset"][0].value;
 			int tracknum = atoi(offset.c_str()) + 1;
-			stringstream num;
+			ostringstream num;
 			num << tracknum;
 			track.setValue(TRACKNUMBER, num.str());
 			bool queries_ok = true;
 			ostringstream query;
-			if (!locutus->database->query(query.str()))
-				queries_ok = false;
-			locutus->database->clear();
 			if (queries_ok) {
 				query.str("");
 				query << "INSERT INTO artist(mbid, name) SELECT '" << armbide << "', '" << arnamee << "' WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << armbide << "')";
@@ -285,12 +299,36 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 }
 
 vector<Metadata> WebService::searchPUID(string puid) {
-	if (puid == "")
-		return vector<Metadata>();
-	/* check if it's in database and updated recently first */
-	string query = "puid=";
-	query.append(puid);
-	return searchMetadata(query);
+	vector<Metadata> tracks;
+	if (puid.size() != 36)
+		return tracks;
+	/* first see if we got this puid in database, and if it's recently updated(?) */
+	string epuid = locutus->database->escapeString(puid);
+	ostringstream query;
+	/*
+	query << "SELECT * FROM puid WHERE puid = '" << epuid << "'";
+	if (locutus->database->query(query.str()) && locutus->database->getRows() > 0) {
+		Metadata track;
+		// TODO
+		tracks.push_back(track);
+		return tracks;
+	}
+	*/
+	/* then look up on musicbrainz */
+	string wsquery = "puid=";
+	wsquery.append(puid);
+	tracks = searchMetadata(wsquery);
+	/* update puid in database */
+	for (vector<Metadata>::size_type a = 0; a < tracks.size(); ++a) {
+		string embid = locutus->database->escapeString(tracks[a].getValue(MUSICBRAINZ_TRACKID));
+		if (embid == "")
+			continue;
+		query.str("");
+		query << "INSERT INTO puid(track_id, puid) SELECT ('" << embid << "', '" << epuid << "') WHERE NOT EXISTS (SELECT true FROM puid WHERE puid = '" << epuid << "')";
+		locutus->database->query(query.str());
+		locutus->database->clear();
+	}
+	return tracks;
 }
 
 /* private methods */
