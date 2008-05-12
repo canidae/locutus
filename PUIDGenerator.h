@@ -27,9 +27,8 @@ class PUIDGenerator {
 		~PUIDGenerator();
 
 		/* methods */
+		void generatePUIDs();
 		void loadSettings();
-		void quit();
-		void run();
 
 	private:
 		/* variables */

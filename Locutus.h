@@ -21,7 +21,6 @@ class Locutus;
 #include "WebService.h"
 
 /* namespace */
-using namespace ost;
 using namespace std;
 
 /* Locutus */
@@ -39,7 +38,6 @@ class Locutus {
 		vector<FileMetadata> files;
 		map<string, vector<int> > grouped_files; // album/directory, files
 		vector<int> gen_puid_queue; // files missing puid
-		vector<int> lookup_puid_queue; // files with puid
 
 		/* constructors */
 		Locutus();
@@ -48,7 +46,13 @@ class Locutus {
 		~Locutus();
 
 		/* methods */
-		void loadSettings();
 		long run();
+
+	private:
+		/* variables */
+
+		/* methods */
+		void loadSettings();
+		void scanDirectory(string directory);
 };
 #endif

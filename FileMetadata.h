@@ -52,6 +52,7 @@ class FileMetadata : public Metadata {
 		int bitrate;
 		int channels;
 		int samplerate;
+		bool puid_lookup;
 
 		/* constructors */
 		FileMetadata(Locutus *locutus, string filename);

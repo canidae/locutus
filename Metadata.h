@@ -49,8 +49,5 @@ class Metadata {
 		bool equalMetadata(Metadata target);
 		string getValue(const string key);
 		void setValue(const string key, const string value);
-
-	protected:
-		/* variables */
 };
 #endif

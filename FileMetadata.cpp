@@ -8,6 +8,7 @@ FileMetadata::FileMetadata(Locutus *locutus, string filename) {
 	channels = 0;
 	samplerate = 0;
 	type = 0;
+	puid_lookup = false;
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos) {
 		string ext = filename.substr(pos);

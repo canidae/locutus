@@ -29,20 +29,9 @@ long Locutus::run() {
 	/* load settings */
 	loadSettings();
 	/* parse sorted directory */
-	filereader->scanFiles(filereader->output_dir);
-	/* generate puids */
-	/* lookup */
-	/* save changes */
-	/* clear data */
-	lookup_puid_queue.clear();
-	gen_puid_queue.clear();
-	grouped_files.clear();
-	files.clear();
+	scanDirectory(filereader->output_dir);
 	/* parse unsorted directory */
-	filereader->scanFiles(filereader->input_dir);
-	/* generate puids */
-	/* lookup */
-	/* save changes */
+	scanDirectory(filereader->input_dir);
 	/* submit new puids? */
 	/* return */
 	return 10000;
@@ -66,6 +55,21 @@ void Locutus::loadSettings() {
 	webservice->loadSettings();
 	puidgen->loadSettings();
 	webfetcher->loadSettings();
+}
+
+void Locutus::scanDirectory(string directory) {
+	/* clear data */
+	gen_puid_queue.clear();
+	grouped_files.clear();
+	files.clear();
+	/* parse directory */
+	filereader->scanFiles(directory);
+	/* generate puids */
+	puidgen->generatePUIDs();
+	/* lookup */
+	webfetcher->lookup();
+	/* save changes */
+	// TODO
 }
 
 /* main */
