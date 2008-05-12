@@ -102,19 +102,19 @@ Album WebService::fetchAlbum(string mbid) {
 			areleasede.append(locutus->database->escapeString(album.released));
 			areleasede.append("'");
 		}
-		query.clear();
+		query.str("");
 		bool queries_ok = true;
 		if (!locutus->database->query(query.str()))
 			queries_ok = false;
 		locutus->database->clear();
 		if (queries_ok) {
-			query.clear();
+			query.str("");
 			query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << aambide << "', '" << aanamee << "', '" << aasortnamee << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << aambide << "')";
 			if (!locutus->database->query(query.str()))
 				queries_ok = false;
 			locutus->database->clear();
 			if (queries_ok) {
-				query.clear();
+				query.str("");
 				query << "UPDATE artist SET name = '" << aanamee << "', sortname = '" << aasortnamee << "', loaded = true WHERE mbid = '" << aambide << "'";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
@@ -122,13 +122,13 @@ Album WebService::fetchAlbum(string mbid) {
 			}
 		}
 		if (queries_ok) {
-			query.clear();
+			query.str("");
 			query << "INSERT INTO album(artist_id, mbid, type, title, released, loaded) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), '" << ambide << "', '" << atypee << "', '" << atitlee << "', " << areleasede << ", true WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << ambide << "')";
 			if (!locutus->database->query(query.str()))
 				queries_ok = false;
 			locutus->database->clear();
 			if (queries_ok) {
-				query.clear();
+				query.str("");
 				query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), type = '" << atypee << "', title = '" << atitlee << "', released = " << areleasede << ", loaded = true WHERE mbid = '" << aambide << "'";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
@@ -154,13 +154,13 @@ Album WebService::fetchAlbum(string mbid) {
 				track.setValue(ARTISTSORT, release.children["track-list"][0].children["track"][a].children["artist"][0].children["sort-name"][0].value);
 				string tartistsort = locutus->database->escapeString(track.getValue(ARTISTSORT));
 				if (queries_ok) {
-					query.clear();
+					query.str("");
 					query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << tambide << "', '" << tartist << "', '" << tartistsort << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << aambide << "')";
 					if (!locutus->database->query(query.str()))
 						queries_ok = false;
 					locutus->database->clear();
 					if (queries_ok) {
-						query.clear();
+						query.str("");
 						query << "UPDATE artist SET name = '" << tartist << "', sortname = '" << tartistsort << "', loaded = true WHERE mbid = '" << aambide << "'";
 						if (!locutus->database->query(query.str()))
 							queries_ok = false;
@@ -175,13 +175,13 @@ Album WebService::fetchAlbum(string mbid) {
 			}
 			album.tracks[a] = track;
 			if (queries_ok) {
-				query.clear();
+				query.str("");
 				query << "INSERT INTO track(album_id, artist_id, mbid, title, duration, tracknumber) SELECT (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), '" << tmbide << "', '" << ttitlee << "', " << track.duration << ", " << a << " WHERE NOT EXISTS (SELECT true FROM track WHERE mbid = '" << tmbide << "')";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
 				locutus->database->clear();
 				if (queries_ok) {
-					query.clear();
+					query.str("");
 					query << "UPDATE track SET album_id = (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), title = '" << ttitlee << "', duration = " << track.duration << ", tracknumber = " << a << " WHERE mbid = '" << tmbide << "'";
 				       if (!locutus->database->query(query.str()))
 					       queries_ok = false;
@@ -237,13 +237,13 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 				queries_ok = false;
 			locutus->database->clear();
 			if (queries_ok) {
-				query.clear();
+				query.str("");
 				query << "INSERT INTO artist(mbid, name) SELECT '" << armbide << "', '" << arnamee << "' WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << armbide << "')";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
 				locutus->database->clear();
 				if (queries_ok) {
-					query.clear();
+					query.str("");
 					query << "UPDATE artist SET name = '" << arnamee << "' WHERE mbid = '" << armbide << "'";
 					if (!locutus->database->query(query.str()))
 						queries_ok = false;
@@ -251,13 +251,13 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 				}
 			}
 			if (queries_ok) {
-				query.clear();
+				query.str("");
 				query << "INSERT INTO album(artist_id, mbid, title) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << armbide << "'), '" << almbide << "', '" << altitlee << "' WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << almbide << "')";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
 				locutus->database->clear();
 				if (queries_ok) {
-					query.clear();
+					query.str("");
 					query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << armbide << "'), title = '" << altitlee << "' WHERE mbid = '" << almbide << "'";
 					if (!locutus->database->query(query.str()))
 						queries_ok = false;
@@ -265,13 +265,13 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 				}
 			}
 			if (queries_ok) {
-				query.clear();
+				query.str("");
 				query << "INSERT INTO track(album_id, artist_id, mbid, title, duration, tracknumber) SELECT (SELECT album_id FROM album WHERE mbid = '" << almbide << "'), (SELECT artist_id FROM artist WHERE mbid = '" << armbide << "'), '" << tmbide << "', '" << ttitlee << "', " << track.duration << ", " << tracknum << " WHERE NOT EXISTS (SELECT true FROM track WHERE mbid = '" << tmbide << "')";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
 				locutus->database->clear();
 				if (queries_ok) {
-					query.clear();
+					query.str("");
 					query << "UPDATE track SET album_id = (SELECT album_id FROM album WHERE mbid = '" << almbide << "'), artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << armbide << "'), title = '" << ttitlee << "', duration = " << track.duration << ", tracknumber = " << tracknum << " WHERE mbid = '" << tmbide << "'";
 				       if (!locutus->database->query(query.str()))
 					       queries_ok = false;

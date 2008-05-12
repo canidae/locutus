@@ -74,11 +74,11 @@ void Locutus::scanDirectory(string directory) {
 
 /* main */
 int main() {
-	while (true) {
+	//while (true) {
 		Locutus *locutus = new Locutus();
 		long sleeptime = locutus->run();
 		delete locutus;
-		sleep(sleeptime);
-	}
+		usleep(sleeptime);
+	//}
 	return 0;
 }

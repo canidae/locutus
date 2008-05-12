@@ -22,11 +22,11 @@ int Settings::loadClassID(string name, string description) {
 	if (locutus->database->getRows() <= 0) {
 		/* hmm, no entry for this class */
 		locutus->database->clear();
-		query.clear();
+		query.str("");
 		query << "INSERT INTO setting_class(name, description) VALUES ('" << name << "', '" << description << "')";
 		locutus->database->query(query.str());
 		locutus->database->clear();
-		query.clear();
+		query.str("");
 		query << "SELECT setting_class_id FROM setting_class WHERE name = '" << name << "'";
 		if (!locutus->database->query(query.str())) {
 			locutus->database->clear();
@@ -72,7 +72,7 @@ string Settings::loadSetting(int class_id, string key, string default_value, str
 			 * update database */
 			locutus->database->clear();
 			back = default_value;
-			query.clear();
+			query.str("");
 			query << "UPDATE setting SET value = '" << escaped_value << "', description = '" << description << "' WHERE setting_class_id = " << class_id << " AND key = '" << key << "'";
 			if (!locutus->database->query(query.str())) {
 				locutus->database->clear();
@@ -82,7 +82,7 @@ string Settings::loadSetting(int class_id, string key, string default_value, str
 	} else {
 		/* this key is missing, add it */
 		locutus->database->clear();
-		query.clear();
+		query.str("");
 		query << "INSERT INTO setting(setting_class_id, key, value, description) VALUES (" << class_id << ", '" << key << "', '" << escaped_value << "', '" << description << "')";
 		if (!locutus->database->query(query.str())) {
 			locutus->database->clear();
