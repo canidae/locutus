@@ -27,6 +27,9 @@ void WebFetcher::lookup() {
 		 * - hrm, will have to think more later, when i actually can hear my own thoughts
 		 */
 		vector<Album> albums;
+		/* TODO
+		 * screw this for now, we don't generate puids yet, it's not important.
+		 * spend time on matching metadata first */
 		for (vector<int>::size_type a = 0; a < it->second.size(); ++a) {
 			FileMetadata fm = locutus->files[it->second[a]];
 			if (!fm.puid_lookup)
