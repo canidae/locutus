@@ -13,56 +13,33 @@ WebFetcher::~WebFetcher() {
 void WebFetcher::loadSettings() {
 	setting_class_id = locutus->settings->loadClassID(FILEREADER_CLASS, FILEREADER_CLASS_DESCRIPTION);
 	puid_min_match = locutus->settings->loadSetting(setting_class_id, PUID_MIN_MATCH_KEY, PUID_MIN_MATCH_VALUE, PUID_MIN_MATCH_DESCRIPTION);
+	metadata_min_match = locutus->settings->loadSetting(setting_class_id, METADATA_MIN_MATCH_KEY, METADATA_MIN_MATCH_VALUE, METADATA_MIN_MATCH_DESCRIPTION);
 }
 
 void WebFetcher::lookup() {
 	for (map<string, vector<int> >::iterator it = locutus->grouped_files.begin(); it != locutus->grouped_files.end(); ++it) {
-		/* check if there are any files we want to look up puid for */
-		/* TODO
-		 * this whole thing has to be rethought & rewritten.
-		 * bloody noisy people.
-		 * the idea, which is hard to think of right now is something like this:
-		 * - if we got mbid and puid lookup returns vastly different tracks, notify user
-		 * - perhaps lookup all puids first and see if lots of them mostly match 1 album?
-		 * - hrm, will have to think more later, when i actually can hear my own thoughts
-		 */
-		vector<Album> albums;
-		/* TODO
-		 * screw this for now, we don't generate puids yet, it's not important.
-		 * spend time on matching metadata first */
-		for (vector<int>::size_type a = 0; a < it->second.size(); ++a) {
-			FileMetadata fm = locutus->files[it->second[a]];
+		/* look up using puid */
+		map<string, Album> albums;
+		map<string, map<vector<Metadata>::size_type, vector<Match> > > matches;
+		for (vector<int>::size_type file_in_group = 0; file_in_group < it->second.size(); ++file_in_group) {
+			FileMetadata fm = locutus->files[it->second[file_in_group]];
 			if (!fm.puid_lookup)
 				continue;
 			vector<Metadata> tracks = locutus->webservice->searchPUID(fm.getValue(MUSICIP_PUID));
-			for (vector<int>::size_type b = 0; b < tracks.size(); ++b) {
-				double match = fm.compareWithMetadata(tracks[b]);
-				if (match < puid_min_match)
-					continue;
-				/* good match, add this album as a potential match */
-				Album album = locutus->webservice->fetchAlbum(tracks[b].getValue(MUSICBRAINZ_ALBUMID));
-				bool add_album = true;
-				for (vector<int>::size_type c = 0; c < albums.size(); ++c) {
-					if (albums[c].mbid == album.mbid) {
-						add_album = false;
-						break;
-					}
+			for (vector<int>::size_type track_in_result = 0; track_in_result < tracks.size(); ++track_in_result) {
+				string ambid = tracks[track_in_result].getValue(MUSICBRAINZ_ALBUMID);
+				if (albums.find(ambid) == albums.end()) {
+					Album album = locutus->webservice->fetchAlbum(ambid);
+					albums[ambid] = album;
 				}
-				if (add_album)
-					albums.push_back(album);
+				Match match;
+				match.file = file_in_group;
+				match.mbid_match = fm.equalMBID(tracks[track_in_result]);
+				match.puid_match = true;
+				match.meta_score = fm.compareWithMetadata(tracks[track_in_result]);
+				/* TODO: store possible match in database */
+				matches[ambid][track_in_result].push_back(match);
 			}
-		}
-		/* after looking up puids, compare albums with files in group */
-		/* TODO & FIXME */
-
-		/* then lookup using metadata
-		 * to limit lookups to musicbrainz:
-		 * 10 lookup file not connected to any album
-		 * 20 load album with best metadata match
-		 * 30 match all files in group with album
-		 * 40 goto 10
-		 */
-		for (vector<int>::size_type a = 0; a < it->second.size(); ++a) {
 		}
 	}
 }
