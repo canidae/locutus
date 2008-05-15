@@ -18,9 +18,13 @@ void WebFetcher::loadSettings() {
 
 void WebFetcher::lookup() {
 	for (map<string, vector<int> >::iterator it = locutus->grouped_files.begin(); it != locutus->grouped_files.end(); ++it) {
-		/* look up using puid */
 		map<string, Album> albums;
 		map<string, map<vector<Metadata>::size_type, vector<Match> > > matches;
+		vector<bool> mbid_looked_up;
+		vector<bool> puid_looked_up;
+		vector<bool> meta_looked_up;
+		/* look up using mbid */
+		/* look up using puid */
 		for (vector<int>::size_type file_in_group = 0; file_in_group < it->second.size(); ++file_in_group) {
 			FileMetadata fm = locutus->files[it->second[file_in_group]];
 			if (!fm.puid_lookup)
@@ -41,5 +45,8 @@ void WebFetcher::lookup() {
 				matches[ambid][track_in_result].push_back(match);
 			}
 		}
+		/* match files with albums */
+		/* look up using metadata */
+		/* match files with albums */
 	}
 }
