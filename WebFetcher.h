@@ -20,7 +20,6 @@ class WebFetcher;
 #include <map>
 #include <string>
 #include <vector>
-#include "Album.h"
 #include "Locutus.h"
 
 /* namespaces */

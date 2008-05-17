@@ -25,7 +25,6 @@ class WebService;
 #include <map>
 #include <string>
 #include <vector>
-#include "Album.h"
 #include "Locutus.h"
 #include "Metadata.h"
 
@@ -53,7 +52,7 @@ class WebService : public URLStream, public XMLStream {
 
 		/* methods */
 		void cleanCache();
-		Album fetchAlbum(string mbid);
+		vector<Metadata> fetchAlbum(string mbid);
 		void loadSettings();
 		vector<Metadata> searchMetadata(string wsquery);
 		vector<Metadata> searchPUID(string puid);

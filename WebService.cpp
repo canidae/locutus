@@ -31,8 +31,8 @@ void WebService::cleanCache() {
 	locutus->database->clear();
 }
 
-Album WebService::fetchAlbum(string mbid) {
-	Album album;
+vector<Metadata> WebService::fetchAlbum(string mbid) {
+	vector<Metadata> album;
 	if (mbid.size() != 36)
 		return album;
 	/* check if it's in database and updated recently first */
@@ -41,16 +41,16 @@ Album WebService::fetchAlbum(string mbid) {
 	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << mbid << "'";
 	if (locutus->database->query(query.str()) && locutus->database->getRows() > 0) {
 		/* cool, we got this album in our "cache" */
-		album.artist_mbid = locutus->database->getString(0, 0);
-		album.artist_name = locutus->database->getString(0, 1);
-		album.artist_sortname = locutus->database->getString(0, 2);
-		album.mbid = locutus->database->getString(0, 3);
-		album.type = locutus->database->getString(0, 4);
-		// 0, 5 is album_updated, not needed
-		album.title = locutus->database->getString(0, 6);
-		album.released = locutus->database->getString(0, 7);
 		for (int r = 0; r < locutus->database->getRows(); ++r) {
 			Metadata track;
+			track.setValue(MUSICBRAINZ_ALBUMARTISTID, locutus->database->getString(0, 0));
+			track.setValue(ALBUMARTIST, locutus->database->getString(0, 1));
+			track.setValue(ALBUMARTISTSORT, locutus->database->getString(0, 2));
+			track.setValue(MUSICBRAINZ_ALBUMID, locutus->database->getString(0, 3));
+			//album.type = locutus->database->getString(0, 4);
+			// 0, 5 is album_updated, not needed
+			track.setValue(ALBUM, locutus->database->getString(0, 6));
+			//album.released = locutus->database->getString(0, 7);
 			track.setValue(MUSICBRAINZ_TRACKID, locutus->database->getString(r, 8));
 			track.setValue(TITLE, locutus->database->getString(r, 9));
 			track.duration = locutus->database->getInt(r, 10);
@@ -58,7 +58,7 @@ Album WebService::fetchAlbum(string mbid) {
 			track.setValue(MUSICBRAINZ_ARTISTID, locutus->database->getString(r, 12));
 			track.setValue(ARTIST, locutus->database->getString(r, 13));
 			track.setValue(ARTISTSORT, locutus->database->getString(r, 14));
-			album.tracks[locutus->database->getInt(0, 11)] = track;
+			album[locutus->database->getInt(0, 11)] = track;
 		}
 		locutus->database->clear();
 		return album;
@@ -70,55 +70,56 @@ Album WebService::fetchAlbum(string mbid) {
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
 	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
 		XMLNode release = root.children["metadata"][0].children["release"][0];
-		album.mbid = release.children["id"][0].value;
-		string ambide = locutus->database->escapeString(album.mbid);
-		album.type = release.children["type"][0].value;
-		string atypee = locutus->database->escapeString(album.type);
-		album.title = release.children["title"][0].value;
-		string atitlee = locutus->database->escapeString(album.title);
-		album.artist_mbid = release.children["artist"][0].children["id"][0].value;
-		string aambide = locutus->database->escapeString(album.artist_mbid);
-		album.artist_name = release.children["artist"][0].children["name"][0].value;
-		string aanamee = locutus->database->escapeString(album.artist_name);
-		album.artist_sortname = release.children["artist"][0].children["sort-name"][0].value;
-		string aasortnamee = locutus->database->escapeString(album.artist_sortname);
+		string ambid = release.children["id"][0].value;
+		string ambide = locutus->database->escapeString(ambid);
+		string atype = release.children["type"][0].value;
+		string atypee = locutus->database->escapeString(atype);
+		string atitle = release.children["title"][0].value;
+		string atitlee = locutus->database->escapeString(atitlee);
+		string aambid = release.children["artist"][0].children["id"][0].value;
+		string aambide = locutus->database->escapeString(aambide);
+		string aaname = release.children["artist"][0].children["name"][0].value;
+		string aanamee = locutus->database->escapeString(aanamee);
+		string aasortname = release.children["artist"][0].children["sort-name"][0].value;
+		string aasortnamee = locutus->database->escapeString(aasortname);
+		string areleased = "";
 		if (release.children["release-event-list"].size() > 0) {
-			album.released = release.children["released-event-list"][0].children["event"][0].children["date"][0].value;
+			areleased = release.children["released-event-list"][0].children["event"][0].children["date"][0].value;
 			bool ok = false;
-			if (album.released.size() == 10) {
+			if (areleased.size() == 10) {
 				ok = true;
 				for (int a = 0; a < 10 && ok; ++a) {
 					if (a == 4 || a == 6 || a == 8) {
-						if (album.released[a] != '-')
+						if (areleased[a] != '-')
 							ok = false;
 					} else {
-						if (album.released[a] < '0' || album.released[a] > '9')
+						if (areleased[a] < '0' || areleased[a] > '9')
 							ok = false;
 					}
 				}
 			}
 			if (!ok) {
-				if (album.released.size() >= 4) {
+				if (areleased.size() >= 4) {
 					bool yearok = true;
 					for (int a = 0; a < 4 && yearok; ++a) {
-						if (album.released[a] < '0' || album.released[a] > '9')
+						if (areleased[a] < '0' || areleased[a] > '9')
 							yearok = false;
 					}
 					if (yearok)
-						album.released = album.released.substr(0, 4);
+						areleased = areleased.substr(0, 4);
 					else
-						album.released = "";
+						areleased = "";
 				} else {
-					album.released = "";
+					areleased = "";
 				}
 			}
 		}
 		string areleasede;
-		if (album.released == "") {
+		if (areleased == "") {
 			areleasede = "NULL";
 		} else {
 			areleasede = "'";
-			areleasede.append(locutus->database->escapeString(album.released));
+			areleasede.append(locutus->database->escapeString(areleased));
 			areleasede.append("'");
 		}
 		query.str("");
@@ -153,43 +154,53 @@ Album WebService::fetchAlbum(string mbid) {
 		}
 		for (vector<XMLNode>::size_type a = 0; a < release.children["track-list"][0].children["track"].size(); ++a) {
 			Metadata track;
-			track.setValue(MUSICBRAINZ_TRACKID, release.children["track-list"][0].children["track"][a].children["id"][0].value);
-			string tmbide = locutus->database->escapeString(track.getValue(MUSICBRAINZ_TRACKID));
-			track.setValue(TITLE, release.children["track-list"][0].children["track"][a].children["title"][0].value);
-			string ttitlee = locutus->database->escapeString(track.getValue(TITLE));
+			track.setValue(MUSICBRAINZ_ALBUMID, ambid);
+			track.setValue(ALBUM, atitle);
+			track.setValue(MUSICBRAINZ_ALBUMARTISTID, aambid);
+			track.setValue(ALBUMARTIST, aaname);
+			track.setValue(ALBUMARTISTSORT, aasortname);
+			string tmbid = release.children["track-list"][0].children["track"][a].children["id"][0].value;
+			track.setValue(MUSICBRAINZ_TRACKID, tmbid);
+			string tmbide = locutus->database->escapeString(tmbid);
+			string ttitle = release.children["track-list"][0].children["track"][a].children["title"][0].value;
+			track.setValue(TITLE, ttitle);
+			string ttitlee = locutus->database->escapeString(ttitle);
 			track.duration = atoi(release.children["track-list"][0].children["track"][a].children["duration"][0].value.c_str());
 			ostringstream num;
 			num << a;
 			track.setValue(TRACKNUMBER, num.str());
 			string tambide = "";
 			if (release.children["track-list"][0].children["track"][a].children["artist"].size() > 0) {
-				track.setValue(MUSICBRAINZ_ARTISTID, release.children["track-list"][0].children["track"][a].children["artist"][0].children["id"][0].value);
-				tambide = locutus->database->escapeString(track.getValue(MUSICBRAINZ_ARTISTID));
-				track.setValue(ARTIST, release.children["track-list"][0].children["track"][a].children["artist"][0].children["name"][0].value);
-				string tartist = locutus->database->escapeString(track.getValue(ARTIST));
-				track.setValue(ARTISTSORT, release.children["track-list"][0].children["track"][a].children["artist"][0].children["sort-name"][0].value);
-				string tartistsort = locutus->database->escapeString(track.getValue(ARTISTSORT));
+				string tambid = release.children["track-list"][0].children["track"][a].children["artist"][0].children["id"][0].value;
+				track.setValue(MUSICBRAINZ_ARTISTID, tambid);
+				tambide = locutus->database->escapeString(tambid);
+				string tartist = release.children["track-list"][0].children["track"][a].children["artist"][0].children["name"][0].value;
+				track.setValue(ARTIST, tartist);
+				string tartiste = locutus->database->escapeString(tartist);
+				string tartistsort = release.children["track-list"][0].children["track"][a].children["artist"][0].children["sort-name"][0].value;
+				track.setValue(ARTISTSORT, tartistsort);
+				string tartistsorte = locutus->database->escapeString(tartistsort);
 				if (queries_ok) {
 					query.str("");
-					query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << tambide << "', '" << tartist << "', '" << tartistsort << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << aambide << "')";
+					query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << tambide << "', '" << tartiste << "', '" << tartistsorte << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << aambide << "')";
 					if (!locutus->database->query(query.str()))
 						queries_ok = false;
 					locutus->database->clear();
 					if (queries_ok) {
 						query.str("");
-						query << "UPDATE artist SET name = '" << tartist << "', sortname = '" << tartistsort << "', loaded = true WHERE mbid = '" << aambide << "'";
+						query << "UPDATE artist SET name = '" << tartiste << "', sortname = '" << tartistsorte << "', loaded = true WHERE mbid = '" << aambide << "'";
 						if (!locutus->database->query(query.str()))
 							queries_ok = false;
 						locutus->database->clear();
 					}
 				}
 			} else {
-				track.setValue(MUSICBRAINZ_ARTISTID, track.getValue(MUSICBRAINZ_ARTISTID));
-				tambide = locutus->database->escapeString(track.getValue(MUSICBRAINZ_ARTISTID));
-				track.setValue(ARTIST, track.getValue(ALBUMARTIST));
-				track.setValue(ARTISTSORT, track.getValue(ALBUMARTISTSORT));
+				track.setValue(MUSICBRAINZ_ARTISTID, aambid);
+				tambide = aambide;
+				track.setValue(ARTIST, aaname);
+				track.setValue(ARTISTSORT, aasortname);
 			}
-			album.tracks[a] = track;
+			album[a] = track;
 			if (queries_ok) {
 				query.str("");
 				query << "INSERT INTO track(album_id, artist_id, mbid, title, duration, tracknumber) SELECT (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), '" << tmbide << "', '" << ttitlee << "', " << track.duration << ", " << a << " WHERE NOT EXISTS (SELECT true FROM track WHERE mbid = '" << tmbide << "')";
@@ -230,19 +241,25 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 		for (vector<XMLNode>::size_type a = 0; a < root.children["metadata"][0].children["track-list"][0].children["track"].size(); ++a) {
 			XMLNode tracknode = root.children["metadata"][0].children["track-list"][0].children["track"][a];
 			Metadata track;
-			track.setValue(MUSICBRAINZ_TRACKID, tracknode.children["id"][0].value);
-			string tmbide = locutus->database->escapeString(track.getValue(MUSICBRAINZ_TRACKID));
-			track.setValue(TITLE, tracknode.children["title"][0].value);
-			string ttitlee = locutus->database->escapeString(track.getValue(TITLE));
+			string tmbid = tracknode.children["id"][0].value;
+			track.setValue(MUSICBRAINZ_TRACKID, tmbid);
+			string tmbide = locutus->database->escapeString(tmbid);
+			string ttitle = tracknode.children["title"][0].value;
+			track.setValue(TITLE, ttitle);
+			string ttitlee = locutus->database->escapeString(ttitle);
 			track.duration = atoi(tracknode.children["duration"][0].value.c_str());
-			track.setValue(MUSICBRAINZ_ARTISTID, tracknode.children["artist"][0].children["id"][0].value);
-			string armbide = locutus->database->escapeString(track.getValue(MUSICBRAINZ_ARTISTID));
-			track.setValue(ARTIST, tracknode.children["artist"][0].children["artist"][0].value);
-			string arnamee = locutus->database->escapeString(track.getValue(ARTIST));
-			track.setValue(MUSICBRAINZ_ALBUMID, tracknode.children["release-list"][0].children["release"][0].children["id"][0].value);
-			string almbide = locutus->database->escapeString(track.getValue(MUSICBRAINZ_ALBUMID));
-			track.setValue(ALBUM, tracknode.children["release-list"][0].children["release"][0].children["title"][0].value);
-			string altitlee = locutus->database->escapeString(track.getValue(ALBUM));
+			string armbid = tracknode.children["artist"][0].children["id"][0].value;
+			track.setValue(MUSICBRAINZ_ARTISTID, armbid);
+			string armbide = locutus->database->escapeString(armbid);
+			string arname = tracknode.children["artist"][0].children["artist"][0].value;
+			track.setValue(ARTIST, arname);
+			string arnamee = locutus->database->escapeString(arname);
+			string almbid = tracknode.children["release-list"][0].children["release"][0].children["id"][0].value;
+			track.setValue(MUSICBRAINZ_ALBUMID, almbid);
+			string almbide = locutus->database->escapeString(almbid);
+			string altitle = tracknode.children["release-list"][0].children["release"][0].children["title"][0].value;
+			track.setValue(ALBUM, altitle);
+			string altitlee = locutus->database->escapeString(altitle);
 			string offset = tracknode.children["release-list"][0].children["release"][0].children["track-list"][0].children["offset"][0].value;
 			int tracknum = atoi(offset.c_str()) + 1;
 			ostringstream num;
