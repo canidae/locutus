@@ -335,8 +335,10 @@ vector<Metadata> WebService::searchPUID(string puid) {
 	string wsquery = "puid=";
 	wsquery.append(puid);
 	tracks = searchMetadata(wsquery);
-	/* update puid in database */
 	for (vector<Metadata>::size_type a = 0; a < tracks.size(); ++a) {
+		/* puid isn't returned from query, so set it manually */
+		tracks[a].setValue(MUSICIP_PUID, puid);
+		/* update puid in database */
 		string embid = locutus->database->escapeString(tracks[a].getValue(MUSICBRAINZ_TRACKID));
 		if (embid == "")
 			continue;
