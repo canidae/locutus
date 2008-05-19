@@ -41,6 +41,7 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << mbid << "'";
 	if (locutus->database->query(query.str()) && locutus->database->getRows() > 0) {
 		/* cool, we got this album in our "cache" */
+		album.resize(locutus->database->getRows());
 		for (int r = 0; r < locutus->database->getRows(); ++r) {
 			Metadata track;
 			track.setValue(MUSICBRAINZ_ALBUMARTISTID, locutus->database->getString(0, 0));
@@ -68,7 +69,6 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 	string url = release_lookup_url;
 	url.append(mbid);
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
-	cout << "Looking up " << url << endl;
 	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
 		XMLNode release = root.children["metadata"][0].children["release"][0];
 		string ambid = release.children["id"][0].value;
@@ -155,6 +155,7 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 				locutus->database->clear();
 			}
 		}
+		album.resize(release.children["track-list"][0].children["track"].size());
 		for (vector<XMLNode>::size_type a = 0; a < release.children["track-list"][0].children["track"].size(); ++a) {
 			Metadata track;
 			track.setValue(MUSICBRAINZ_ALBUMID, ambid);
@@ -185,13 +186,13 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 				string tartistsorte = locutus->database->escapeString(tartistsort);
 				if (queries_ok) {
 					query.str("");
-					query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << tambide << "', '" << tartiste << "', '" << tartistsorte << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << aambide << "')";
+					query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << tambide << "', '" << tartiste << "', '" << tartistsorte << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << tambide << "')";
 					if (!locutus->database->query(query.str()))
 						queries_ok = false;
 					locutus->database->clear();
 					if (queries_ok) {
 						query.str("");
-						query << "UPDATE artist SET name = '" << tartiste << "', sortname = '" << tartistsorte << "', loaded = true WHERE mbid = '" << aambide << "'";
+						query << "UPDATE artist SET name = '" << tartiste << "', sortname = '" << tartistsorte << "', loaded = true WHERE mbid = '" << tambide << "'";
 						if (!locutus->database->query(query.str()))
 							queries_ok = false;
 						locutus->database->clear();
@@ -206,13 +207,13 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 			album[a] = track;
 			if (queries_ok) {
 				query.str("");
-				query << "INSERT INTO track(album_id, artist_id, mbid, title, duration, tracknumber) SELECT (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), '" << tmbide << "', '" << ttitlee << "', " << track.duration << ", " << a << " WHERE NOT EXISTS (SELECT true FROM track WHERE mbid = '" << tmbide << "')";
+				query << "INSERT INTO track(album_id, artist_id, mbid, title, duration, tracknumber) SELECT (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), '" << tmbide << "', '" << ttitlee << "', " << track.duration << ", " << a + 1 << " WHERE NOT EXISTS (SELECT true FROM track WHERE mbid = '" << tmbide << "')";
 				if (!locutus->database->query(query.str()))
 					queries_ok = false;
 				locutus->database->clear();
 				if (queries_ok) {
 					query.str("");
-					query << "UPDATE track SET album_id = (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), title = '" << ttitlee << "', duration = " << track.duration << ", tracknumber = " << a << " WHERE mbid = '" << tmbide << "'";
+					query << "UPDATE track SET album_id = (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), title = '" << ttitlee << "', duration = " << track.duration << ", tracknumber = " << a + 1 << " WHERE mbid = '" << tmbide << "'";
 				       if (!locutus->database->query(query.str()))
 					       queries_ok = false;
 				       locutus->database->clear();
@@ -238,7 +239,6 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 	string url = metadata_search_url;
 	url.append("?type=xml&");
 	url.append(wsquery);
-	cout << "Looking up " << url << endl;
 	vector<Metadata> tracks;
 	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
 		XMLNode tracklist = root.children["metadata"][0].children["track-list"][0];
