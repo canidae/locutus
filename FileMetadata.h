@@ -63,6 +63,7 @@ class FileMetadata : public Metadata {
 		/* methods */
 		double compareWithMetadata(Metadata target);
 		list<string> createMetadataList();
+		string getBaseNameWithoutExtension();
 		string getGroup();
 
 	private:

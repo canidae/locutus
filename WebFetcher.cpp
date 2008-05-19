@@ -33,8 +33,7 @@ void WebFetcher::lookup() {
 				} else {
 					track_puid_match[file_in_group] = false;
 					/* do meta lookup if no match on puid lookup */
-					string wsquery = "";
-					tracks = locutus->webservice->searchMetadata(wsquery);
+					tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, fm));
 				}
 			} else if (ambid != "") {
 				/* mbid lookup */
@@ -45,8 +44,7 @@ void WebFetcher::lookup() {
 				tracks = albums[ambid];
 			} else {
 				/* meta lookup */
-				string wsquery = "";
-				tracks = locutus->webservice->searchMetadata(wsquery);
+				tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, fm));
 			}
 			for (vector<Metadata>::size_type track_in_result = 0; track_in_result < tracks.size(); ++track_in_result) {
 				Metadata track = tracks[track_in_result];
@@ -146,4 +144,62 @@ void WebFetcher::lookup() {
 			}
 		}
 	}
+}
+
+string WebFetcher::makeWSQuery(string group, FileMetadata fm) {
+	ostringstream query;
+	group = protectWSString(group);
+	string bnwe = protectWSString(fm.getBaseNameWithoutExtension());
+	query << "limit=25&query=";
+	query << "tnum:(" << protectWSString(fm.getValue(TRACKNUMBER)) << " " << bnwe << ") ";
+	if (fm.duration > 0) {
+		int lower = fm.duration / 1000 - 10;
+		int upper = fm.duration / 1000 + 10;
+		if (lower < 0)
+			lower = 0;
+		query << "qdur:[" << lower << " TO " << upper << "] ";
+	}
+	query << "artist:(" << protectWSString(fm.getValue(ARTIST)) << " " << bnwe << " " << group << ") ";
+	query << "track:(" << protectWSString(fm.getValue(TITLE)) << " " << bnwe << " " << group << ") ";
+	query << "release:(" << protectWSString(fm.getValue(ALBUM)) << " " << bnwe << " " << group << ") ";
+	return query.str();
+}
+
+string WebFetcher::protectWSString(string text) {
+	/* escape these characters:
+	 * + - && || ! ( ) { } [ ] ^ " ~ * ? : \ */
+	ostringstream str;
+	for (string::size_type a = 0; a < text.size(); ++a) {
+		switch (text[a]) {
+			case '+':
+			case '-':
+			case '!':
+			case '(':
+			case ')':
+			case '{':
+			case '}':
+			case '[':
+			case ']':
+			case '^':
+			case '"':
+			case '~':
+			case '*':
+			case '?':
+			case ':':
+			case '\\':
+				str << '\\';
+				break;
+
+			case '&':
+			case '|':
+				if (a + 1 < text.size() && text[a + 1] == text[a])
+					str << '\\';
+				break;
+
+			default:
+				break;
+		}
+		str << text[a];
+	}
+	return str.str();
 }

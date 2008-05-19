@@ -153,6 +153,20 @@ list<string> FileMetadata::createMetadataList() {
 	return data;
 }
 
+string FileMetadata::getBaseNameWithoutExtension() {
+	/* return basename without extension, duh */
+	string::size_type pos = filename.find_last_of('/');
+	if (pos != string::npos && pos > 0) {
+		++pos;
+		string::size_type pos2 = filename.find_last_of('.');
+		if (pos2 != string::npos)
+			return filename.substr(pos, pos2 - pos);
+		else
+			return filename.substr(pos);
+	}
+	return "";
+}
+
 string FileMetadata::getGroup() {
 	/* returns either album, last directory name or ""
 	 * used for grouping tracks that possibly are from the same album */

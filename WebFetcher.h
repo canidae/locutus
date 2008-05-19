@@ -52,6 +52,8 @@ class WebFetcher {
 		/* methods */
 		void loadSettings();
 		void lookup();
+		string makeWSQuery(string group, FileMetadata fm);
+		string protectWSString(string text);
 
 	private:
 		/* variables */

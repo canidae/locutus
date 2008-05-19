@@ -68,6 +68,7 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 	string url = release_lookup_url;
 	url.append(mbid);
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
+	cout << "Looking up " << url << endl;
 	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
 		XMLNode release = root.children["metadata"][0].children["release"][0];
 		string ambid = release.children["id"][0].value;
@@ -75,21 +76,21 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 		string atype = release.children["type"][0].value;
 		string atypee = locutus->database->escapeString(atype);
 		string atitle = release.children["title"][0].value;
-		string atitlee = locutus->database->escapeString(atitlee);
+		string atitlee = locutus->database->escapeString(atitle);
 		string aambid = release.children["artist"][0].children["id"][0].value;
-		string aambide = locutus->database->escapeString(aambide);
+		string aambide = locutus->database->escapeString(aambid);
 		string aaname = release.children["artist"][0].children["name"][0].value;
-		string aanamee = locutus->database->escapeString(aanamee);
+		string aanamee = locutus->database->escapeString(aaname);
 		string aasortname = release.children["artist"][0].children["sort-name"][0].value;
 		string aasortnamee = locutus->database->escapeString(aasortname);
 		string areleased = "";
 		if (release.children["release-event-list"].size() > 0) {
-			areleased = release.children["released-event-list"][0].children["event"][0].children["date"][0].value;
+			areleased = release.children["release-event-list"][0].children["event"][0].children["date"][0].value;
 			bool ok = false;
 			if (areleased.size() == 10) {
 				ok = true;
 				for (int a = 0; a < 10 && ok; ++a) {
-					if (a == 4 || a == 6 || a == 8) {
+					if (a == 4 || a == 7) {
 						if (areleased[a] != '-')
 							ok = false;
 					} else {
@@ -120,6 +121,8 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 		} else {
 			areleasede = "'";
 			areleasede.append(locutus->database->escapeString(areleased));
+			if (areleased.size() == 4)
+				areleasede.append("-01-01");
 			areleasede.append("'");
 		}
 		query.str("");
@@ -235,6 +238,7 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 	string url = metadata_search_url;
 	url.append("?type=xml&");
 	url.append(wsquery);
+	cout << "Looking up " << url << endl;
 	vector<Metadata> tracks;
 	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
 		XMLNode tracklist = root.children["metadata"][0].children["track-list"][0];
