@@ -84,6 +84,7 @@ void WebFetcher::lookup() {
 			tmp.score = 0.0;
 			vector<AlbumMatch> matched(group->second.size(), tmp);
 			double album_score = 0.0;
+			int matched_tracks = 0;
 			for (map<vector<Metadata>::size_type, vector<Match> >::iterator tc = album->second.begin(); tc != album->second.end(); ++tc) {
 				int best_file = -1;
 				int best_track = -1;
@@ -108,14 +109,41 @@ void WebFetcher::lookup() {
 					}
 				}
 				if (best_track != -1) {
+					++matched_tracks;
 					matched[best_track].file = best_file;
 					matched[best_track].score = best_score;
 					album_score += best_score;
 				}
 			}
-			album_scores[album->first] = album_score;
+			if (matched_tracks == (int) group->second.size())
+				album_score *= 3;
+			else if (matched_tracks == (int) album->second.size())
+				album_score *= 2;
+			album_scores[album->first] = album_score / album->second.size();
 			album_matched[album->first] = matched;
 		}
 		/* make changes */
+		vector<bool> used_files(group->second.size(), false);
+		for (map<string, vector<Metadata> >::iterator album = albums.begin(); album != albums.end(); ++album) {
+			double max = -1.0;
+			string key = "";
+			for (map<string, double>::iterator as = album_scores.begin(); as != album_scores.end(); ++as) {
+				if (as->second > max) {
+					key = as->first;
+					max = as->second;
+				}
+			}
+			if (key == "")
+				break;
+			for (vector<Metadata>::size_type track = 0; track < album->second.size(); ++track) {
+				AlbumMatch am = album_matched[key][track];
+				if (am.file == -1 || used_files[am.file])
+					continue;
+				FileMetadata fm = locutus->files[am.file];
+				fm.setValues(albums[key][track]);
+				locutus->files[am.file] = fm;
+				used_files[am.file] = true;
+			}
+		}
 	}
 }

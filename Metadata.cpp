@@ -77,3 +77,8 @@ void Metadata::setValue(const string key, const string value) {
 		entries.push_back(entry);
 	}
 }
+
+void Metadata::setValues(Metadata metadata) {
+	for (list<Entry>::iterator e = metadata.entries.begin(); e != metadata.entries.end(); ++e)
+		setValue(e->key, e->value);
+}
