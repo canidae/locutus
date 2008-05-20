@@ -4,11 +4,14 @@
 WebService::WebService(Locutus *locutus) {
 	pthread_mutex_init(&mutex, NULL);
 	this->locutus = locutus;
+	root = new XMLNode;
 }
 
 /* destructors */
 WebService::~WebService() {
 	pthread_mutex_destroy(&mutex);
+	deleteTree(root);
+	delete root;
 }
 
 /* methods */
@@ -69,23 +72,23 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 	string url = release_lookup_url;
 	url.append(mbid);
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
-	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
-		XMLNode release = root.children["metadata"][0].children["release"][0];
-		string ambid = release.children["id"][0].value;
+	if (fetch(url.c_str()) && root->children["metadata"].size() > 0) {
+		XMLNode *release = root->children["metadata"][0]->children["release"][0];
+		string ambid = release->children["id"][0]->value;
 		string ambide = locutus->database->escapeString(ambid);
-		string atype = release.children["type"][0].value;
+		string atype = release->children["type"][0]->value;
 		string atypee = locutus->database->escapeString(atype);
-		string atitle = release.children["title"][0].value;
+		string atitle = release->children["title"][0]->value;
 		string atitlee = locutus->database->escapeString(atitle);
-		string aambid = release.children["artist"][0].children["id"][0].value;
+		string aambid = release->children["artist"][0]->children["id"][0]->value;
 		string aambide = locutus->database->escapeString(aambid);
-		string aaname = release.children["artist"][0].children["name"][0].value;
+		string aaname = release->children["artist"][0]->children["name"][0]->value;
 		string aanamee = locutus->database->escapeString(aaname);
-		string aasortname = release.children["artist"][0].children["sort-name"][0].value;
+		string aasortname = release->children["artist"][0]->children["sort-name"][0]->value;
 		string aasortnamee = locutus->database->escapeString(aasortname);
 		string areleased = "";
-		if (release.children["release-event-list"].size() > 0) {
-			areleased = release.children["release-event-list"][0].children["event"][0].children["date"][0].value;
+		if (release->children["release-event-list"].size() > 0) {
+			areleased = release->children["release-event-list"][0]->children["event"][0]->children["date"][0]->value;
 			bool ok = false;
 			if (areleased.size() == 10) {
 				ok = true;
@@ -155,33 +158,33 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 				locutus->database->clear();
 			}
 		}
-		album.resize(release.children["track-list"][0].children["track"].size());
-		for (vector<XMLNode>::size_type a = 0; a < release.children["track-list"][0].children["track"].size(); ++a) {
+		album.resize(release->children["track-list"][0]->children["track"].size());
+		for (vector<XMLNode *>::size_type a = 0; a < release->children["track-list"][0]->children["track"].size(); ++a) {
 			Metadata track;
 			track.setValue(MUSICBRAINZ_ALBUMID, ambid);
 			track.setValue(ALBUM, atitle);
 			track.setValue(MUSICBRAINZ_ALBUMARTISTID, aambid);
 			track.setValue(ALBUMARTIST, aaname);
 			track.setValue(ALBUMARTISTSORT, aasortname);
-			string tmbid = release.children["track-list"][0].children["track"][a].children["id"][0].value;
+			string tmbid = release->children["track-list"][0]->children["track"][a]->children["id"][0]->value;
 			track.setValue(MUSICBRAINZ_TRACKID, tmbid);
 			string tmbide = locutus->database->escapeString(tmbid);
-			string ttitle = release.children["track-list"][0].children["track"][a].children["title"][0].value;
+			string ttitle = release->children["track-list"][0]->children["track"][a]->children["title"][0]->value;
 			track.setValue(TITLE, ttitle);
 			string ttitlee = locutus->database->escapeString(ttitle);
-			track.duration = atoi(release.children["track-list"][0].children["track"][a].children["duration"][0].value.c_str());
+			track.duration = atoi(release->children["track-list"][0]->children["track"][a]->children["duration"][0]->value.c_str());
 			ostringstream num;
 			num << a;
 			track.setValue(TRACKNUMBER, num.str());
 			string tambide = "";
-			if (release.children["track-list"][0].children["track"][a].children["artist"].size() > 0) {
-				string tambid = release.children["track-list"][0].children["track"][a].children["artist"][0].children["id"][0].value;
+			if (release->children["track-list"][0]->children["track"][a]->children["artist"].size() > 0) {
+				string tambid = release->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["id"][0]->value;
 				track.setValue(MUSICBRAINZ_ARTISTID, tambid);
 				tambide = locutus->database->escapeString(tambid);
-				string tartist = release.children["track-list"][0].children["track"][a].children["artist"][0].children["name"][0].value;
+				string tartist = release->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["name"][0]->value;
 				track.setValue(ARTIST, tartist);
 				string tartiste = locutus->database->escapeString(tartist);
-				string tartistsort = release.children["track-list"][0].children["track"][a].children["artist"][0].children["sort-name"][0].value;
+				string tartistsort = release->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["sort-name"][0]->value;
 				track.setValue(ARTISTSORT, tartistsort);
 				string tartistsorte = locutus->database->escapeString(tartistsort);
 				if (queries_ok) {
@@ -240,31 +243,31 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 	url.append("?type=xml&");
 	url.append(wsquery);
 	vector<Metadata> tracks;
-	if (fetch(url.c_str()) && root.children["metadata"].size() > 0) {
-		XMLNode tracklist = root.children["metadata"][0].children["track-list"][0];
-		for (vector<XMLNode>::size_type a = 0; a < root.children["metadata"][0].children["track-list"][0].children["track"].size(); ++a) {
-			XMLNode tracknode = root.children["metadata"][0].children["track-list"][0].children["track"][a];
+	if (fetch(url.c_str()) && root->children["metadata"].size() > 0 && root->children["metadata"][0]->children["track-list"].size() > 0) {
+		for (vector<XMLNode *>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
+			XMLNode *tracknode = root->children["metadata"][0]->children["track-list"][0]->children["track"][a];
 			Metadata track;
-			string tmbid = tracknode.children["id"][0].value;
+			string tmbid = tracknode->children["id"][0]->value;
 			track.setValue(MUSICBRAINZ_TRACKID, tmbid);
 			string tmbide = locutus->database->escapeString(tmbid);
-			string ttitle = tracknode.children["title"][0].value;
+			string ttitle = tracknode->children["title"][0]->value;
 			track.setValue(TITLE, ttitle);
 			string ttitlee = locutus->database->escapeString(ttitle);
-			track.duration = atoi(tracknode.children["duration"][0].value.c_str());
-			string armbid = tracknode.children["artist"][0].children["id"][0].value;
+			if (tracknode->children["duration"].size() > 0)
+				track.duration = atoi(tracknode->children["duration"][0]->value.c_str());
+			string armbid = tracknode->children["artist"][0]->children["id"][0]->value;
 			track.setValue(MUSICBRAINZ_ARTISTID, armbid);
 			string armbide = locutus->database->escapeString(armbid);
-			string arname = tracknode.children["artist"][0].children["artist"][0].value;
+			string arname = tracknode->children["artist"][0]->children["name"][0]->value;
 			track.setValue(ARTIST, arname);
 			string arnamee = locutus->database->escapeString(arname);
-			string almbid = tracknode.children["release-list"][0].children["release"][0].children["id"][0].value;
+			string almbid = tracknode->children["release-list"][0]->children["release"][0]->children["id"][0]->value;
 			track.setValue(MUSICBRAINZ_ALBUMID, almbid);
 			string almbide = locutus->database->escapeString(almbid);
-			string altitle = tracknode.children["release-list"][0].children["release"][0].children["title"][0].value;
+			string altitle = tracknode->children["release-list"][0]->children["release"][0]->children["title"][0]->value;
 			track.setValue(ALBUM, altitle);
 			string altitlee = locutus->database->escapeString(altitle);
-			string offset = tracknode.children["release-list"][0].children["release"][0].children["track-list"][0].children["offset"][0].value;
+			string offset = tracknode->children["release-list"][0]->children["release"][0]->children["track-list"][0]->children["offset"][0]->value;
 			int tracknum = atoi(offset.c_str()) + 1;
 			ostringstream num;
 			num << tracknum;
@@ -363,6 +366,17 @@ void WebService::close() {
 	URLStream::close();
 }
 
+void WebService::deleteTree(XMLNode *node) {
+	for (map<string, vector<XMLNode *> >::iterator it = node->children.begin(); it != node->children.end(); ++it) {
+		for (vector<XMLNode *>::size_type a = 0; a < it->second.size(); ++a) {
+			deleteTree(it->second[a]);
+			delete it->second[a];
+		}
+		it->second.clear();
+	}
+	node->children.clear();
+}
+
 void WebService::endElement(const unsigned char *name) {
 	if (curnode != NULL)
 		curnode = curnode->parent;
@@ -370,35 +384,41 @@ void WebService::endElement(const unsigned char *name) {
 
 bool WebService::fetch(const char *url) {
 	pthread_mutex_lock(&mutex);
-	cout << url << endl;
-	status = get(url);
+	char *urle = new char[65536];
+	urle = urlEncode(url, urle, 65536);
+	cout << urle << endl;
+	status = get(urle);
+	delete [] urle;
 	if (status) {
 		cout << "failed; reason=" << status << endl;
 		close();
 		return false;
 	}
-	root.parent = NULL;
-	root.children.clear();
-	root.key = "root";
-	root.value = "";
-	curnode = &root;
+	deleteTree(root);
+	root->parent = NULL;
+	root->children.clear();
+	root->key = "root";
+	root->value = "";
+	curnode = root;
 	if (!parse())
 		cout << "not well formed..." << endl;
 	close();
-	printXML(&root);
+	printXML(root, 0);
 	return true;
 }
 
-void WebService::printXML(XMLNode *startnode) {
+void WebService::printXML(XMLNode *startnode, int indent) {
 	if (startnode == NULL)
 		return;
+	for (int a = 0; a < indent; ++a)
+		cout << "  ";
 	if (startnode->parent == NULL)
 		cout << startnode->key << ": " << startnode->value << endl;
 	else
-		cout << startnode->key << ": " << startnode->value << " (parent: " << startnode->parent->key << ")" << endl;
-	for (map<string, vector<XMLNode> >::iterator it = startnode->children.begin(); it != startnode->children.end(); ++it) {
-		for (vector<XMLNode>::size_type a = 0; a < it->second.size(); ++a)
-			printXML(&it->second[a]);
+		cout << startnode->key << " @" << startnode << ": " << startnode->value << " (parent: " << startnode->parent->key << " @" << startnode->parent << ")" << endl;
+	for (map<string, vector<XMLNode *> >::iterator it = startnode->children.begin(); it != startnode->children.end(); ++it) {
+		for (vector<XMLNode *>::size_type a = 0; a < it->second.size(); ++a)
+			printXML(it->second[a], indent + 1);
 	}
 }
 
@@ -408,33 +428,19 @@ int WebService::read(unsigned char *buffer, size_t len) {
 }
 
 void WebService::startElement(const unsigned char *name, const unsigned char **attr) {
-	XMLNode childnode;
-	childnode.parent = curnode;
-	childnode.key = (char *) name;
-	childnode.value = "";
-	curnode->children[childnode.key].push_back(childnode);
-	if (curnode->children[childnode.key].size() > 1)
-		uniteChildrenWithParent(curnode, childnode.key);
-	curnode = &curnode->children[childnode.key][curnode->children[childnode.key].size() - 1];
+	XMLNode *childnode = new XMLNode;
+	childnode->parent = curnode;
+	childnode->key = (char *) name;
+	childnode->value = "";
+	curnode->children[childnode->key].push_back(childnode);
+	curnode = curnode->children[childnode->key][curnode->children[childnode->key].size() - 1];
 	if (attr != NULL) {
 		while (*attr != NULL) {
-			childnode.parent = curnode;
-			childnode.key = (char *) *(attr++);
-			childnode.value = (char *) *(attr++);
-			curnode->children[childnode.key].push_back(childnode);
-			if (curnode->children[childnode.key].size() > 1)
-				uniteChildrenWithParent(curnode, childnode.key);
-		}
-	}
-}
-
-void WebService::uniteChildrenWithParent(XMLNode *parent, string key) {
-	/* when we add more elements to a vector the other elements might be recreated.
-	 * this means they'll get a new memory location, and the "parent" pointer in child nodes is invalid */
-	for (vector<XMLNode>::size_type a = 0; a < parent->children[key].size() - 1; ++a) {
-		for (map<string, vector<XMLNode> >::iterator it = parent->children[key][a].children.begin(); it != parent->children[key][a].children.end(); ++it) {
-			for (vector<XMLNode>::size_type a = 0; a < it->second.size(); ++a)
-				it->second[a].parent = parent;
+			childnode = new XMLNode;
+			childnode->parent = curnode;
+			childnode->key = (char *) *(attr++);
+			childnode->value = (char *) *(attr++);
+			curnode->children[childnode->key].push_back(childnode);
 		}
 	}
 }

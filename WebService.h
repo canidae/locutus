@@ -34,7 +34,7 @@ using namespace std;
 
 struct XMLNode {
 	XMLNode *parent;
-	map<string, vector<XMLNode> > children;
+	map<string, vector<XMLNode *> > children;
 	string key;
 	string value;
 };
@@ -67,16 +67,16 @@ class WebService : public URLStream, public XMLStream {
 		string release_lookup_url;
 		int album_cache_lifetime;
 		int puid_cache_lifetime;
-		XMLNode root;
+		XMLNode *root;
 		XMLNode *curnode;
 
 		/* methods */
 		void characters(const unsigned char *text, size_t len);
 		void close();
-		void uniteChildrenWithParent(XMLNode *parent, string key);
+		void deleteTree(XMLNode *node);
 		void endElement(const unsigned char *name);
 		bool fetch(const char *url);
-		void printXML(XMLNode *startnode);
+		void printXML(XMLNode *startnode, int indent);
 		int read(unsigned char *buffer, size_t len);
 		void startElement(const unsigned char *name, const unsigned char **attr);
 };
