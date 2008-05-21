@@ -57,8 +57,12 @@ string Metadata::getValue(const string key) {
 }
 
 void Metadata::setValue(const string key, const string value) {
-	string tkey = key.substr(key.find_first_not_of(" "), key.find_last_not_of(" "));
-	string tvalue = value.substr(value.find_first_not_of(" "), value.find_last_not_of(" "));
+	string::size_type p1 = key.find_first_not_of(" ");
+	string::size_type p2 = value.find_first_not_of(" ");
+	if (p1 == string::npos || p2 == string::npos)
+		return;
+	string tkey = key.substr(p1, key.find_last_not_of(" ") - p1);
+	string tvalue = value.substr(p2, value.find_last_not_of(" ") - p2);
 	if (tkey == "" || tvalue == "")
 		return;
 	bool found = false;

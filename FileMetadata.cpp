@@ -4,6 +4,7 @@
 FileMetadata::FileMetadata(Locutus *locutus, string filename) {
 	this->locutus = locutus;
 	this->filename = filename;
+	puid_lookup = false;
 	ostringstream query;
 	query << "SELECT * FROM v_file_lookup WHERE filename = '" << locutus->database->escapeString(filename) << "'";
 	if (locutus->database->query(query.str()) && locutus->database->getRows() > 0) {
@@ -32,7 +33,6 @@ FileMetadata::FileMetadata(Locutus *locutus, string filename) {
 	channels = 0;
 	samplerate = 0;
 	type = 0;
-	puid_lookup = false;
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos) {
 		string ext = filename.substr(pos);
