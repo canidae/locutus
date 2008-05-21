@@ -1,0 +1,5 @@
+daemon
+------
+* code should be cleaned up, a lot. for starters, create a proper db-layer
+* perhaps drop the key-value system in metadata and rather make a fixed class "Track" with "duration", "title", etc.
+  would reflect the database a bit better, and would be easier to work with.

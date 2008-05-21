@@ -16,16 +16,16 @@ Metadata::~Metadata() {
 /* methods */
 bool Metadata::equalMBID(Metadata target) {
 	string value = getValue(MUSICBRAINZ_ALBUMARTISTID);
-	if (value != "" && value != target.getValue(MUSICBRAINZ_ALBUMARTISTID))
+	if (value == "" || value != target.getValue(MUSICBRAINZ_ALBUMARTISTID))
 		return false;
 	value = getValue(MUSICBRAINZ_ALBUMID);
-	if (value != "" && value != target.getValue(MUSICBRAINZ_ALBUMID))
+	if (value == "" || value != target.getValue(MUSICBRAINZ_ALBUMID))
 		return false;
 	value = getValue(MUSICBRAINZ_ARTISTID);
-	if (value != "" && value != target.getValue(MUSICBRAINZ_ARTISTID))
+	if (value == "" || value != target.getValue(MUSICBRAINZ_ARTISTID))
 		return false;
 	value = getValue(MUSICBRAINZ_TRACKID);
-	if (value != "" && value != target.getValue(MUSICBRAINZ_TRACKID))
+	if (value == "" || value != target.getValue(MUSICBRAINZ_TRACKID))
 		return false;
 	return true;
 }
@@ -61,8 +61,8 @@ void Metadata::setValue(const string key, const string value) {
 	string::size_type p2 = value.find_first_not_of(" ");
 	if (p1 == string::npos || p2 == string::npos)
 		return;
-	string tkey = key.substr(p1, key.find_last_not_of(" ") - p1);
-	string tvalue = value.substr(p2, value.find_last_not_of(" ") - p2);
+	string tkey = key.substr(p1, key.find_last_not_of(" ") - p1 + 1);
+	string tvalue = value.substr(p2, value.find_last_not_of(" ") - p2 + 1);
 	if (tkey == "" || tvalue == "")
 		return;
 	bool found = false;

@@ -139,10 +139,10 @@ double FileMetadata::compareWithMetadata(Metadata target) {
 	double match[4][source.size()];
 	int pos = 0;
 	for (list<string>::iterator s = source.begin(); s != source.end(); ++s) {
-		match[0][pos] = locutus->levenshtein->similarity(target.getValue(ALBUM), *s);
-		match[1][pos] = locutus->levenshtein->similarity(target.getValue(ARTIST), *s);
-		match[2][pos] = locutus->levenshtein->similarity(target.getValue(TITLE), *s);
-		match[3][pos] = (target.getValue(TRACKNUMBER) == *s) ? 1.0 : 0.0;
+		match[0][pos] = locutus->levenshtein->similarity(*s, target.getValue(ALBUM));
+		match[1][pos] = locutus->levenshtein->similarity(*s, target.getValue(ARTIST));
+		match[2][pos] = locutus->levenshtein->similarity(*s, target.getValue(TITLE));
+		match[3][pos] = (*s != "" && *s == target.getValue(TRACKNUMBER)) ? 1.0 : 0.0;
 		++pos;
 	}
 	/* find the combination that gives the best score

@@ -69,6 +69,26 @@ void WebFetcher::lookup() {
 						match.file = fig2;
 						matches[ambid][track_in_result].push_back(match);
 						/* TODO: store possible match in database */
+						ostringstream query;
+						query << "INSERT INTO possible_match(file_id, track_id, meta_score, mbid_match, puid_match) SELECT (SELECT file_id FROM file WHERE filename = '";
+						query << locutus->database->escapeString(fm2.filename) << "'), (SELECT track_id FROM track WHERE mbid = '";
+						query << locutus->database->escapeString(ambid) << "'), ";
+						query << match.meta_score << ", ";
+						query << (match.mbid_match ? "true" : "false") << ", ";
+						query << (match.puid_match ? "true" : "false") << " WHERE NOT EXISTS (SELECT true FROM file WHERE filename = '";
+						query << locutus->database->escapeString(fm2.filename) << "' UNION SELECT true FROM track WHERE mbid = '";
+						query << locutus->database->escapeString(ambid) << "')";
+						locutus->database->query(query.str());
+						locutus->database->clear();
+						query.str("");
+						query << "UPDATE possible_match SET meta_score = ";
+						query << match.meta_score << ", mbid_match = ";
+						query << (match.mbid_match ? "true" : "false") << ", puid_match = ";
+						query << (match.puid_match ? "true" : "false") << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '";
+						query << locutus->database->escapeString(fm2.filename) << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '";
+						query << locutus->database->escapeString(ambid) << "')";
+						locutus->database->query(query.str());
+						locutus->database->clear();
 					}
 				}
 			}
