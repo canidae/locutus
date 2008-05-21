@@ -37,11 +37,7 @@ void WebFetcher::lookup() {
 				}
 			} else if (ambid != "") {
 				/* mbid lookup */
-				if (albums.find(ambid) == albums.end()) {
-					vector<Metadata> album = locutus->webservice->fetchAlbum(ambid);
-					albums[ambid] = album;
-				}
-				tracks = albums[ambid];
+				tracks = locutus->webservice->fetchAlbum(ambid);
 			} else {
 				/* meta lookup */
 				tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, fm));
@@ -68,16 +64,16 @@ void WebFetcher::lookup() {
 							continue; // too low score
 						match.file = fig2;
 						matches[ambid][track_in_result].push_back(match);
-						/* TODO: store possible match in database */
+						/* store possible match in database */
 						ostringstream query;
 						query << "INSERT INTO possible_match(file_id, track_id, meta_score, mbid_match, puid_match) SELECT (SELECT file_id FROM file WHERE filename = '";
 						query << locutus->database->escapeString(fm2.filename) << "'), (SELECT track_id FROM track WHERE mbid = '";
-						query << locutus->database->escapeString(ambid) << "'), ";
+						query << locutus->database->escapeString(albumtrack->getValue(MUSICBRAINZ_TRACKID)) << "'), ";
 						query << match.meta_score << ", ";
 						query << (match.mbid_match ? "true" : "false") << ", ";
-						query << (match.puid_match ? "true" : "false") << " WHERE NOT EXISTS (SELECT true FROM file WHERE filename = '";
-						query << locutus->database->escapeString(fm2.filename) << "' UNION SELECT true FROM track WHERE mbid = '";
-						query << locutus->database->escapeString(ambid) << "')";
+						query << (match.puid_match ? "true" : "false") << " WHERE NOT EXISTS (SELECT true FROM file f JOIN possible_match pm ON (f.file_id = pm.file_id) JOIN track t ON (pm.track_id = t.track_id) WHERE f.filename = '";
+						query << locutus->database->escapeString(fm2.filename) << "' AND t.mbid = '";
+						query << locutus->database->escapeString(albumtrack->getValue(MUSICBRAINZ_TRACKID)) << "')";
 						locutus->database->query(query.str());
 						locutus->database->clear();
 						query.str("");
@@ -86,7 +82,7 @@ void WebFetcher::lookup() {
 						query << (match.mbid_match ? "true" : "false") << ", puid_match = ";
 						query << (match.puid_match ? "true" : "false") << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '";
 						query << locutus->database->escapeString(fm2.filename) << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '";
-						query << locutus->database->escapeString(ambid) << "')";
+						query << locutus->database->escapeString(albumtrack->getValue(MUSICBRAINZ_TRACKID)) << "')";
 						locutus->database->query(query.str());
 						locutus->database->clear();
 					}
