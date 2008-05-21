@@ -4,6 +4,30 @@
 FileMetadata::FileMetadata(Locutus *locutus, string filename) {
 	this->locutus = locutus;
 	this->filename = filename;
+	ostringstream query;
+	query << "SELECT * FROM v_file_lookup WHERE filename = '" << locutus->database->escapeString(filename) << "'";
+	if (locutus->database->query(query.str()) && locutus->database->getRows() > 0) {
+		duration = locutus->database->getInt(0, 1);
+		channels = locutus->database->getInt(0, 2);
+		bitrate = locutus->database->getInt(0, 3);
+		samplerate = locutus->database->getInt(0, 4);
+		setValue(MUSICIP_PUID, locutus->database->getString(0, 5));
+		setValue(ALBUM, locutus->database->getString(0, 6));
+		setValue(ALBUMARTIST, locutus->database->getString(0, 7));
+		setValue(ALBUMARTISTSORT, locutus->database->getString(0, 8));
+		setValue(ARTIST, locutus->database->getString(0, 9));
+		setValue(ARTISTSORT, locutus->database->getString(0, 10));
+		setValue(MUSICBRAINZ_ALBUMARTISTID, locutus->database->getString(0, 11));
+		setValue(MUSICBRAINZ_ALBUMID, locutus->database->getString(0, 12));
+		setValue(MUSICBRAINZ_ARTISTID, locutus->database->getString(0, 13));
+		setValue(MUSICBRAINZ_TRACKID, locutus->database->getString(0, 14));
+		setValue(TITLE, locutus->database->getString(0, 15));
+		setValue(TRACKNUMBER, locutus->database->getString(0, 16));
+		setValue(YEAR, locutus->database->getString(0, 17));
+		locutus->database->clear();
+		return;
+	}
+	locutus->database->clear();
 	bitrate = 0;
 	channels = 0;
 	samplerate = 0;
@@ -66,6 +90,41 @@ FileMetadata::FileMetadata(Locutus *locutus, string filename) {
 			//delete file;
 		}
 	}
+	/* insert in database */
+	string puid = getValue(MUSICIP_PUID);
+	if (puid != "") {
+		query.str("");
+		query << "INSERT INTO puid(puid) VALUES ('" << locutus->database->escapeString(puid) << "')";
+		locutus->database->query(query.str());
+	}
+	query.str("");
+	query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, ";
+	if (puid != "")
+		query << "puid_id, ";
+	query << "album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, year) VALUES ('";
+	query << locutus->database->escapeString(filename) << "', ";
+	query << duration << ", ";
+	query << channels << ", ";
+	query << bitrate << ", ";
+	query << samplerate << ", ";
+	if (puid != "")
+		query << "(SELECT puid_id FROM puid WHERE puid = '" << locutus->database->escapeString(puid) << "'), '";
+	else
+		query << "'";
+	query << locutus->database->escapeString(getValue(ALBUM)) << "', '";
+	query << locutus->database->escapeString(getValue(ALBUMARTIST)) << "', '";
+	query << locutus->database->escapeString(getValue(ALBUMARTISTSORT)) << "', '";
+	query << locutus->database->escapeString(getValue(ARTIST)) << "', '";
+	query << locutus->database->escapeString(getValue(ARTISTSORT)) << "', '";
+	query << locutus->database->escapeString(getValue(MUSICBRAINZ_ALBUMARTISTID)) << "', '";
+	query << locutus->database->escapeString(getValue(MUSICBRAINZ_ALBUMID)) << "', '";
+	query << locutus->database->escapeString(getValue(MUSICBRAINZ_ARTISTID)) << "', '";
+	query << locutus->database->escapeString(getValue(MUSICBRAINZ_TRACKID)) << "', '";
+	query << locutus->database->escapeString(getValue(TITLE)) << "', '";
+	query << locutus->database->escapeString(getValue(TRACKNUMBER)) << "', '";
+	query << locutus->database->escapeString(getValue(YEAR)) << "')";
+	locutus->database->query(query.str());
+	locutus->database->clear();
 }
 
 /* destructors */

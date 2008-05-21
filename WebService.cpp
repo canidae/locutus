@@ -52,17 +52,16 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 			track.setValue(ALBUMARTISTSORT, locutus->database->getString(0, 2));
 			track.setValue(MUSICBRAINZ_ALBUMID, locutus->database->getString(0, 3));
 			//album.type = locutus->database->getString(0, 4);
-			// 0, 5 is album_updated, not needed
-			track.setValue(ALBUM, locutus->database->getString(0, 6));
-			//album.released = locutus->database->getString(0, 7);
-			track.setValue(MUSICBRAINZ_TRACKID, locutus->database->getString(r, 8));
-			track.setValue(TITLE, locutus->database->getString(r, 9));
-			track.duration = locutus->database->getInt(r, 10);
-			track.setValue(TRACKNUMBER, locutus->database->getString(r, 11));
-			track.setValue(MUSICBRAINZ_ARTISTID, locutus->database->getString(r, 12));
-			track.setValue(ARTIST, locutus->database->getString(r, 13));
-			track.setValue(ARTISTSORT, locutus->database->getString(r, 14));
-			album[locutus->database->getInt(0, 11)] = track;
+			track.setValue(ALBUM, locutus->database->getString(0, 5));
+			//album.released = locutus->database->getString(0, 6);
+			track.setValue(MUSICBRAINZ_TRACKID, locutus->database->getString(r, 7));
+			track.setValue(TITLE, locutus->database->getString(r, 8));
+			track.duration = locutus->database->getInt(r, 9);
+			track.setValue(TRACKNUMBER, locutus->database->getString(r, 10));
+			track.setValue(MUSICBRAINZ_ARTISTID, locutus->database->getString(r, 11));
+			track.setValue(ARTIST, locutus->database->getString(r, 12));
+			track.setValue(ARTISTSORT, locutus->database->getString(r, 13));
+			album[locutus->database->getInt(0, 10)] = track;
 		}
 		locutus->database->clear();
 		return album;

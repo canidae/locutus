@@ -57,23 +57,25 @@ string Metadata::getValue(const string key) {
 }
 
 void Metadata::setValue(const string key, const string value) {
-	if (key == "" || value == "")
+	string tkey = key.substr(key.find_first_not_of(" "), key.find_last_not_of(" "));
+	string tvalue = value.substr(value.find_first_not_of(" "), value.find_last_not_of(" "));
+	if (tkey == "" || tvalue == "")
 		return;
 	bool found = false;
 	for (list<Entry>::iterator e = entries.begin(); e != entries.end(); ++e) {
-		if (e->key != key)
+		if (e->key != tkey)
 			continue;
 		if (found) {
 			entries.erase(e);
 		} else {
-			e->value = value;
+			e->value = tvalue;
 			found = true;
 		}
 	}
 	if (!found) {
 		Entry entry;
-		entry.key = key;
-		entry.value = value;
+		entry.key = tkey;
+		entry.value = tvalue;
 		entries.push_back(entry);
 	}
 }

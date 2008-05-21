@@ -1,7 +1,7 @@
 CXX = g++
 RM = rm -f
 CXXFLAGS = -O0 -Wall -g -I/usr/include/postgresql `taglib-config --cflags`
-LDFLAGS = -lccgnu2 -lccext2 -pthread -lpq `taglib-config --libs`
+LDFLAGS = -lccgnu2 -lccext2 -lpq `taglib-config --libs`
 OBJECTS = Database.o FileMetadata.o FileMetadataConstants.o FileReader.o Levenshtein.o Locutus.o Metadata.o PUIDGenerator.o Settings.o WebFetcher.o WebService.o
 
 locutus: $(OBJECTS)
