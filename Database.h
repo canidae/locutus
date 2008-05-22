@@ -4,10 +4,14 @@
 /* connection (FIXME: should be config file) */
 #define CONNECTION_STRING "host=localhost user=locutus password=locutus dbname=locutus"
 
+/* forward declare */
+class Database;
+
 /* includes */
 #include <iostream>
 #include <libpq-fe.h>
 #include <string>
+#include "Locutus.h"
 
 /* namespaces */
 using namespace std;
@@ -15,10 +19,8 @@ using namespace std;
 /* Database */
 class Database {
 	public:
-		/* variables */
-
 		/* constructors */
-		Database();
+		Database(Locutus *locutus);
 
 		/* destructors */
 		~Database();
@@ -37,11 +39,10 @@ class Database {
 
 	private:
 		/* variables */
+		Locutus *locutus;
 		pthread_mutex_t mutex;
 		bool got_result;
 		PGconn *pg_connection;
 		PGresult *pg_result;
-
-		/* methods */
 };
 #endif

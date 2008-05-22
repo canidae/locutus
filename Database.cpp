@@ -1,12 +1,13 @@
 #include "Database.h"
 
 /* constructors */
-Database::Database() {
+Database::Database(Locutus *locutus) {
 	pthread_mutex_init(&mutex, NULL);
+	this->locutus = locutus;
 	got_result = false;
 	pg_connection = PQconnectdb(CONNECTION_STRING);
 	if (PQstatus(pg_connection) != CONNECTION_OK) {
-		cerr << "Unable to connect to the database" << endl;
+		locutus->debug(DEBUG_ERROR, "Unable to connect to the database");
 		exit(1);
 	}
 }
@@ -67,13 +68,18 @@ bool Database::query(const string q) {
 bool Database::query(const char *q) {
 	pthread_mutex_lock(&mutex);
 	got_result = true;
-	cout << "Query: " << q << endl;
+	string msg = "Query: ";
+	msg.append(q);
+	locutus->debug(DEBUG_INFO, msg);
 	pg_result = PQexec(pg_connection, q);
 	int status = PQresultStatus(pg_result);
 	if (status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK)
 		return true;
-	cerr << PQresultErrorMessage(pg_result) << "Query: " << q << endl;
-	cerr << "Status: " << status << endl;
-	cerr << "Error: " << PQresultErrorMessage(pg_result) << endl;
+	msg = "Query failed: ";
+	msg.append(q);
+	locutus->debug(DEBUG_WARNING, msg);
+	msg = "Query error: ";
+	msg.append(PQresultErrorMessage(pg_result));
+	locutus->debug(DEBUG_WARNING, msg);
 	return false;
 }

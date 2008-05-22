@@ -3,7 +3,7 @@
 /* constructors */
 Locutus::Locutus() {
 	debugfile = new ofstream("locutus.log", ios::app);
-	database = new Database();
+	database = new Database(this);
 	levenshtein = new Levenshtein();
 	settings = new Settings(this);
 	fmconst = new FileMetadataConstants(this);
