@@ -17,14 +17,8 @@ using namespace std;
 class Track {
 	public:
 		/* variables */
-		Locutus *locutus;
+		Album *album;
 		int duration;
-		string album;
-		string albumartist;
-		string albumartistid;
-		string albumartistsort;
-		string albumid;
-		string albumtype;
 		string artist;
 		string artistid;
 		string artistsort;
@@ -35,7 +29,7 @@ class Track {
 		string tracknumber;
 
 		/* constructors */
-		Track(Locutus *locutus);
+		Track(Locutus *locutus, Album *album);
 
 		/* destructors */
 		~Track();
@@ -45,6 +39,7 @@ class Track {
 
 	private:
 		/* variables */
+		Locutus *locutus;
 
 		/* methods */
 };

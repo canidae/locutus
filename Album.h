@@ -18,7 +18,13 @@ using namespace std;
 class Album {
 	public:
 		/* variables */
-		Locutus *locutus;
+		string album;
+		string albumartist;
+		string albumartistid;
+		string albumartistsort;
+		string albumid;
+		string albumtype;
+		string released;
 		vector<Track *> tracks;
 
 		/* constructors */
@@ -33,6 +39,7 @@ class Album {
 
 	private:
 		/* variables */
+		Locutus *locutus;
 
 		/* methods */
 };
