@@ -9,6 +9,7 @@ Track::Track(Locutus *locutus) {
 	albumartistid = "";
 	albumartistsort = "";
 	albumid = "";
+	albumtype = "";
 	artist = "";
 	artistid = "";
 	artistsort = "";
@@ -24,3 +25,8 @@ Track::~Track() {
 }
 
 /* methods */
+bool Track::saveToCache() {
+	if (trackid.size() != 36)
+		return false;
+	return true;
+}

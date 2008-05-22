@@ -24,6 +24,7 @@ class Track {
 		string albumartistid;
 		string albumartistsort;
 		string albumid;
+		string albumtype;
 		string artist;
 		string artistid;
 		string artistsort;
@@ -40,6 +41,7 @@ class Track {
 		~Track();
 
 		/* methods */
+		bool saveToCache();
 
 	private:
 		/* variables */

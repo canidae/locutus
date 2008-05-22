@@ -2,6 +2,7 @@
 
 /* constructors */
 Locutus::Locutus() {
+	debugfile = new ofstream("locutus.log", ios::app);
 	database = new Database();
 	levenshtein = new Levenshtein();
 	settings = new Settings(this);
@@ -14,6 +15,8 @@ Locutus::Locutus() {
 
 /* destructors */
 Locutus::~Locutus() {
+	debugfile->close();
+	delete debugfile;
 	delete puidgen;
 	delete webfetcher;
 	delete webservice;
@@ -25,6 +28,34 @@ Locutus::~Locutus() {
 }
 
 /* methods */
+void Locutus::debug(int level, string text) {
+	time_t rawtime;
+	time(&rawtime);
+	*debugfile << asctime(localtime(&rawtime)) << " ";
+	switch (level) {
+		case DEBUG_ERROR:
+			*debugfile << "ERROR: ";
+			break;
+
+		case DEBUG_WARNING:
+			*debugfile << "WARNING: ";
+			break;
+
+		case DEBUG_NOTICE:
+			*debugfile << "NOTICE: ";
+			break;
+
+		case DEBUG_INFO:
+			*debugfile << "INFO: ";
+			break;
+
+		default:
+			*debugfile << "UNKNOWN: ";
+			break;
+	}
+	*debugfile << text << endl;
+}
+
 long Locutus::run() {
 	/* load settings */
 	loadSettings();

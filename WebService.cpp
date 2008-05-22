@@ -128,7 +128,6 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 			areleasede.append("'");
 		}
 		query.str("");
-		query.str("");
 		query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << aambide << "', '" << aanamee << "', '" << aasortnamee << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << aambide << "')";
 		locutus->database->query(query.str());
 		locutus->database->clear();

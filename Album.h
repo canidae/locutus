@@ -29,6 +29,7 @@ class Album {
 
 		/* methods */
 		bool loadFromCache(string mbid);
+		bool saveToCache();
 
 	private:
 		/* variables */

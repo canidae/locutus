@@ -1,6 +1,10 @@
 #ifndef LOCUTUS_H
 /* defines */
 #define LOCUTUS_H
+#define DEBUG_ERROR 3
+#define DEBUG_WARNING 2
+#define DEBUG_NOTICE 1
+#define DEBUG_INFO 0
 
 /* forward declare */
 class Locutus;
@@ -46,10 +50,12 @@ class Locutus {
 		~Locutus();
 
 		/* methods */
+		void debug(int level, string text);
 		long run();
 
 	private:
 		/* variables */
+		ofstream *debugfile;
 
 		/* methods */
 		void loadSettings();
