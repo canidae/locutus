@@ -31,26 +31,28 @@ Locutus::~Locutus() {
 void Locutus::debug(int level, string text) {
 	time_t rawtime;
 	time(&rawtime);
-	*debugfile << asctime(localtime(&rawtime)) << " ";
+	string t = asctime(localtime(&rawtime));
+	t.erase(t.size() - 1);
+	*debugfile << "[" << t << "] ";
 	switch (level) {
 		case DEBUG_ERROR:
-			*debugfile << "ERROR: ";
+			*debugfile << "[ERROR]  ";
 			break;
 
 		case DEBUG_WARNING:
-			*debugfile << "WARNING: ";
+			*debugfile << "[WARNING]  ";
 			break;
 
 		case DEBUG_NOTICE:
-			*debugfile << "NOTICE: ";
+			*debugfile << "[NOTICE]  ";
 			break;
 
 		case DEBUG_INFO:
-			*debugfile << "INFO: ";
+			*debugfile << "[INFO]  ";
 			break;
 
 		default:
-			*debugfile << "UNKNOWN: ";
+			*debugfile << "[UNKNOWN]  ";
 			break;
 	}
 	*debugfile << text << endl;

@@ -1,10 +1,10 @@
 #ifndef LOCUTUS_H
 /* defines */
 #define LOCUTUS_H
-#define DEBUG_ERROR 3
-#define DEBUG_WARNING 2
-#define DEBUG_NOTICE 1
-#define DEBUG_INFO 0
+#define DEBUG_ERROR 3 // error that will kill locutus
+#define DEBUG_WARNING 2 // a serious problem, but won't kill locutus
+#define DEBUG_NOTICE 1 // usually follows a warning for more context
+#define DEBUG_INFO 0 // just telling the user what we're doing
 
 /* forward declare */
 class Locutus;

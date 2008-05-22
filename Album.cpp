@@ -20,12 +20,19 @@ Album::~Album() {
 /* methods */
 bool Album::loadFromCache(string mbid) {
 	/* fetch album from cache */
-	if (mbid.size() != 36)
+	if (mbid.size() != 36) {
+		string msg = "Unable to load album from cache. Illegal MusicBrainz ID: ";
+		msg.append(mbid);
+		locutus->debug(DEBUG_NOTICE, msg);
 		return false;
+	}
 	ostringstream query;
-	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << mbid << "'";
+	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << locutus->database->escapeString(mbid) << "'";
 	if (!locutus->database->query(query.str()) || locutus->database->getRows() <= 0) {
 		/* album not in cache */
+		string msg = "Unable to load album from cache. MusicBrainz ID not found: ";
+		msg.append(mbid);
+		locutus->debug(DEBUG_NOTICE, msg);
 		locutus->database->clear();
 		return false;
 	}
@@ -34,7 +41,7 @@ bool Album::loadFromCache(string mbid) {
 	artist->name = locutus->database->getString(0, 1);
 	artist->sortname = locutus->database->getString(0, 2);
 	/* album data */
-	mbid = locutus->database->getString(0, 3);
+	this->mbid = locutus->database->getString(0, 3);
 	type = locutus->database->getString(0, 4);
 	title = locutus->database->getString(0, 5);
 	released = locutus->database->getString(0, 6);
@@ -77,7 +84,8 @@ bool Album::saveToCache() {
 	string e_released = locutus->database->escapeString(released);
 	ostringstream query;
 	/* save artist */
-	artist->saveToCache();
+	if (!artist->saveToCache())
+		locutus->debug(DEBUG_NOTICE, "Failed to save album artist in cache. See errors above");
 	/* save album */
 	query.str("");
 	query << "INSERT INTO album(artist_id, mbid, type, title, released, loaded) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), '" << e_mbid << "', '" << e_type << "', '" << e_title << "', " << e_released << ", true WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << e_mbid << "')";
@@ -96,6 +104,6 @@ bool Album::saveToCache() {
 			status = false;
 	}
 	if (!status)
-		locutus->debug(DEBUG_NOTICE, "One or more tracks couldn't be saved in cache. See errors above");
+		locutus->debug(DEBUG_NOTICE, "One or more album tracks couldn't be saved in cache. See errors above");
 	return status;
 }

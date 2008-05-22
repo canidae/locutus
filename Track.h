@@ -8,6 +8,7 @@ class Track;
 /* includes */
 #include <string>
 #include "Album.h"
+#include "Artist.h"
 #include "Locutus.h"
 
 /* namespaces */
