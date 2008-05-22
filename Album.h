@@ -8,6 +8,7 @@ class Album;
 /* includes */
 #include <string>
 #include <vector>
+#include "Artist.h"
 #include "Locutus.h"
 #include "Track.h"
 
@@ -18,13 +19,11 @@ using namespace std;
 class Album {
 	public:
 		/* variables */
-		string album;
-		string albumartist;
-		string albumartistid;
-		string albumartistsort;
-		string albumid;
-		string albumtype;
+		Artist *artist;
+		string mbid;
 		string released;
+		string title;
+		string type;
 		vector<Track *> tracks;
 
 		/* constructors */

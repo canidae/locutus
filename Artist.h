@@ -1,35 +1,30 @@
-#ifndef TRACK_H
+#ifndef ARTIST_H
 /* defines */
-#define TRACK_H
+#define ARTIST_H
 
 /* forward declare */
-class Track;
+class Artist;
 
 /* includes */
 #include <string>
-#include "Album.h"
 #include "Locutus.h"
 
 /* namespaces */
 using namespace std;
 
-/* Track */
-class Track {
+/* Artist */
+class Artist {
 	public:
 		/* variables */
-		Album *album;
-		Artist *artist;
-		int duration;
 		string mbid;
-		string puid;
-		string title;
-		string tracknumber;
+		string name;
+		string sortname;
 
 		/* constructors */
-		Track(Locutus *locutus, Album *album, Artist *artist);
+		Artist(Locutus *locutus);
 
 		/* destructors */
-		~Track();
+		~Artist();
 
 		/* methods */
 		bool saveToCache();
