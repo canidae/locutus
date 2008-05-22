@@ -1,22 +1,26 @@
 #include "Track.h"
 
 /* constructors */
-Track::Track() {
+Track::Track(Locutus *locutus) {
+	this->locutus = locutus;
 	duration = 0;
 	album = "";
 	albumartist = "";
 	albumartistid = "";
 	albumartistsort = "";
+	albumid = "";
 	artist = "";
 	artistid = "";
 	artistsort = "";
 	puid = "";
+	released = "";
 	title = "";
 	trackid = "";
 	tracknumber = "";
-	year = "";
 }
 
 /* destructors */
 Track::~Track() {
 }
+
+/* methods */

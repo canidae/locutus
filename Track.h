@@ -2,8 +2,13 @@
 /* defines */
 #define TRACK_H
 
+/* forward declare */
+class Track;
+
 /* includes */
 #include <string>
+#include "Album.h"
+#include "Locutus.h"
 
 /* namespaces */
 using namespace std;
@@ -12,22 +17,24 @@ using namespace std;
 class Track {
 	public:
 		/* variables */
+		Locutus *locutus;
+		int duration;
 		string album;
 		string albumartist;
 		string albumartistid;
 		string albumartistsort;
+		string albumid;
 		string artist;
 		string artistid;
 		string artistsort;
 		string puid;
+		string released;
 		string title;
 		string trackid;
 		string tracknumber;
-		string year;
-		int duration;
 
 		/* constructors */
-		Track();
+		Track(Locutus *locutus);
 
 		/* destructors */
 		~Track();
