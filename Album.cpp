@@ -42,16 +42,20 @@ bool Album::loadFromCache(string mbid) {
 	int trackcount = locutus->database->getRows();
 	tracks.resize(trackcount, NULL);
 	for (int t = 0; t < trackcount; ++t) {
-		Track *track = new Track(locutus, this, NULL);
+		/* we could reduce memory usage here.
+		 * when we've loaded an album that's not various artists,
+		 * we'll get the same artist stored <trackcount> times.
+		 * since each artist entry usually eats about 64 bytes mem,
+		 * it's hardly necessary to improve this, though */
+		Artist *track_artist = new Artist(locutus);
+		track_artist->mbid = locutus->database->getString(t, 11);
+		track_artist->name = locutus->database->getString(t, 12);
+		track_artist->sortname = locutus->database->getString(t, 13);
+		Track *track = new Track(locutus, this, track_artist);
 		track->mbid = locutus->database->getString(t, 7);
 		track->title = locutus->database->getString(t, 8);
 		track->duration = locutus->database->getInt(t, 9);
 		track->tracknumber = locutus->database->getString(t, 10);
-		/*
-		track->artistid = locutus->database->getString(t, 11);
-		track->artist = locutus->database->getString(t, 12);
-		track->artistsort = locutus->database->getString(t, 13);
-		*/
 		tracks[locutus->database->getInt(t, 10) - 1] = track;
 	}
 	locutus->database->clear();
@@ -60,8 +64,10 @@ bool Album::loadFromCache(string mbid) {
 
 bool Album::saveToCache() {
 	/* save album to cache */
-	if (mbid.size() != 36)
+	if (mbid.size() != 36) {
+		locutus->debug(DEBUG_NOTICE, "Unable to save album in cache. Illegal MusicBrainz ID");
 		return false;
+	}
 	string e_artist_mbid = locutus->database->escapeString(artist->mbid);
 	string e_mbid = locutus->database->escapeString(mbid);
 	string e_title = locutus->database->escapeString(title);

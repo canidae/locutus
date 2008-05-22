@@ -32,7 +32,5 @@ class Artist {
 	private:
 		/* variables */
 		Locutus *locutus;
-
-		/* methods */
 };
 #endif

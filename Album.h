@@ -39,7 +39,5 @@ class Album {
 	private:
 		/* variables */
 		Locutus *locutus;
-
-		/* methods */
 };
 #endif

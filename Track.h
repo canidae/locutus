@@ -21,7 +21,6 @@ class Track {
 		Artist *artist;
 		int duration;
 		string mbid;
-		string puid;
 		string title;
 		string tracknumber;
 
@@ -37,7 +36,5 @@ class Track {
 	private:
 		/* variables */
 		Locutus *locutus;
-
-		/* methods */
 };
 #endif
