@@ -26,7 +26,6 @@ class Database {
 		~Database();
 
 		/* methods */
-		void clear();
 		string escapeString(string str);
 		bool getBool(const int row, const int col);
 		double getDouble(const int row, const int col);
@@ -40,9 +39,11 @@ class Database {
 	private:
 		/* variables */
 		Locutus *locutus;
-		pthread_mutex_t mutex;
 		bool got_result;
 		PGconn *pg_connection;
 		PGresult *pg_result;
+
+		/* methods */
+		void clear();
 };
 #endif

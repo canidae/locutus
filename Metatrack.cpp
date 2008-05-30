@@ -43,11 +43,9 @@ bool Metatrack::saveToCache() {
 	query << "DELETE FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to delete from metatrack, query failed. See error above");
-	locutus->database->clear();
 	query.str("");
 	query << "INSERT INTO metatrack(track_mbid, track_title, duration, tracknumber, artist_mbid, artist_name, album_mbid, album_title) VALUES ('" << e_track_mbid << "', '" << e_track_title << "', " << duration << ", " << tracknumber << ", '" << e_artist_mbid << "', '" << e_artist_name << "', '" << e_album_mbid << "', '" << e_album_title << "')";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save metatrack, query failed. See error above");
-	locutus->database->clear();
 	return true;
 }

@@ -75,7 +75,6 @@ void WebFetcher::lookup() {
 						query << locutus->database->escapeString(fm2.filename) << "' AND t.mbid = '";
 						query << locutus->database->escapeString(albumtrack->getValue(MUSICBRAINZ_TRACKID)) << "')";
 						locutus->database->query(query.str());
-						locutus->database->clear();
 						query.str("");
 						query << "UPDATE possible_match SET meta_score = ";
 						query << match.meta_score << ", mbid_match = ";
@@ -84,7 +83,6 @@ void WebFetcher::lookup() {
 						query << locutus->database->escapeString(fm2.filename) << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '";
 						query << locutus->database->escapeString(albumtrack->getValue(MUSICBRAINZ_TRACKID)) << "')";
 						locutus->database->query(query.str());
-						locutus->database->clear();
 					}
 				}
 			}

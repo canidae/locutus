@@ -20,17 +20,14 @@ void WebService::cleanCache() {
 	/* album */
 	query << "DELETE FROM album WHERE updated + INTERVAL '" << album_cache_lifetime << " months' < now()";
 	locutus->database->query(query.str());
-	locutus->database->clear();
 	/* puid_track */
 	query.str("");
 	query << "DELETE FROM puid_track WHERE updated + INTERVAL '" << puid_cache_lifetime << " months' < now()";
 	locutus->database->query(query.str());
-	locutus->database->clear();
 	/* artist */
 	query.str("");
 	query << "DELETE FROM artist WHERE artist_id NOT IN (SELECT artist_id FROM album UNION SELECT artist_id FROM track)";
 	locutus->database->query(query.str());
-	locutus->database->clear();
 }
 
 vector<Metadata> WebService::fetchAlbum(string mbid) {
@@ -62,10 +59,8 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 			track.setValue(ARTISTSORT, locutus->database->getString(r, 13));
 			album[locutus->database->getInt(r, 10) - 1] = track;
 		}
-		locutus->database->clear();
 		return album;
 	}
-	locutus->database->clear();
 	/* if not, then check web & update database */
 	string url = release_lookup_url;
 	url.append(mbid);
@@ -129,19 +124,15 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 		query.str("");
 		query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << aambide << "', '" << aanamee << "', '" << aasortnamee << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << aambide << "')";
 		locutus->database->query(query.str());
-		locutus->database->clear();
 		query.str("");
 		query << "UPDATE artist SET name = '" << aanamee << "', sortname = '" << aasortnamee << "', loaded = true WHERE mbid = '" << aambide << "'";
 		locutus->database->query(query.str());
-		locutus->database->clear();
 		query.str("");
 		query << "INSERT INTO album(artist_id, mbid, type, title, released, loaded) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), '" << ambide << "', '" << atypee << "', '" << atitlee << "', " << areleasede << ", true WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << ambide << "')";
 		locutus->database->query(query.str());
-		locutus->database->clear();
 		query.str("");
 		query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << aambide << "'), type = '" << atypee << "', title = '" << atitlee << "', released = " << areleasede << ", loaded = true, updated = now() WHERE mbid = '" << aambide << "'";
 		locutus->database->query(query.str());
-		locutus->database->clear();
 		album.resize(release->children["track-list"][0]->children["track"].size());
 		for (vector<XMLNode *>::size_type a = 0; a < release->children["track-list"][0]->children["track"].size(); ++a) {
 			Metadata track;
@@ -174,11 +165,9 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 				query.str("");
 				query << "INSERT INTO artist(mbid, name, sortname, loaded) SELECT '" << tambide << "', '" << tartiste << "', '" << tartistsorte << "', true WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << tambide << "')";
 				locutus->database->query(query.str());
-				locutus->database->clear();
 				query.str("");
 				query << "UPDATE artist SET name = '" << tartiste << "', sortname = '" << tartistsorte << "', loaded = true WHERE mbid = '" << tambide << "'";
 				locutus->database->query(query.str());
-				locutus->database->clear();
 			} else {
 				track.setValue(MUSICBRAINZ_ARTISTID, aambid);
 				tambide = aambide;
@@ -189,11 +178,9 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 			query.str("");
 			query << "INSERT INTO track(album_id, artist_id, mbid, title, duration, tracknumber) SELECT (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), '" << tmbide << "', '" << ttitlee << "', " << track.duration << ", " << a + 1 << " WHERE NOT EXISTS (SELECT true FROM track WHERE mbid = '" << tmbide << "')";
 			locutus->database->query(query.str());
-			locutus->database->clear();
 			query.str("");
 			query << "UPDATE track SET album_id = (SELECT album_id FROM album WHERE mbid = '" << ambide << "'), artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << tambide << "'), title = '" << ttitlee << "', duration = " << track.duration << ", tracknumber = " << a + 1 << " WHERE mbid = '" << tmbide << "'";
 			locutus->database->query(query.str());
-			locutus->database->clear();
 		}
 	}
 	pthread_mutex_unlock(&mutex);
@@ -248,27 +235,21 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 			query.str("");
 			query << "INSERT INTO artist(mbid, name) SELECT '" << armbide << "', '" << arnamee << "' WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << armbide << "')";
 			locutus->database->query(query.str());
-			locutus->database->clear();
 			query.str("");
 			query << "UPDATE artist SET name = '" << arnamee << "' WHERE mbid = '" << armbide << "'";
 			locutus->database->query(query.str());
-			locutus->database->clear();
 			query.str("");
 			query << "INSERT INTO album(artist_id, mbid, title) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << armbide << "'), '" << almbide << "', '" << altitlee << "' WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << almbide << "')";
 			locutus->database->query(query.str());
-			locutus->database->clear();
 			query.str("");
 			query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << armbide << "'), title = '" << altitlee << "' WHERE mbid = '" << almbide << "'";
 			locutus->database->query(query.str());
-			locutus->database->clear();
 			query.str("");
 			query << "INSERT INTO track(album_id, artist_id, mbid, title, duration, tracknumber) SELECT (SELECT album_id FROM album WHERE mbid = '" << almbide << "'), (SELECT artist_id FROM artist WHERE mbid = '" << armbide << "'), '" << tmbide << "', '" << ttitlee << "', " << track.duration << ", " << tracknum << " WHERE NOT EXISTS (SELECT true FROM track WHERE mbid = '" << tmbide << "')";
 			locutus->database->query(query.str());
-			locutus->database->clear();
 			query.str("");
 			query << "UPDATE track SET album_id = (SELECT album_id FROM album WHERE mbid = '" << almbide << "'), artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << armbide << "'), title = '" << ttitlee << "', duration = " << track.duration << ", tracknumber = " << tracknum << " WHERE mbid = '" << tmbide << "'";
 			locutus->database->query(query.str());
-			locutus->database->clear();
 			tracks.push_back(track);
 		}
 	}
@@ -297,7 +278,6 @@ vector<Metadata> WebService::searchPUID(string puid) {
 		query.str("");
 		query << "INSERT INTO puid(track_id, puid) SELECT ('" << embid << "', '" << epuid << "') WHERE NOT EXISTS (SELECT true FROM puid WHERE puid = '" << epuid << "')";
 		locutus->database->query(query.str());
-		locutus->database->clear();
 	}
 	return tracks;
 }

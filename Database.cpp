@@ -2,7 +2,6 @@
 
 /* constructors */
 Database::Database(Locutus *locutus) {
-	pthread_mutex_init(&mutex, NULL);
 	this->locutus = locutus;
 	got_result = false;
 	pg_connection = PQconnectdb(CONNECTION_STRING);
@@ -16,17 +15,9 @@ Database::Database(Locutus *locutus) {
 Database::~Database() {
 	clear();
 	PQfinish(pg_connection);
-	pthread_mutex_destroy(&mutex);
 }
 
 /* methods */
-void Database::clear() {
-	if (got_result)
-		PQclear(pg_result);
-	got_result = false;
-	pthread_mutex_unlock(&mutex);
-}
-
 string Database::escapeString(string str) {
 	char *to;
 	to = new char[str.size() * 2 + 1];
@@ -66,7 +57,7 @@ bool Database::query(const string q) {
 }
 
 bool Database::query(const char *q) {
-	pthread_mutex_lock(&mutex);
+	clear();
 	got_result = true;
 	string msg = "Query: ";
 	msg.append(q);
@@ -82,4 +73,11 @@ bool Database::query(const char *q) {
 	msg.append(PQresultErrorMessage(pg_result));
 	locutus->debug(DEBUG_WARNING, msg);
 	return false;
+}
+
+/* private methods */
+void Database::clear() {
+	if (got_result)
+		PQclear(pg_result);
+	got_result = false;
 }

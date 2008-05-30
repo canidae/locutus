@@ -25,10 +25,8 @@ FileMetadata::FileMetadata(Locutus *locutus, string filename) {
 		setValue(TITLE, locutus->database->getString(0, 15));
 		setValue(TRACKNUMBER, locutus->database->getString(0, 16));
 		setValue(YEAR, locutus->database->getString(0, 17));
-		locutus->database->clear();
 		return;
 	}
-	locutus->database->clear();
 	bitrate = 0;
 	channels = 0;
 	samplerate = 0;
@@ -124,7 +122,6 @@ FileMetadata::FileMetadata(Locutus *locutus, string filename) {
 	query << locutus->database->escapeString(getValue(TRACKNUMBER)) << "', '";
 	query << locutus->database->escapeString(getValue(YEAR)) << "')";
 	locutus->database->query(query.str());
-	locutus->database->clear();
 }
 
 /* destructors */

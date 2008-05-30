@@ -33,7 +33,6 @@ bool Album::loadFromCache(string mbid) {
 		string msg = "Unable to load album from cache. MusicBrainz ID not found: ";
 		msg.append(mbid);
 		locutus->debug(DEBUG_NOTICE, msg);
-		locutus->database->clear();
 		return false;
 	}
 	/* artist data */
@@ -65,7 +64,6 @@ bool Album::loadFromCache(string mbid) {
 		track->tracknumber = locutus->database->getString(t, 10);
 		tracks[locutus->database->getInt(t, 10) - 1] = track;
 	}
-	locutus->database->clear();
 	return true;
 }
 
@@ -91,12 +89,10 @@ bool Album::saveToCache() {
 	query << "INSERT INTO album(artist_id, mbid, type, title, released, loaded) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), '" << e_mbid << "', '" << e_type << "', '" << e_title << "', " << e_released << ", true WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << e_mbid << "')";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save album in cache, query failed. See error above");
-	locutus->database->clear();
 	query.str("");
 	query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), type = '" << e_type << "', title = '" << e_title << "', released = " << e_released << ", loaded = true, updated = now() WHERE mbid = '" << e_mbid << "'";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save album in cache, query failed. See error above");
-	locutus->database->clear();
 	/* save tracks */
 	bool status = true;
 	for (vector<Track *>::iterator track = tracks.begin(); track != tracks.end(); ++track) {
