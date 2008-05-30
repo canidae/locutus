@@ -55,7 +55,6 @@ class WebService : public URLStream, public XMLStream {
 		/* variables */
 		Locutus *locutus;
 		URLStream::Error status;
-		pthread_mutex_t mutex;
 		int setting_class_id;
 		string metadata_search_url;
 		string release_lookup_url;

@@ -2,14 +2,12 @@
 
 /* constructors */
 WebService::WebService(Locutus *locutus) {
-	pthread_mutex_init(&mutex, NULL);
 	this->locutus = locutus;
 	root = new XMLNode;
 }
 
 /* destructors */
 WebService::~WebService() {
-	pthread_mutex_destroy(&mutex);
 	delete root;
 }
 
@@ -183,7 +181,6 @@ vector<Metadata> WebService::fetchAlbum(string mbid) {
 			locutus->database->query(query.str());
 		}
 	}
-	pthread_mutex_unlock(&mutex);
 	return album;
 }
 
@@ -253,7 +250,6 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 			tracks.push_back(track);
 		}
 	}
-	pthread_mutex_unlock(&mutex);
 	return tracks;
 }
 
@@ -297,7 +293,6 @@ void WebService::endElement(const unsigned char *name) {
 }
 
 bool WebService::fetch(const char *url) {
-	pthread_mutex_lock(&mutex);
 	char *urle = new char[65536];
 	urle = urlEncode(url, urle, 65536);
 	cout << urle << endl;
