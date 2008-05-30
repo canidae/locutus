@@ -33,6 +33,10 @@ bool Metatrack::loadFromXML(XMLNode *track) {
 }
 
 bool Metatrack::saveToCache() {
+	if (track_mbid.size() != 36) {
+		locutus->debug(DEBUG_NOTICE, "Won't save metatrack in cache, missing MBIDs");
+		return false;
+	}
 	string e_track_mbid = locutus->database->escapeString(track_mbid);
 	string e_track_title = locutus->database->escapeString(track_title);
 	string e_artist_mbid = locutus->database->escapeString(artist_mbid);

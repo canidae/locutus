@@ -64,7 +64,7 @@ bool Album::loadFromCache(string mbid) {
 		track_artist->mbid = locutus->database->getString(t, 11);
 		track_artist->name = locutus->database->getString(t, 12);
 		track_artist->sortname = locutus->database->getString(t, 13);
-		tracks[locutus->database->getInt(t, 10) - 1] = track;
+		tracks[track->tracknumber - 1] = track;
 	}
 	return true;
 }
@@ -91,7 +91,7 @@ bool Album::loadFromXML(XMLNode *album) {
 	artist->name = album->children["artist"][0]->children["name"][0]->value;
 	artist->sortname = album->children["artist"][0]->children["sort-name"][0]->value;
 	/* track data */
-	tracks.resize(album->children["track-list"][0]->children["track"].size());
+	tracks.resize(album->children["track-list"][0]->children["track"].size(), NULL);
 	for (vector<XMLNode *>::size_type a = 0; a < album->children["track-list"][0]->children["track"].size(); ++a) {
 		Artist *track_artist = new Artist(locutus);
 		Track *track = new Track(locutus, this, track_artist);
