@@ -54,15 +54,63 @@ bool Album::loadFromCache(string mbid) {
 		 * since each artist entry usually eats about 64 bytes mem,
 		 * it's hardly necessary to improve this, though */
 		Artist *track_artist = new Artist(locutus);
-		track_artist->mbid = locutus->database->getString(t, 11);
-		track_artist->name = locutus->database->getString(t, 12);
-		track_artist->sortname = locutus->database->getString(t, 13);
 		Track *track = new Track(locutus, this, track_artist);
+		/* track data */
 		track->mbid = locutus->database->getString(t, 7);
 		track->title = locutus->database->getString(t, 8);
 		track->duration = locutus->database->getInt(t, 9);
 		track->tracknumber = locutus->database->getInt(t, 10);
+		/* track artist data */
+		track_artist->mbid = locutus->database->getString(t, 11);
+		track_artist->name = locutus->database->getString(t, 12);
+		track_artist->sortname = locutus->database->getString(t, 13);
 		tracks[locutus->database->getInt(t, 10) - 1] = track;
+	}
+	return true;
+}
+
+bool Album::loadFromXML(XMLNode *album) {
+	/* album data */
+	string mbid = album->children["id"][0]->value;
+	string type = album->children["type"][0]->value;
+	string title = album->children["title"][0]->value;
+	if (album->children["release-event-list"].size() > 0) {
+		released = album->children["release-event-list"][0]->children["event"][0]->children["date"][0]->value;
+		if (released.size() == 10 && released[4] == '-' && released[7] == '-') {
+			/* ok as it is, probably a valid date */
+		} else if (released.size() == 4) {
+			/* no month & day, add 1st of january */
+			released.append("-01-01");
+		} else {
+			/* possibly not a valid date, ignore it */
+			released = "";
+		}
+	}
+	/* artist data */
+	artist->mbid = album->children["artist"][0]->children["id"][0]->value;
+	artist->name = album->children["artist"][0]->children["name"][0]->value;
+	artist->sortname = album->children["artist"][0]->children["sort-name"][0]->value;
+	/* track data */
+	tracks.resize(album->children["track-list"][0]->children["track"].size());
+	for (vector<XMLNode *>::size_type a = 0; a < album->children["track-list"][0]->children["track"].size(); ++a) {
+		Artist *track_artist = new Artist(locutus);
+		Track *track = new Track(locutus, this, track_artist);
+		/* track data */
+		track->mbid = album->children["track-list"][0]->children["track"][a]->children["id"][0]->value;
+		track->title = album->children["track-list"][0]->children["track"][a]->children["title"][0]->value;
+		track->duration = atoi(album->children["track-list"][0]->children["track"][a]->children["duration"][0]->value.c_str());
+		track->tracknumber = a + 1;
+		/* track artist data */
+		if (album->children["track-list"][0]->children["track"][a]->children["artist"].size() > 0) {
+			track_artist->mbid = album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["id"][0]->value;
+			track_artist->name = album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["name"][0]->value;
+			track_artist->sortname = album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["sort-name"][0]->value;
+		} else {
+			track_artist->mbid = artist->mbid;
+			track_artist->name = artist->name;
+			track_artist->sortname = artist->sortname;
+		}
+		tracks[a] = track;
 	}
 	return true;
 }
@@ -80,6 +128,13 @@ bool Album::saveToCache() {
 	string e_title = locutus->database->escapeString(title);
 	string e_type = locutus->database->escapeString(type);
 	string e_released = locutus->database->escapeString(released);
+	if (e_released == "" || released.size() != 10) {
+		e_released = "NULL";
+	} else {
+		e_released = "'";
+		e_released.append(e_released);
+		e_released.append("'");
+	}
 	ostringstream query;
 	/* save artist */
 	if (!artist->saveToCache())

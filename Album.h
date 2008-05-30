@@ -11,6 +11,7 @@ class Album;
 #include "Artist.h"
 #include "Locutus.h"
 #include "Track.h"
+#include "XMLNode.h"
 
 /* namespaces */
 using namespace std;
@@ -34,6 +35,7 @@ class Album {
 
 		/* methods */
 		bool loadFromCache(string mbid);
+		bool loadFromXML(XMLNode *album);
 		bool saveToCache();
 
 	private:
