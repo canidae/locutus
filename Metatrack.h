@@ -33,7 +33,7 @@ class Metatrack {
 		~Metatrack();
 
 		/* methods */
-		bool loadFromXML(XMLNode *track);
+		bool readFromXML(XMLNode *track);
 		bool saveToCache();
 
 	private:

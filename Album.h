@@ -35,7 +35,7 @@ class Album {
 
 		/* methods */
 		bool loadFromCache(string mbid);
-		bool loadFromXML(XMLNode *album);
+		bool readFromXML(XMLNode *album);
 		bool saveToCache();
 
 	private:

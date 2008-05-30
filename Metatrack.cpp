@@ -18,7 +18,7 @@ Metatrack::~Metatrack() {
 }
 
 /* methods */
-bool Metatrack::loadFromXML(XMLNode *track) {
+bool Metatrack::readFromXML(XMLNode *track) {
 	track_mbid = track->children["id"][0]->value;
 	track_title = track->children["title"][0]->value;
 	if (track->children["duration"].size() > 0)

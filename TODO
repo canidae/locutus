@@ -14,4 +14,5 @@ daemon
   - Artist
   - Track
   - Metatrack
-  - Audiofile(?) Metafile?
+  - Metafile
+* i'm not fetching release date from id3, am i? check this shit later

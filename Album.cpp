@@ -69,7 +69,7 @@ bool Album::loadFromCache(string mbid) {
 	return true;
 }
 
-bool Album::loadFromXML(XMLNode *album) {
+bool Album::readFromXML(XMLNode *album) {
 	/* album data */
 	string mbid = album->children["id"][0]->value;
 	string type = album->children["type"][0]->value;
