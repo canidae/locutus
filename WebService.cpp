@@ -10,7 +10,6 @@ WebService::WebService(Locutus *locutus) {
 /* destructors */
 WebService::~WebService() {
 	pthread_mutex_destroy(&mutex);
-	deleteTree(root);
 	delete root;
 }
 
@@ -312,17 +311,6 @@ void WebService::close() {
 	URLStream::close();
 }
 
-void WebService::deleteTree(XMLNode *node) {
-	for (map<string, vector<XMLNode *> >::iterator it = node->children.begin(); it != node->children.end(); ++it) {
-		for (vector<XMLNode *>::size_type a = 0; a < it->second.size(); ++a) {
-			deleteTree(it->second[a]);
-			delete it->second[a];
-		}
-		it->second.clear();
-	}
-	node->children.clear();
-}
-
 void WebService::endElement(const unsigned char *name) {
 	if (curnode != NULL)
 		curnode = curnode->parent;
@@ -340,9 +328,9 @@ bool WebService::fetch(const char *url) {
 		close();
 		return false;
 	}
-	deleteTree(root);
+	delete root;
+	root = new XMLNode;
 	root->parent = NULL;
-	root->children.clear();
 	root->key = "root";
 	root->value = "";
 	curnode = root;

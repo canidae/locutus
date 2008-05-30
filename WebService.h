@@ -27,17 +27,11 @@ class WebService;
 #include <vector>
 #include "Locutus.h"
 #include "Metadata.h"
+#include "XMLNode.h"
 
 /* namespaces */
 using namespace ost;
 using namespace std;
-
-struct XMLNode {
-	XMLNode *parent;
-	map<string, vector<XMLNode *> > children;
-	string key;
-	string value;
-};
 
 /* WebService */
 class WebService : public URLStream, public XMLStream {
