@@ -61,7 +61,7 @@ bool Album::loadFromCache(string mbid) {
 		track->mbid = locutus->database->getString(t, 7);
 		track->title = locutus->database->getString(t, 8);
 		track->duration = locutus->database->getInt(t, 9);
-		track->tracknumber = locutus->database->getString(t, 10);
+		track->tracknumber = locutus->database->getInt(t, 10);
 		tracks[locutus->database->getInt(t, 10) - 1] = track;
 	}
 	return true;

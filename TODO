@@ -6,3 +6,12 @@ daemon
 * since code is no longer threaded, we can remove mutexes as they serve no purpose.
   note that the database _must_ be cleared, so this should be done each time before running the query.
   this means we don't need the "locutus->database->clear()" after each query too.
+* these classes shall die:
+  - FileMetadata
+  - Metadata
+* which will be replaced by these:
+  - Album
+  - Artist
+  - Track
+  - Metatrack
+  - Audiofile(?) Metafile?

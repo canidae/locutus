@@ -21,9 +21,9 @@ class Track {
 		Album *album;
 		Artist *artist;
 		int duration;
+		int tracknumber;
 		string mbid;
 		string title;
-		string tracknumber;
 
 		/* constructors */
 		Track(Locutus *locutus, Album *album, Artist *artist);
