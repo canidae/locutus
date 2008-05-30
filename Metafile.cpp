@@ -28,21 +28,22 @@ Metafile::~Metafile() {
 
 /* methods */
 double Metafile::compareWithMetatrack(Metatrack *metatrack) {
+	/* TODO */
 	return 0.0;
 }
 
 string Metafile::getBaseNameWithoutExtension() {
-        /* return basename without extension, duh */
-        string::size_type pos = filename.find_last_of('/');
-        if (pos != string::npos && pos > 0) {
-                ++pos;
-                string::size_type pos2 = filename.find_last_of('.');
-                if (pos2 != string::npos)
-                        return filename.substr(pos, pos2 - pos);
-                else
-                        return filename.substr(pos);
-        }
-        return "";
+	/* return basename without extension, duh */
+	string::size_type pos = filename.find_last_of('/');
+	if (pos != string::npos && pos > 0) {
+		++pos;
+		string::size_type pos2 = filename.find_last_of('.');
+		if (pos2 != string::npos)
+			return filename.substr(pos, pos2 - pos);
+		else
+			return filename.substr(pos);
+	}
+	return "";
 }
 
 string Metafile::getGroup() {
@@ -151,12 +152,54 @@ bool Metafile::readFromFile(string filename) {
 			//readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
 			//readAudioProperties(file->audioProperties());
 			//delete file;
+		} else {
+			string msg = "Unsupported file format (well, extension): ";
+			msg.append(filename);
+			locutus->debug(DEBUG_NOTICE, msg);
+			return false;
 		}
 	}
 	return true;
 }
 
 bool Metafile::saveToCache() {
+	ostringstream query;
+	string e_puid = locutus->database->escapeString(puid);
+	if (puid != "") {
+		query << "INSERT INTO puid(puid) SELECT '" << e_puid << "' WHERE NOT EXISTS (SELECT true FROM puid WHERE puid = '" << e_puid << "')";
+		if (!locutus->database->query(query.str()))
+			locutus->debug(DEBUG_NOTICE, "Unable to store PUID in database. See error above");
+	}
+	query.str("");
+	query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, ";
+	if (puid != "")
+		query << "puid_id, ";
+	query << "album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, year) VALUES ('";
+	query << locutus->database->escapeString(filename) << "', ";
+	query << duration << ", ";
+	query << channels << ", ";
+	query << bitrate << ", ";
+	query << samplerate << ", ";
+	if (puid != "")
+		query << "(SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), '";
+	else
+		query << "'";
+	query << locutus->database->escapeString(album) << "', '";
+	query << locutus->database->escapeString(albumartist) << "', '";
+	query << locutus->database->escapeString(albumartistsort) << "', '";
+	query << locutus->database->escapeString(artist) << "', '";
+	query << locutus->database->escapeString(artistsort) << "', '";
+	query << locutus->database->escapeString(musicbrainz_albumartistid) << "', '";
+	query << locutus->database->escapeString(musicbrainz_albumid) << "', '";
+	query << locutus->database->escapeString(musicbrainz_artistid) << "', '";
+	query << locutus->database->escapeString(musicbrainz_trackid) << "', '";
+	query << locutus->database->escapeString(title) << "', '";
+	query << locutus->database->escapeString(tracknumber) << "', '";
+	query << locutus->database->escapeString(released) << "')";
+	if (!locutus->database->query(query.str())) {
+		locutus->debug(DEBUG_NOTICE, "Unable to store file in database. See error above");
+		return false;
+	}
 	return true;
 }
 
