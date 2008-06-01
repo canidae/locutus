@@ -96,6 +96,16 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 	return score;
 }
 
+bool Metafile::equalMBID(Metatrack *metatrack) {
+	if (musicbrainz_albumid == "" || musicbrainz_albumid != metatrack->album_mbid)
+		return false;
+	if (musicbrainz_artistid == "" || musicbrainz_artistid != metatrack->artist_mbid)
+		return false;
+	if (musicbrainz_trackid == "" || musicbrainz_trackid != metatrack->track_mbid)
+		return false;
+	return true;
+}
+
 string Metafile::getBaseNameWithoutExtension() {
 	/* return basename without extension, duh */
 	string::size_type pos = filename.find_last_of('/');

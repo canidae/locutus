@@ -89,6 +89,7 @@ class Metafile {
 
 		/* methods */
 		double compareWithMetatrack(Metatrack *metatrack);
+		bool equalMBID(Metatrack *metatrack);
 		string getBaseNameWithoutExtension();
 		string getGroup();
 		bool loadFromCache(string filename);
