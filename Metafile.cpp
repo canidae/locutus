@@ -56,22 +56,32 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 		scores[2][pos] = locutus->levenshtein->similarity(*v, metatrack->track_title);
 		scores[3][pos] = (atoi(v->c_str()) == metatrack->tracknumber) ? 1.0 : 0.0;
 	}
-	bool used[4];
+	bool used_row[4];
 	for (int a = 0; a < 4; ++a)
-		used[a] = false;
+		used_row[a] = false;
+	bool used_col[4];
+	for (list<string>::size_type a = 0; a < values.size(); ++a)
+		used_col[a] = false;
 	for (int a = 0; a < 4; ++a) {
 		for (list<string>::size_type b = 0; b < values.size(); ++b) {
-			int best_id = -1;
+			if (used_col[b])
+				continue;
+			int best_row = -1;
+			list<string>::size_type best_col = -1;
 			double best_score = -1.0;
-			for (int c = 0; !used[b] && c < 4; ++c) {
+			for (int c = 0; c < 4; ++c) {
+				if (used_row[c])
+					continue;
 				if (scores[c][b] > best_score) {
-					best_id = c;
+					best_row = c;
+					best_col = b;
 					best_score = scores[c][b];
 				}
 			}
-			if (best_id >= 0) {
-				scores[best_id][0] = best_score;
-				used[best_id] = true;
+			if (best_row >= 0) {
+				scores[best_row][0] = best_score;
+				used_row[best_row] = true;
+				used_col[best_col] = true;
 			}
 		}
 	}
