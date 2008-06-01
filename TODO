@@ -9,4 +9,5 @@ daemon
   - Track
   - Metatrack
   - Metafile
+* FileMetadataConstants should be renamed, at least
 * i'm not fetching release date from id3, am i? check this shit later

@@ -40,7 +40,11 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 		values.push_back(title);
 	if (tracknumber != "")
 		values.push_back(tracknumber);
-	/* TODO: filename */
+	string group = getGroup();
+	if (group != "" && group != album)
+		values.push_back(group);
+	string basename = getBaseNameWithoutExtension();
+	/* TODO: basename */
 	if (values.size() <= 0)
 		return 0.0; // this shouldn't happen, though
 	/* find highest score */
@@ -56,39 +60,19 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 	for (int a = 0; a < 4; ++a)
 		used[a] = false;
 	for (int a = 0; a < 4; ++a) {
-		int best_id = -1;
-		double best_score = -1.0;
-		/* album */
-		for (list<string>::size_type b = 0; !used[0] && b < values.size(); ++b) {
-			if (scores[0][b] > best_score) {
-				best_id = 0;
-				best_score = scores[0][b];
+		for (list<string>::size_type b = 0; b < values.size(); ++b) {
+			int best_id = -1;
+			double best_score = -1.0;
+			for (int c = 0; !used[b] && c < 4; ++c) {
+				if (scores[c][b] > best_score) {
+					best_id = c;
+					best_score = scores[c][b];
+				}
 			}
-		}
-		/* artist */
-		for (list<string>::size_type b = 0; !used[1] && b < values.size(); ++b) {
-			if (scores[1][b] > best_score) {
-				best_id = 1;
-				best_score = scores[1][b];
+			if (best_id >= 0) {
+				scores[best_id][0] = best_score;
+				used[best_id] = true;
 			}
-		}
-		/* track */
-		for (list<string>::size_type b = 0; !used[2] && b < values.size(); ++b) {
-			if (scores[2][b] > best_score) {
-				best_id = 2;
-				best_score = scores[2][b];
-			}
-		}
-		/* tracknumber */
-		for (list<string>::size_type b = 0; !used[3] && b < values.size(); ++b) {
-			if (scores[3][b] > best_score) {
-				best_id = 3;
-				best_score = scores[3][b];
-			}
-		}
-		if (best_id >= 0) {
-			scores[best_id][0] = best_score;
-			used[best_id] = true;
 		}
 	}
 	double score = scores[0][0] * locutus->fmconst->album_weight;
