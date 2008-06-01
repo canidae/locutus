@@ -12,6 +12,7 @@ Metafile::Metafile(Locutus *locutus) {
 	albumartistsort = "";
 	artist = "";
 	artistsort = "";
+	filename = "";
 	musicbrainz_albumartistid = "";
 	musicbrainz_albumid = "";
 	musicbrainz_artistid = "";
@@ -28,8 +29,77 @@ Metafile::~Metafile() {
 
 /* methods */
 double Metafile::compareWithMetatrack(Metatrack *metatrack) {
-	/* TODO */
-	return 0.0;
+	list<string> values;
+	if (album != "")
+		values.push_back(album);
+	if (albumartist != "")
+		values.push_back(albumartist);
+	if (artist != "")
+		values.push_back(artist);
+	if (title != "")
+		values.push_back(title);
+	if (tracknumber != "")
+		values.push_back(tracknumber);
+	/* TODO: filename */
+	if (values.size() <= 0)
+		return 0.0; // this shouldn't happen, though
+	/* find highest score */
+	double scores[4][values.size()];
+	int pos = 0;
+	for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
+		scores[0][pos] = locutus->levenshtein->similarity(*v, metatrack->album_title);
+		scores[1][pos] = locutus->levenshtein->similarity(*v, metatrack->artist_name);
+		scores[2][pos] = locutus->levenshtein->similarity(*v, metatrack->track_title);
+		scores[3][pos] = (atoi(v->c_str()) == metatrack->tracknumber) ? 1.0 : 0.0;
+	}
+	bool used[4];
+	for (int a = 0; a < 4; ++a)
+		used[a] = false;
+	for (int a = 0; a < 4; ++a) {
+		int best_id = -1;
+		double best_score = -1.0;
+		/* album */
+		for (list<string>::size_type b = 0; !used[0] && b < values.size(); ++b) {
+			if (scores[0][b] > best_score) {
+				best_id = 0;
+				best_score = scores[0][b];
+			}
+		}
+		/* artist */
+		for (list<string>::size_type b = 0; !used[1] && b < values.size(); ++b) {
+			if (scores[1][b] > best_score) {
+				best_id = 1;
+				best_score = scores[1][b];
+			}
+		}
+		/* track */
+		for (list<string>::size_type b = 0; !used[2] && b < values.size(); ++b) {
+			if (scores[2][b] > best_score) {
+				best_id = 2;
+				best_score = scores[2][b];
+			}
+		}
+		/* tracknumber */
+		for (list<string>::size_type b = 0; !used[3] && b < values.size(); ++b) {
+			if (scores[3][b] > best_score) {
+				best_id = 3;
+				best_score = scores[3][b];
+			}
+		}
+		if (best_id >= 0) {
+			scores[best_id][0] = best_score;
+			used[best_id] = true;
+		}
+	}
+	double score = scores[0][0] * locutus->fmconst->album_weight;
+	score += scores[1][0] * locutus->fmconst->artist_weight;
+	score += scores[2][0] * locutus->fmconst->title_weight;
+	score += scores[3][0] * locutus->fmconst->tracknumber_weight;
+	int durationdiff = abs(metatrack->duration - duration);
+	if (durationdiff < locutus->fmconst->duration_limit)
+		score += (1.0 - durationdiff / locutus->fmconst->duration_limit) * locutus->fmconst->duration_weight;
+	score /= locutus->fmconst->album_weight + locutus->fmconst->artist_weight + locutus->fmconst->title_weight + locutus->fmconst->tracknumber_weight + locutus->fmconst->duration_weight;
+	return score;
 }
 
 string Metafile::getBaseNameWithoutExtension() {
@@ -76,6 +146,7 @@ bool Metafile::loadFromCache(string filename) {
 		locutus->debug(DEBUG_NOTICE, msg);
 		return false;
 	}
+	this->filename = filename;
 	duration = locutus->database->getInt(0, 1);
 	channels = locutus->database->getInt(0, 2);
 	bitrate = locutus->database->getInt(0, 3);
@@ -134,24 +205,26 @@ bool Metafile::readFromFile(string filename) {
 			readXiphComment(file->tag());
 			readAudioProperties(file->audioProperties());
 			delete file;
+		/*
 		} else if (ext == ".WV") {
 			filetype = FILETYPE_WAVPACK;
-			//WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
-			//readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
-			//readAudioProperties(file->audioProperties());
-			//delete file;
+			WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
+			readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+			readAudioProperties(file->audioProperties());
+			delete file;
 		} else if (ext == ".SPX") {
 			filetype = FILETYPE_OGG_SPEEX;
-			//Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
-			//readXiphComment(file->tag());
-			//readAudioProperties(file->audioProperties());
-			//delete file;
+			Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
+			readXiphComment(file->tag());
+			readAudioProperties(file->audioProperties());
+			delete file;
 		} else if (ext == ".TTA") {
 			filetype = FILETYPE_TRUEAUDIO;
-			//TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
-			//readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
-			//readAudioProperties(file->audioProperties());
-			//delete file;
+			TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
+			readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+			readAudioProperties(file->audioProperties());
+			delete file;
+		*/
 		} else {
 			string msg = "Unsupported file format (well, extension): ";
 			msg.append(filename);
@@ -159,6 +232,7 @@ bool Metafile::readFromFile(string filename) {
 			return false;
 		}
 	}
+	this->filename = filename;
 	return true;
 }
 

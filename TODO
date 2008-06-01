@@ -1,11 +1,5 @@
 daemon
 ------
-* code should be cleaned up, a lot. for starters, create a proper db-layer
-* perhaps drop the key-value system in metadata and rather make a fixed class "Track" with "duration", "title", etc.
-  would reflect the database a bit better, and would be easier to work with.
-* since code is no longer threaded, we can remove mutexes as they serve no purpose.
-  note that the database _must_ be cleared, so this should be done each time before running the query.
-  this means we don't need the "locutus->database->clear()" after each query too.
 * these classes shall die:
   - FileMetadata
   - Metadata
