@@ -3,6 +3,7 @@
 /* constructors */
 Metafile::Metafile(Locutus *locutus) {
 	this->locutus = locutus;
+	puid_lookup = false;
 	bitrate = 0;
 	channels = 0;
 	duration = 0;
@@ -21,10 +22,12 @@ Metafile::Metafile(Locutus *locutus) {
 	title = "";
 	tracknumber = "";
 	released = "";
+	track_compare = new Metatrack(locutus);
 }
 
 /* destructors */
 Metafile::~Metafile() {
+	delete track_compare;
 }
 
 /* methods */
@@ -46,7 +49,7 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 	string basename = getBaseNameWithoutExtension();
 	/* TODO: basename */
 	if (values.size() <= 0)
-		return 0.0; // this shouldn't happen, though
+		return 0.0;
 	/* find highest score */
 	double scores[4][values.size()];
 	int pos = 0;
@@ -93,6 +96,17 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 	if (durationdiff < locutus->fmconst->duration_limit)
 		score += (1.0 - durationdiff / locutus->fmconst->duration_limit) * locutus->fmconst->duration_weight;
 	score /= locutus->fmconst->album_weight + locutus->fmconst->artist_weight + locutus->fmconst->title_weight + locutus->fmconst->tracknumber_weight + locutus->fmconst->duration_weight;
+	return score;
+}
+
+double Metafile::compareWithTrack(Track *track) {
+	/* FIXME: no point calling "new" & "delete" every time i do this */
+	track_compare->album_title = track->album->title;
+	track_compare->artist_name = track->artist->name;
+	track_compare->track_title = track->title;
+	track_compare->tracknumber = track->tracknumber;
+	track_compare->duration = track->duration;
+	double score = compareWithMetatrack(track_compare);
 	return score;
 }
 

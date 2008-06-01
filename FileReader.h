@@ -22,6 +22,7 @@ class FileReader;
 #include <list>
 #include <string>
 #include "Locutus.h"
+#include "Metafile.h"
 
 /* namespaces */
 using namespace std;

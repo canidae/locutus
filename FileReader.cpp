@@ -66,15 +66,14 @@ bool FileReader::parseFile() {
 	string filename(*file_queue.begin());
 	cout << "Checking file " << filename << endl;
 	file_queue.pop_front();
-	FileMetadata file(locutus, filename);
-	list<Entry>::iterator ei = file.entries.begin();
-	while (ei != file.entries.end()) {
-		cout << ei->key << ": " << ei->value << endl;
-		++ei;
+	Metafile *mf = new Metafile(locutus);
+	if (!mf->loadFromCache(filename)) {
+		if (!mf->readFromFile(filename)) {
+			delete mf;
+			return false;
+		}
 	}
-	locutus->files.push_back(file);
-	locutus->grouped_files[file.getGroup()].push_back(locutus->files.size() - 1);
-	if (file.getValue(MUSICIP_PUID) == "")
-		locutus->gen_puid_queue.push_back(locutus->files.size() - 1);
+	locutus->files.push_back(mf);
+	locutus->grouped_files[mf->getGroup()].push_back(mf);
 	return true;
 }

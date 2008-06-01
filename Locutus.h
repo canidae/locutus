@@ -15,11 +15,10 @@ class Locutus;
 #include <vector>
 #include "Album.h"
 #include "Database.h"
-#include "FileMetadata.h"
 #include "FileMetadataConstants.h"
 #include "FileReader.h"
 #include "Levenshtein.h"
-#include "Metadata.h"
+#include "Metafile.h"
 #include "PUIDGenerator.h"
 #include "Settings.h"
 #include "WebFetcher.h"
@@ -40,11 +39,9 @@ class Locutus {
 		FileReader *filereader;
 		PUIDGenerator *puidgen;
 		WebFetcher *webfetcher;
-		map<string, Album *> albums;
 		/* reconsider structure of stuff below */
-		vector<FileMetadata> files;
-		map<string, vector<int> > grouped_files; // album/directory, files
-		vector<int> gen_puid_queue; // files missing puid
+		vector<Metafile *> files;
+		map<string, vector<Metafile *> > grouped_files; // album/directory, files
 
 		/* constructors */
 		Locutus();

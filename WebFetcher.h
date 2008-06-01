@@ -16,10 +16,13 @@
 class WebFetcher;
 
 /* includes */
-#include <list>
 #include <map>
 #include <string>
 #include <vector>
+#include "Album.h"
+#include "FileMetadataConstants.h"
+#include "Metafile.h"
+#include "Metatrack.h"
 #include "Locutus.h"
 
 /* namespaces */
@@ -27,15 +30,9 @@ using namespace std;
 
 /* matching */
 struct Match {
-	vector<int>::size_type file;
 	bool mbid_match;
 	bool puid_match;
 	double meta_score;
-};
-
-struct AlbumMatch {
-	int file;
-	double score;
 };
 
 /* WebFetcher */
@@ -52,8 +49,6 @@ class WebFetcher {
 		/* methods */
 		void loadSettings();
 		void lookup();
-		string makeWSQuery(string group, FileMetadata fm);
-		string protectWSString(string text);
 
 	private:
 		/* variables */
@@ -61,5 +56,11 @@ class WebFetcher {
 		int setting_class_id;
 		double puid_min_score;
 		double metadata_min_score;
+
+		/* methods */
+		void compareFilesWithAlbum(map<string, vector<map<string, Match> > > *scores, vector<Metafile *> *files, Album *album);
+		string escapeWSString(string text);
+		bool loadAlbum(map<string, Album> *albums, string mbid);
+		string makeWSQuery(string group, Metafile *mf);
 };
 #endif

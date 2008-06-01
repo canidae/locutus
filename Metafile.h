@@ -53,6 +53,7 @@ class Metafile;
 #include <vorbisfile.h>
 #include "Locutus.h"
 #include "Metatrack.h"
+#include "Track.h"
 
 /* namespaces */
 using namespace std;
@@ -63,6 +64,7 @@ class Metafile {
 	public:
 		/* variables */
 		string filename;
+		bool puid_lookup;
 		int bitrate;
 		int channels;
 		int duration;
@@ -89,6 +91,7 @@ class Metafile {
 
 		/* methods */
 		double compareWithMetatrack(Metatrack *metatrack);
+		double compareWithTrack(Track *track);
 		string getBaseNameWithoutExtension();
 		string getGroup();
 		bool loadFromCache(string filename);
@@ -98,6 +101,7 @@ class Metafile {
 	private:
 		/* variables */
 		Locutus *locutus;
+		Metatrack *track_compare;
 		int filetype;
 
 		/* methods */

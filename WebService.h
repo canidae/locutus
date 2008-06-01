@@ -25,8 +25,9 @@ class WebService;
 #include <map>
 #include <string>
 #include <vector>
+#include "Album.h"
 #include "Locutus.h"
-#include "Metadata.h"
+#include "Metatrack.h"
 #include "XMLNode.h"
 
 /* namespaces */
@@ -46,14 +47,15 @@ class WebService : public URLStream, public XMLStream {
 
 		/* methods */
 		void cleanCache();
-		vector<Metadata> fetchAlbum(string mbid);
+		Album fetchAlbum(string mbid);
 		void loadSettings();
-		vector<Metadata> searchMetadata(string wsquery);
-		vector<Metadata> searchPUID(string puid);
+		vector<Metatrack> *searchMetadata(string wsquery);
+		vector<Metatrack> *searchPUID(string puid);
 
 	private:
 		/* variables */
 		Locutus *locutus;
+		vector<Metatrack> *tracks;
 		URLStream::Error status;
 		int setting_class_id;
 		string metadata_search_url;

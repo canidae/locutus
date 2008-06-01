@@ -94,7 +94,6 @@ void Locutus::loadSettings() {
 
 void Locutus::scanDirectory(string directory) {
 	/* clear data */
-	gen_puid_queue.clear();
 	grouped_files.clear();
 	files.clear();
 	/* parse directory */

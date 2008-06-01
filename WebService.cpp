@@ -4,11 +4,13 @@
 WebService::WebService(Locutus *locutus) {
 	this->locutus = locutus;
 	root = new XMLNode;
+	tracks = new vector<Metatrack>;
 }
 
 /* destructors */
 WebService::~WebService() {
 	delete root;
+	delete tracks;
 }
 
 /* methods */
@@ -28,7 +30,7 @@ void WebService::cleanCache() {
 	locutus->database->query(query.str());
 }
 
-vector<Metadata> WebService::fetchAlbum(string mbid) {
+Album WebService::fetchAlbum(string mbid) {
 	vector<Metadata> album;
 	if (mbid.size() != 36)
 		return album;
@@ -192,7 +194,7 @@ void WebService::loadSettings() {
 	puid_cache_lifetime = locutus->settings->loadSetting(setting_class_id, PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
 }
 
-vector<Metadata> WebService::searchMetadata(string wsquery) {
+vector<Metatrack> *WebService::searchMetadata(string wsquery) {
 	if (wsquery == "")
 		return vector<Metadata>();
 	string url = metadata_search_url;
@@ -253,22 +255,21 @@ vector<Metadata> WebService::searchMetadata(string wsquery) {
 	return tracks;
 }
 
-vector<Metadata> WebService::searchPUID(string puid) {
-	vector<Metadata> tracks;
+vector<Metatrack> *WebService::searchPUID(string puid) {
+	tracks->clear();
 	if (puid.size() != 36)
 		return tracks;
 	/* first see if we got this puid in database, and if it's recently updated(?) */
+	/* TODO? */
 	string epuid = locutus->database->escapeString(puid);
 	ostringstream query;
 	/* then look up on musicbrainz */
 	string wsquery = "puid=";
 	wsquery.append(puid);
 	tracks = searchMetadata(wsquery);
-	for (vector<Metadata>::size_type a = 0; a < tracks.size(); ++a) {
-		/* puid isn't returned from query, so set it manually */
-		tracks[a].setValue(MUSICIP_PUID, puid);
+	for (vector<Metatrack>::size_type a = 0; a < tracks->size(); ++a) {
 		/* update puid in database */
-		string embid = locutus->database->escapeString(tracks[a].getValue(MUSICBRAINZ_TRACKID));
+		string embid = locutus->database->escapeString(tracks[a].track_mbid);
 		if (embid == "")
 			continue;
 		query.str("");
