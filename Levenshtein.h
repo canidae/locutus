@@ -1,7 +1,7 @@
 #ifndef LEVENSHTEIN_H
 /* defines */
 #define LEVENSHTEIN_H
-/* start size matrix */
+/* initial size matrix */
 #define MATRIX_SIZE 64
 
 /* includes */
@@ -13,8 +13,6 @@ using namespace std;
 /* Levenshtein */
 class Levenshtein {
 	public:
-		/* variables */
-
 		/* constructors */
 		Levenshtein();
 
