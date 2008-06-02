@@ -19,10 +19,9 @@ Database::~Database() {
 
 /* methods */
 string Database::escapeString(string str) {
-	char *to;
-	to = new char[str.size() * 2 + 1];
-	int *error = NULL;
-	size_t len = PQescapeStringConn(pg_connection, to, str.c_str(), str.size(), error);
+	char *to = new char[str.size() * 2 + 1];
+	int error = 0;
+	size_t len = PQescapeStringConn(pg_connection, to, str.c_str(), str.size(), &error);
 	string back(to, len);
 	delete [] to;
 	return back;
