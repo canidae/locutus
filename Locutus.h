@@ -48,9 +48,8 @@ class Locutus {
 		FileReader *filereader;
 		PUIDGenerator *puidgen;
 		WebFetcher *webfetcher;
-		/* reconsider structure of stuff below */
 		vector<Metafile *> files;
-		map<string, vector<Metafile *> > grouped_files; // album/directory, files
+		map<string, vector<Metafile *> > grouped_files;
 
 		/* constructors */
 		Locutus();

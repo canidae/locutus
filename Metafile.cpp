@@ -22,12 +22,10 @@ Metafile::Metafile(Locutus *locutus) {
 	title = "";
 	tracknumber = "";
 	released = "";
-	track_compare = new Metatrack(locutus);
 }
 
 /* destructors */
 Metafile::~Metafile() {
-	delete track_compare;
 }
 
 /* methods */
@@ -100,13 +98,13 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 }
 
 double Metafile::compareWithTrack(Track *track) {
-	/* FIXME: no point calling "new" & "delete" every time i do this */
-	track_compare->album_title = track->album->title;
-	track_compare->artist_name = track->artist->name;
-	track_compare->track_title = track->title;
-	track_compare->tracknumber = track->tracknumber;
-	track_compare->duration = track->duration;
-	double score = compareWithMetatrack(track_compare);
+	Metatrack mt(locutus);
+	mt.album_title = track->album->title;
+	mt.artist_name = track->artist->name;
+	mt.track_title = track->title;
+	mt.tracknumber = track->tracknumber;
+	mt.duration = track->duration;
+	double score = compareWithMetatrack(&mt);
 	return score;
 }
 

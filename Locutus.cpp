@@ -15,6 +15,8 @@ Locutus::Locutus() {
 
 /* destructors */
 Locutus::~Locutus() {
+	for (vector<Metafile *>::iterator mf = files.begin(); mf != files.end(); ++mf)
+		delete (*mf);
 	debugfile->close();
 	delete debugfile;
 	delete puidgen;
@@ -70,24 +72,13 @@ long Locutus::run() {
 	/* submit new puids? */
 	/* return */
 	return 10000;
-
-	/* old */
-	//webservice->fetchAlbum("4e0d7112-28cc-429f-ab55-6a495ce30192");
-	/*
-	FileMetadata t3(this, "FIXME");
-	t3.setValue(ARTIST, "The Final Countdown");
-	t3.setValue(ALBUM, "The Final Countdown");
-	t3.setValue(TITLE, "The Final Countdown");
-	t3.setValue(TRACKNUMBER, "1");
-	cout << t3.compareWithMetadata(t1) << endl;
-	*/
 }
 
 /* private methods */
 void Locutus::cleanCache() {
 	/* delete old data from database */
-	ostringstream query;
 	/* album */
+	ostringstream query;
 	query << "DELETE FROM album WHERE updated + INTERVAL '" << album_cache_lifetime << " months' < now()";
 	database->query(query.str());
 	/* puid_track */

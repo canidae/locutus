@@ -95,75 +95,13 @@ void WebFetcher::lookup() {
 			}
 		}
 		delete albums;
+		delete scores;
 	}
 }
 
 /*
 void WebFetcher::lookup() {
 	for (map<string, vector<int> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
-		map<string, vector<Metadata> > albums;
-		map<string, map<vector<Metadata>::size_type, vector<Match> > > matches;
-		map<int, bool> track_puid_match;
-		for (vector<int>::size_type file_in_group = 0; file_in_group < group->second.size(); ++file_in_group) {
-			FileMetadata fm = locutus->files[group->second[file_in_group]];
-			string ambid = fm.getValue(MUSICBRAINZ_ALBUMID);
-			vector<Metadata> tracks;
-			if (fm.puid_lookup) {
-				tracks = locutus->webservice->searchPUID(fm.getValue(MUSICIP_PUID));
-				if (tracks.size() > 0) {
-					track_puid_match[file_in_group] = true;
-				} else {
-					track_puid_match[file_in_group] = false;
-					tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, fm));
-				}
-			} else if (ambid != "") {
-				tracks = locutus->webservice->fetchAlbum(ambid);
-			} else {
-				tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, fm));
-			}
-			for (vector<Metadata>::size_type track_in_result = 0; track_in_result < tracks.size(); ++track_in_result) {
-				Metadata track = tracks[track_in_result];
-				double minscore = fm.puid_lookup ? puid_min_score : metadata_min_score;
-				if (!fm.equalMBID(track) && fm.compareWithMetadata(track) < minscore)
-					continue; // don't load album, not good enough match
-				string ambid = track.getValue(MUSICBRAINZ_ALBUMID);
-				if (albums.find(ambid) != albums.end())
-					continue; // album already loaded
-				vector<Metadata> album = locutus->webservice->fetchAlbum(ambid);
-				albums[ambid] = album;
-				for (vector<FileMetadata>::size_type fig2 = 0; fig2 < group->second.size(); ++fig2) {
-					FileMetadata fm2 = locutus->files[group->second[fig2]];
-					for (vector<Metadata>::iterator albumtrack = album.begin(); albumtrack != album.end(); ++albumtrack) {
-						Match match;
-						match.mbid_match = fm2.equalMBID(*albumtrack);
-						match.puid_match = fm2.puid_lookup && fm2.getValue(MUSICIP_PUID) == track.getValue(MUSICIP_PUID) && albumtrack->getValue(MUSICBRAINZ_TRACKID) == track.getValue(MUSICBRAINZ_TRACKID);
-						match.meta_score = fm2.compareWithMetadata(*albumtrack);
-						if (!match.mbid_match && match.meta_score < minscore)
-							continue; // too low score
-						match.file = fig2;
-						matches[ambid][track_in_result].push_back(match);
-						ostringstream query;
-						query << "INSERT INTO possible_match(file_id, track_id, meta_score, mbid_match, puid_match) SELECT (SELECT file_id FROM file WHERE filename = '";
-						query << locutus->database->escapeString(fm2.filename) << "'), (SELECT track_id FROM track WHERE mbid = '";
-						query << locutus->database->escapeString(albumtrack->getValue(MUSICBRAINZ_TRACKID)) << "'), ";
-						query << match.meta_score << ", ";
-						query << (match.mbid_match ? "true" : "false") << ", ";
-						query << (match.puid_match ? "true" : "false") << " WHERE NOT EXISTS (SELECT true FROM file f JOIN possible_match pm ON (f.file_id = pm.file_id) JOIN track t ON (pm.track_id = t.track_id) WHERE f.filename = '";
-						query << locutus->database->escapeString(fm2.filename) << "' AND t.mbid = '";
-						query << locutus->database->escapeString(albumtrack->getValue(MUSICBRAINZ_TRACKID)) << "')";
-						locutus->database->query(query.str());
-						query.str("");
-						query << "UPDATE possible_match SET meta_score = ";
-						query << match.meta_score << ", mbid_match = ";
-						query << (match.mbid_match ? "true" : "false") << ", puid_match = ";
-						query << (match.puid_match ? "true" : "false") << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '";
-						query << locutus->database->escapeString(fm2.filename) << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '";
-						query << locutus->database->escapeString(albumtrack->getValue(MUSICBRAINZ_TRACKID)) << "')";
-						locutus->database->query(query.str());
-					}
-				}
-			}
-		}
 		map<string, double> album_scores;
 		map<string, vector<AlbumMatch> > album_matched;
 		for (map<string, map<vector<Metadata>::size_type, vector<Match> > >::iterator album = matches.begin(); album != matches.end(); ++album) {
@@ -243,7 +181,10 @@ void WebFetcher::compareFilesWithAlbum(map<string, vector<map<string, Match> > >
 			if ((*scores)[album->mbid][t].find((*mf)->filename) != (*scores)[album->mbid][t].end())
 				continue;
 			Match m;
-			m.mbid_match = false;
+			if (album->tracks[t]->mbid == (*mf)->musicbrainz_trackid)
+				m.mbid_match = true;
+			else
+				m.mbid_match = false;
 			m.puid_match = false;
 			m.meta_score = (*mf)->compareWithTrack(album->tracks[t]);
 			(*scores)[album->mbid][t][(*mf)->filename] = m;

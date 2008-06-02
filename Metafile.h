@@ -101,7 +101,6 @@ class Metafile {
 	private:
 		/* variables */
 		Locutus *locutus;
-		Metatrack *track_compare;
 		int filetype;
 
 		/* methods */
