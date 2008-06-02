@@ -60,7 +60,6 @@ class WebFetcher {
 		/* methods */
 		void compareFilesWithAlbum(map<string, vector<map<string, Match> > > *scores, vector<Metafile *> *files, Album *album);
 		string escapeWSString(string text);
-		bool loadAlbum(map<string, Album> *albums, string mbid);
 		string makeWSQuery(string group, Metafile *mf);
 };
 #endif

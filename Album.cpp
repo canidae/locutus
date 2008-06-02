@@ -20,6 +20,8 @@ Album::~Album() {
 /* methods */
 bool Album::loadFromCache(string mbid) {
 	/* fetch album from cache */
+	if (locutus == NULL)
+		return false;
 	if (mbid.size() != 36) {
 		string msg = "Unable to load album from cache. Illegal MusicBrainz ID: ";
 		msg.append(mbid);
@@ -69,11 +71,19 @@ bool Album::loadFromCache(string mbid) {
 	return true;
 }
 
-bool Album::readFromXML(XMLNode *album) {
+bool Album::retrieveFromWebService(string mbid) {
 	/* album data */
-	string mbid = album->children["id"][0]->value;
-	string type = album->children["type"][0]->value;
-	string title = album->children["title"][0]->value;
+	if (locutus == NULL)
+		return false;
+	XMLNode *root = locutus->webservice->lookupAlbum(mbid);
+	if (root == NULL)
+		return false;
+	if (root->children["metadata"].size() <= 0)
+		return false;
+	XMLNode *album = root->children["metadata"][0];
+	mbid = album->children["id"][0]->value;
+	type = album->children["type"][0]->value;
+	title = album->children["title"][0]->value;
 	if (album->children["release-event-list"].size() > 0) {
 		released = album->children["release-event-list"][0]->children["event"][0]->children["date"][0]->value;
 		if (released.size() == 10 && released[4] == '-' && released[7] == '-') {
@@ -117,6 +127,8 @@ bool Album::readFromXML(XMLNode *album) {
 
 bool Album::saveToCache() {
 	/* save album to cache */
+	if (locutus == NULL)
+		return false;
 	if (mbid.size() != 36) {
 		string msg = "Unable to save album in cache. Illegal MusicBrainz ID: ";
 		msg.append(mbid);

@@ -28,14 +28,14 @@ class Album {
 		vector<Track *> tracks;
 
 		/* constructors */
-		Album(Locutus *locutus);
+		Album(Locutus *locutus = NULL);
 
 		/* destructors */
 		~Album();
 
 		/* methods */
 		bool loadFromCache(string mbid);
-		bool readFromXML(XMLNode *album);
+		bool retrieveFromWebService(string mbid);
 		bool saveToCache();
 
 	private:

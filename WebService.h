@@ -38,6 +38,8 @@ using namespace std;
 class WebService : public URLStream, public XMLStream {
 	public:
 		/* variables */
+		string metadata_search_url;
+		string release_lookup_url;
 
 		/* constructors */
 		WebService(Locutus *locutus);
@@ -46,11 +48,12 @@ class WebService : public URLStream, public XMLStream {
 		~WebService();
 
 		/* methods */
-		void cleanCache();
-		Album fetchAlbum(string mbid);
 		void loadSettings();
+		XMLNode *lookupAlbum(string mbid);
 		vector<Metatrack> *searchMetadata(string wsquery);
 		vector<Metatrack> *searchPUID(string puid);
+		/* old */
+		void cleanCache();
 
 	private:
 		/* variables */
@@ -58,8 +61,6 @@ class WebService : public URLStream, public XMLStream {
 		vector<Metatrack> *tracks;
 		URLStream::Error status;
 		int setting_class_id;
-		string metadata_search_url;
-		string release_lookup_url;
 		int album_cache_lifetime;
 		int puid_cache_lifetime;
 		XMLNode *root;

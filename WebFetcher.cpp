@@ -17,7 +17,6 @@ void WebFetcher::loadSettings() {
 }
 
 void WebFetcher::lookup() {
-	/* file -> [Track : score] */
 	for (map<string, vector<Metafile *> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
 		map<string, Album> *albums = new map<string, Album>;
 		/* <album_mbid, <tracknumber<filename, Match> > > */
@@ -36,8 +35,14 @@ void WebFetcher::lookup() {
 				double score = mf->compareWithMetatrack(&(*mt));
 				if (score < puid_min_score)
 					continue;
-				if (loadAlbum(albums, mt->album_mbid)) {
-					if (mt->tracknumber > (int) (*albums)[mt->album_mbid].tracks.size() || mt->tracknumber <= 0) {
+				Album album(locutus);
+				if (!album.loadFromCache(mt->album_mbid)) {
+					if (album.retrieveFromWebService(mt->album_mbid))
+						album.saveToCache();
+				}
+				if (album.mbid != "") {
+					(*albums)[album.mbid] = album;
+					if (mt->tracknumber > (int) album.tracks.size() || mt->tracknumber <= 0) {
 						/* this should never happen */
 						locutus->debug(DEBUG_NOTICE, "PUID search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 						continue;
@@ -46,8 +51,8 @@ void WebFetcher::lookup() {
 					m.mbid_match = false;
 					m.puid_match = true;
 					m.meta_score = score;
-					(*scores)[mt->album_mbid].resize((*albums)[mt->album_mbid].tracks.size());
-					(*scores)[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+					(*scores)[album.mbid].resize(album.tracks.size());
+					(*scores)[album.mbid][mt->tracknumber - 1][mf->filename] = m;
 				}
 			}
 		}
@@ -67,8 +72,13 @@ void WebFetcher::lookup() {
 				double score = mf->compareWithMetatrack(&(*mt));
 				if (score < metadata_min_score)
 					continue;
-				if (loadAlbum(albums, mt->album_mbid)) {
-					if (mt->tracknumber > (int) (*albums)[mt->album_mbid].tracks.size() || mt->tracknumber <= 0) {
+				Album album(locutus);
+				if (!album.loadFromCache(mt->album_mbid)) {
+					if (album.retrieveFromWebService(mt->album_mbid))
+						album.saveToCache();
+				}
+				if (album.mbid != "") {
+					if (mt->tracknumber > (int) album.tracks.size() || mt->tracknumber <= 0) {
 						/* this should never happen */
 						locutus->debug(DEBUG_NOTICE, "Metadata search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 						continue;
@@ -77,7 +87,8 @@ void WebFetcher::lookup() {
 					m.mbid_match = false;
 					m.puid_match = false;
 					m.meta_score = score;
-					(*scores)[mt->album_mbid].resize((*albums)[mt->album_mbid].tracks.size());
+					(*scores)[album.mbid].resize(album.tracks.size());
+					(*scores)[album.mbid][mt->tracknumber - 1][mf->filename] = m;
 					/* compare the other files in group with this album */
 					compareFilesWithAlbum(scores, &group->second, &(*albums)[mt->album_mbid]);
 				}
@@ -282,23 +293,6 @@ string WebFetcher::escapeWSString(string text) {
 		str << text[a];
 	}
 	return str.str();
-}
-
-bool WebFetcher::loadAlbum(map<string, Album> *albums, string mbid) {
-	if (mbid.size() != 36)
-		return false;
-	if (albums->find(mbid) != albums->end())
-		return true; // already loaded
-	Album album(locutus);
-	if (!album.loadFromCache(mbid)) {
-		album = locutus->webservice->fetchAlbum(mbid);
-		if (album.mbid != "")
-			album.saveToCache();
-		else
-			return false; // couldn't load album
-	}
-	(*albums)[mbid] = album;
-	return true;
 }
 
 string WebFetcher::makeWSQuery(string group, Metafile *mf) {
