@@ -21,6 +21,7 @@ class Locutus;
 /* includes */
 #include <iostream>
 #include <map>
+#include <string>
 #include <vector>
 #include "Album.h"
 #include "Database.h"

@@ -6,6 +6,7 @@
 class Settings;
 
 /* includes */
+#include <string>
 #include "Locutus.h"
 
 /* namespaces */
