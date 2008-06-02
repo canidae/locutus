@@ -62,7 +62,7 @@ long Locutus::run() {
 	/* load settings */
 	loadSettings();
 	/* clean cache */
-	webservice->cleanCache();
+	cleanCache();
 	/* parse sorted directory */
 	scanDirectory(filereader->output_dir);
 	/* parse unsorted directory */
@@ -84,7 +84,29 @@ long Locutus::run() {
 }
 
 /* private methods */
+void Locutus::cleanCache() {
+	/* delete old data from database */
+	ostringstream query;
+	/* album */
+	query << "DELETE FROM album WHERE updated + INTERVAL '" << album_cache_lifetime << " months' < now()";
+	database->query(query.str());
+	/* puid_track */
+	query.str("");
+	query << "DELETE FROM puid_track WHERE updated + INTERVAL '" << puid_cache_lifetime << " months' < now()";
+	database->query(query.str());
+	/* artist */
+	query.str("");
+	query << "DELETE FROM artist WHERE artist_id NOT IN (SELECT artist_id FROM album UNION SELECT artist_id FROM track)";
+	database->query(query.str());
+}
+
 void Locutus::loadSettings() {
+	/* load general settings */
+        setting_class_id = settings->loadClassID(LOCUTUS_CLASS, LOCUTUS_CLASS_DESCRIPTION);
+        album_cache_lifetime = settings->loadSetting(setting_class_id, ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
+        puid_cache_lifetime = settings->loadSetting(setting_class_id, PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
+
+	/* load settings for other classes */
 	fmconst->loadSettings();
 	filereader->loadSettings();
 	webservice->loadSettings();

@@ -10,12 +10,6 @@
 #define RELEASE_LOOKUP_URL_KEY "release_url"
 #define RELEASE_LOOKUP_URL_VALUE "http://musicbrainz.org/ws/1/release/"
 #define RELEASE_LOOKUP_URL_DESCRIPTION "URL to lookup a release"
-#define ALBUM_CACHE_LIFETIME_KEY "album_cache_lifetime"
-#define ALBUM_CACHE_LIFETIME_VALUE 3
-#define ALBUM_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
-#define PUID_CACHE_LIFETIME_KEY "puid_cache_lifetime"
-#define PUID_CACHE_LIFETIME_VALUE 3
-#define PUID_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since puid was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
 
 /* forward declare */
 class WebService;
@@ -38,8 +32,6 @@ using namespace std;
 class WebService : public URLStream, public XMLStream {
 	public:
 		/* variables */
-		string metadata_search_url;
-		string release_lookup_url;
 
 		/* constructors */
 		WebService(Locutus *locutus);
@@ -52,8 +44,6 @@ class WebService : public URLStream, public XMLStream {
 		XMLNode *lookupAlbum(string mbid);
 		vector<Metatrack> *searchMetadata(string wsquery);
 		vector<Metatrack> *searchPUID(string puid);
-		/* old */
-		void cleanCache();
 
 	private:
 		/* variables */
@@ -61,8 +51,8 @@ class WebService : public URLStream, public XMLStream {
 		vector<Metatrack> *tracks;
 		URLStream::Error status;
 		int setting_class_id;
-		int album_cache_lifetime;
-		int puid_cache_lifetime;
+		string metadata_search_url;
+		string release_lookup_url;
 		XMLNode *root;
 		XMLNode *curnode;
 

@@ -18,8 +18,6 @@ void WebService::loadSettings() {
 	setting_class_id = locutus->settings->loadClassID(WEBSERVICE_CLASS, WEBSERVICE_CLASS_DESCRIPTION);
 	metadata_search_url = locutus->settings->loadSetting(setting_class_id, METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = locutus->settings->loadSetting(setting_class_id, RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
-	album_cache_lifetime = locutus->settings->loadSetting(setting_class_id, ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
-	puid_cache_lifetime = locutus->settings->loadSetting(setting_class_id, PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
 }
 
 XMLNode *WebService::lookupAlbum(string mbid) {
@@ -57,24 +55,6 @@ vector<Metatrack> *WebService::searchPUID(string puid) {
 	string wsquery = "puid=";
 	wsquery.append(puid);
 	return searchMetadata(wsquery);
-}
-
-
-/* old */
-void WebService::cleanCache() {
-	/* delete old data from database */
-	ostringstream query;
-	/* album */
-	query << "DELETE FROM album WHERE updated + INTERVAL '" << album_cache_lifetime << " months' < now()";
-	locutus->database->query(query.str());
-	/* puid_track */
-	query.str("");
-	query << "DELETE FROM puid_track WHERE updated + INTERVAL '" << puid_cache_lifetime << " months' < now()";
-	locutus->database->query(query.str());
-	/* artist */
-	query.str("");
-	query << "DELETE FROM artist WHERE artist_id NOT IN (SELECT artist_id FROM album UNION SELECT artist_id FROM track)";
-	locutus->database->query(query.str());
 }
 
 /* private methods */
