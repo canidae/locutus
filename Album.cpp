@@ -80,7 +80,7 @@ bool Album::retrieveFromWebService(string mbid) {
 		return false;
 	if (root->children["metadata"].size() <= 0)
 		return false;
-	XMLNode *album = root->children["metadata"][0];
+	XMLNode *album = root->children["metadata"][0]->children["release"][0];
 	mbid = album->children["id"][0]->value;
 	type = album->children["type"][0]->value;
 	title = album->children["title"][0]->value;

@@ -21,9 +21,15 @@ double Levenshtein::similarity(const string source, const string target) {
 		resizeMatrix(size + 1);
 
 	for (int a = 1; a <= sl; ++a) {
-		const char s = source[a - 1];
+		char s = source[a - 1];
+		/* make A-Z lowercase */
+		if (s >= 'A' && s <= 'Z')
+			s += 32;
 		for (int b = 1; b <= tl; ++b) {
-			const char t = target[b - 1];
+			char t = target[b - 1];
+			/* make A-Z lowercase */
+			if (t >= 'A' && t <= 'Z')
+				t += 32;
 			int cost = (s == t ? 0 : 1);
 
 			const int above = matrix[a - 1][b];

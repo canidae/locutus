@@ -56,6 +56,7 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 		scores[1][pos] = locutus->levenshtein->similarity(*v, metatrack->artist_name);
 		scores[2][pos] = locutus->levenshtein->similarity(*v, metatrack->track_title);
 		scores[3][pos] = (atoi(v->c_str()) == metatrack->tracknumber) ? 1.0 : 0.0;
+		++pos;
 	}
 	bool used_row[4];
 	for (int a = 0; a < 4; ++a)
