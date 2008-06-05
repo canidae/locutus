@@ -70,6 +70,7 @@ class Locutus {
 		ofstream *debugfile;
 		int setting_class_id;
 		int album_cache_lifetime;
+		int metatrack_cache_lifetime;
 		int puid_cache_lifetime;
 
 		/* methods */

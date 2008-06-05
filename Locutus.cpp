@@ -82,7 +82,7 @@ void Locutus::cleanCache() {
 	query << "DELETE FROM album WHERE last_updated + INTERVAL '" << album_cache_lifetime << " months' < now()";
 	database->query(query.str());
 	/* metatrack */
-	ostringstream query;
+	query.str("");
 	query << "DELETE FROM metatrack WHERE last_updated + INTERVAL '" << metatrack_cache_lifetime << " months' < now()";
 	database->query(query.str());
 	/* puid_track */
