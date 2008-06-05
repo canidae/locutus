@@ -225,7 +225,7 @@ ALTER SEQUENCE album_album_id_seq OWNED BY album.album_id;
 -- Name: album_album_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('album_album_id_seq', 1437, true);
+SELECT pg_catalog.setval('album_album_id_seq', 1449, true);
 
 
 --
@@ -252,7 +252,7 @@ ALTER SEQUENCE artist_artist_id_seq OWNED BY artist.artist_id;
 -- Name: artist_artist_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('artist_artist_id_seq', 1287, true);
+SELECT pg_catalog.setval('artist_artist_id_seq', 1289, true);
 
 
 --
@@ -287,7 +287,6 @@ SELECT pg_catalog.setval('file_file_id_seq', 222, true);
 --
 
 CREATE SEQUENCE metatrack_metatrack_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -307,7 +306,7 @@ ALTER SEQUENCE metatrack_metatrack_id_seq OWNED BY metatrack.metatrack_id;
 -- Name: metatrack_metatrack_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('metatrack_metatrack_id_seq', 1, false);
+SELECT pg_catalog.setval('metatrack_metatrack_id_seq', 489, true);
 
 
 --
@@ -416,7 +415,7 @@ ALTER SEQUENCE track_track_id_seq OWNED BY track.track_id;
 -- Name: track_track_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('track_track_id_seq', 2825, true);
+SELECT pg_catalog.setval('track_track_id_seq', 7903, true);
 
 
 --
@@ -480,6 +479,18 @@ ALTER TABLE track ALTER COLUMN track_id SET DEFAULT nextval('track_track_id_seq'
 --
 
 COPY album (album_id, artist_id, mbid, type, title, released, custom_artist_sortname, last_updated) FROM stdin;
+1438	1289	79024eb2-513b-484b-9301-bb3884cd047d	Compilation Official	Absolute Music 27	\N	\N	2008-06-05 21:49:02.563304
+1439	1288	dec22fe3-01f1-43f3-bd91-11b93c35c1e0	Album 	No Strings Attached	\N	\N	2008-06-05 21:49:07.103893
+1440	1288	631c7d7a-fca8-4891-bf02-47462cff37a5	Album Official	No Strings Attached	\N	\N	2008-06-05 21:49:07.691082
+1441	1288	ae94ea26-b263-407d-a9f9-bfeec05111c8	Album 	No Strings Attached	\N	\N	2008-06-05 21:49:08.939499
+1442	1289	f42748d4-8908-4b1d-81b0-4ad918d40d7e	Compilation Promotion	Promo Only: Mainstream Radio, February 2000	\N	\N	2008-06-05 21:49:14.355932
+1443	1288	711633d2-5ccc-44e1-9d32-4b401bca2716	Album Official	*NSYNC	1998-03-24	\N	2008-06-05 21:51:33.151891
+1444	1288	f6010e25-d302-4848-9b07-53f715c363bb	Album Official	*NSync	1998-03-24	\N	2008-06-05 21:51:39.724041
+1445	1288	5f68e32a-ccc1-4b01-a4de-daa880bf3864	Album 	No Strings Attached	2001-01-01	\N	2008-06-05 21:51:46.874656
+1446	1288	3f0dcafd-359f-46b9-b2bc-988a5eb8fe02	Album Official	No Strings Attached	2000-03-21	\N	2008-06-05 21:51:47.519983
+1447	1288	65fb1b24-f321-4d6b-aaa5-0fd66d311c15	Compilation Official	Greatest Hits	2005-10-25	\N	2008-06-05 21:51:52.432554
+1448	1289	70666922-6d32-41fc-b208-0b91c42c35a1	Compilation Official	Now That's What I Call Music! 5	2000-11-14	\N	2008-06-05 21:52:01.339921
+1449	1289	130dde16-0fee-428f-820e-7ce449ed50e1	Compilation Official	Smash Hits: The Reunion (disc 2)	2003-01-01	\N	2008-06-05 21:52:07.735393
 \.
 
 
@@ -488,6 +499,8 @@ COPY album (album_id, artist_id, mbid, type, title, released, custom_artist_sort
 --
 
 COPY artist (artist_id, mbid, name, sortname) FROM stdin;
+1288	603ba565-3967-4be1-931e-9cb945394e86	*NSync	NSYNC
+1289	89ad4ac3-39f7-470e-963a-56509c546377	Various Artists	Various Artists
 \.
 
 
@@ -549,6 +562,38 @@ COPY metadata_match (file_id, metatrack_id, score) FROM stdin;
 --
 
 COPY metatrack (metatrack_id, track_mbid, track_title, duration, tracknumber, artist_mbid, artist_name, album_mbid, album_title, last_updated) FROM stdin;
+458	e77b5548-66d5-42d7-829b-86657a6cb596	God Must Have Spent a Little More Time on You	282960	5	603ba565-3967-4be1-931e-9cb945394e86	*NSync	711633d2-5ccc-44e1-9d32-4b401bca2716	*NSYNC	2008-06-05 21:54:26.996237
+459	9020d8e7-aebd-4ade-95dc-f39649031034	I Want You Back	202106	8	603ba565-3967-4be1-931e-9cb945394e86	*NSync	711633d2-5ccc-44e1-9d32-4b401bca2716	*NSYNC	2008-06-05 21:54:29.188052
+460	63e8c7c8-80f3-4b0c-957c-e248542f83b0	Forever Young	247400	14	603ba565-3967-4be1-931e-9cb945394e86	*NSync	f6010e25-d302-4848-9b07-53f715c363bb	*NSync	2008-06-05 21:54:30.739966
+461	b6cfb931-fe77-4cc1-8870-89d816b1a5f6	Pop	176160	11	603ba565-3967-4be1-931e-9cb945394e86	*NSync	79024eb2-513b-484b-9301-bb3884cd047d	Absolute Music 27	2008-06-05 21:54:33.056055
+462	9a76541c-6219-4716-aab7-9bbb45c925b6	This I Promise You	284733	6	603ba565-3967-4be1-931e-9cb945394e86	*NSync	5f68e32a-ccc1-4b01-a4de-daa880bf3864	No Strings Attached	2008-06-05 21:54:35.452046
+463	73638768-0b5c-4791-8a4e-5a192217a019	This I Promise You	284760	6	603ba565-3967-4be1-931e-9cb945394e86	*NSync	dec22fe3-01f1-43f3-bd91-11b93c35c1e0	No Strings Attached	2008-06-05 21:54:35.483968
+464	3c0a5b36-5e34-43b6-aba4-998a6f242a8c	This I Promise You	284760	6	603ba565-3967-4be1-931e-9cb945394e86	*NSync	631c7d7a-fca8-4891-bf02-47462cff37a5	No Strings Attached	2008-06-05 21:54:35.519957
+465	d2c36a97-6596-439e-9018-3d9ff08278c1	This I Promise You	284760	6	603ba565-3967-4be1-931e-9cb945394e86	*NSync	3f0dcafd-359f-46b9-b2bc-988a5eb8fe02	No Strings Attached	2008-06-05 21:54:35.551958
+466	aec2ef6c-672b-457e-b17e-06960cc0c214	This I Promise You	285200	6	603ba565-3967-4be1-931e-9cb945394e86	*NSync	ae94ea26-b263-407d-a9f9-bfeec05111c8	No Strings Attached	2008-06-05 21:54:35.579972
+467	0c06b996-1890-445a-9561-1dfd37ac5852	I'll Never Stop	206426	13	603ba565-3967-4be1-931e-9cb945394e86	*NSync	631c7d7a-fca8-4891-bf02-47462cff37a5	No Strings Attached	2008-06-05 21:54:37.559961
+468	09a9f27b-01c2-44f7-9948-f9378ee60b8f	I'll Never Stop	203000	9	603ba565-3967-4be1-931e-9cb945394e86	*NSync	dec22fe3-01f1-43f3-bd91-11b93c35c1e0	No Strings Attached	2008-06-05 21:54:37.568043
+469	d3107b60-5c69-4337-a468-6a8f7ed3d553	If I'm Not The One	202106	13	603ba565-3967-4be1-931e-9cb945394e86	*NSync	5f68e32a-ccc1-4b01-a4de-daa880bf3864	No Strings Attached	2008-06-05 21:54:37.579958
+470	d57ee379-ad62-404c-a36e-3e43945e608e	If I'm Not the One	202106	13	603ba565-3967-4be1-931e-9cb945394e86	*NSync	dec22fe3-01f1-43f3-bd91-11b93c35c1e0	No Strings Attached	2008-06-05 21:54:37.58794
+471	a46bb9f8-1436-4ea7-b3fb-d997ec3f2ad5	Bye Bye Bye	201373	1	603ba565-3967-4be1-931e-9cb945394e86	*NSync	5f68e32a-ccc1-4b01-a4de-daa880bf3864	No Strings Attached	2008-06-05 21:54:40.027988
+472	14f07a28-8c8f-4c2a-8a43-a19e27f40099	Bye Bye Bye	200400	1	603ba565-3967-4be1-931e-9cb945394e86	*NSync	631c7d7a-fca8-4891-bf02-47462cff37a5	No Strings Attached	2008-06-05 21:54:40.035946
+473	03e1ec9e-7d12-44c3-830f-bdd631fc6cd7	Bye Bye Bye	202786	1	603ba565-3967-4be1-931e-9cb945394e86	*NSync	ae94ea26-b263-407d-a9f9-bfeec05111c8	No Strings Attached	2008-06-05 21:54:40.043955
+474	d4b4a809-0ec3-404b-b87f-ed117674ba0b	Bye Bye Bye	200400	1	603ba565-3967-4be1-931e-9cb945394e86	*NSync	3f0dcafd-359f-46b9-b2bc-988a5eb8fe02	No Strings Attached	2008-06-05 21:54:40.051945
+475	64580be4-9eda-4ca1-89b7-3365c43d2122	Bye Bye Bye	200560	1	603ba565-3967-4be1-931e-9cb945394e86	*NSync	dec22fe3-01f1-43f3-bd91-11b93c35c1e0	No Strings Attached	2008-06-05 21:54:40.05996
+476	bc318e9a-fe4f-40a9-ba51-d292e672207d	Bye, Bye, Bye	200000	1	603ba565-3967-4be1-931e-9cb945394e86	*NSync	65fb1b24-f321-4d6b-aaa5-0fd66d311c15	Greatest Hits	2008-06-05 21:54:40.070997
+477	9ceade08-7170-457c-b0a9-bb951b9bca57	Bye Bye Bye	199320	1	603ba565-3967-4be1-931e-9cb945394e86	*NSync	f42748d4-8908-4b1d-81b0-4ad918d40d7e	Promo Only: Mainstream Radio, February 2000	2008-06-05 21:54:40.100019
+478	eb55ad9e-0070-472c-bb04-a2127b179f27	Digital Get Down	263200	8	603ba565-3967-4be1-931e-9cb945394e86	*NSync	3f0dcafd-359f-46b9-b2bc-988a5eb8fe02	No Strings Attached	2008-06-05 21:54:42.259961
+479	4f361aa3-1339-4bce-a944-dcd55e104b34	Digital Get Down	261333	8	603ba565-3967-4be1-931e-9cb945394e86	*NSync	dec22fe3-01f1-43f3-bd91-11b93c35c1e0	No Strings Attached	2008-06-05 21:54:42.267943
+480	2724dcfc-3217-448e-9c6f-6a03750079b4	Digital Get Down	261466	8	603ba565-3967-4be1-931e-9cb945394e86	*NSync	5f68e32a-ccc1-4b01-a4de-daa880bf3864	No Strings Attached	2008-06-05 21:54:42.275942
+481	ef70aaa1-efe9-4558-ae0c-83727b8dfbbb	Digital Get Down	263200	8	603ba565-3967-4be1-931e-9cb945394e86	*NSync	631c7d7a-fca8-4891-bf02-47462cff37a5	No Strings Attached	2008-06-05 21:54:42.283933
+482	fa844934-e783-4d78-9b50-49d2bc5bd357	Digital Get Down	264320	8	603ba565-3967-4be1-931e-9cb945394e86	*NSync	ae94ea26-b263-407d-a9f9-bfeec05111c8	No Strings Attached	2008-06-05 21:54:42.28905
+483	671fbe8f-1b41-48fb-868d-21de0508186c	It's Gonna Be Me	192426	2	603ba565-3967-4be1-931e-9cb945394e86	*NSync	3f0dcafd-359f-46b9-b2bc-988a5eb8fe02	No Strings Attached	2008-06-05 21:54:45.08401
+484	d979f2c8-90c1-4670-a417-a31eea9b477f	It's Gonna Be Me	192373	2	603ba565-3967-4be1-931e-9cb945394e86	*NSync	dec22fe3-01f1-43f3-bd91-11b93c35c1e0	No Strings Attached	2008-06-05 21:54:45.091959
+485	c2580264-8e00-41e4-acf1-aa52a5f5decb	It's Gonna Be Me	192426	2	603ba565-3967-4be1-931e-9cb945394e86	*NSync	631c7d7a-fca8-4891-bf02-47462cff37a5	No Strings Attached	2008-06-05 21:54:45.099951
+486	8e158c90-bc55-4a7e-8999-52d191ffe177	It's Gonna Be Me	192426	2	603ba565-3967-4be1-931e-9cb945394e86	*NSync	5f68e32a-ccc1-4b01-a4de-daa880bf3864	No Strings Attached	2008-06-05 21:54:45.108016
+487	d0f6da35-48b4-489d-9d19-c0881625e8a6	It's Gonna Be Me	193600	2	603ba565-3967-4be1-931e-9cb945394e86	*NSync	ae94ea26-b263-407d-a9f9-bfeec05111c8	No Strings Attached	2008-06-05 21:54:45.115961
+488	236c4951-f779-4ae1-ab61-741cf0a2133c	It's Gonna Be Me	190826	1	603ba565-3967-4be1-931e-9cb945394e86	*NSync	70666922-6d32-41fc-b208-0b91c42c35a1	Now That's What I Call Music! 5	2008-06-05 21:54:48.732008
+489	84a7c3b4-5c8f-4895-af1c-292bcf80480a	Bye Bye Bye	199666	11	603ba565-3967-4be1-931e-9cb945394e86	*NSync	130dde16-0fee-428f-820e-7ce449ed50e1	Smash Hits: The Reunion (disc 2)	2008-06-05 21:54:54.78805
 \.
 
 
@@ -582,7 +627,6 @@ COPY setting (setting_id, setting_class_id, key, value, user_changed, descriptio
 7	3	album_weight	100	f	
 8	3	artist_weight	100	f	
 9	3	combine_threshold	0.8	f	
-10	3	duration_limit	15	f	
 11	3	duration_weight	100	f	
 12	3	title_weight	100	f	
 13	3	tracknumber_weight	100	f	
@@ -594,6 +638,7 @@ COPY setting (setting_id, setting_class_id, key, value, user_changed, descriptio
 19	4	album_cache_lifetime	3	f	When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again.
 20	4	puid_cache_lifetime	3	f	When it's more than this months since puid was fetched from MusicBrainz, it'll be fetched from MusicBrainz again.
 21	4	metatrack_cache_lifetime	3	f	When it's more than this months since metatrack was fetched from MusicBrainz, it'll be fetched from MusicBrainz again.
+10	3	duration_limit	15000	f	
 \.
 
 
@@ -614,6 +659,119 @@ COPY setting_class (setting_class_id, name, description) FROM stdin;
 --
 
 COPY track (track_id, album_id, artist_id, mbid, title, duration, tracknumber) FROM stdin;
+7671	1438	1288	b6cfb931-fe77-4cc1-8870-89d816b1a5f6	Pop	176160	11
+7693	1439	1288	64580be4-9eda-4ca1-89b7-3365c43d2122	Bye Bye Bye	200560	1
+7694	1439	1288	d979f2c8-90c1-4670-a417-a31eea9b477f	It's Gonna Be Me	192373	2
+7695	1439	1288	a7dd8dbb-5439-443c-9f38-a758bd7dc9c9	Space Cowboy	263400	3
+7696	1439	1288	2374bcad-335d-444d-b098-0a760e08f9c4	Just Got Paid	250133	4
+7697	1439	1288	2c614148-f591-44e5-a314-64ae5549efe5	It Makes Me Ill	207800	5
+7698	1439	1288	73638768-0b5c-4791-8a4e-5a192217a019	This I Promise You	284760	6
+7699	1439	1288	cbc6d7ca-2c59-450e-881f-00e7c45a28da	No Strings Attached	228640	7
+7700	1439	1288	4f361aa3-1339-4bce-a944-dcd55e104b34	Digital Get Down	261333	8
+7701	1439	1288	09a9f27b-01c2-44f7-9948-f9378ee60b8f	I'll Never Stop	203000	9
+7702	1439	1288	769f1cdb-8d02-48d6-9153-4357338bf336	Bringin' da Noise	211333	10
+7703	1439	1288	868fa25c-5348-4161-a812-b316f463a182	That's When I'll Stop Loving You	291760	11
+7704	1439	1288	86345be3-79f8-4ddf-9d3f-7f4deaf6a0f3	I'll Be Good for You	235266	12
+7705	1439	1288	d57ee379-ad62-404c-a36e-3e43945e608e	If I'm Not the One	202106	13
+7706	1439	1288	a5bc287c-d688-44a7-986f-090e653fbb71	I Thought She Knew	202960	14
+7707	1439	1288	c64591a0-60ae-491a-9266-fae134403c17	Could It Be You	222000	15
+7708	1439	1288	5b59ff98-9683-40c2-a93e-ce024bd43ca6	This Is Where the Party's At	372213	16
+7709	1440	1288	14f07a28-8c8f-4c2a-8a43-a19e27f40099	Bye Bye Bye	200400	1
+7710	1440	1288	c2580264-8e00-41e4-acf1-aa52a5f5decb	It's Gonna Be Me	192426	2
+7711	1440	1288	d1ac2dcf-28b5-4bcd-9c7f-959d701f0754	Space Cowboy	263466	3
+7712	1440	1288	714b2916-7915-4fee-9e15-a50a96a82cfc	Just Got Paid	250000	4
+7713	1440	1288	2cc7cb79-22a8-48fe-bd62-6f122ca7b1a2	It Makes Me Ill	207906	5
+7714	1440	1288	3c0a5b36-5e34-43b6-aba4-998a6f242a8c	This I Promise You	284760	6
+7715	1440	1288	a0320f1b-7e5f-41ae-b16e-ff5611b9184b	No Strings Attached	228906	7
+7716	1440	1288	ef70aaa1-efe9-4558-ae0c-83727b8dfbbb	Digital Get Down	263200	8
+7717	1440	1288	9b92c3b9-8e0e-47af-a91c-0086ec6d32c1	Bringin' da Noise	212066	9
+7718	1440	1288	dc56a3ef-3e3f-4b57-b3f8-a46116b7142f	That's When I'll Stop Loving You	291760	10
+7719	1440	1288	6a2858ae-030c-4bb9-a60d-027b2976ff77	I'll Be Good for You	236373	11
+7720	1440	1288	eb1a198c-10b3-4286-b8ed-e8542e59d9ef	I Thought She Knew	202666	12
+7721	1440	1288	0c06b996-1890-445a-9561-1dfd37ac5852	I'll Never Stop	206426	13
+7722	1440	1288	99257296-d8f2-4c65-a946-4743a5f42cd4	If Only in Heaven's Eyes	278840	14
+7723	1440	1288	f2a00a4f-dc45-4871-a0d3-f9a0e8a82d32	Could It Be You	219800	15
+7736	1441	1288	03e1ec9e-7d12-44c3-830f-bdd631fc6cd7	Bye Bye Bye	202786	1
+7737	1441	1288	d0f6da35-48b4-489d-9d19-c0881625e8a6	It's Gonna Be Me	193600	2
+7738	1441	1288	1fde75bb-9483-4900-86c2-4fe1526afc1d	Space Cowboy	264413	3
+7739	1441	1288	793c6c35-25ad-4133-8236-b38f171d1b91	Just Got Paid	250626	4
+7740	1441	1288	191ef811-05eb-4218-b98e-83063c2d1119	It Makes Me Ill	208026	5
+7741	1441	1288	aec2ef6c-672b-457e-b17e-06960cc0c214	This I Promise You	285200	6
+7742	1441	1288	66f07e13-9aad-4ca0-b5af-5e395a0ae11f	No Strings Attached	228840	7
+7743	1441	1288	fa844934-e783-4d78-9b50-49d2bc5bd357	Digital Get Down	264320	8
+7744	1441	1288	c17995d6-774f-43f6-8155-a92c64f1bb8c	Bringin Da Noise	212506	9
+7745	1441	1288	d7f4a379-11a9-4878-88f9-411bea3bed84	That's When I'll Stop Loving You	292346	10
+7746	1441	1288	fb467c51-9582-4f9f-b5e7-95c159d6eadf	I'll Be Good For You	236800	11
+7747	1441	1288	672b9f77-ecd3-4265-a964-5f5b3e40cf71	I Thought She Knew	201960	12
+7748	1441	1288	b8ee546b-c3b8-4371-aed6-488041c47f12	Yo Te Voy A Amar	267666	13
+7761	1442	1288	9ceade08-7170-457c-b0a9-bb951b9bca57	Bye Bye Bye	199320	1
+7800	1443	1288	e8918777-b1ca-499e-b168-3649f0e2ea13	Tearin' Up My Heart	211000	1
+7801	1443	1288	76cce4e7-c9d1-413e-a066-ff08e130dbff	I Just Wanna Be With You	243400	2
+7802	1443	1288	144b3f0c-2dae-4a4c-902e-b122346cfb31	Here We Go	215866	3
+7803	1443	1288	ad843218-b22f-45b6-8664-98c9539dca50	For the Girl Who Has Everything	226200	4
+7804	1443	1288	e77b5548-66d5-42d7-829b-86657a6cb596	God Must Have Spent a Little More Time on You	282960	5
+7805	1443	1288	fb5d01e0-2091-4fa0-bd06-20cf0f17134e	You Got It	213640	6
+7806	1443	1288	e2cc2bec-29bf-4158-81bf-4e1307b83bbf	I Need Love	194960	7
+7807	1443	1288	9020d8e7-aebd-4ade-95dc-f39649031034	I Want You Back	202106	8
+7808	1443	1288	6d4f2747-2658-482b-ab76-8482b60d3e51	Everything I Own	238693	9
+7809	1443	1288	5a22e684-b543-462c-a177-2235b7a5c36e	I Drive Myself Crazy	239733	10
+7810	1443	1288	6f462501-111b-4e43-9574-7d12cb14ae5f	Crazy for You	221666	11
+7811	1443	1288	8e3faaa9-e2b9-4c26-9bc8-748fd657bf61	Sailing	277640	12
+7812	1443	1288	45a89256-b895-4d07-808b-ac05608429c1	Giddy Up	249960	13
+7813	1444	1288	65776b8f-21cf-47bb-99e8-3660504b473c	Tearin' Up My Heart	287360	1
+7814	1444	1288	681e75eb-efb6-4cc0-816f-73816a354bc9	You Got It	213066	2
+7815	1444	1288	709e6196-3e0f-4726-82f1-4c6496a027ca	Sailing	276973	3
+7816	1444	1288	ede6e302-5d5e-429b-ac6a-63c573574764	Crazy for You	222000	4
+7817	1444	1288	1d660a11-648a-4caf-9735-bfb5b66608c9	Riddle	221133	5
+7818	1444	1288	fd6d87c8-c4da-4e65-822d-596a49130066	For the Girl Who Has Everything	231360	6
+7819	1444	1288	bfaf96a8-c954-4060-80ce-50c44c0f07b3	I Need Love	194866	7
+7820	1444	1288	3ad4f1c0-ca53-4eca-8bad-86edb79a7012	Giddy Up	249666	8
+7821	1444	1288	9ecf0a4c-9b2e-4242-9bd6-255dfbcb2005	Here We Go	216240	9
+7822	1444	1288	dfea1c55-805d-4acf-aa44-ad7ce0f16fd3	Best of My Life	286493	10
+7823	1444	1288	b4b8550f-4ccc-42ad-8410-87cfab8d98f3	More Than a Feeling	222706	11
+7824	1444	1288	52a12817-0dc8-4488-a1df-ec2fd576b017	I Want You Back	264693	12
+7825	1444	1288	d9c56e24-d37b-47bc-9d8f-bd5819c80467	Together Again	251840	13
+7826	1444	1288	63e8c7c8-80f3-4b0c-957c-e248542f83b0	Forever Young	247400	14
+7827	1445	1288	a46bb9f8-1436-4ea7-b3fb-d997ec3f2ad5	Bye Bye Bye	201373	1
+7828	1445	1288	8e158c90-bc55-4a7e-8999-52d191ffe177	It's Gonna Be Me	192426	2
+7829	1445	1288	1e35ce07-7632-40e9-a2ac-ee6f87e6a314	Space Cowboy (Yippie-Yi-Yay)	263440	3
+7830	1445	1288	866c09e7-d5f3-4c32-a029-d56686fc3b54	Just Got Paid	250000	4
+7831	1445	1288	88428b42-3b55-4b7d-9e54-f41fa063279f	It Makes Me Ill	207893	5
+7832	1445	1288	9a76541c-6219-4716-aab7-9bbb45c925b6	This I Promise You	284733	6
+7833	1445	1288	5d847153-0b7f-48da-890b-4a122f12d62d	No Strings Attached	228466	7
+7834	1445	1288	2724dcfc-3217-448e-9c6f-6a03750079b4	Digital Get Down	261466	8
+7835	1445	1288	04e1f9a4-0a6b-4a35-874e-9fd8436da7d8	I Will Never Stop	201133	9
+7836	1445	1288	efc47178-9652-41f3-949a-9955db026178	Bringin' Da Noise	213240	10
+7837	1445	1288	5ad4dffe-f9d1-4705-8c87-a2df3f0b398a	That's When I'll Stop Loving You	291666	11
+7838	1445	1288	c0f3862f-8e07-4d79-b29e-63639a65e556	I'll Be Good For You	235293	12
+7839	1445	1288	d3107b60-5c69-4337-a468-6a8f7ed3d553	If I'm Not The One	202106	13
+7840	1445	1288	2935c5a1-41fe-4a1d-96b4-f79f03f34579	I Thought She Knew	201733	14
+7841	1446	1288	d4b4a809-0ec3-404b-b87f-ed117674ba0b	Bye Bye Bye	200400	1
+7842	1446	1288	671fbe8f-1b41-48fb-868d-21de0508186c	It's Gonna Be Me	192426	2
+7843	1446	1288	d8af185e-1a2f-45d1-b5bd-dd73005b3be7	Space Cowboy	263466	3
+7844	1446	1288	e6f4ee7d-2141-4896-b708-3438613ec64f	Just Got Paid	250000	4
+7845	1446	1288	f2629c73-164d-46a8-9243-b15d25f4da66	It Makes Me Ill	207906	5
+7846	1446	1288	d2c36a97-6596-439e-9018-3d9ff08278c1	This I Promise You	284760	6
+7847	1446	1288	62f92d66-ec85-43fc-b633-8d8d7ba0910e	No Strings Attached	228906	7
+7848	1446	1288	eb55ad9e-0070-472c-bb04-a2127b179f27	Digital Get Down	263200	8
+7849	1446	1288	819002e9-1fbc-402f-b6e1-b1246c2a2853	Bringin' da Noise	212066	9
+7850	1446	1288	dc1a30d8-dab6-4960-a3ec-a8d85c996f5b	That's When I'll Stop Loving You	291760	10
+7851	1446	1288	7d3acea0-1ce7-4dd5-97d0-359453bbca40	I'll Be Good for You	236373	11
+7852	1446	1288	cfe6c921-bfa6-47d1-bd32-fab242f9eac5	I Thought She Knew	202333	12
+7853	1447	1288	bc318e9a-fe4f-40a9-ba51-d292e672207d	Bye, Bye, Bye	200000	1
+7854	1447	1288	c0c6de7f-3282-420e-b64c-4a514f6ddfc8	Girlfriend (feat. Nelly) (remix)	285000	2
+7855	1447	1288	b4eb9c9b-01a7-440d-a200-dd06f1df8b57	This I Promise You	267000	3
+7856	1447	1288	e7a39e19-dbfd-4eb5-8c37-dc03102d8e6c	It's Gonna Be Me	192000	4
+7857	1447	1288	35e2f88b-dc42-406f-baaa-3df42365d0d5	God Must Have Spent a Little More Time on You	244000	5
+7858	1447	1288	6ff52679-9504-423d-a2c5-613bf36c3475	I Want You Back	200000	6
+7859	1447	1288	e27ce99d-3dd0-4dea-9bf2-1fe9d4f364bc	Pop	176000	7
+7860	1447	1288	e45165ef-c16e-4b72-9bc2-81e43a2dc4ec	Gone	293000	8
+7861	1447	1288	761566f9-c063-4524-b4fd-d6c2143113e3	Tearin' Up My Heart	210000	9
+7862	1447	1288	2d94654e-ae02-4a08-bc4e-d630452b9540	I Drive Myself Crazy	239000	10
+7863	1447	1288	8d127905-819e-407b-b46a-a050a0b0a650	I'll Never Stop	188000	11
+7864	1447	1288	5a11a41a-b387-4f64-bd39-d6fcfdbc6b8b	Music of My Heart (feat. Gloria Estefan)	271000	12
+7865	1448	1288	236c4951-f779-4ae1-ab61-741cf0a2133c	It's Gonna Be Me	190826	1
+7894	1449	1288	84a7c3b4-5c8f-4895-af1c-292bcf80480a	Bye Bye Bye	199666	11
 \.
 
 
@@ -671,22 +829,6 @@ ALTER TABLE ONLY file
 
 ALTER TABLE ONLY metadata_match
     ADD CONSTRAINT metadata_match_pkey PRIMARY KEY (file_id, metatrack_id);
-
-
---
--- Name: metatrack_album_mbid_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
---
-
-ALTER TABLE ONLY metatrack
-    ADD CONSTRAINT metatrack_album_mbid_key UNIQUE (album_mbid, track_mbid);
-
-
---
--- Name: metatrack_artist_mbid_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
---
-
-ALTER TABLE ONLY metatrack
-    ADD CONSTRAINT metatrack_artist_mbid_key UNIQUE (artist_mbid, album_mbid);
 
 
 --

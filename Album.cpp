@@ -142,8 +142,9 @@ bool Album::saveToCache() {
 	if (e_released == "" || released.size() != 10) {
 		e_released = "NULL";
 	} else {
+		string tmp_e_released = e_released;
 		e_released = "'";
-		e_released.append(e_released);
+		e_released.append(tmp_e_released);
 		e_released.append("'");
 	}
 	ostringstream query;
@@ -152,11 +153,11 @@ bool Album::saveToCache() {
 		locutus->debug(DEBUG_NOTICE, "Failed to save album artist in cache. See errors above");
 	/* save album */
 	query.str("");
-	query << "INSERT INTO album(artist_id, mbid, type, title, released, loaded) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), '" << e_mbid << "', '" << e_type << "', '" << e_title << "', " << e_released << ", true WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << e_mbid << "')";
+	query << "INSERT INTO album(artist_id, mbid, type, title, released) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), '" << e_mbid << "', '" << e_type << "', '" << e_title << "', " << e_released << " WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << e_mbid << "')";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save album in cache, query failed. See error above");
 	query.str("");
-	query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), type = '" << e_type << "', title = '" << e_title << "', released = " << e_released << ", loaded = true, updated = now() WHERE mbid = '" << e_mbid << "'";
+	query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), type = '" << e_type << "', title = '" << e_title << "', released = " << e_released << ", last_updated = now() WHERE mbid = '" << e_mbid << "'";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save album in cache, query failed. See error above");
 	/* save tracks */

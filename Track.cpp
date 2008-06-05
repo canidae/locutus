@@ -24,6 +24,7 @@ bool Track::saveToCache() {
 		locutus->debug(DEBUG_NOTICE, msg);
 		return false;
 	}
+	artist->saveToCache();
 	string e_album_mbid = locutus->database->escapeString(album->mbid);
 	string e_artist_mbid = locutus->database->escapeString(artist->mbid);
 	string e_mbid = locutus->database->escapeString(mbid);
