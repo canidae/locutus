@@ -51,7 +51,6 @@ bool Album::loadFromCache(string mbid) {
 	tracks.resize(trackcount, NULL);
 	for (int t = 0; t < trackcount; ++t) {
 		/* we could reduce memory usage here.
-		 * when we've loaded an album that's not various artists,
 		 * we'll get the same artist stored <trackcount> times.
 		 * since each artist entry usually eats about 64 bytes mem,
 		 * it's hardly necessary to improve this, though */
@@ -81,7 +80,7 @@ bool Album::retrieveFromWebService(string mbid) {
 	if (root->children["metadata"].size() <= 0)
 		return false;
 	XMLNode *album = root->children["metadata"][0]->children["release"][0];
-	mbid = album->children["id"][0]->value;
+	this->mbid = album->children["id"][0]->value;
 	type = album->children["type"][0]->value;
 	title = album->children["title"][0]->value;
 	if (album->children["release-event-list"].size() > 0) {
