@@ -61,5 +61,6 @@ class WebFetcher {
 		void compareFilesWithAlbum(map<string, vector<map<string, Match> > > *scores, vector<Metafile *> *files, Album *album);
 		string escapeWSString(string text);
 		string makeWSQuery(string group, Metafile *mf);
+		bool saveMatchToCache(string filename, string track_mbid, double score);
 };
 #endif

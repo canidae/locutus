@@ -2,4 +2,4 @@ daemon
 ------
 * FileMetadataConstants should be renamed, at least
 * i'm not fetching release date from id3, am i? check this shit later
-* database isn't up to date. "loaded" in album/artist/track must go, and file should have reference to metatrack, not track. probably lots more, and so on
+* locutus crash if eg. track with tracknumber 1 is removed from the track table and that album got more than 1 tracks. should do something clever here (order by tracknumber desc and seeing if first tracknumber equals rows?)

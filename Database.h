@@ -3,6 +3,7 @@
 #define DATABASE_H
 /* connection (FIXME: should be config file) */
 #define CONNECTION_STRING "host=localhost user=locutus password=locutus dbname=locutus"
+//#define CONNECTION_STRING "host=sql.samfundet.no user=locutus password=locutus dbname=locutus"
 
 /* forward declare */
 class Database;

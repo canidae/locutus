@@ -36,6 +36,7 @@ void WebFetcher::lookup() {
 				if (score < puid_min_score)
 					continue;
 				mt->saveToCache();
+				saveMatchToCache(mf->filename, mt->track_mbid, score);
 				if (albums.find(mt->album_mbid) == albums.end()) {
 					Album *album = new Album(locutus);
 					if (!album->loadFromCache(mt->album_mbid)) {
@@ -81,6 +82,7 @@ void WebFetcher::lookup() {
 				if (score < metadata_min_score)
 					continue;
 				mt->saveToCache();
+				saveMatchToCache(mf->filename, mt->track_mbid, score);
 				if (albums.find(mt->album_mbid) == albums.end()) {
 					Album *album = new Album(locutus);
 					if (!album->loadFromCache(mt->album_mbid)) {
@@ -272,4 +274,20 @@ string WebFetcher::makeWSQuery(string group, Metafile *mf) {
 	query << "track:(" << escapeWSString(mf->title) << " " << bnwe << " " << group << ") ";
 	query << "release:(" << escapeWSString(mf->album) << " " << bnwe << " " << group << ") ";
 	return query.str();
+}
+
+bool WebFetcher::saveMatchToCache(string filename, string track_mbid, double score) {
+	if (filename == "" || track_mbid.size() != 36)
+		return false;
+	string e_filename = locutus->database->escapeString(filename);
+	string e_track_mbid = locutus->database->escapeString(track_mbid);
+	ostringstream query;
+	query << "INSERT INTO metadata_match(file_id, metatrack_id, score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'), " << score << " WHERE NOT EXISTS (SELECT true FROM metadata_match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'))";
+	if (!locutus->database->query(query.str()))
+		locutus->debug(DEBUG_NOTICE, "Unable to save metadata match in cache, query failed. See error above");
+	query.str("");
+	query << "UPDATE metadata_match SET score = " << score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
+	if (!locutus->database->query(query.str()))
+		locutus->debug(DEBUG_NOTICE, "Unable to save metadata match in cache, query failed. See error above");
+	return true;
 }
