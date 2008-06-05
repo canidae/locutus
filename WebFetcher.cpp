@@ -33,10 +33,10 @@ void WebFetcher::lookup() {
 			vector<Metatrack> *tracks = locutus->webservice->searchPUID(mf->puid);
 			for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
 				double score = mf->compareWithMetatrack(&(*mt));
-				if (score < puid_min_score)
-					continue;
 				mt->saveToCache();
 				saveMatchToCache(mf->filename, mt->track_mbid, score);
+				if (score < puid_min_score)
+					continue;
 				if (albums.find(mt->album_mbid) == albums.end()) {
 					Album *album = new Album(locutus);
 					if (!album->loadFromCache(mt->album_mbid)) {
@@ -79,10 +79,10 @@ void WebFetcher::lookup() {
 			vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, mf));
 			for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
 				double score = mf->compareWithMetatrack(&(*mt));
-				if (score < metadata_min_score)
-					continue;
 				mt->saveToCache();
 				saveMatchToCache(mf->filename, mt->track_mbid, score);
+				if (score < metadata_min_score)
+					continue;
 				if (albums.find(mt->album_mbid) == albums.end()) {
 					Album *album = new Album(locutus);
 					if (!album->loadFromCache(mt->album_mbid)) {
