@@ -129,7 +129,7 @@ ALTER TABLE public.puid OWNER TO canidae;
 CREATE TABLE puid_metatrack (
     puid_id integer NOT NULL,
     metatrack_id integer NOT NULL,
-    last_update timestamp without time zone DEFAULT now() NOT NULL
+    last_updated timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -389,7 +389,7 @@ ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
 -- Name: setting_setting_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('setting_setting_id_seq', 20, true);
+SELECT pg_catalog.setval('setting_setting_id_seq', 21, true);
 
 
 --
@@ -564,7 +564,7 @@ COPY puid (puid_id, puid) FROM stdin;
 -- Data for Name: puid_metatrack; Type: TABLE DATA; Schema: public; Owner: canidae
 --
 
-COPY puid_metatrack (puid_id, metatrack_id, last_update) FROM stdin;
+COPY puid_metatrack (puid_id, metatrack_id, last_updated) FROM stdin;
 \.
 
 
@@ -593,6 +593,7 @@ COPY setting (setting_id, setting_class_id, key, value, user_changed, descriptio
 18	1	metadata_min_score	0.75	f	Minimum value for when a metadata lookup is considered a match. Must be between 0.0 and 1.0
 19	4	album_cache_lifetime	3	f	When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again.
 20	4	puid_cache_lifetime	3	f	When it's more than this months since puid was fetched from MusicBrainz, it'll be fetched from MusicBrainz again.
+21	4	metatrack_cache_lifetime	3	f	When it's more than this months since metatrack was fetched from MusicBrainz, it'll be fetched from MusicBrainz again.
 \.
 
 
@@ -897,6 +898,16 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE file TO locutus;
 
 
 --
+-- Name: metadata_match; Type: ACL; Schema: public; Owner: canidae
+--
+
+REVOKE ALL ON TABLE metadata_match FROM PUBLIC;
+REVOKE ALL ON TABLE metadata_match FROM canidae;
+GRANT ALL ON TABLE metadata_match TO canidae;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE metadata_match TO locutus;
+
+
+--
 -- Name: metatrack; Type: ACL; Schema: public; Owner: canidae
 --
 
@@ -914,6 +925,16 @@ REVOKE ALL ON TABLE puid FROM PUBLIC;
 REVOKE ALL ON TABLE puid FROM canidae;
 GRANT ALL ON TABLE puid TO canidae;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE puid TO locutus;
+
+
+--
+-- Name: puid_metatrack; Type: ACL; Schema: public; Owner: canidae
+--
+
+REVOKE ALL ON TABLE puid_metatrack FROM PUBLIC;
+REVOKE ALL ON TABLE puid_metatrack FROM canidae;
+GRANT ALL ON TABLE puid_metatrack TO canidae;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE puid_metatrack TO locutus;
 
 
 --

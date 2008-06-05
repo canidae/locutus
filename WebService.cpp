@@ -91,7 +91,7 @@ bool WebService::fetch(const char *url) {
 	if (!parse())
 		cout << "not well formed..." << endl;
 	close();
-	printXML(root, 0);
+	//printXML(root, 0);
 	return true;
 }
 

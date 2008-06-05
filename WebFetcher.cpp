@@ -35,6 +35,7 @@ void WebFetcher::lookup() {
 				double score = mf->compareWithMetatrack(&(*mt));
 				if (score < puid_min_score)
 					continue;
+				mt->saveToCache();
 				Album album(locutus);
 				if (!album.loadFromCache(mt->album_mbid)) {
 					if (album.retrieveFromWebService(mt->album_mbid))
@@ -72,6 +73,7 @@ void WebFetcher::lookup() {
 				double score = mf->compareWithMetatrack(&(*mt));
 				if (score < metadata_min_score)
 					continue;
+				mt->saveToCache();
 				Album album(locutus);
 				if (!album.loadFromCache(mt->album_mbid)) {
 					if (album.retrieveFromWebService(mt->album_mbid))
