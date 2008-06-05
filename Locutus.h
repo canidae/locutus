@@ -11,6 +11,9 @@
 #define ALBUM_CACHE_LIFETIME_KEY "album_cache_lifetime"
 #define ALBUM_CACHE_LIFETIME_VALUE 3
 #define ALBUM_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
+#define METATRACK_CACHE_LIFETIME_KEY "metatrack_cache_lifetime"
+#define METATRACK_CACHE_LIFETIME_VALUE 3
+#define METATRACK_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since metatrack was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
 #define PUID_CACHE_LIFETIME_KEY "puid_cache_lifetime"
 #define PUID_CACHE_LIFETIME_VALUE 3
 #define PUID_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since puid was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
