@@ -10,6 +10,7 @@ class Track;
 #include "Album.h"
 #include "Artist.h"
 #include "Locutus.h"
+#include "Metatrack.h"
 
 /* namespaces */
 using namespace std;
@@ -32,6 +33,7 @@ class Track {
 		~Track();
 
 		/* methods */
+		Metatrack getAsMetatrack();
 		bool saveToCache();
 
 	private:

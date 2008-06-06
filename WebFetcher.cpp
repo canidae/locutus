@@ -214,14 +214,17 @@ void WebFetcher::compareFilesWithAlbum(map<string, vector<map<string, Match> > >
 		for (vector<Track *>::size_type t = 0; t < album->tracks.size(); ++t) {
 			if ((*scores)[album->mbid][t].find((*mf)->filename) != (*scores)[album->mbid][t].end())
 				continue;
+			Metatrack mt = album->tracks[t]->getAsMetatrack();
 			Match m;
-			if (album->tracks[t]->mbid == (*mf)->musicbrainz_trackid)
+			if (mt.track_mbid == (*mf)->musicbrainz_trackid)
 				m.mbid_match = true;
 			else
 				m.mbid_match = false;
 			m.puid_match = false;
-			m.meta_score = (*mf)->compareWithTrack(album->tracks[t]);
-			(*scores)[album->mbid][t][(*mf)->filename] = m;
+			m.meta_score = (*mf)->compareWithMetatrack(&mt);
+			(*scores)[mt.album_mbid][t][(*mf)->filename] = m;
+			mt.saveToCache();
+			saveMatchToCache((*mf)->filename, mt.track_mbid, m.meta_score);
 		}
 	}
 }

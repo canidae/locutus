@@ -17,6 +17,19 @@ Track::~Track() {
 }
 
 /* methods */
+Metatrack Track::getAsMetatrack() {
+	Metatrack mt(locutus);
+	mt.duration = duration;
+	mt.tracknumber = tracknumber;
+	mt.track_mbid = mbid;
+	mt.track_title = title;
+	mt.artist_mbid = artist->mbid;
+	mt.artist_name = artist->name;
+	mt.album_mbid = album->mbid;
+	mt.album_title = album->title;
+	return mt;
+}
+
 bool Track::saveToCache() {
 	if (mbid.size() != 36) {
 		string msg = "Unable to save track in cache. Illegal MusicBrainz ID: ";

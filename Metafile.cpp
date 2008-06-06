@@ -98,17 +98,6 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 	return score;
 }
 
-double Metafile::compareWithTrack(Track *track) {
-	Metatrack mt(locutus);
-	mt.album_title = track->album->title;
-	mt.artist_name = track->artist->name;
-	mt.track_title = track->title;
-	mt.tracknumber = track->tracknumber;
-	mt.duration = track->duration;
-	double score = compareWithMetatrack(&mt);
-	return score;
-}
-
 string Metafile::getBaseNameWithoutExtension() {
 	/* return basename without extension, duh */
 	string::size_type pos = filename.find_last_of('/');

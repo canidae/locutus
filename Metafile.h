@@ -105,7 +105,6 @@ class Metafile {
 
 		/* methods */
 		double compareWithMetatrack(Metatrack *metatrack);
-		double compareWithTrack(Track *track);
 		string getBaseNameWithoutExtension();
 		string getGroup();
 		bool loadFromCache(string filename);
