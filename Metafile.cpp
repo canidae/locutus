@@ -255,7 +255,7 @@ bool Metafile::saveToCache() {
 	query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, ";
 	if (puid != "")
 		query << "puid_id, ";
-	query << "album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, year) VALUES ('";
+	query << "album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released) VALUES ('";
 	query << locutus->database->escapeString(filename) << "', ";
 	query << duration << ", ";
 	query << channels << ", ";
@@ -366,36 +366,39 @@ void Metafile::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1)
 		frames = map["TSOP"];
 		if (!frames.isEmpty())
 			artistsort = frames.front()->toString().to8Bit(true);
+		frames = map["TDRC"];
+		if (!frames.isEmpty())
+			released = frames.front()->toString().to8Bit(true);
 	}
 	/* overwrite with ape */
 	if (ape != NULL) {
 		const APE::ItemListMap map = ape->itemListMap();
-		if (!map[ALBUM].isEmpty())
-			album = map[ALBUM].toString().to8Bit(true);
-		if (!map[ALBUMARTIST].isEmpty())
-			albumartist = map[ALBUMARTIST].toString().to8Bit(true);
-		if (!map[ALBUMARTISTSORT].isEmpty())
-			albumartistsort = map[ALBUMARTISTSORT].toString().to8Bit(true);
-		if (!map[ARTIST].isEmpty())
-			artist = map[ARTIST].toString().to8Bit(true);
-		if (!map[ARTISTSORT].isEmpty())
-			artistsort = map[ARTISTSORT].toString().to8Bit(true);
-		if (!map[MUSICBRAINZ_ALBUMARTISTID].isEmpty())
-			musicbrainz_albumartistid = map[MUSICBRAINZ_ALBUMARTISTID].toString().to8Bit(true);
-		if (!map[MUSICBRAINZ_ALBUMID].isEmpty())
-			musicbrainz_albumid = map[MUSICBRAINZ_ALBUMID].toString().to8Bit(true);
-		if (!map[MUSICBRAINZ_ARTISTID].isEmpty())
-			musicbrainz_artistid = map[MUSICBRAINZ_ARTISTID].toString().to8Bit(true);
-		if (!map[MUSICBRAINZ_TRACKID].isEmpty())
-			musicbrainz_trackid = map[MUSICBRAINZ_TRACKID].toString().to8Bit(true);
-		if (!map[TITLE].isEmpty())
-			title = map[TITLE].toString().to8Bit(true);
-		if (!map[TRACKNUMBER].isEmpty())
-			tracknumber = map[TRACKNUMBER].toString().to8Bit(true);
-		if (!map[DATE].isEmpty())
-			released = map[DATE].toString().to8Bit(true);
-		if (!map[MUSICIP_PUID].isEmpty())
-			puid = map[MUSICIP_PUID].toString().to8Bit(true);
+		if (!map[APEALBUM].isEmpty())
+			album = map[APEALBUM].toString().to8Bit(true);
+		if (!map[APEALBUMARTIST].isEmpty())
+			albumartist = map[APEALBUMARTIST].toString().to8Bit(true);
+		if (!map[APEALBUMARTISTSORT].isEmpty())
+			albumartistsort = map[APEALBUMARTISTSORT].toString().to8Bit(true);
+		if (!map[APEARTIST].isEmpty())
+			artist = map[APEARTIST].toString().to8Bit(true);
+		if (!map[APEARTISTSORT].isEmpty())
+			artistsort = map[APEARTISTSORT].toString().to8Bit(true);
+		if (!map[APEMUSICBRAINZ_ALBUMARTISTID].isEmpty())
+			musicbrainz_albumartistid = map[APEMUSICBRAINZ_ALBUMARTISTID].toString().to8Bit(true);
+		if (!map[APEMUSICBRAINZ_ALBUMID].isEmpty())
+			musicbrainz_albumid = map[APEMUSICBRAINZ_ALBUMID].toString().to8Bit(true);
+		if (!map[APEMUSICBRAINZ_ARTISTID].isEmpty())
+			musicbrainz_artistid = map[APEMUSICBRAINZ_ARTISTID].toString().to8Bit(true);
+		if (!map[APEMUSICBRAINZ_TRACKID].isEmpty())
+			musicbrainz_trackid = map[APEMUSICBRAINZ_TRACKID].toString().to8Bit(true);
+		if (!map[APETITLE].isEmpty())
+			title = map[APETITLE].toString().to8Bit(true);
+		if (!map[APETRACKNUMBER].isEmpty())
+			tracknumber = map[APETRACKNUMBER].toString().to8Bit(true);
+		if (!map[APEDATE].isEmpty())
+			released = map[APEDATE].toString().to8Bit(true);
+		if (!map[APEMUSICIP_PUID].isEmpty())
+			puid = map[APEMUSICIP_PUID].toString().to8Bit(true);
 	}
 }
 
