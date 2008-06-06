@@ -81,11 +81,12 @@ void WebFetcher::lookup() {
 				if (album->mbid == "") {
 					/* hmm, didn't find the album? */
 					delete album;
+				} else {
+					albums[album->mbid] = album;
+					/* compare the other files in group with this album */
+					compareFilesWithAlbum(&scores, &group->second, album);
 					continue;
 				}
-				albums[album->mbid] = album;
-				/* compare the other files in group with this album */
-				compareFilesWithAlbum(&scores, &group->second, album);
 			}
 			/* meta lookup */
 			vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, mf));
