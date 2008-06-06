@@ -129,6 +129,21 @@ void WebFetcher::lookup() {
 				compareFilesWithAlbum(&scores, &group->second, albums[mt->album_mbid]);
 			}
 		}
+		/* match tracks to album */
+		/* TODO
+		 * ideas?
+		 * - always save if a group perfectly match an album (no duplicates, no files left, album is filled)?
+		 *   * there are several problems that must be adressed. what if all files except 1 match album "a"
+		 *     using puid while the last track doesn't match the same album using puid, but rather match
+		 *     another album?
+		 *     same goes for mbid.
+		 * - optionally save if a group match multiple albums perfectly?
+		 *   * this is ~essentially the same as above, though. probably safe to merge them
+		 * - optionally save if all files match one (or more) albums, but don't fill the album(s) up?
+		 *   * we'll need some intelligent way to make sure files are "gathered" on as few albums as possible
+		 * - optionally save if some of the files match an album, but not all?
+		 */
+		/* clear for next group */
 		for (map<string, Album *>::iterator album = albums.begin(); album != albums.end(); ++album)
 			delete album->second;
 		albums.clear();
