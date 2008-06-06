@@ -84,6 +84,9 @@ void WebFetcher::lookup() {
 				} else {
 					albums[album->mbid] = album;
 					/* compare the other files in group with this album */
+					int trackcount = (int) album->tracks.size();
+					if ((int) scores[album->mbid].size() < trackcount)
+						scores[album->mbid].resize(trackcount);
 					compareFilesWithAlbum(&scores, &group->second, album);
 					continue;
 				}
