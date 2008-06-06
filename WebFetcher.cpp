@@ -72,9 +72,21 @@ void WebFetcher::lookup() {
 		for (vector<Metafile *>::iterator group_file = group->second.begin(); group_file != group->second.end(); ++group_file) {
 			Metafile *mf = *group_file;
 			/* mbid lookup */
-			/* TODO:
-			 * we'll need some sort of handling here too:
-			 * - no matching tracks (mbid was deleted from mb) */
+			if (mf->musicbrainz_albumid.size() == 36 && albums.find(mf->musicbrainz_albumid) == albums.end()) {
+				Album *album = new Album(locutus);
+				if (!album->loadFromCache(mf->musicbrainz_albumid)) {
+					if (album->retrieveFromWebService(mf->musicbrainz_albumid))
+						album->saveToCache();
+				}
+				if (album->mbid == "") {
+					/* hmm, didn't find the album? */
+					delete album;
+					continue;
+				}
+				albums[album->mbid] = album;
+				/* compare the other files in group with this album */
+				compareFilesWithAlbum(&scores, &group->second, album);
+			}
 			/* meta lookup */
 			vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, mf));
 			for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {

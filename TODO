@@ -1,5 +1,4 @@
 daemon
 ------
 * FileMetadataConstants should be renamed, at least
-* i'm not fetching release date from id3, am i? check this shit later
 * locutus crash if eg. track with tracknumber 1 is removed from the track table and that album got more than 1 tracks. should do something clever here (order by tracknumber desc and seeing if first tracknumber equals rows?)
