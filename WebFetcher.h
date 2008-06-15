@@ -20,7 +20,6 @@ class WebFetcher;
 #include <string>
 #include <vector>
 #include "Album.h"
-#include "FileMetadataConstants.h"
 #include "Metafile.h"
 #include "Metatrack.h"
 #include "Locutus.h"
