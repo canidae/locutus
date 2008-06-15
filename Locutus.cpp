@@ -6,7 +6,6 @@ Locutus::Locutus() {
 	database = new Database(this);
 	levenshtein = new Levenshtein();
 	settings = new Settings(this);
-	fmconst = new FileMetadataConstants(this);
 	webservice = new WebService(this);
 	filereader = new FileReader(this);
 	puidgen = new PUIDGenerator(this);
@@ -24,7 +23,6 @@ Locutus::~Locutus() {
 	delete webservice;
 	delete settings;
 	delete filereader;
-	delete fmconst;
 	delete levenshtein;
 	delete database;
 }
@@ -101,9 +99,15 @@ void Locutus::loadSettings() {
         album_cache_lifetime = settings->loadSetting(setting_class_id, ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
         metatrack_cache_lifetime = settings->loadSetting(setting_class_id, METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
         puid_cache_lifetime = settings->loadSetting(setting_class_id, PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
+	album_weight = settings->loadSetting(setting_class_id, ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
+	artist_weight = settings->loadSetting(setting_class_id, ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
+	combine_threshold = settings->loadSetting(setting_class_id, COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
+	duration_limit = settings->loadSetting(setting_class_id, DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
+	duration_weight = settings->loadSetting(setting_class_id, DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
+	title_weight = settings->loadSetting(setting_class_id, TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
+	tracknumber_weight = settings->loadSetting(setting_class_id, TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 
 	/* load settings for other classes */
-	fmconst->loadSettings();
 	filereader->loadSettings();
 	webservice->loadSettings();
 	puidgen->loadSettings();

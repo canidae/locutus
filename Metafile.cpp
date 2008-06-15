@@ -87,14 +87,14 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 			}
 		}
 	}
-	double score = scores[0][0] * locutus->fmconst->album_weight;
-	score += scores[1][0] * locutus->fmconst->artist_weight;
-	score += scores[2][0] * locutus->fmconst->title_weight;
-	score += scores[3][0] * locutus->fmconst->tracknumber_weight;
+	double score = scores[0][0] * locutus->album_weight;
+	score += scores[1][0] * locutus->artist_weight;
+	score += scores[2][0] * locutus->title_weight;
+	score += scores[3][0] * locutus->tracknumber_weight;
 	int durationdiff = abs(metatrack->duration - duration);
-	if (durationdiff < locutus->fmconst->duration_limit)
-		score += (1.0 - durationdiff / locutus->fmconst->duration_limit) * locutus->fmconst->duration_weight;
-	score /= locutus->fmconst->album_weight + locutus->fmconst->artist_weight + locutus->fmconst->title_weight + locutus->fmconst->tracknumber_weight + locutus->fmconst->duration_weight;
+	if (durationdiff < locutus->duration_limit)
+		score += (1.0 - durationdiff / locutus->duration_limit) * locutus->duration_weight;
+	score /= locutus->album_weight + locutus->artist_weight + locutus->title_weight + locutus->tracknumber_weight + locutus->duration_weight;
 	return score;
 }
 
