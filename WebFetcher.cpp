@@ -60,6 +60,7 @@ void WebFetcher::lookup() {
 				if ((int) mg.scores[mt->album_mbid].size() < trackcount)
 					mg.scores[mt->album_mbid].resize(trackcount);
 				mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+				setBestScore(mf->filename, m);
 			}
 		}
 		/* compare all tracks in group with albums loaded so far */
@@ -89,6 +90,8 @@ void WebFetcher::lookup() {
 				}
 			}
 			/* meta lookup */
+			if (mg.best_score.find(mf->filename) != mg.best_score.end() && (mg.best_score[mf->filename].mbid_match || mg.best_score[mf->filename].puid_match || mg.best_score[mf->filename].meta_score > metadata_min_score))
+				continue;
 			vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group->first, mf));
 			for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
 				double score = mf->compareWithMetatrack(&(*mt));
@@ -122,6 +125,7 @@ void WebFetcher::lookup() {
 				if ((int) mg.scores[mt->album_mbid].size() < trackcount)
 					mg.scores[mt->album_mbid].resize(trackcount);
 				mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+				setBestScore(mf->filename, m);
 				/* compare the other files in group with this album */
 				compareFilesWithAlbum(&group->second, mt->album_mbid);
 			}
@@ -238,6 +242,7 @@ void WebFetcher::compareFilesWithAlbum(vector<Metafile *> *files, string album_m
 			m.puid_match = false;
 			m.meta_score = (*mf)->compareWithMetatrack(&mt);
 			mg.scores[album_mbid][t][(*mf)->filename] = m;
+			setBestScore((*mf)->filename, m);
 			mt.saveToCache();
 			saveMatchToCache((*mf)->filename, mt.track_mbid, m.meta_score);
 		}
@@ -248,6 +253,7 @@ void WebFetcher::clearMatchGroup() {
 	for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
 		delete album->second;
 	mg.albums.clear();
+	mg.best_score.clear();
 	mg.scores.clear();
 }
 
@@ -328,4 +334,19 @@ bool WebFetcher::saveMatchToCache(string filename, string track_mbid, double sco
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save metadata match in cache, query failed. See error above");
 	return true;
+}
+
+void WebFetcher::setBestScore(string filename, Match score) {
+	if (mg.best_score.find(filename) == mg.best_score.end()) {
+		mg.best_score[filename] = score;
+		return;
+	}
+	Match m = mg.best_score[filename];
+	if ((m.mbid_match && !score.mbid_match) || (m.mbid_match && score.mbid_match && m.meta_score > score.meta_score))
+		return;
+	else if ((m.puid_match && !score.puid_match) || (m.puid_match && score.puid_match && m.meta_score > score.meta_score))
+		return;
+	else if (m.meta_score > score.meta_score)
+		return;
+	mg.best_score[filename] = score;
 }

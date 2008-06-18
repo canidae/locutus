@@ -36,6 +36,7 @@ struct Match {
 
 struct MatchGroup {
 	map<string, Album *> albums;
+	map<string, Match> best_score;
 	map<string, vector<map<string, Match> > > scores;
 };
 
@@ -68,5 +69,6 @@ class WebFetcher {
 		string escapeWSString(string text);
 		string makeWSTrackQuery(string group, Metafile *mf);
 		bool saveMatchToCache(string filename, string track_mbid, double score);
+		void setBestScore(string filename, Match match);
 };
 #endif
