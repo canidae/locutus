@@ -305,7 +305,7 @@ string WebFetcher::makeWSQuery(string group, Metafile *mf) {
 		query << "qdur:[" << lower << " TO " << upper << "] ";
 	}
 	query << "artist:(" << escapeWSString(mf->artist) << " " << bnwe << " " << group << ") ";
-	query << "track:(" << escapeWSString(mf->title) << " " << bnwe << " " << group << ") ";
+	query << "track:(" << escapeWSString(mf->title) << " " << bnwe << " " << ") ";
 	query << "release:(" << escapeWSString(mf->album) << " " << bnwe << " " << group << ") ";
 	return query.str();
 }
