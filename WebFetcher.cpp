@@ -89,7 +89,7 @@ void WebFetcher::lookup() {
 				}
 			}
 			/* meta lookup */
-			vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSQuery(group->first, mf));
+			vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group->first, mf));
 			for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
 				double score = mf->compareWithMetatrack(&(*mt));
 				mt->saveToCache();
@@ -295,7 +295,7 @@ string WebFetcher::escapeWSString(string text) {
 	return str.str();
 }
 
-string WebFetcher::makeWSQuery(string group, Metafile *mf) {
+string WebFetcher::makeWSTrackQuery(string group, Metafile *mf) {
 	ostringstream query;
 	group = escapeWSString(group);
 	string bnwe = escapeWSString(mf->getBaseNameWithoutExtension());
