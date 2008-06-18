@@ -143,7 +143,10 @@ void WebFetcher::lookup() {
 		 * - optionally save if all files match one (or more) albums, but don't fill the album(s) up?
 		 *   * we'll need some intelligent way to make sure files are "gathered" on as few albums as possible
 		 * - optionally save if some of the files match an album, but not all?
+		 * 
+		 * this is actually incredibly difficult. perhaps we should just use best match for the time being?
 		 */
+
 		/* clear for next group */
 		clearMatchGroup();
 	}
