@@ -34,6 +34,11 @@ struct Match {
 	double meta_score;
 };
 
+struct MatchGroup {
+	map<string, Album *> albums;
+	map<string, vector<map<string, Match> > > scores;
+};
+
 /* WebFetcher */
 class WebFetcher {
 	public:
@@ -52,12 +57,14 @@ class WebFetcher {
 	private:
 		/* variables */
 		Locutus *locutus;
+		MatchGroup mg;
 		int setting_class_id;
 		double puid_min_score;
 		double metadata_min_score;
 
 		/* methods */
-		void compareFilesWithAlbum(map<string, vector<map<string, Match> > > *scores, vector<Metafile *> *files, Album *album);
+		void compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid);
+		void clearMatchGroup();
 		string escapeWSString(string text);
 		string makeWSQuery(string group, Metafile *mf);
 		bool saveMatchToCache(string filename, string track_mbid, double score);

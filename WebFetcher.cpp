@@ -18,9 +18,6 @@ void WebFetcher::loadSettings() {
 
 void WebFetcher::lookup() {
 	for (map<string, vector<Metafile *> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
-		map<string, Album *> albums;
-		/* <album_mbid, <tracknumber<filename, Match> > > */
-		map<string, vector<map<string, Match> > > scores;
 		/* look up puids first */
 		/* TODO:
 		 * we'll need some sort of handling when:
@@ -37,7 +34,7 @@ void WebFetcher::lookup() {
 				saveMatchToCache(mf->filename, mt->track_mbid, score);
 				if (score < puid_min_score)
 					continue;
-				if (albums.find(mt->album_mbid) == albums.end()) {
+				if (mg.albums.find(mt->album_mbid) == mg.albums.end()) {
 					Album *album = new Album(locutus);
 					if (!album->loadFromCache(mt->album_mbid)) {
 						if (album->retrieveFromWebService(mt->album_mbid))
@@ -48,9 +45,9 @@ void WebFetcher::lookup() {
 						delete album;
 						continue;
 					}
-					albums[album->mbid] = album;
+					mg.albums[album->mbid] = album;
 				}
-				int trackcount = (int) albums[mt->album_mbid]->tracks.size();
+				int trackcount = (int) mg.albums[mt->album_mbid]->tracks.size();
 				if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
 					/* this should never happen */
 					locutus->debug(DEBUG_NOTICE, "PUID search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
@@ -60,19 +57,19 @@ void WebFetcher::lookup() {
 				m.mbid_match = false;
 				m.puid_match = true;
 				m.meta_score = score;
-				if ((int) scores[mt->album_mbid].size() < trackcount)
-					scores[mt->album_mbid].resize(trackcount);
-				scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+				if ((int) mg.scores[mt->album_mbid].size() < trackcount)
+					mg.scores[mt->album_mbid].resize(trackcount);
+				mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
 			}
 		}
 		/* compare all tracks in group with albums loaded so far */
-		for (map<string, Album *>::iterator album = albums.begin(); album != albums.end(); ++album)
-			compareFilesWithAlbum(&scores, &group->second, album->second);
+		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
+			compareFilesWithAlbum(&group->second, album->first);
 		/* look up with mbid or search with metadata */
 		for (vector<Metafile *>::iterator group_file = group->second.begin(); group_file != group->second.end(); ++group_file) {
 			Metafile *mf = *group_file;
 			/* mbid lookup */
-			if (mf->musicbrainz_albumid.size() == 36 && albums.find(mf->musicbrainz_albumid) == albums.end()) {
+			if (mf->musicbrainz_albumid.size() == 36 && mg.albums.find(mf->musicbrainz_albumid) == mg.albums.end()) {
 				Album *album = new Album(locutus);
 				if (!album->loadFromCache(mf->musicbrainz_albumid)) {
 					if (album->retrieveFromWebService(mf->musicbrainz_albumid))
@@ -82,12 +79,12 @@ void WebFetcher::lookup() {
 					/* hmm, didn't find the album? */
 					delete album;
 				} else {
-					albums[album->mbid] = album;
+					mg.albums[album->mbid] = album;
 					/* compare the other files in group with this album */
 					int trackcount = (int) album->tracks.size();
-					if ((int) scores[album->mbid].size() < trackcount)
-						scores[album->mbid].resize(trackcount);
-					compareFilesWithAlbum(&scores, &group->second, album);
+					if ((int) mg.scores[album->mbid].size() < trackcount)
+						mg.scores[album->mbid].resize(trackcount);
+					compareFilesWithAlbum(&group->second, album->mbid);
 					continue;
 				}
 			}
@@ -99,7 +96,7 @@ void WebFetcher::lookup() {
 				saveMatchToCache(mf->filename, mt->track_mbid, score);
 				if (score < metadata_min_score)
 					continue;
-				if (albums.find(mt->album_mbid) == albums.end()) {
+				if (mg.albums.find(mt->album_mbid) == mg.albums.end()) {
 					Album *album = new Album(locutus);
 					if (!album->loadFromCache(mt->album_mbid)) {
 						if (album->retrieveFromWebService(mt->album_mbid))
@@ -110,9 +107,9 @@ void WebFetcher::lookup() {
 						delete album;
 						continue;
 					}
-					albums[album->mbid] = album;
+					mg.albums[album->mbid] = album;
 				}
-				int trackcount = (int) albums[mt->album_mbid]->tracks.size();
+				int trackcount = (int) mg.albums[mt->album_mbid]->tracks.size();
 				if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
 					/* this should never happen */
 					locutus->debug(DEBUG_NOTICE, "Metadata search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
@@ -122,11 +119,11 @@ void WebFetcher::lookup() {
 				m.mbid_match = false;
 				m.puid_match = false;
 				m.meta_score = score;
-				if ((int) scores[mt->album_mbid].size() < trackcount)
-					scores[mt->album_mbid].resize(trackcount);
-				scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+				if ((int) mg.scores[mt->album_mbid].size() < trackcount)
+					mg.scores[mt->album_mbid].resize(trackcount);
+				mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
 				/* compare the other files in group with this album */
-				compareFilesWithAlbum(&scores, &group->second, albums[mt->album_mbid]);
+				compareFilesWithAlbum(&group->second, mt->album_mbid);
 			}
 		}
 		/* match tracks to album */
@@ -144,10 +141,7 @@ void WebFetcher::lookup() {
 		 * - optionally save if some of the files match an album, but not all?
 		 */
 		/* clear for next group */
-		for (map<string, Album *>::iterator album = albums.begin(); album != albums.end(); ++album)
-			delete album->second;
-		albums.clear();
-		scores.clear();
+		clearMatchGroup();
 	}
 }
 
@@ -227,10 +221,13 @@ void WebFetcher::lookup() {
 */
 
 /* private methods */
-void WebFetcher::compareFilesWithAlbum(map<string, vector<map<string, Match> > > *scores, vector<Metafile *> *files, Album *album) {
+void WebFetcher::compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid) {
+	if (mg.albums.find(album_mbid) == mg.albums.end())
+		return;
+	Album *album = mg.albums[album_mbid];
 	for (vector<Metafile *>::iterator mf = files->begin(); mf != files->end(); ++mf) {
 		for (vector<Track *>::size_type t = 0; t < album->tracks.size(); ++t) {
-			if ((*scores)[album->mbid][t].find((*mf)->filename) != (*scores)[album->mbid][t].end())
+			if (mg.scores[album_mbid][t].find((*mf)->filename) != mg.scores[album_mbid][t].end())
 				continue;
 			Metatrack mt = album->tracks[t]->getAsMetatrack();
 			Match m;
@@ -240,11 +237,18 @@ void WebFetcher::compareFilesWithAlbum(map<string, vector<map<string, Match> > >
 				m.mbid_match = false;
 			m.puid_match = false;
 			m.meta_score = (*mf)->compareWithMetatrack(&mt);
-			(*scores)[mt.album_mbid][t][(*mf)->filename] = m;
+			mg.scores[album_mbid][t][(*mf)->filename] = m;
 			mt.saveToCache();
 			saveMatchToCache((*mf)->filename, mt.track_mbid, m.meta_score);
 		}
 	}
+}
+
+void WebFetcher::clearMatchGroup() {
+	for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
+		delete album->second;
+	mg.albums.clear();
+	mg.scores.clear();
 }
 
 string WebFetcher::escapeWSString(string text) {
