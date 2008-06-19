@@ -9,7 +9,7 @@ Locutus::Locutus() {
 	webservice = new WebService(this);
 	filereader = new FileReader(this);
 	puidgen = new PUIDGenerator(this);
-	webfetcher = new WebFetcher(this);
+	matcher = new Matcher(this);
 }
 
 /* destructors */
@@ -19,7 +19,7 @@ Locutus::~Locutus() {
 	debugfile->close();
 	delete debugfile;
 	delete puidgen;
-	delete webfetcher;
+	delete matcher;
 	delete webservice;
 	delete settings;
 	delete filereader;
@@ -111,7 +111,7 @@ void Locutus::loadSettings() {
 	filereader->loadSettings();
 	webservice->loadSettings();
 	puidgen->loadSettings();
-	webfetcher->loadSettings();
+	matcher->loadSettings();
 }
 
 void Locutus::scanDirectory(string directory) {
@@ -123,7 +123,7 @@ void Locutus::scanDirectory(string directory) {
 	/* generate puids */
 	puidgen->generatePUIDs();
 	/* lookup */
-	webfetcher->lookup();
+	matcher->lookup();
 	/* save changes */
 	// TODO
 }

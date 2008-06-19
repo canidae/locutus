@@ -2,7 +2,7 @@ CXX = g++
 RM = rm -f
 CXXFLAGS = -O0 -Wall -g -I/usr/include/postgresql `taglib-config --cflags`
 LDFLAGS = -lccgnu2 -lccext2 -lpq `taglib-config --libs`
-OBJECTS = Album.o Artist.o Database.o FileReader.o Levenshtein.o Locutus.o Metafile.o Metatrack.o PUIDGenerator.o Settings.o Track.o WebFetcher.o WebService.o XMLNode.o
+OBJECTS = Album.o Artist.o Database.o FileReader.o Levenshtein.o Locutus.o Metafile.o Metatrack.o PUIDGenerator.o Settings.o Track.o Matcher.o WebService.o XMLNode.o
 
 locutus: $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LDFLAGS) -o locutus
@@ -18,7 +18,7 @@ Metatrack.o: Metatrack.h Metatrack.cpp
 PUIDGenerator.o: PUIDGenerator.h PUIDGenerator.cpp
 Settings.o: Settings.h Settings.cpp
 Track.o: Track.h Track.cpp
-WebFetcher.o: WebFetcher.h WebFetcher.cpp
+Matcher.o: Matcher.h Matcher.cpp
 WebService.o: WebService.h WebService.cpp
 XMLNode.o: XMLNode.h XMLNode.cpp
 

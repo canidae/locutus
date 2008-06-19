@@ -1,22 +1,22 @@
-#include "WebFetcher.h"
+#include "Matcher.h"
 
 /* constructors */
-WebFetcher::WebFetcher(Locutus *locutus) {
+Matcher::Matcher(Locutus *locutus) {
 	this->locutus = locutus;
 }
 
 /* destructors */
-WebFetcher::~WebFetcher() {
+Matcher::~Matcher() {
 }
 
 /* methods */
-void WebFetcher::loadSettings() {
-	setting_class_id = locutus->settings->loadClassID(FILEREADER_CLASS, FILEREADER_CLASS_DESCRIPTION);
+void Matcher::loadSettings() {
+	setting_class_id = locutus->settings->loadClassID(MATCHER_CLASS, MATCHER_CLASS_DESCRIPTION);
 	puid_min_score = locutus->settings->loadSetting(setting_class_id, PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
 	metadata_min_score = locutus->settings->loadSetting(setting_class_id, METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
 }
 
-void WebFetcher::lookup() {
+void Matcher::lookup() {
 	for (map<string, vector<Metafile *> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
 		/* look up puids first */
 		/* TODO:
@@ -153,7 +153,7 @@ void WebFetcher::lookup() {
 }
 
 /*
-void WebFetcher::lookup() {
+void Matcher::lookup() {
 	for (map<string, vector<int> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
 		map<string, double> album_scores;
 		map<string, vector<AlbumMatch> > album_matched;
@@ -228,7 +228,7 @@ void WebFetcher::lookup() {
 */
 
 /* private methods */
-void WebFetcher::compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid) {
+void Matcher::compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid) {
 	if (mg.albums.find(album_mbid) == mg.albums.end())
 		return;
 	Album *album = mg.albums[album_mbid];
@@ -252,7 +252,7 @@ void WebFetcher::compareFilesWithAlbum(vector<Metafile *> *files, string album_m
 	}
 }
 
-void WebFetcher::clearMatchGroup() {
+void Matcher::clearMatchGroup() {
 	for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
 		delete album->second;
 	mg.albums.clear();
@@ -260,7 +260,7 @@ void WebFetcher::clearMatchGroup() {
 	mg.scores.clear();
 }
 
-string WebFetcher::escapeWSString(string text) {
+string Matcher::escapeWSString(string text) {
 	/* escape these characters:
 	 * + - && || ! ( ) { } [ ] ^ " ~ * ? : \ */
 	/* also change "_" to " " */
@@ -304,7 +304,7 @@ string WebFetcher::escapeWSString(string text) {
 	return str.str();
 }
 
-string WebFetcher::makeWSTrackQuery(string group, Metafile *mf) {
+string Matcher::makeWSTrackQuery(string group, Metafile *mf) {
 	ostringstream query;
 	group = escapeWSString(group);
 	string bnwe = escapeWSString(mf->getBaseNameWithoutExtension());
@@ -323,7 +323,7 @@ string WebFetcher::makeWSTrackQuery(string group, Metafile *mf) {
 	return query.str();
 }
 
-bool WebFetcher::saveMatchToCache(string filename, string track_mbid, double score) {
+bool Matcher::saveMatchToCache(string filename, string track_mbid, double score) {
 	if (filename == "" || track_mbid.size() != 36)
 		return false;
 	string e_filename = locutus->database->escapeString(filename);
@@ -339,7 +339,7 @@ bool WebFetcher::saveMatchToCache(string filename, string track_mbid, double sco
 	return true;
 }
 
-void WebFetcher::setBestScore(string filename, Match score) {
+void Matcher::setBestScore(string filename, Match score) {
 	if (mg.best_score.find(filename) == mg.best_score.end()) {
 		mg.best_score[filename] = score;
 		return;

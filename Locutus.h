@@ -54,7 +54,7 @@ class Locutus;
 #include "Metafile.h"
 #include "PUIDGenerator.h"
 #include "Settings.h"
-#include "WebFetcher.h"
+#include "Matcher.h"
 #include "WebService.h"
 
 /* namespace */
@@ -70,7 +70,7 @@ class Locutus {
 		WebService *webservice;
 		FileReader *filereader;
 		PUIDGenerator *puidgen;
-		WebFetcher *webfetcher;
+		Matcher *matcher;
 		vector<Metafile *> files;
 		map<string, vector<Metafile *> > grouped_files;
 		double album_weight;

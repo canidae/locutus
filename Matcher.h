@@ -1,9 +1,9 @@
-#ifndef WEBFETCHER_H
+#ifndef MATCHER_H
 /* defines */
-#define WEBFETCHER_H
+#define MATCHER_H
 /* setting class */
-#define WEBFETCHER_CLASS "WebFetcher"
-#define WEBFETCHER_CLASS_DESCRIPTION "TODO"
+#define MATCHER_CLASS "Matcher"
+#define MATCHER_CLASS_DESCRIPTION "TODO"
 /* default values */
 #define PUID_MIN_SCORE_KEY "puid_min_score"
 #define PUID_MIN_SCORE_VALUE 0.50
@@ -13,7 +13,7 @@
 #define METADATA_MIN_SCORE_DESCRIPTION "Minimum value for when a metadata lookup is considered a match. Must be between 0.0 and 1.0"
 
 /* forward declare */
-class WebFetcher;
+class Matcher;
 
 /* includes */
 #include <map>
@@ -40,16 +40,16 @@ struct MatchGroup {
 	map<string, vector<map<string, Match> > > scores;
 };
 
-/* WebFetcher */
-class WebFetcher {
+/* Matcher */
+class Matcher {
 	public:
 		/* variables */
 
 		/* constructors */
-		WebFetcher(Locutus *locutus);
+		Matcher(Locutus *locutus);
 
 		/* destructors */
-		~WebFetcher();
+		~Matcher();
 
 		/* methods */
 		void loadSettings();
