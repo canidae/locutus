@@ -122,8 +122,8 @@ void Locutus::scanDirectory(string directory) {
 	filereader->scanFiles(directory);
 	/* generate puids */
 	puidgen->generatePUIDs();
-	/* lookup */
-	matcher->lookup();
+	/* match files */
+	matcher->match();
 	/* save changes */
 	// TODO
 }

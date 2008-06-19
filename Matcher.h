@@ -53,7 +53,7 @@ class Matcher {
 
 		/* methods */
 		void loadSettings();
-		void lookup();
+		void match();
 
 	private:
 		/* variables */

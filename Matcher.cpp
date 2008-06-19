@@ -16,7 +16,7 @@ void Matcher::loadSettings() {
 	metadata_min_score = locutus->settings->loadSetting(setting_class_id, METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
 }
 
-void Matcher::lookup() {
+void Matcher::match() {
 	for (map<string, vector<Metafile *> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
 		/* look up puids first */
 		/* TODO:
