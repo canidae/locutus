@@ -132,19 +132,17 @@ void Matcher::match() {
 		}
 		/* match tracks to album */
 		/* TODO
-		 * ideas?
-		 * - always save if a group perfectly match an album (no duplicates, no files left, album is filled)?
-		 *   * there are several problems that must be adressed. what if all files except 1 match album "a"
-		 *     using puid while the last track doesn't match the same album using puid, but rather match
-		 *     another album?
-		 *     same goes for mbid.
-		 * - optionally save if a group match multiple albums perfectly?
-		 *   * this is ~essentially the same as above, though. probably safe to merge them
-		 * - optionally save if all files match one (or more) albums, but don't fill the album(s) up?
-		 *   * we'll need some intelligent way to make sure files are "gathered" on as few albums as possible
-		 * - optionally save if some of the files match an album, but not all?
-		 * 
-		 * this is actually incredibly difficult. perhaps we should just use best match for the time being?
+		 * 1. find best album:
+		 *    * match_score = meta_score * (5 if mbid_match, 2 if puid_match, 1 if neither)
+		 *    * album_score = matches/tracks * match_score
+		 * 2. make files matched unavailable for matching with next album
+		 * 3. goto 1
+		 *
+		 * notes:
+		 * - add "only save if all files in group match something" setting
+		 * - add "only save complete albums" setting
+		 *   * best album must be complete, it's not enough with any album being complete.
+		 *     this because there often are singles with same tracks as an album
 		 */
 
 		/* clear for next group */
