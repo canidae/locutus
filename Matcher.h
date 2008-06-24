@@ -58,7 +58,7 @@ class Matcher {
 		double metadata_min_score;
 
 		/* methods */
-		void compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid);
+		void compareFilesWithAlbum(vector<Metafile *> &files, string album_mbid);
 		void clearMatchGroup();
 		string escapeWSString(string text);
 		void lookupMBIDs(vector<Metafile *> &files);
@@ -66,6 +66,6 @@ class Matcher {
 		string makeWSTrackQuery(string group, Metafile *mf);
 		bool saveMatchToCache(string filename, string track_mbid, double score);
 		void setBestScore(string filename, Match match);
-		void searchMeta(string group, vector<Metafile *> &files);
+		void searchMetadata(string group, vector<Metafile *> &files);
 };
 #endif

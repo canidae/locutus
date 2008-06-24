@@ -31,7 +31,7 @@ Metafile::~Metafile() {
 }
 
 /* methods */
-Match Metafile::compareWithMetatrack(Metatrack *metatrack) {
+Match Metafile::compareWithMetatrack(Metatrack &metatrack) {
 	Match m;
 	m.puid_match = false;
 	m.mbid_match = false;
@@ -58,10 +58,10 @@ Match Metafile::compareWithMetatrack(Metatrack *metatrack) {
 	double scores[4][values.size()];
 	int pos = 0;
 	for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
-		scores[0][pos] = locutus->levenshtein->similarity(*v, metatrack->album_title);
-		scores[1][pos] = locutus->levenshtein->similarity(*v, metatrack->artist_name);
-		scores[2][pos] = locutus->levenshtein->similarity(*v, metatrack->track_title);
-		scores[3][pos] = (atoi(v->c_str()) == metatrack->tracknumber) ? 1.0 : 0.0;
+		scores[0][pos] = locutus->levenshtein->similarity(*v, metatrack.album_title);
+		scores[1][pos] = locutus->levenshtein->similarity(*v, metatrack.artist_name);
+		scores[2][pos] = locutus->levenshtein->similarity(*v, metatrack.track_title);
+		scores[3][pos] = (atoi(v->c_str()) == metatrack.tracknumber) ? 1.0 : 0.0;
 		++pos;
 	}
 	bool used_row[4];
@@ -93,13 +93,13 @@ Match Metafile::compareWithMetatrack(Metatrack *metatrack) {
 			}
 		}
 	}
-	m.puid_match = (puid != "" && puid == metatrack->puid);
-	m.mbid_match = (musicbrainz_trackid != "" && musicbrainz_trackid == metatrack->track_mbid);
+	m.puid_match = (puid != "" && puid == metatrack.puid);
+	m.mbid_match = (musicbrainz_trackid != "" && musicbrainz_trackid == metatrack.track_mbid);
 	m.meta_score = scores[0][0] * locutus->album_weight;
 	m.meta_score += scores[1][0] * locutus->artist_weight;
 	m.meta_score += scores[2][0] * locutus->title_weight;
 	m.meta_score += scores[3][0] * locutus->tracknumber_weight;
-	int durationdiff = abs(metatrack->duration - duration);
+	int durationdiff = abs(metatrack.duration - duration);
 	if (durationdiff < locutus->duration_limit)
 		m.meta_score += (1.0 - durationdiff / locutus->duration_limit) * locutus->duration_weight;
 	m.meta_score /= locutus->album_weight + locutus->artist_weight + locutus->title_weight + locutus->tracknumber_weight + locutus->duration_weight;

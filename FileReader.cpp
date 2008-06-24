@@ -73,6 +73,11 @@ bool FileReader::parseFile() {
 			return false;
 		}
 	}
+	/* TODO:
+	 * should be settings which lookups we want to run */
+	mf->puid_lookup = true;
+	mf->mbid_lookup = true;
+	mf->meta_lookup = true;
 	locutus->files.push_back(mf);
 	locutus->grouped_files[mf->getGroup()].push_back(mf);
 	return true;

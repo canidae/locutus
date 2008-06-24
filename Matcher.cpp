@@ -23,11 +23,11 @@ void Matcher::match() {
 		/* then look up mbids */
 		lookupMBIDs(group->second);
 		/* and finally search using metadata */
-		searchMeta(group->first, group->second);
+		searchMetadata(group->first, group->second);
 
 		/* compare all tracks in group with albums loaded so far */
 		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
-			compareFilesWithAlbum(&group->second, album->first);
+			compareFilesWithAlbum(group->second, album->first);
 		/* look up with mbid or search with metadata */
 		for (vector<Metafile *>::iterator group_file = group->second.begin(); group_file != group->second.end(); ++group_file) {
 			Metafile *mf = *group_file;
@@ -36,7 +36,7 @@ void Matcher::match() {
 				continue;
 			vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group->first, mf));
 			for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
-				Match m = mf->compareWithMetatrack(&(*mt));
+				Match m = mf->compareWithMetatrack(*mt);
 				mt->saveToCache();
 				saveMatchToCache(mf->filename, mt->track_mbid, m.meta_score);
 				if (m.meta_score < metadata_min_score)
@@ -65,7 +65,7 @@ void Matcher::match() {
 				mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
 				setBestScore(mf->filename, m);
 				/* compare the other files in group with this album */
-				compareFilesWithAlbum(&group->second, mt->album_mbid);
+				compareFilesWithAlbum(group->second, mt->album_mbid);
 			}
 		}
 		/* match tracks to album */
@@ -89,16 +89,16 @@ void Matcher::match() {
 }
 
 /* private methods */
-void Matcher::compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid) {
+void Matcher::compareFilesWithAlbum(vector<Metafile *> &files, string album_mbid) {
 	if (mg.albums.find(album_mbid) == mg.albums.end())
 		return;
 	Album *album = mg.albums[album_mbid];
-	for (vector<Metafile *>::iterator mf = files->begin(); mf != files->end(); ++mf) {
+	for (vector<Metafile *>::iterator mf = files.begin(); mf != files.end(); ++mf) {
 		for (vector<Track *>::size_type t = 0; t < album->tracks.size(); ++t) {
 			if (mg.scores[album_mbid][t].find((*mf)->filename) != mg.scores[album_mbid][t].end())
 				continue;
 			Metatrack mt = album->tracks[t]->getAsMetatrack();
-			Match m = (*mf)->compareWithMetatrack(&mt);
+			Match m = (*mf)->compareWithMetatrack(mt);
 			mg.scores[album_mbid][t][(*mf)->filename] = m;
 			setBestScore((*mf)->filename, m);
 			mt.saveToCache();
@@ -194,7 +194,7 @@ void Matcher::lookupPUIDs(vector<Metafile *> &files) {
 		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
 			/* puid search won't return puid, so let's set it manually */
 			mt->puid = mf->puid;
-			Match m = mf->compareWithMetatrack(&(*mt));
+			Match m = mf->compareWithMetatrack(*mt);
 			mt->saveToCache();
 			saveMatchToCache(mf->filename, mt->track_mbid, m.meta_score);
 			if (m.meta_score < puid_min_score)
@@ -276,7 +276,7 @@ void Matcher::setBestScore(string filename, Match score) {
 	mg.best_score[filename] = score;
 }
 
-void Matcher::searchMeta(string group, vector<Metafile *> &files) {
+void Matcher::searchMetadata(string group, vector<Metafile *> &files) {
 	for (vector<Metafile *>::iterator file = files.begin(); file != files.end(); ++file) {
 		Metafile *mf = *file;
 		/* meta lookup */
@@ -284,7 +284,7 @@ void Matcher::searchMeta(string group, vector<Metafile *> &files) {
 			continue;
 		vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group, mf));
 		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
-			Match m = mf->compareWithMetatrack(&(*mt));
+			Match m = mf->compareWithMetatrack(*mt);
 			mt->saveToCache();
 			saveMatchToCache(mf->filename, mt->track_mbid, m.meta_score);
 			if (m.meta_score < metadata_min_score)
