@@ -113,7 +113,7 @@ class Metafile {
 		~Metafile();
 
 		/* methods */
-		Match compareWithMetatrack(Metatrack &metatrack);
+		Match compareWithMetatrack(Metatrack *metatrack);
 		string getBaseNameWithoutExtension();
 		string getGroup();
 		bool loadFromCache(string filename);

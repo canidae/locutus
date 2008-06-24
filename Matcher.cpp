@@ -19,15 +19,15 @@ void Matcher::loadSettings() {
 void Matcher::match() {
 	for (map<string, vector<Metafile *> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
 		/* look up puids first */
-		lookupPUIDs(group->second);
+		lookupPUIDs(&group->second);
 		/* then look up mbids */
-		lookupMBIDs(group->second);
+		lookupMBIDs(&group->second);
 		/* and finally search using metadata */
-		searchMetadata(group->first, group->second);
+		searchMetadata(group->first, &group->second);
 
 		/* compare all tracks in group with albums loaded so far */
 		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
-			compareFilesWithAlbum(album->first, group->second);
+			compareFilesWithAlbum(album->first, &group->second);
 		/* match tracks to album */
 		/* TODO
 		 * 1. find best album:
@@ -49,16 +49,16 @@ void Matcher::match() {
 }
 
 /* private methods */
-void Matcher::compareFilesWithAlbum(string mbid, vector<Metafile *> &files) {
+void Matcher::compareFilesWithAlbum(string mbid, vector<Metafile *> *files) {
 	if (mg.albums.find(mbid) == mg.albums.end())
 		return;
 	Album *album = mg.albums[mbid];
-	for (vector<Metafile *>::iterator mf = files.begin(); mf != files.end(); ++mf) {
+	for (vector<Metafile *>::iterator mf = files->begin(); mf != files->end(); ++mf) {
 		for (vector<Track *>::size_type t = 0; t < album->tracks.size(); ++t) {
 			if (mg.scores[mbid][t].find((*mf)->filename) != mg.scores[mbid][t].end())
 				continue;
 			Metatrack mt = album->tracks[t]->getAsMetatrack();
-			Match m = (*mf)->compareWithMetatrack(mt);
+			Match m = (*mf)->compareWithMetatrack(&mt);
 			mg.scores[mbid][t][(*mf)->filename] = m;
 			mt.saveToCache();
 			saveMatchToCache((*mf)->filename, mt.track_mbid, m.meta_score);
@@ -137,8 +137,8 @@ bool Matcher::loadAlbum(string mbid) {
 	return true;
 }
 
-void Matcher::lookupMBIDs(vector<Metafile *> &files) {
-	for (vector<Metafile *>::iterator file = files.begin(); file != files.end(); ++file) {
+void Matcher::lookupMBIDs(vector<Metafile *> *files) {
+	for (vector<Metafile *>::iterator file = files->begin(); file != files->end(); ++file) {
 		Metafile *mf = *file;
 		if (!mf->mbid_lookup || mf->musicbrainz_albumid.size() != 36 || mg.albums.find(mf->musicbrainz_albumid) != mg.albums.end())
 			continue;
@@ -147,12 +147,12 @@ void Matcher::lookupMBIDs(vector<Metafile *> &files) {
 	}
 }
 
-void Matcher::lookupPUIDs(vector<Metafile *> &files) {
+void Matcher::lookupPUIDs(vector<Metafile *> *files) {
 	/* TODO:
 	 * we'll need some sort of handling when:
 	 * - no matching tracks
 	 * - matching tracks, but no good mbid/metadata match */
-	for (vector<Metafile *>::iterator file = files.begin(); file != files.end(); ++file) {
+	for (vector<Metafile *>::iterator file = files->begin(); file != files->end(); ++file) {
 		Metafile *mf = *file;
 		if (!mf->puid_lookup || mf->puid.size() != 36)
 			continue;
@@ -160,7 +160,7 @@ void Matcher::lookupPUIDs(vector<Metafile *> &files) {
 		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
 			/* puid search won't return puid, so let's set it manually */
 			mt->puid = mf->puid;
-			Match m = mf->compareWithMetatrack(*mt);
+			Match m = mf->compareWithMetatrack(&(*mt));
 			mt->saveToCache();
 			saveMatchToCache(mf->filename, mt->track_mbid, m.meta_score);
 			if (m.meta_score < puid_min_score)
@@ -216,14 +216,14 @@ bool Matcher::saveMatchToCache(string filename, string track_mbid, double score)
 	return true;
 }
 
-void Matcher::searchMetadata(string group, vector<Metafile *> &files) {
-	for (vector<Metafile *>::iterator file = files.begin(); file != files.end(); ++file) {
+void Matcher::searchMetadata(string group, vector<Metafile *> *files) {
+	for (vector<Metafile *>::iterator file = files->begin(); file != files->end(); ++file) {
 		Metafile *mf = *file;
 		if (!mf->meta_lookup)
 			continue;
 		vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group, mf));
 		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
-			Match m = mf->compareWithMetatrack(*mt);
+			Match m = mf->compareWithMetatrack(&(*mt));
 			mt->saveToCache();
 			saveMatchToCache(mf->filename, mt->track_mbid, m.meta_score);
 			if (m.meta_score < metadata_min_score)
