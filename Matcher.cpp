@@ -22,12 +22,12 @@ void Matcher::match() {
 		lookupPUIDs(&group->second);
 		/* then look up mbids */
 		lookupMBIDs(&group->second);
-		/* and finally search using metadata */
-		searchMetadata(group->first, &group->second);
-
 		/* compare all tracks in group with albums loaded so far */
 		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
 			compareFilesWithAlbum(album->first, &group->second);
+		/* and finally search using metadata */
+		searchMetadata(group->first, &group->second);
+
 		/* match tracks to album */
 		/* TODO
 		 * 1. find best album:
@@ -59,6 +59,8 @@ void Matcher::compareFilesWithAlbum(string mbid, vector<Metafile *> *files) {
 				continue;
 			Metatrack mt = album->tracks[t]->getAsMetatrack();
 			Match m = (*mf)->compareWithMetatrack(&mt);
+			if (!(*mf)->puid_lookup && !(*mf)->mbid_lookup && m.meta_score >= metadata_min_score)
+				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
 			mg.scores[mbid][t][(*mf)->filename] = m;
 			mt.saveToCache();
 			saveMatchToCache((*mf)->filename, mt.track_mbid, m.meta_score);
@@ -238,6 +240,7 @@ void Matcher::searchMetadata(string group, vector<Metafile *> *files) {
 			}
 			/* since we've already calculated the score, save it */
 			mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+			compareFilesWithAlbum(mt->album_mbid, files);
 		}
 	}
 }
