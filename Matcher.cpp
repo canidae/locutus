@@ -27,7 +27,7 @@ void Matcher::match() {
 
 		/* compare all tracks in group with albums loaded so far */
 		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
-			compareFilesWithAlbum(group->second, album->first);
+			compareFilesWithAlbum(album->first, group->second);
 		/* match tracks to album */
 		/* TODO
 		 * 1. find best album:
@@ -49,17 +49,17 @@ void Matcher::match() {
 }
 
 /* private methods */
-void Matcher::compareFilesWithAlbum(vector<Metafile *> &files, string album_mbid) {
-	if (mg.albums.find(album_mbid) == mg.albums.end())
+void Matcher::compareFilesWithAlbum(string mbid, vector<Metafile *> &files) {
+	if (mg.albums.find(mbid) == mg.albums.end())
 		return;
-	Album *album = mg.albums[album_mbid];
+	Album *album = mg.albums[mbid];
 	for (vector<Metafile *>::iterator mf = files.begin(); mf != files.end(); ++mf) {
 		for (vector<Track *>::size_type t = 0; t < album->tracks.size(); ++t) {
-			if (mg.scores[album_mbid][t].find((*mf)->filename) != mg.scores[album_mbid][t].end())
+			if (mg.scores[mbid][t].find((*mf)->filename) != mg.scores[mbid][t].end())
 				continue;
 			Metatrack mt = album->tracks[t]->getAsMetatrack();
 			Match m = (*mf)->compareWithMetatrack(mt);
-			mg.scores[album_mbid][t][(*mf)->filename] = m;
+			mg.scores[mbid][t][(*mf)->filename] = m;
 			mt.saveToCache();
 			saveMatchToCache((*mf)->filename, mt.track_mbid, m.meta_score);
 		}
@@ -173,6 +173,7 @@ void Matcher::lookupPUIDs(vector<Metafile *> &files) {
 				locutus->debug(DEBUG_NOTICE, "PUID search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 				continue;
 			}
+			/* since we've already calculated the score, save it */
 			mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
 			/* if we found a match using puid we shouldn't look up using metadata */
 			mf->meta_lookup = false;
@@ -227,27 +228,15 @@ void Matcher::searchMetadata(string group, vector<Metafile *> &files) {
 			saveMatchToCache(mf->filename, mt->track_mbid, m.meta_score);
 			if (m.meta_score < metadata_min_score)
 				continue;
-			if (mg.albums.find(mt->album_mbid) == mg.albums.end()) {
-				Album *album = new Album(locutus);
-				if (!album->loadFromCache(mt->album_mbid)) {
-					if (album->retrieveFromWebService(mt->album_mbid))
-						album->saveToCache();
-				}
-				if (album->mbid == "") {
-					/* hmm, didn't find the album? */
-					delete album;
-					continue;
-				}
-				mg.albums[album->mbid] = album;
-			}
+			if (!loadAlbum(mt->album_mbid))
+				continue;
 			int trackcount = (int) mg.albums[mt->album_mbid]->tracks.size();
 			if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
 				/* this should never happen */
 				locutus->debug(DEBUG_NOTICE, "Metadata search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 				continue;
 			}
-			if ((int) mg.scores[mt->album_mbid].size() < trackcount)
-				mg.scores[mt->album_mbid].resize(trackcount);
+			/* since we've already calculated the score, save it */
 			mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
 		}
 	}

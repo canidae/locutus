@@ -57,7 +57,7 @@ class Matcher {
 		double metadata_min_score;
 
 		/* methods */
-		void compareFilesWithAlbum(vector<Metafile *> &files, string album_mbid);
+		void compareFilesWithAlbum(string mbid, vector<Metafile *> &files);
 		void clearMatchGroup();
 		string escapeWSString(string text);
 		bool loadAlbum(string mbid);
