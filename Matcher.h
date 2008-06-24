@@ -30,7 +30,6 @@ using namespace std;
 /* structs */
 struct MatchGroup {
 	map<string, Album *> albums; // album_mbid, album
-	map<string, Match> best_score; // filename, match
 	map<string, vector<map<string, Match> > > scores; // album_mbid, tracknum, filename, match
 };
 
@@ -61,6 +60,7 @@ class Matcher {
 		void compareFilesWithAlbum(vector<Metafile *> &files, string album_mbid);
 		void clearMatchGroup();
 		string escapeWSString(string text);
+		bool loadAlbum(string mbid);
 		void lookupMBIDs(vector<Metafile *> &files);
 		void lookupPUIDs(vector<Metafile *> &files);
 		string makeWSTrackQuery(string group, Metafile *mf);
