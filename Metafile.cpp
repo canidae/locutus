@@ -29,7 +29,11 @@ Metafile::~Metafile() {
 }
 
 /* methods */
-double Metafile::compareWithMetatrack(Metatrack *metatrack) {
+Match Metafile::compareWithMetatrack(Metatrack *metatrack) {
+	Match m;
+	m.puid_match = false;
+	m.mbid_match = false;
+	m.meta_score = 0.0;
 	list<string> values;
 	if (album != "")
 		values.push_back(album);
@@ -47,7 +51,7 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 	string basename = getBaseNameWithoutExtension();
 	/* TODO: basename */
 	if (values.size() <= 0)
-		return 0.0;
+		return m;
 	/* find highest score */
 	double scores[4][values.size()];
 	int pos = 0;
@@ -87,15 +91,17 @@ double Metafile::compareWithMetatrack(Metatrack *metatrack) {
 			}
 		}
 	}
-	double score = scores[0][0] * locutus->album_weight;
-	score += scores[1][0] * locutus->artist_weight;
-	score += scores[2][0] * locutus->title_weight;
-	score += scores[3][0] * locutus->tracknumber_weight;
+	m.puid_match = (puid != "" && puid == metatrack->puid);
+	m.mbid_match = (musicbrainz_trackid != "" && musicbrainz_trackid == metatrack->track_mbid);
+	m.meta_score = scores[0][0] * locutus->album_weight;
+	m.meta_score += scores[1][0] * locutus->artist_weight;
+	m.meta_score += scores[2][0] * locutus->title_weight;
+	m.meta_score += scores[3][0] * locutus->tracknumber_weight;
 	int durationdiff = abs(metatrack->duration - duration);
 	if (durationdiff < locutus->duration_limit)
-		score += (1.0 - durationdiff / locutus->duration_limit) * locutus->duration_weight;
-	score /= locutus->album_weight + locutus->artist_weight + locutus->title_weight + locutus->tracknumber_weight + locutus->duration_weight;
-	return score;
+		m.meta_score += (1.0 - durationdiff / locutus->duration_limit) * locutus->duration_weight;
+	m.meta_score /= locutus->album_weight + locutus->artist_weight + locutus->title_weight + locutus->tracknumber_weight + locutus->duration_weight;
+	return m;
 }
 
 string Metafile::getBaseNameWithoutExtension() {

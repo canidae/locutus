@@ -11,6 +11,7 @@ Metatrack::Metatrack(Locutus *locutus) {
 	artist_name = "";
 	album_mbid = "";
 	album_title = "";
+	puid = "";
 }
 
 /* destructors */

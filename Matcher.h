@@ -27,13 +27,7 @@ class Matcher;
 /* namespaces */
 using namespace std;
 
-/* matching */
-struct Match {
-	bool mbid_match;
-	bool puid_match;
-	double meta_score;
-};
-
+/* structs */
 struct MatchGroup {
 	map<string, Album *> albums;
 	map<string, Match> best_score;
@@ -67,6 +61,8 @@ class Matcher {
 		void compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid);
 		void clearMatchGroup();
 		string escapeWSString(string text);
+		void lookupMBIDs(vector<Metafile *> *files);
+		void lookupPUIDs(vector<Metafile *> *files);
 		string makeWSTrackQuery(string group, Metafile *mf);
 		bool saveMatchToCache(string filename, string track_mbid, double score);
 		void setBestScore(string filename, Match match);

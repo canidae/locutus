@@ -25,6 +25,7 @@ class Metatrack {
 		string artist_name;
 		string album_mbid;
 		string album_title;
+		string puid;
 
 		/* constructors */
 		Metatrack(Locutus *locutus);

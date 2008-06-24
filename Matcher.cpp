@@ -19,50 +19,10 @@ void Matcher::loadSettings() {
 void Matcher::match() {
 	for (map<string, vector<Metafile *> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
 		/* look up puids first */
-		/* TODO:
-		 * we'll need some sort of handling when:
-		 * - no matching tracks
-		 * - matching tracks, but no good mbid/metadata match */
-		for (vector<Metafile *>::iterator group_file = group->second.begin(); group_file != group->second.end(); ++group_file) {
-			Metafile *mf = *group_file;
-			if (!mf->puid_lookup)
-				continue;
-			vector<Metatrack> *tracks = locutus->webservice->searchPUID(mf->puid);
-			for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
-				double score = mf->compareWithMetatrack(&(*mt));
-				mt->saveToCache();
-				saveMatchToCache(mf->filename, mt->track_mbid, score);
-				if (score < puid_min_score)
-					continue;
-				if (mg.albums.find(mt->album_mbid) == mg.albums.end()) {
-					Album *album = new Album(locutus);
-					if (!album->loadFromCache(mt->album_mbid)) {
-						if (album->retrieveFromWebService(mt->album_mbid))
-							album->saveToCache();
-					}
-					if (album->mbid == "") {
-						/* hmm, didn't find the album? */
-						delete album;
-						continue;
-					}
-					mg.albums[album->mbid] = album;
-				}
-				int trackcount = (int) mg.albums[mt->album_mbid]->tracks.size();
-				if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
-					/* this should never happen */
-					locutus->debug(DEBUG_NOTICE, "PUID search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
-					continue;
-				}
-				Match m;
-				m.mbid_match = false;
-				m.puid_match = true;
-				m.meta_score = score;
-				if ((int) mg.scores[mt->album_mbid].size() < trackcount)
-					mg.scores[mt->album_mbid].resize(trackcount);
-				mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
-				setBestScore(mf->filename, m);
-			}
-		}
+		lookupPUIDs(&group->second);
+		/* then look up mbids */
+		/* and finally search using metadata */
+
 		/* compare all tracks in group with albums loaded so far */
 		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
 			compareFilesWithAlbum(&group->second, album->first);
@@ -94,10 +54,10 @@ void Matcher::match() {
 				continue;
 			vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group->first, mf));
 			for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
-				double score = mf->compareWithMetatrack(&(*mt));
+				Match m = mf->compareWithMetatrack(&(*mt));
 				mt->saveToCache();
-				saveMatchToCache(mf->filename, mt->track_mbid, score);
-				if (score < metadata_min_score)
+				saveMatchToCache(mf->filename, mt->track_mbid, m.meta_score);
+				if (m.meta_score < metadata_min_score)
 					continue;
 				if (mg.albums.find(mt->album_mbid) == mg.albums.end()) {
 					Album *album = new Album(locutus);
@@ -118,10 +78,6 @@ void Matcher::match() {
 					locutus->debug(DEBUG_NOTICE, "Metadata search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 					continue;
 				}
-				Match m;
-				m.mbid_match = false;
-				m.puid_match = false;
-				m.meta_score = score;
 				if ((int) mg.scores[mt->album_mbid].size() < trackcount)
 					mg.scores[mt->album_mbid].resize(trackcount);
 				mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
@@ -131,6 +87,11 @@ void Matcher::match() {
 			}
 		}
 		/* match tracks to album */
+		for (map<string, vector<map<string, Match> > >::iterator tmp = mg.scores.begin(); tmp != mg.scores.end(); ++tmp) {
+			string best_album = "";
+			double best_score = 0.0;
+			map<string, double> score_cache;
+		}
 		/* TODO
 		 * 1. find best album:
 		 *    * match_score = meta_score * (5 if mbid_match, 2 if puid_match, 1 if neither)
@@ -235,13 +196,7 @@ void Matcher::compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid
 			if (mg.scores[album_mbid][t].find((*mf)->filename) != mg.scores[album_mbid][t].end())
 				continue;
 			Metatrack mt = album->tracks[t]->getAsMetatrack();
-			Match m;
-			if (mt.track_mbid == (*mf)->musicbrainz_trackid)
-				m.mbid_match = true;
-			else
-				m.mbid_match = false;
-			m.puid_match = false;
-			m.meta_score = (*mf)->compareWithMetatrack(&mt);
+			Match m = (*mf)->compareWithMetatrack(&mt);
 			mg.scores[album_mbid][t][(*mf)->filename] = m;
 			setBestScore((*mf)->filename, m);
 			mt.saveToCache();
@@ -300,6 +255,71 @@ string Matcher::escapeWSString(string text) {
 		str << text[a];
 	}
 	return str.str();
+}
+
+void Matcher::lookupMBIDs(vector<Metafile *> *files) {
+	for (vector<Metafile *>::iterator file = files->begin(); file != files->end(); ++file) {
+		Metafile *mf = *file;
+		if (mf->musicbrainz_albumid.size() != 36 || mg.albums.find(mf->musicbrainz_albumid) != mg.albums.end())
+			continue;
+		Album *album = new Album(locutus);
+		if (!album->loadFromCache(mf->musicbrainz_albumid)) {
+			if (album->retrieveFromWebService(mf->musicbrainz_albumid))
+				album->saveToCache();
+		}
+		if (album->mbid == "") {
+			/* hmm, didn't find the album? */
+			delete album;
+			continue;
+		}
+		mg.albums[album->mbid] = album;
+		int trackcount = (int) album->tracks.size();
+		if ((int) mg.scores[album->mbid].size() < trackcount)
+			mg.scores[album->mbid].resize(trackcount);
+	}
+}
+
+void Matcher::lookupPUIDs(vector<Metafile *> *files) {
+	/* TODO:
+	 * we'll need some sort of handling when:
+	 * - no matching tracks
+	 * - matching tracks, but no good mbid/metadata match */
+	for (vector<Metafile *>::iterator file = files->begin(); file != files->end(); ++file) {
+		Metafile *mf = *file;
+		if (!mf->puid_lookup)
+			continue;
+		vector<Metatrack> *tracks = locutus->webservice->searchPUID(mf->puid);
+		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
+			Match m = mf->compareWithMetatrack(&(*mt));
+			mt->saveToCache();
+			saveMatchToCache(mf->filename, mt->track_mbid, m.meta_score);
+			if (m.meta_score < puid_min_score)
+				continue;
+			if (mg.albums.find(mt->album_mbid) == mg.albums.end()) {
+				Album *album = new Album(locutus);
+				if (!album->loadFromCache(mt->album_mbid)) {
+					if (album->retrieveFromWebService(mt->album_mbid))
+						album->saveToCache();
+				}
+				if (album->mbid == "") {
+					/* hmm, didn't find the album? */
+					delete album;
+					continue;
+				}
+				mg.albums[album->mbid] = album;
+			}
+			int trackcount = (int) mg.albums[mt->album_mbid]->tracks.size();
+			if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
+				/* this should never happen */
+				locutus->debug(DEBUG_NOTICE, "PUID search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
+				continue;
+			}
+			if ((int) mg.scores[mt->album_mbid].size() < trackcount)
+				mg.scores[mt->album_mbid].resize(trackcount);
+			mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+			setBestScore(mf->filename, m);
+		}
+	}
 }
 
 string Matcher::makeWSTrackQuery(string group, Metafile *mf) {

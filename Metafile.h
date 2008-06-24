@@ -49,6 +49,13 @@
 /* forward declare */
 class Metafile;
 
+/* structs */
+struct Match {
+	bool mbid_match;
+	bool puid_match;
+	double meta_score;
+};
+
 /* includes */
 #include <apetag.h>
 #include <fileref.h>
@@ -104,7 +111,7 @@ class Metafile {
 		~Metafile();
 
 		/* methods */
-		double compareWithMetatrack(Metatrack *metatrack);
+		Match compareWithMetatrack(Metatrack *metatrack);
 		string getBaseNameWithoutExtension();
 		string getGroup();
 		bool loadFromCache(string filename);
