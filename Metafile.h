@@ -86,6 +86,8 @@ class Metafile {
 		/* variables */
 		string filename;
 		bool puid_lookup;
+		bool mbid_lookup;
+		bool meta_lookup;
 		int bitrate;
 		int channels;
 		int duration;

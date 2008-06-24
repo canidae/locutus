@@ -29,9 +29,9 @@ using namespace std;
 
 /* structs */
 struct MatchGroup {
-	map<string, Album *> albums;
-	map<string, Match> best_score;
-	map<string, vector<map<string, Match> > > scores;
+	map<string, Album *> albums; // album_mbid, album
+	map<string, Match> best_score; // filename, match
+	map<string, vector<map<string, Match> > > scores; // album_mbid, tracknum, filename, match
 };
 
 /* Matcher */
@@ -66,5 +66,6 @@ class Matcher {
 		string makeWSTrackQuery(string group, Metafile *mf);
 		bool saveMatchToCache(string filename, string track_mbid, double score);
 		void setBestScore(string filename, Match match);
+		void searchMeta(string group, vector<Metafile *> *files);
 };
 #endif

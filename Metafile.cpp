@@ -3,6 +3,8 @@
 /* constructors */
 Metafile::Metafile(Locutus *locutus) {
 	this->locutus = locutus;
+	meta_lookup = false;
+	mbid_lookup = false;
 	puid_lookup = false;
 	bitrate = 0;
 	channels = 0;
