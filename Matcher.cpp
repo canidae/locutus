@@ -19,11 +19,11 @@ void Matcher::loadSettings() {
 void Matcher::match() {
 	for (map<string, vector<Metafile *> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
 		/* look up puids first */
-		lookupPUIDs(&group->second);
+		lookupPUIDs(group->second);
 		/* then look up mbids */
-		lookupMBIDs(&group->second);
+		lookupMBIDs(group->second);
 		/* and finally search using metadata */
-		searchMeta(group->first, &group->second);
+		searchMeta(group->first, group->second);
 
 		/* compare all tracks in group with albums loaded so far */
 		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
@@ -87,81 +87,6 @@ void Matcher::match() {
 		clearMatchGroup();
 	}
 }
-
-/*
-void Matcher::lookup() {
-	for (map<string, vector<int> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
-		map<string, double> album_scores;
-		map<string, vector<AlbumMatch> > album_matched;
-		for (map<string, map<vector<Metadata>::size_type, vector<Match> > >::iterator album = matches.begin(); album != matches.end(); ++album) {
-			AlbumMatch tmp;
-			tmp.file = -1;
-			tmp.score = 0.0;
-			vector<AlbumMatch> matched(group->second.size(), tmp);
-			double album_score = 0.0;
-			int matched_tracks = 0;
-			for (map<vector<Metadata>::size_type, vector<Match> >::iterator tc = album->second.begin(); tc != album->second.end(); ++tc) {
-				int best_file = -1;
-				int best_track = -1;
-				double best_score = 0.0;
-				for (map<vector<Metadata>::size_type, vector<Match> >::size_type t = 0; t < album->second.size(); ++t) {
-					for (vector<Match>::iterator match = album->second[t].begin(); match != album->second[t].begin(); ++match) {
-						if (matched[t].file != -1)
-							continue;
-						FileMetadata fm = locutus->files[group->second[match->file]];
-						double score = 0.0;
-						if (fm.puid_lookup && track_puid_match[match->file])
-							score = 2.0 + match->meta_score;
-						else if (match->mbid_match)
-							score = 1.0 + match->meta_score;
-						else
-							score = match->meta_score;
-						if (score > best_score) {
-							best_file = match->file;
-							best_track = t;
-							best_score = score;
-						}
-					}
-				}
-				if (best_track != -1) {
-					++matched_tracks;
-					matched[best_track].file = best_file;
-					matched[best_track].score = best_score;
-					album_score += best_score;
-				}
-			}
-			if (matched_tracks == (int) group->second.size())
-				album_score *= 3;
-			else if (matched_tracks == (int) album->second.size())
-				album_score *= 2;
-			album_scores[album->first] = album_score / album->second.size();
-			album_matched[album->first] = matched;
-		}
-		vector<bool> used_files(group->second.size(), false);
-		for (map<string, vector<Metadata> >::iterator album = albums.begin(); album != albums.end(); ++album) {
-			double max = -1.0;
-			string key = "";
-			for (map<string, double>::iterator as = album_scores.begin(); as != album_scores.end(); ++as) {
-				if (as->second > max) {
-					key = as->first;
-					max = as->second;
-				}
-			}
-			if (key == "")
-				break;
-			for (vector<Metadata>::size_type track = 0; track < album->second.size(); ++track) {
-				AlbumMatch am = album_matched[key][track];
-				if (am.file == -1 || used_files[am.file])
-					continue;
-				FileMetadata fm = locutus->files[am.file];
-				fm.setValues(albums[key][track]);
-				locutus->files[am.file] = fm;
-				used_files[am.file] = true;
-			}
-		}
-	}
-}
-*/
 
 /* private methods */
 void Matcher::compareFilesWithAlbum(vector<Metafile *> *files, string album_mbid) {
@@ -234,8 +159,8 @@ string Matcher::escapeWSString(string text) {
 	return str.str();
 }
 
-void Matcher::lookupMBIDs(vector<Metafile *> *files) {
-	for (vector<Metafile *>::iterator file = files->begin(); file != files->end(); ++file) {
+void Matcher::lookupMBIDs(vector<Metafile *> &files) {
+	for (vector<Metafile *>::iterator file = files.begin(); file != files.end(); ++file) {
 		Metafile *mf = *file;
 		if (!mf->mbid_lookup || mf->musicbrainz_albumid.size() != 36 || mg.albums.find(mf->musicbrainz_albumid) != mg.albums.end())
 			continue;
@@ -256,12 +181,12 @@ void Matcher::lookupMBIDs(vector<Metafile *> *files) {
 	}
 }
 
-void Matcher::lookupPUIDs(vector<Metafile *> *files) {
+void Matcher::lookupPUIDs(vector<Metafile *> &files) {
 	/* TODO:
 	 * we'll need some sort of handling when:
 	 * - no matching tracks
 	 * - matching tracks, but no good mbid/metadata match */
-	for (vector<Metafile *>::iterator file = files->begin(); file != files->end(); ++file) {
+	for (vector<Metafile *>::iterator file = files.begin(); file != files.end(); ++file) {
 		Metafile *mf = *file;
 		if (!mf->puid_lookup || mf->puid.size() != 36)
 			continue;
@@ -351,8 +276,8 @@ void Matcher::setBestScore(string filename, Match score) {
 	mg.best_score[filename] = score;
 }
 
-void Matcher::searchMeta(string group, vector<Metafile *> *files) {
-	for (vector<Metafile *>::iterator file = files->begin(); file != files->end(); ++file) {
+void Matcher::searchMeta(string group, vector<Metafile *> &files) {
+	for (vector<Metafile *>::iterator file = files.begin(); file != files.end(); ++file) {
 		Metafile *mf = *file;
 		/* meta lookup */
 		if (mg.best_score.find(mf->filename) != mg.best_score.end() && (mg.best_score[mf->filename].mbid_match || mg.best_score[mf->filename].puid_match || mg.best_score[mf->filename].meta_score > metadata_min_score))
