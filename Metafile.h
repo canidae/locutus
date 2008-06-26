@@ -88,6 +88,7 @@ class Metafile {
 		bool puid_lookup;
 		bool mbid_lookup;
 		bool meta_lookup;
+		bool save;
 		int bitrate;
 		int channels;
 		int duration;

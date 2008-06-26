@@ -46,7 +46,7 @@ class Matcher {
 
 		/* methods */
 		void loadSettings();
-		void match();
+		void match(string group, vector<Metafile *> *files);
 
 	private:
 		/* variables */
@@ -64,6 +64,7 @@ class Matcher {
 		void lookupMBIDs(vector<Metafile *> *files);
 		void lookupPUIDs(vector<Metafile *> *files);
 		string makeWSTrackQuery(string group, Metafile *mf);
+		void matchFilesToAlbums(vector<Metafile *> *files);
 		bool saveMatchToCache(string filename, string track_mbid, double score);
 		void setBestScore(string filename, Match match);
 		void searchMetadata(string group, vector<Metafile *> *files);

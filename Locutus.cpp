@@ -123,7 +123,7 @@ void Locutus::scanDirectory(string directory) {
 	/* generate puids */
 	puidgen->generatePUIDs();
 	/* match files */
-	matcher->match();
+	//matcher->match();
 	/* save changes */
 	// TODO
 }

@@ -16,36 +16,77 @@ void Matcher::loadSettings() {
 	metadata_min_score = locutus->settings->loadSetting(setting_class_id, METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
 }
 
-void Matcher::match() {
-	for (map<string, vector<Metafile *> >::iterator group = locutus->grouped_files.begin(); group != locutus->grouped_files.end(); ++group) {
-		/* look up puids first */
-		lookupPUIDs(&group->second);
-		/* then look up mbids */
-		lookupMBIDs(&group->second);
-		/* compare all tracks in group with albums loaded so far */
-		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
-			compareFilesWithAlbum(album->first, &group->second);
-		/* and finally search using metadata */
-		searchMetadata(group->first, &group->second);
-
-		/* match tracks to album */
-		/* TODO
-		 * 1. find best album:
-		 *    * match_score = meta_score * (5 if mbid_match, 2 if puid_match, 1 if neither)
-		 *    * album_score = matches/tracks * match_score
-		 * 2. make files matched unavailable for matching with next album
-		 * 3. goto 1
-		 *
-		 * notes:
-		 * - add "only save if all files in group match something" setting
-		 * - add "only save complete albums" setting
-		 *   * best album must be complete, it's not enough with any album being complete.
-		 *     this because there often are singles with same tracks as an album
-		 */
-
-		/* clear for next group */
-		clearMatchGroup();
+void Matcher::matchFilesToAlbums(vector<Metafile *> *files) {
+	/* match tracks to album */
+	/* TODO
+	 * 1. find best album:
+	 *    * match_score = meta_score * (5 if mbid_match, 2 if puid_match, 1 if neither)
+	 *    * album_score = matches/tracks * match_score
+	 * 2. make files matched unavailable for matching with next album
+	 * 3. goto 1
+	 *
+	 * notes:
+	 * - add "only save if all files in group match something" setting
+	 * - add "only save complete albums" setting
+	 *   * best album must be complete, it's not enough with any album being complete.
+	 *     this because there often are singles with same tracks as an album
+	 */
+	/* find best album */
+	for (map<string, Album *>::size_type albumtmp = 0; albumtmp < mg.albums.size(); ++albumtmp) {
+		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album) {
+			map<string, Track *> used_files;
+			map<int, bool> used_tracks;
+			double album_score = 0.0;
+			int files_matched = 0;
+			/* find best track */
+			for (vector<map<string, Match> >::size_type tracktmp = 0; tracktmp < mg.scores[album->first].size(); ++tracktmp) {
+				double best_score = 0.0;
+				int best_track = -1;
+				string best_file = "";
+				for (vector<map<string, Match> >::size_type track = 0; track < mg.scores[album->first].size(); ++track) {
+					if (used_tracks.find(track) != used_tracks.end())
+						continue;
+					/* find best file to track */
+					for (map<string, Match>::iterator match = mg.scores[album->first][track].begin(); match != mg.scores[album->first][track].end(); ++match) {
+						if (used_files.find(match->first) != used_files.end())
+							continue;
+						if (!match->second.mbid_match && match->second.meta_score < metadata_min_score)
+							continue;
+						if (!match->second.puid_match && match->second.meta_score < puid_min_score)
+							continue;
+						double score = match->second.meta_score * (match->second.mbid_match ? 5 : (match->second.puid_match ? 2 : 1));
+						if (score > best_score) {
+							best_score = score;
+							best_track = track;
+							best_file = match->first;
+						}
+					}
+				}
+				if (best_track != -1) {
+					used_files[best_file] = album->second->tracks[best_track];
+					used_tracks[best_track] = true;
+					album_score += best_score;
+					++files_matched;
+				}
+			}
+		}
 	}
+}
+
+void Matcher::match(string group, vector<Metafile *> *files) {
+	/* look up puids first */
+	lookupPUIDs(files);
+	/* then look up mbids */
+	lookupMBIDs(files);
+	/* compare all tracks in group with albums loaded so far */
+	for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
+		compareFilesWithAlbum(album->first, files);
+	/* search using metadata */
+	searchMetadata(group, files);
+	/* and then match the files to albums */
+	matchFilesToAlbums(files);
+	/* clear data */
+	clearMatchGroup();
 }
 
 /* private methods */
