@@ -11,12 +11,12 @@ Levenshtein::~Levenshtein() {
 }
 
 /* methods */
-double Levenshtein::similarity(const string source, const string target) {
-	const int sl = source.length();
-	const int tl = target.length();
+double Levenshtein::similarity(const string &source, const string &target) {
+	int sl = source.length();
+	int tl = target.length();
 	if (sl == 0 || tl == 0)
 		return 0.0;
-	const int size = max(sl, tl);
+	int size = max(sl, tl);
 	if (size + 1 > matrix_size)
 		resizeMatrix(size + 1);
 
@@ -32,9 +32,9 @@ double Levenshtein::similarity(const string source, const string target) {
 				t += 32;
 			int cost = (s == t ? 0 : 1);
 
-			const int above = matrix[a - 1][b];
-			const int left = matrix[a][b - 1];
-			const int diag = matrix[a - 1][b - 1];
+			int above = matrix[a - 1][b];
+			int left = matrix[a][b - 1];
+			int diag = matrix[a - 1][b - 1];
 			int cell = min(above + 1, min(left + 1, diag + cost));
 			if (a > 2 && b > 2) {
 				int trans = matrix[a - 2][b - 2] + 1;
@@ -48,12 +48,11 @@ double Levenshtein::similarity(const string source, const string target) {
 			matrix[a][b] = cell;
 		}
 	}
-	double value = 1.0 - (double) matrix[sl][tl] / (double) size;
-	return value;
+	return 1.0 - (double) matrix[sl][tl] / (double) size;
 }
 
 /* private methods */
-void Levenshtein::createMatrix(const int size) {
+void Levenshtein::createMatrix(const int &size) {
 	matrix_size = size;
 	matrix = new int*[matrix_size];
 	for (int a = 0; a < matrix_size; ++a) {
@@ -69,7 +68,7 @@ void Levenshtein::deleteMatrix() {
 	delete [] matrix;
 }
 
-void Levenshtein::resizeMatrix(const int size) {
+void Levenshtein::resizeMatrix(const int &size) {
 	deleteMatrix();
 	createMatrix(size);
 }

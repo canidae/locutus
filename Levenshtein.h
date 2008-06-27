@@ -20,7 +20,7 @@ class Levenshtein {
 		~Levenshtein();
 
 		/* methods */
-		double similarity(const string source, const string target);
+		double similarity(const string &source, const string &target);
 
 	private:
 		/* variables */
@@ -28,8 +28,8 @@ class Levenshtein {
 		int matrix_size;
 
 		/* methods */
-		void createMatrix(const int size);
+		void createMatrix(const int &size);
 		void deleteMatrix();
-		void resizeMatrix(const int size);
+		void resizeMatrix(const int &size);
 };
 #endif

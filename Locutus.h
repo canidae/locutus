@@ -88,7 +88,7 @@ class Locutus {
 		~Locutus();
 
 		/* methods */
-		void debug(int level, string text);
+		void debug(const int &level, const string &text);
 		long run();
 
 	private:
@@ -100,8 +100,8 @@ class Locutus {
 		int puid_cache_lifetime;
 
 		/* methods */
-		void cleanCache();
+		void cleanCache() const;
 		void loadSettings();
-		void scanDirectory(string directory);
+		void scanDirectory(const string &directory);
 };
 #endif

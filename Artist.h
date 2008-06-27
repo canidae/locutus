@@ -27,7 +27,7 @@ class Artist {
 		~Artist();
 
 		/* methods */
-		bool saveToCache();
+		bool saveToCache() const;
 
 	private:
 		/* variables */

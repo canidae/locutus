@@ -28,7 +28,7 @@ Locutus::~Locutus() {
 }
 
 /* methods */
-void Locutus::debug(int level, string text) {
+void Locutus::debug(const int &level, const string &text) {
 	time_t rawtime;
 	time(&rawtime);
 	string t = asctime(localtime(&rawtime));
@@ -73,7 +73,7 @@ long Locutus::run() {
 }
 
 /* private methods */
-void Locutus::cleanCache() {
+void Locutus::cleanCache() const {
 	/* delete old data from database */
 	/* album */
 	ostringstream query;
@@ -114,7 +114,7 @@ void Locutus::loadSettings() {
 	matcher->loadSettings();
 }
 
-void Locutus::scanDirectory(string directory) {
+void Locutus::scanDirectory(const string &directory) {
 	/* clear data */
 	grouped_files.clear();
 	files.clear();

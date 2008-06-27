@@ -32,7 +32,7 @@ Metafile::~Metafile() {
 }
 
 /* methods */
-Match Metafile::compareWithMetatrack(Metatrack *metatrack) {
+Match Metafile::compareWithMetatrack(const Metatrack &metatrack) const {
 	Match m;
 	m.puid_match = false;
 	m.mbid_match = false;
@@ -59,10 +59,10 @@ Match Metafile::compareWithMetatrack(Metatrack *metatrack) {
 	double scores[4][values.size()];
 	int pos = 0;
 	for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
-		scores[0][pos] = locutus->levenshtein->similarity(*v, metatrack->album_title);
-		scores[1][pos] = locutus->levenshtein->similarity(*v, metatrack->artist_name);
-		scores[2][pos] = locutus->levenshtein->similarity(*v, metatrack->track_title);
-		scores[3][pos] = (atoi(v->c_str()) == metatrack->tracknumber) ? 1.0 : 0.0;
+		scores[0][pos] = locutus->levenshtein->similarity(*v, metatrack.album_title);
+		scores[1][pos] = locutus->levenshtein->similarity(*v, metatrack.artist_name);
+		scores[2][pos] = locutus->levenshtein->similarity(*v, metatrack.track_title);
+		scores[3][pos] = (atoi(v->c_str()) == metatrack.tracknumber) ? 1.0 : 0.0;
 		++pos;
 	}
 	bool used_row[4];
@@ -94,20 +94,20 @@ Match Metafile::compareWithMetatrack(Metatrack *metatrack) {
 			}
 		}
 	}
-	m.puid_match = (puid != "" && puid == metatrack->puid);
-	m.mbid_match = (musicbrainz_trackid != "" && musicbrainz_trackid == metatrack->track_mbid);
+	m.puid_match = (puid != "" && puid == metatrack.puid);
+	m.mbid_match = (musicbrainz_trackid != "" && musicbrainz_trackid == metatrack.track_mbid);
 	m.meta_score = scores[0][0] * locutus->album_weight;
 	m.meta_score += scores[1][0] * locutus->artist_weight;
 	m.meta_score += scores[2][0] * locutus->title_weight;
 	m.meta_score += scores[3][0] * locutus->tracknumber_weight;
-	int durationdiff = abs(metatrack->duration - duration);
+	int durationdiff = abs(metatrack.duration - duration);
 	if (durationdiff < locutus->duration_limit)
 		m.meta_score += (1.0 - durationdiff / locutus->duration_limit) * locutus->duration_weight;
 	m.meta_score /= locutus->album_weight + locutus->artist_weight + locutus->title_weight + locutus->tracknumber_weight + locutus->duration_weight;
 	return m;
 }
 
-string Metafile::getBaseNameWithoutExtension() {
+string Metafile::getBaseNameWithoutExtension() const {
 	/* return basename without extension, duh */
 	string::size_type pos = filename.find_last_of('/');
 	if (pos != string::npos && pos > 0) {
@@ -121,7 +121,7 @@ string Metafile::getBaseNameWithoutExtension() {
 	return "";
 }
 
-string Metafile::getGroup() {
+string Metafile::getGroup() const {
 	/* returns either album, last directory name or ""
 	 * used for grouping tracks that possibly are from the same album */
 	if (album.size() > 0)
@@ -137,7 +137,7 @@ string Metafile::getGroup() {
 	return "";
 }
 
-bool Metafile::loadFromCache(string filename) {
+bool Metafile::loadFromCache(const string &filename) {
 	if (filename.size() <= 0) {
 		locutus->debug(DEBUG_NOTICE, "Length of filename is 0 or less? Can't load that from cache");
 		return false;
@@ -172,7 +172,7 @@ bool Metafile::loadFromCache(string filename) {
 	return true;
 }
 
-bool Metafile::readFromFile(string filename) {
+bool Metafile::readFromFile(const string &filename) {
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos) {
 		string ext = filename.substr(pos);
@@ -241,7 +241,7 @@ bool Metafile::readFromFile(string filename) {
 	return true;
 }
 
-bool Metafile::saveToCache() {
+bool Metafile::saveToCache() const {
 	ostringstream query;
 	string e_puid = locutus->database->escapeString(puid);
 	if (puid != "") {
@@ -283,7 +283,7 @@ bool Metafile::saveToCache() {
 }
 
 /* private methods */
-void Metafile::readAudioProperties(AudioProperties *ap) {
+void Metafile::readAudioProperties(const AudioProperties *ap) {
 	if (ap == NULL)
 		return;
 	bitrate = ap->bitrate();
@@ -292,7 +292,7 @@ void Metafile::readAudioProperties(AudioProperties *ap) {
 	samplerate = ap->sampleRate();
 }
 
-void Metafile::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1) {
+void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const ID3v1::Tag *id3v1) {
 	/* first fetch id3v1 */
 	if (id3v1 != NULL) {
 		if (!id3v1->album().isEmpty())
@@ -400,7 +400,7 @@ void Metafile::readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1)
 	}
 }
 
-void Metafile::readXiphComment(Ogg::XiphComment *tag) {
+void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 	const Ogg::FieldListMap map = tag->fieldListMap();
 	if (!map[ALBUM].isEmpty())
 		album = map[ALBUM].front().to8Bit(true);

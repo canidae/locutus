@@ -46,7 +46,7 @@ class Matcher {
 
 		/* methods */
 		void loadSettings();
-		void match(string group, vector<Metafile *> *files);
+		void match(const string &group, const vector<Metafile *> &files);
 
 	private:
 		/* variables */
@@ -57,16 +57,15 @@ class Matcher {
 		double metadata_min_score;
 
 		/* methods */
-		void compareFilesWithAlbum(string mbid, vector<Metafile *> *files);
+		void compareFilesWithAlbum(const string &mbid, const vector<Metafile *> &files);
 		void clearMatchGroup();
-		string escapeWSString(string text);
-		bool loadAlbum(string mbid);
-		void lookupMBIDs(vector<Metafile *> *files);
-		void lookupPUIDs(vector<Metafile *> *files);
-		string makeWSTrackQuery(string group, Metafile *mf);
-		void matchFilesToAlbums(vector<Metafile *> *files);
-		bool saveMatchToCache(string filename, string track_mbid, double score);
-		void setBestScore(string filename, Match match);
-		void searchMetadata(string group, vector<Metafile *> *files);
+		string escapeWSString(const string &text) const;
+		bool loadAlbum(const string &mbid);
+		void lookupMBIDs(const vector<Metafile *> &files);
+		void lookupPUIDs(const vector<Metafile *> &files);
+		string makeWSTrackQuery(const string &group, const Metafile &mf) const;
+		void matchFilesToAlbums(const vector<Metafile *> &files);
+		bool saveMatchToCache(const string &filename, const string &track_mbid, const double &score) const;
+		void searchMetadata(const string &group, const vector<Metafile *> &files);
 };
 #endif

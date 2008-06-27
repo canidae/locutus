@@ -34,9 +34,9 @@ class Album {
 		~Album();
 
 		/* methods */
-		bool loadFromCache(string mbid);
-		bool retrieveFromWebService(string mbid);
-		bool saveToCache();
+		bool loadFromCache(const string &mbid);
+		bool retrieveFromWebService(const string &mbid);
+		bool saveToCache() const;
 
 	private:
 		/* variables */

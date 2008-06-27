@@ -13,7 +13,7 @@ Artist::~Artist() {
 }
 
 /* methods */
-bool Artist::saveToCache() {
+bool Artist::saveToCache() const {
 	/* save artist to cache */
 	if (mbid.size() != 36)
 		return false;

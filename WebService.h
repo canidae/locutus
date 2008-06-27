@@ -41,9 +41,9 @@ class WebService : public URLStream, public XMLStream {
 
 		/* methods */
 		void loadSettings();
-		XMLNode *lookupAlbum(string mbid);
-		vector<Metatrack> *searchMetadata(string wsquery);
-		vector<Metatrack> *searchPUID(string puid);
+		XMLNode *lookupAlbum(const string &mbid);
+		vector<Metatrack> *searchMetadata(const string &wsquery);
+		vector<Metatrack> *searchPUID(const string &puid);
 
 	private:
 		/* variables */
@@ -59,10 +59,9 @@ class WebService : public URLStream, public XMLStream {
 		/* methods */
 		void characters(const unsigned char *text, size_t len);
 		void close();
-		void deleteTree(XMLNode *node);
 		void endElement(const unsigned char *name);
 		bool fetch(const char *url);
-		void printXML(XMLNode *startnode, int indent);
+		void printXML(XMLNode *startnode, const int &indent) const;
 		int read(unsigned char *buffer, size_t len);
 		void startElement(const unsigned char *name, const unsigned char **attr);
 };

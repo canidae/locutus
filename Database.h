@@ -27,14 +27,14 @@ class Database {
 		~Database();
 
 		/* methods */
-		string escapeString(string str);
-		bool getBool(const int row, const int col);
-		double getDouble(const int row, const int col);
-		int getInt(const int row, const int col);
-		int getRows();
-		string getString(const int row, const int col);
-		bool isNull(const int row, const int col);
-		bool query(const string q);
+		string escapeString(const string &str) const;
+		bool getBool(const int &row, const int &col) const;
+		double getDouble(const int &row, const int &col) const;
+		int getInt(const int &row, const int &col) const;
+		int getRows() const;
+		string getString(const int &row, const int &col) const;
+		bool isNull(const int &row, const int &col) const;
+		bool query(const string &q) const;
 		bool query(const char *q);
 
 	private:

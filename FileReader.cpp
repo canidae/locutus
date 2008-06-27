@@ -17,7 +17,7 @@ void FileReader::loadSettings() {
 	duplicate_dir = locutus->settings->loadSetting(setting_class_id, MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
 }
 
-void FileReader::scanFiles(string directory) {
+void FileReader::scanFiles(const string &directory) {
 	dir_queue.push_back(directory);
 	while (dir_queue.size() > 0 || file_queue.size() > 0) {
 		/* first files */

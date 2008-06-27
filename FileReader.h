@@ -44,7 +44,7 @@ class FileReader {
 
 		/* methods */
 		void loadSettings();
-		void scanFiles(string directory);
+		void scanFiles(const string &directory);
 
 	private:
 		/* variables */

@@ -114,12 +114,12 @@ class Metafile {
 		~Metafile();
 
 		/* methods */
-		Match compareWithMetatrack(Metatrack *metatrack);
-		string getBaseNameWithoutExtension();
-		string getGroup();
-		bool loadFromCache(string filename);
-		bool readFromFile(string filename);
-		bool saveToCache();
+		Match compareWithMetatrack(const Metatrack &metatrack) const;
+		string getBaseNameWithoutExtension() const;
+		string getGroup() const;
+		bool loadFromCache(const string &filename);
+		bool readFromFile(const string &filename);
+		bool saveToCache() const;
 
 	private:
 		/* variables */
@@ -127,8 +127,8 @@ class Metafile {
 		int filetype;
 
 		/* methods */
-		void readAudioProperties(AudioProperties *ap);
-		void readCrapTags(APE::Tag *ape, ID3v2::Tag *id3v2, ID3v1::Tag *id3v1);
-		void readXiphComment(Ogg::XiphComment *tag);
+		void readAudioProperties(const AudioProperties *ap);
+		void readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const ID3v1::Tag *id3v1);
+		void readXiphComment(const Ogg::XiphComment *tag);
 };
 #endif

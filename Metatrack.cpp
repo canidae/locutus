@@ -33,7 +33,7 @@ bool Metatrack::readFromXML(XMLNode *track) {
 	return true;
 }
 
-bool Metatrack::saveToCache() {
+bool Metatrack::saveToCache() const {
 	if (track_mbid.size() != 36) {
 		locutus->debug(DEBUG_NOTICE, "Won't save metatrack in cache, missing MBIDs");
 		return false;

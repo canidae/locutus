@@ -35,7 +35,7 @@ class Metatrack {
 
 		/* methods */
 		bool readFromXML(XMLNode *track);
-		bool saveToCache();
+		bool saveToCache() const;
 
 	private:
 		/* variables */

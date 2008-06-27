@@ -18,7 +18,7 @@ Database::~Database() {
 }
 
 /* methods */
-string Database::escapeString(string str) {
+string Database::escapeString(const string &str) const {
 	char *to = new char[str.size() * 2 + 1];
 	int error = 0;
 	size_t len = PQescapeStringConn(pg_connection, to, str.c_str(), str.size(), &error);
@@ -27,31 +27,31 @@ string Database::escapeString(string str) {
 	return back;
 }
 
-bool Database::getBool(const int row, const int col) {
+bool Database::getBool(const int &row, const int &col) const {
 	return PQgetvalue(pg_result, row, col)[0] == 't';
 }
 
-double Database::getDouble(const int row, const int col) {
+double Database::getDouble(const int &row, const int &col) const {
 	return atof(PQgetvalue(pg_result, row, col));
 }
 
-int Database::getInt(const int row, const int col) {
+int Database::getInt(const int &row, const int &col) const {
 	return atoi(PQgetvalue(pg_result, row, col));
 }
 
-int Database::getRows() {
+int Database::getRows() const {
 	return PQntuples(pg_result);
 }
 
-string Database::getString(const int row, const int col) {
+string Database::getString(const int &row, const int &col) const {
 	return PQgetvalue(pg_result, row, col);
 }
 
-bool Database::isNull(const int row, const int col) {
+bool Database::isNull(const int &row, const int &col) const {
 	return (PQgetisnull(pg_result, row, col) != 0);
 }
 
-bool Database::query(const string q) {
+bool Database::query(const string &q) const {
 	return query(q.c_str());
 }
 

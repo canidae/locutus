@@ -20,7 +20,7 @@ void WebService::loadSettings() {
 	release_lookup_url = locutus->settings->loadSetting(setting_class_id, RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 }
 
-XMLNode *WebService::lookupAlbum(string mbid) {
+XMLNode *WebService::lookupAlbum(const string &mbid) {
 	if (mbid.size() != 36)
 		return NULL;
 	string url = release_lookup_url;
@@ -31,7 +31,7 @@ XMLNode *WebService::lookupAlbum(string mbid) {
 	return NULL;
 }
 
-vector<Metatrack> *WebService::searchMetadata(string wsquery) {
+vector<Metatrack> *WebService::searchMetadata(const string &wsquery) {
 	tracks->clear();
 	if (wsquery == "")
 		return tracks;
@@ -48,7 +48,7 @@ vector<Metatrack> *WebService::searchMetadata(string wsquery) {
 	return tracks;
 }
 
-vector<Metatrack> *WebService::searchPUID(string puid) {
+vector<Metatrack> *WebService::searchPUID(const string &puid) {
 	tracks->clear();
 	if (puid.size() != 36)
 		return tracks;
@@ -95,7 +95,7 @@ bool WebService::fetch(const char *url) {
 	return true;
 }
 
-void WebService::printXML(XMLNode *startnode, int indent) {
+void WebService::printXML(XMLNode *startnode, const int &indent) const {
 	if (startnode == NULL)
 		return;
 	for (int a = 0; a < indent; ++a)

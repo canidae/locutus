@@ -18,7 +18,7 @@ Album::~Album() {
 }
 
 /* methods */
-bool Album::loadFromCache(string mbid) {
+bool Album::loadFromCache(const string &mbid) {
 	/* fetch album from cache */
 	if (locutus == NULL)
 		return false;
@@ -70,7 +70,7 @@ bool Album::loadFromCache(string mbid) {
 	return true;
 }
 
-bool Album::retrieveFromWebService(string mbid) {
+bool Album::retrieveFromWebService(const string &mbid) {
 	/* album data */
 	if (locutus == NULL)
 		return false;
@@ -124,7 +124,7 @@ bool Album::retrieveFromWebService(string mbid) {
 	return true;
 }
 
-bool Album::saveToCache() {
+bool Album::saveToCache() const {
 	/* save album to cache */
 	if (locutus == NULL)
 		return false;
@@ -162,7 +162,7 @@ bool Album::saveToCache() {
 		locutus->debug(DEBUG_NOTICE, "Unable to save album in cache, query failed. See error above");
 	/* save tracks */
 	bool status = true;
-	for (vector<Track *>::iterator track = tracks.begin(); track != tracks.end(); ++track) {
+	for (vector<Track *>::const_iterator track = tracks.begin(); track != tracks.end(); ++track) {
 		if (!(*track)->saveToCache())
 			status = false;
 	}

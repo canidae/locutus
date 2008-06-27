@@ -17,7 +17,7 @@ Track::~Track() {
 }
 
 /* methods */
-Metatrack Track::getAsMetatrack() {
+Metatrack Track::getAsMetatrack() const {
 	Metatrack mt(locutus);
 	mt.duration = duration;
 	mt.tracknumber = tracknumber;
@@ -30,7 +30,7 @@ Metatrack Track::getAsMetatrack() {
 	return mt;
 }
 
-bool Track::saveToCache() {
+bool Track::saveToCache() const {
 	if (mbid.size() != 36) {
 		string msg = "Unable to save track in cache. Illegal MusicBrainz ID: ";
 		msg.append(mbid);

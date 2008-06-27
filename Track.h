@@ -33,8 +33,8 @@ class Track {
 		~Track();
 
 		/* methods */
-		Metatrack getAsMetatrack();
-		bool saveToCache();
+		Metatrack getAsMetatrack() const;
+		bool saveToCache() const;
 
 	private:
 		/* variables */
