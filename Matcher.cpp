@@ -22,30 +22,30 @@ void Matcher::match(const string &group, const vector<Metafile *> &files) {
 	/* then look up mbids */
 	lookupMBIDs(files);
 	/* compare all tracks in group with albums loaded so far */
-	for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
-		compareFilesWithAlbum(album->first, files);
+	for (map<string, MatchGroup>::iterator mg = mgs.begin(); mg != mgs.end(); ++mg)
+		compareFilesWithAlbum(mg->first, files);
 	/* search using metadata */
 	searchMetadata(group, files);
 	/* and then match the files to albums */
-	matchFilesToAlbums(files);
+	matchFilesToAlbums();
 	/* clear data */
 	clearMatchGroup();
 }
 
 /* private methods */
 void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *> &files) {
-	if (mg.albums.find(mbid) == mg.albums.end())
+	if (mgs.find(mbid) == mgs.end())
 		return;
-	Album *album = mg.albums[mbid];
+	Album *album = mgs[mbid].album;
 	for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf) {
 		for (vector<Track *>::size_type t = 0; t < album->tracks.size(); ++t) {
-			if (mg.scores[mbid][t].find((*mf)->filename) != mg.scores[mbid][t].end())
+			if (mgs[mbid].scores[t].find((*mf)->filename) != mgs[mbid].scores[t].end())
 				continue;
 			Metatrack mt = album->tracks[t]->getAsMetatrack();
 			Match m = (*mf)->compareWithMetatrack(mt);
 			if (!(*mf)->puid_lookup && !(*mf)->mbid_lookup && m.meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
-			mg.scores[mbid][t][(*mf)->filename] = m;
+			mgs[mbid].scores[t][(*mf)->filename] = m;
 			mt.saveToCache();
 			saveMatchToCache((*mf)->filename, mt.track_mbid, m.meta_score);
 		}
@@ -53,10 +53,9 @@ void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *>
 }
 
 void Matcher::clearMatchGroup() {
-	for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album)
-		delete album->second;
-	mg.albums.clear();
-	mg.scores.clear();
+	for (map<string, MatchGroup>::iterator mg = mgs.begin(); mg != mgs.end(); ++mg)
+		delete mg->second.album;
+	mgs.clear();
 }
 
 string Matcher::escapeWSString(const string &text) const {
@@ -107,7 +106,7 @@ string Matcher::escapeWSString(const string &text) const {
 bool Matcher::loadAlbum(const string &mbid) {
 	if (mbid.size() != 36)
 		return false;
-	if (mg.albums.find(mbid) != mg.albums.end())
+	if (mgs.find(mbid) != mgs.end())
 		return true; // already loaded
 	Album *album = new Album(locutus);
 	if (!album->loadFromCache(mbid)) {
@@ -119,15 +118,15 @@ bool Matcher::loadAlbum(const string &mbid) {
 		delete album;
 		return false;
 	}
-	mg.albums[mbid] = album;
-	mg.scores[mbid].resize((int) album->tracks.size());
+	mgs[mbid].album = album;
+	mgs[mbid].scores.resize((int) album->tracks.size());
 	return true;
 }
 
 void Matcher::lookupMBIDs(const vector<Metafile *> &files) {
 	for (vector<Metafile *>::const_iterator file = files.begin(); file != files.end(); ++file) {
 		Metafile *mf = *file;
-		if (!mf->mbid_lookup || mf->musicbrainz_albumid.size() != 36 || mg.albums.find(mf->musicbrainz_albumid) != mg.albums.end())
+		if (!mf->mbid_lookup || mf->musicbrainz_albumid.size() != 36 || mgs.find(mf->musicbrainz_albumid) != mgs.end())
 			continue;
 		if (loadAlbum(mf->musicbrainz_albumid))
 			mf->meta_lookup = false; // shouldn't look up using metadata
@@ -154,14 +153,14 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 				continue;
 			if (!loadAlbum(mt->album_mbid))
 				continue;
-			int trackcount = (int) mg.albums[mt->album_mbid]->tracks.size();
+			int trackcount = (int) mgs[mt->album_mbid].album->tracks.size();
 			if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
 				/* this should never happen */
 				locutus->debug(DEBUG_NOTICE, "PUID search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 				continue;
 			}
 			/* since we've already calculated the score, save it */
-			mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+			mgs[mt->album_mbid].scores[mt->tracknumber - 1][mf->filename] = m;
 			/* if we found a match using puid we shouldn't look up using metadata */
 			mf->meta_lookup = false;
 		}
@@ -187,7 +186,7 @@ string Matcher::makeWSTrackQuery(const string &group, const Metafile &mf) const 
 	return query.str();
 }
 
-void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
+void Matcher::matchFilesToAlbums() {
 	/* match tracks to album */
 	/* TODO
 	 * 1. find best album:
@@ -203,22 +202,26 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	 *     this because there often are singles with same tracks as an album
 	 */
 	/* find best album */
-	for (map<string, Album *>::size_type albumtmp = 0; albumtmp < mg.albums.size(); ++albumtmp) {
-		for (map<string, Album *>::iterator album = mg.albums.begin(); album != mg.albums.end(); ++album) {
-			map<string, Track *> used_files;
+	bool only_save_if_all_match = true; // TODO
+	bool only_save_complete_albums = true; // TODO
+	map<string, Track *> used_files;
+	map<string, string> save_albums;
+	for (map<string, MatchGroup>::size_type mgtmp = 0; mgtmp < mgs.size(); ++mgtmp) {
+		for (map<string, MatchGroup>::iterator mg = mgs.begin(); mg != mgs.end(); ++mg) {
 			map<int, bool> used_tracks;
 			double album_score = 0.0;
 			int files_matched = 0;
+			vector<map<string, Match> >::size_type trackcount = mgs[mg->first].scores.size();
 			/* find best track */
-			for (vector<map<string, Match> >::size_type tracktmp = 0; tracktmp < mg.scores[album->first].size(); ++tracktmp) {
+			for (vector<map<string, Match> >::size_type tracktmp = 0; tracktmp < trackcount; ++tracktmp) {
 				double best_score = 0.0;
 				int best_track = -1;
 				string best_file = "";
-				for (vector<map<string, Match> >::size_type track = 0; track < mg.scores[album->first].size(); ++track) {
+				for (vector<map<string, Match> >::size_type track = 0; track < trackcount; ++track) {
 					if (used_tracks.find(track) != used_tracks.end())
 						continue;
 					/* find best file to track */
-					for (map<string, Match>::iterator match = mg.scores[album->first][track].begin(); match != mg.scores[album->first][track].end(); ++match) {
+					for (map<string, Match>::iterator match = mgs[mg->first].scores[track].begin(); match != mgs[mg->first].scores[track].end(); ++match) {
 						if (used_files.find(match->first) != used_files.end())
 							continue;
 						if (!match->second.mbid_match && match->second.meta_score < metadata_min_score)
@@ -234,12 +237,17 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 					}
 				}
 				if (best_track != -1) {
-					used_files[best_file] = album->second->tracks[best_track];
+					used_files[best_file] = mg->second.album->tracks[best_track];
 					used_tracks[best_track] = true;
 					album_score += best_score;
 					++files_matched;
 				}
 			}
+			/*
+			if (only_save_complete_albums && files_matched != trackcount)
+				return;
+			*/
+			album_score *= (double) files_matched / (double) trackcount;
 		}
 	}
 }
@@ -274,14 +282,14 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 				continue;
 			if (!loadAlbum(mt->album_mbid))
 				continue;
-			int trackcount = (int) mg.albums[mt->album_mbid]->tracks.size();
+			int trackcount = (int) mgs[mt->album_mbid].album->tracks.size();
 			if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
 				/* this should never happen */
 				locutus->debug(DEBUG_NOTICE, "Metadata search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 				continue;
 			}
 			/* since we've already calculated the score, save it */
-			mg.scores[mt->album_mbid][mt->tracknumber - 1][mf->filename] = m;
+			mgs[mt->album_mbid].scores[mt->tracknumber - 1][mf->filename] = m;
 			compareFilesWithAlbum(mt->album_mbid, files);
 		}
 	}

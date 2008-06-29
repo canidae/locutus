@@ -29,8 +29,8 @@ using namespace std;
 
 /* structs */
 struct MatchGroup {
-	map<string, Album *> albums; // album_mbid, album
-	map<string, vector<map<string, Match> > > scores; // album_mbid, tracknum, filename, match
+	Album *album;
+	vector<map<string, Match> > scores; // tracknum, filename, match
 };
 
 /* Matcher */
@@ -51,7 +51,7 @@ class Matcher {
 	private:
 		/* variables */
 		Locutus *locutus;
-		MatchGroup mg;
+		map<string, MatchGroup> mgs;
 		int setting_class_id;
 		double puid_min_score;
 		double metadata_min_score;
@@ -64,7 +64,7 @@ class Matcher {
 		void lookupMBIDs(const vector<Metafile *> &files);
 		void lookupPUIDs(const vector<Metafile *> &files);
 		string makeWSTrackQuery(const string &group, const Metafile &mf) const;
-		void matchFilesToAlbums(const vector<Metafile *> &files);
+		void matchFilesToAlbums();
 		bool saveMatchToCache(const string &filename, const string &track_mbid, const double &score) const;
 		void searchMetadata(const string &group, const vector<Metafile *> &files);
 };
