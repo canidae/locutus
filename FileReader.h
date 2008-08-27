@@ -5,9 +5,9 @@
 #define FILEREADER_CLASS "FileReader"
 #define FILEREADER_CLASS_DESCRIPTION "TODO"
 /* music locations */
-#define MUSIC_OUPUT_KEY "output_directory"
-#define MUSIC_OUPUT_VALUE "/music/sorted/"
-#define MUSIC_OUPUT_DESCRIPTION "Output directory"
+#define MUSIC_OUTPUT_KEY "output_directory"
+#define MUSIC_OUTPUT_VALUE "/music/sorted/"
+#define MUSIC_OUTPUT_DESCRIPTION "Output directory"
 #define MUSIC_INPUT_KEY "input_directory"
 #define MUSIC_INPUT_VALUE "/music/unsorted/"
 #define MUSIC_INPUT_DESCRIPTION "Input directory"
