@@ -73,11 +73,7 @@ CREATE TABLE file (
     musicbrainz_trackid character(36) NOT NULL,
     title character varying NOT NULL,
     tracknumber character varying NOT NULL,
-    released character varying NOT NULL,
-    CONSTRAINT file_musicbrainz_albumartistid_check CHECK ((length(musicbrainz_albumartistid) = 36)),
-    CONSTRAINT file_musicbrainz_albumid_check CHECK ((length(musicbrainz_albumid) = 36)),
-    CONSTRAINT file_musicbrainz_artistid_check CHECK ((length(musicbrainz_artistid) = 36)),
-    CONSTRAINT file_musicbrainz_trackid_check CHECK ((length(musicbrainz_trackid) = 36))
+    released character varying NOT NULL
 );
 
 
