@@ -51,11 +51,18 @@ bool Database::isNull(const int &row, const int &col) const {
 	return (PQgetisnull(pg_result, row, col) != 0);
 }
 
-bool Database::query(const string &q) const {
-	return query(q.c_str());
+bool Database::query(const string &q) {
+	return doQuery(q.c_str());
 }
 
-bool Database::query(const char *q) {
+/* private methods */
+void Database::clear() {
+	if (got_result)
+		PQclear(pg_result);
+	got_result = false;
+}
+
+bool Database::doQuery(const char *q) {
 	clear();
 	got_result = true;
 	string msg = "Query: ";
@@ -72,11 +79,4 @@ bool Database::query(const char *q) {
 	msg.append(PQresultErrorMessage(pg_result));
 	locutus->debug(DEBUG_WARNING, msg);
 	return false;
-}
-
-/* private methods */
-void Database::clear() {
-	if (got_result)
-		PQclear(pg_result);
-	got_result = false;
 }

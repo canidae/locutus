@@ -34,8 +34,7 @@ class Database {
 		int getRows() const;
 		string getString(const int &row, const int &col) const;
 		bool isNull(const int &row, const int &col) const;
-		bool query(const string &q) const;
-		bool query(const char *q);
+		bool query(const string &q);
 
 	private:
 		/* variables */
@@ -46,5 +45,6 @@ class Database {
 
 		/* methods */
 		void clear();
+		bool doQuery(const char *q);
 };
 #endif

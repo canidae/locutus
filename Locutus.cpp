@@ -60,10 +60,13 @@ void Locutus::debug(const int &level, const string &text) {
 
 long Locutus::run() {
 	/* load settings */
+	debug(DEBUG_INFO, "Loading settings");
 	loadSettings();
 	/* parse sorted directory */
+	debug(DEBUG_INFO, "Scanning output directory");
 	scanDirectory(filereader->output_dir);
 	/* parse unsorted directory */
+	debug(DEBUG_INFO, "Scanning input directory");
 	scanDirectory(filereader->input_dir);
 	/* submit new puids? */
 	/* return */
@@ -110,7 +113,9 @@ void Locutus::scanDirectory(const string &directory) {
 int main() {
 	//while (true) {
 		Locutus *locutus = new Locutus();
+		locutus->debug(DEBUG_INFO, "Checking files...");
 		long sleeptime = locutus->run();
+		locutus->debug(DEBUG_INFO, "Finished checking files");
 		delete locutus;
 		usleep(sleeptime);
 	//}
