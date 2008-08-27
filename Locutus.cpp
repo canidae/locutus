@@ -36,7 +36,7 @@ void Locutus::debug(int level, const string &text) {
 	*debugfile << "[" << t << "] ";
 	switch (level) {
 		case DEBUG_ERROR:
-			*debugfile << "[ERROR]   ";
+			*debugfile << "[ERROR  ] ";
 			break;
 
 		case DEBUG_WARNING:
@@ -44,11 +44,11 @@ void Locutus::debug(int level, const string &text) {
 			break;
 
 		case DEBUG_NOTICE:
-			*debugfile << "[NOTICE]  ";
+			*debugfile << "[NOTICE ] ";
 			break;
 
 		case DEBUG_INFO:
-			*debugfile << "[INFO]    ";
+			*debugfile << "[INFO   ] ";
 			break;
 
 		default:
