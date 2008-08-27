@@ -34,7 +34,7 @@ bool FileReader::parseDirectory() {
 	if (dir_queue.size() <= 0)
 		return false;
 	string directory(*dir_queue.begin());
-	cout << "Checking directory " << directory << endl;
+	locutus->debug(DEBUG_INFO, directory);
 	dir_queue.pop_front();
 	DIR *dir = opendir(directory.c_str());
 	if (dir == NULL)
@@ -64,7 +64,7 @@ bool FileReader::parseFile() {
 	if (file_queue.size() <= 0)
 		return false;
 	string filename(*file_queue.begin());
-	cout << "Checking file " << filename << endl;
+	locutus->debug(DEBUG_INFO, filename);
 	file_queue.pop_front();
 	Metafile *mf = new Metafile(locutus);
 	if (!mf->loadFromCache(filename)) {
