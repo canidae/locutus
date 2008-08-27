@@ -68,7 +68,11 @@ bool FileReader::parseFile() {
 	file_queue.pop_front();
 	Metafile *mf = new Metafile(locutus);
 	if (!mf->loadFromCache(filename)) {
-		if (!mf->readFromFile(filename)) {
+		if (mf->readFromFile(filename)) {
+			/* save file to cache */
+			mf->saveToCache();
+		} else {
+			/* unable to read this file */
 			delete mf;
 			return false;
 		}
