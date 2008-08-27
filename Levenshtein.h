@@ -28,8 +28,8 @@ class Levenshtein {
 		int matrix_size;
 
 		/* methods */
-		void createMatrix(const int &size);
+		void createMatrix(int size);
 		void deleteMatrix();
-		void resizeMatrix(const int &size);
+		void resizeMatrix(int size);
 };
 #endif

@@ -91,7 +91,7 @@ class Locutus {
 		~Locutus();
 
 		/* methods */
-		void debug(const int &level, const string &text);
+		void debug(int level, const string &text);
 		long run();
 
 	private:

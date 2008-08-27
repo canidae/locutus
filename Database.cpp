@@ -27,15 +27,15 @@ string Database::escapeString(const string &str) const {
 	return back;
 }
 
-bool Database::getBool(const int &row, const int &col) const {
+bool Database::getBool(int row, int col) const {
 	return PQgetvalue(pg_result, row, col)[0] == 't';
 }
 
-double Database::getDouble(const int &row, const int &col) const {
+double Database::getDouble(int row, int col) const {
 	return atof(PQgetvalue(pg_result, row, col));
 }
 
-int Database::getInt(const int &row, const int &col) const {
+int Database::getInt(int row, int col) const {
 	return atoi(PQgetvalue(pg_result, row, col));
 }
 
@@ -43,11 +43,11 @@ int Database::getRows() const {
 	return PQntuples(pg_result);
 }
 
-string Database::getString(const int &row, const int &col) const {
+string Database::getString(int row, int col) const {
 	return PQgetvalue(pg_result, row, col);
 }
 
-bool Database::isNull(const int &row, const int &col) const {
+bool Database::isNull(int row, int col) const {
 	return (PQgetisnull(pg_result, row, col) != 0);
 }
 

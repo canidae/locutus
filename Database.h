@@ -28,12 +28,12 @@ class Database {
 
 		/* methods */
 		string escapeString(const string &str) const;
-		bool getBool(const int &row, const int &col) const;
-		double getDouble(const int &row, const int &col) const;
-		int getInt(const int &row, const int &col) const;
+		bool getBool(int row, int col) const;
+		double getDouble(int row, int col) const;
+		int getInt(int row, int col) const;
 		int getRows() const;
-		string getString(const int &row, const int &col) const;
-		bool isNull(const int &row, const int &col) const;
+		string getString(int row, int col) const;
+		bool isNull(int row, int col) const;
 		bool query(const string &q);
 
 	private:

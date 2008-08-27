@@ -61,7 +61,7 @@ class WebService : public URLStream, public XMLStream {
 		void close();
 		void endElement(const unsigned char *name);
 		bool fetch(const char *url);
-		void printXML(XMLNode *startnode, const int &indent) const;
+		void printXML(XMLNode *startnode, int indent) const;
 		int read(unsigned char *buffer, size_t len);
 		void startElement(const unsigned char *name, const unsigned char **attr);
 };

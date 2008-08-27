@@ -33,19 +33,19 @@ int Settings::loadClassID(const string &name, const string &description) const {
 	return class_id;
 }
 
-double Settings::loadSetting(const int &class_id, const string &key, const double &default_value, const string &description) const {
+double Settings::loadSetting(int class_id, const string &key, double default_value, const string &description) const {
 	ostringstream def_val;
 	def_val << default_value;
 	return atof(loadSetting(class_id, key, def_val.str(), description).c_str());
 }
 
-int Settings::loadSetting(const int &class_id, const string &key, const int &default_value, const string &description) const {
+int Settings::loadSetting(int class_id, const string &key, int default_value, const string &description) const {
 	ostringstream def_val;
 	def_val << default_value;
 	return atoi(loadSetting(class_id, key, def_val.str(), description).c_str());
 }
 
-string Settings::loadSetting(const int &class_id, const string &key, const string &default_value, const string &description) const {
+string Settings::loadSetting(int class_id, const string &key, const string &default_value, const string &description) const {
 	string e_key = locutus->database->escapeString(key);
 	string back = default_value;
 	ostringstream query;

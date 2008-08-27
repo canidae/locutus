@@ -95,7 +95,7 @@ bool WebService::fetch(const char *url) {
 	return true;
 }
 
-void WebService::printXML(XMLNode *startnode, const int &indent) const {
+void WebService::printXML(XMLNode *startnode, int indent) const {
 	if (startnode == NULL)
 		return;
 	for (int a = 0; a < indent; ++a)

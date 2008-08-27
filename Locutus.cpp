@@ -28,7 +28,7 @@ Locutus::~Locutus() {
 }
 
 /* methods */
-void Locutus::debug(const int &level, const string &text) {
+void Locutus::debug(int level, const string &text) {
 	time_t rawtime;
 	time(&rawtime);
 	string t = asctime(localtime(&rawtime));

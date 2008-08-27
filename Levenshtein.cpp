@@ -52,7 +52,7 @@ double Levenshtein::similarity(const string &source, const string &target) {
 }
 
 /* private methods */
-void Levenshtein::createMatrix(const int &size) {
+void Levenshtein::createMatrix(int size) {
 	matrix_size = size;
 	matrix = new int*[matrix_size];
 	for (int a = 0; a < matrix_size; ++a) {
@@ -68,7 +68,7 @@ void Levenshtein::deleteMatrix() {
 	delete [] matrix;
 }
 
-void Levenshtein::resizeMatrix(const int &size) {
+void Levenshtein::resizeMatrix(int size) {
 	deleteMatrix();
 	createMatrix(size);
 }
