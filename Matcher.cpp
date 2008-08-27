@@ -43,11 +43,11 @@ void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *>
 				continue;
 			Metatrack mt = album->tracks[t]->getAsMetatrack();
 			Match m = (*mf)->compareWithMetatrack(mt);
-			if (!(*mf)->puid_lookup && !(*mf)->mbid_lookup && m.meta_score >= metadata_min_score)
+			if (m.meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
 			mgs[mbid].scores[t][(*mf)->filename] = m;
 			mt.saveToCache();
-			saveMatchToCache((*mf)->filename, mt.track_mbid, m.mbid_match, m.puid_match, m.meta_score);
+			saveMatchToCache((*mf)->filename, mt.track_mbid, m);
 		}
 	}
 }
@@ -148,7 +148,7 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 			mt->puid = mf->puid;
 			Match m = mf->compareWithMetatrack(*mt);
 			mt->saveToCache();
-			saveMatchToCache(mf->filename, mt->track_mbid, m.mbid_match, m.puid_match, m.meta_score);
+			saveMatchToCache(mf->filename, mt->track_mbid, m);
 			if (m.meta_score < puid_min_score)
 				continue;
 			if (!loadAlbum(mt->album_mbid))
@@ -272,17 +272,17 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	/* set new metadata */
 }
 
-bool Matcher::saveMatchToCache(const string &filename, const string &track_mbid, bool mbid_match, bool puid_match, double meta_score) const {
+bool Matcher::saveMatchToCache(const string &filename, const string &track_mbid, const Match &match) const {
 	if (filename == "" || track_mbid.size() != 36)
 		return false;
 	string e_filename = locutus->database->escapeString(filename);
 	string e_track_mbid = locutus->database->escapeString(track_mbid);
 	ostringstream query;
-	query << "INSERT INTO match(file_id, metatrack_id, mbid_match, puid_match, meta_score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'), " << (mbid_match ? "true" : "false") << ", " << (puid_match ? "true" : "false") << ", " << meta_score << " WHERE NOT EXISTS (SELECT true FROM metadata_match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'))";
+	query << "INSERT INTO match(file_id, metatrack_id, mbid_match, puid_match, meta_score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'), " << (match.mbid_match ? "true" : "false") << ", " << (match.puid_match ? "true" : "false") << ", " << match.meta_score << " WHERE NOT EXISTS (SELECT true FROM metadata_match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'))";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save metadata match in cache, query failed. See error above");
 	query.str("");
-	query << "UPDATE match SET mbid_match = " << (mbid_match ? "true" : "false") << ", puid_match = "  << (puid_match ? "true" : "false") << ", meta_score = " << meta_score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
+	query << "UPDATE match SET mbid_match = " << (match.mbid_match ? "true" : "false") << ", puid_match = "  << (match.puid_match ? "true" : "false") << ", meta_score = " << match.meta_score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save metadata match in cache, query failed. See error above");
 	return true;
@@ -297,7 +297,7 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
 			Match m = mf->compareWithMetatrack(*mt);
 			mt->saveToCache();
-			saveMatchToCache(mf->filename, mt->track_mbid, m.mbid_match, m.puid_match, m.meta_score);
+			saveMatchToCache(mf->filename, mt->track_mbid, m);
 			if (m.meta_score < metadata_min_score)
 				continue;
 			if (!loadAlbum(mt->album_mbid))

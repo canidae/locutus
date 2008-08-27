@@ -65,7 +65,7 @@ class Matcher {
 		void lookupPUIDs(const vector<Metafile *> &files);
 		string makeWSTrackQuery(const string &group, const Metafile &mf) const;
 		void matchFilesToAlbums(const vector<Metafile *> &files);
-		bool saveMatchToCache(const string &filename, const string &track_mbid, bool mbid_match, bool puid_match, double meta_score) const;
+		bool saveMatchToCache(const string &filename, const string &track_mbid, const Match &match) const;
 		void searchMetadata(const string &group, const vector<Metafile *> &files);
 };
 #endif
