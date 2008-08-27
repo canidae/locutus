@@ -29,7 +29,7 @@ bool Album::loadFromCache(const string &mbid) {
 		return false;
 	}
 	ostringstream query;
-	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << locutus->database->escapeString(mbid) << "' AND last_updated + INTERVAL '" << locutus->album_cache_lifetime << " months' < now()";
+	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << locutus->database->escapeString(mbid) << "' AND last_updated + INTERVAL '" << locutus->album_cache_lifetime << " months' > now()";
 	if (!locutus->database->query(query.str()) || locutus->database->getRows() <= 0) {
 		/* album not in cache */
 		string msg = "Unable to load album from cache. MusicBrainz ID not found or cache is too old: ";
