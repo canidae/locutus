@@ -68,7 +68,13 @@ long Locutus::run() {
 	/* parse unsorted directory */
 	debug(DEBUG_INFO, "Scanning input directory");
 	scanDirectory(filereader->input_dir);
+	/* match files */
+	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf)
+		matcher->match(gf->first, gf->second);
 	/* submit new puids? */
+	// TODO
+	/* save changes */
+	// TODO
 	/* return */
 	return 10000;
 }
@@ -103,10 +109,6 @@ void Locutus::scanDirectory(const string &directory) {
 	filereader->scanFiles(directory);
 	/* generate puids */
 	puidgen->generatePUIDs();
-	/* match files */
-	//matcher->match();
-	/* save changes */
-	// TODO
 }
 
 /* main */
