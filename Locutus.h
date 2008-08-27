@@ -80,6 +80,9 @@ class Locutus {
 		double duration_limit;
 		double title_weight;
 		double tracknumber_weight;
+		int album_cache_lifetime;
+		int metatrack_cache_lifetime;
+		int puid_cache_lifetime;
 
 		/* constructors */
 		Locutus();
@@ -95,12 +98,8 @@ class Locutus {
 		/* variables */
 		ofstream *debugfile;
 		int setting_class_id;
-		int album_cache_lifetime;
-		int metatrack_cache_lifetime;
-		int puid_cache_lifetime;
 
 		/* methods */
-		void cleanCache() const;
 		void loadSettings();
 		void scanDirectory(const string &directory);
 };

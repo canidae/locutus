@@ -61,8 +61,6 @@ void Locutus::debug(const int &level, const string &text) {
 long Locutus::run() {
 	/* load settings */
 	loadSettings();
-	/* clean cache */
-	cleanCache();
 	/* parse sorted directory */
 	scanDirectory(filereader->output_dir);
 	/* parse unsorted directory */
@@ -73,26 +71,6 @@ long Locutus::run() {
 }
 
 /* private methods */
-void Locutus::cleanCache() const {
-	/* delete old data from database */
-	/* album */
-	ostringstream query;
-	query << "DELETE FROM album WHERE last_updated + INTERVAL '" << album_cache_lifetime << " months' < now()";
-	database->query(query.str());
-	/* metatrack */
-	query.str("");
-	query << "DELETE FROM metatrack WHERE last_updated + INTERVAL '" << metatrack_cache_lifetime << " months' < now()";
-	database->query(query.str());
-	/* puid_track */
-	query.str("");
-	query << "DELETE FROM puid_metatrack WHERE last_updated + INTERVAL '" << puid_cache_lifetime << " months' < now()";
-	database->query(query.str());
-	/* artist */
-	query.str("");
-	query << "DELETE FROM artist WHERE artist_id NOT IN (SELECT artist_id FROM album UNION SELECT artist_id FROM track)";
-	database->query(query.str());
-}
-
 void Locutus::loadSettings() {
 	/* load general settings */
         setting_class_id = settings->loadClassID(LOCUTUS_CLASS, LOCUTUS_CLASS_DESCRIPTION);
