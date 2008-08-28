@@ -73,7 +73,11 @@ CREATE TABLE file (
     musicbrainz_trackid character(36) NOT NULL,
     title character varying NOT NULL,
     tracknumber character varying NOT NULL,
-    released character varying NOT NULL
+    released character varying NOT NULL,
+    CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length(musicbrainz_albumartistid) = 0) OR (length(musicbrainz_albumartistid) = 36))),
+    CONSTRAINT file_musicbrainz_albumid_check CHECK (((length(musicbrainz_albumid) = 0) OR (length(musicbrainz_albumid) = 36))),
+    CONSTRAINT file_musicbrainz_artistid_check CHECK (((length(musicbrainz_artistid) = 0) OR (length(musicbrainz_artistid) = 36))),
+    CONSTRAINT file_musicbrainz_trackid_check CHECK (((length(musicbrainz_trackid) = 0) OR (length(musicbrainz_trackid) = 36)))
 );
 
 
@@ -235,7 +239,7 @@ ALTER SEQUENCE album_album_id_seq OWNED BY album.album_id;
 -- Name: album_album_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('album_album_id_seq', 1470, true);
+SELECT pg_catalog.setval('album_album_id_seq', 1486, true);
 
 
 --
@@ -262,7 +266,7 @@ ALTER SEQUENCE artist_artist_id_seq OWNED BY artist.artist_id;
 -- Name: artist_artist_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('artist_artist_id_seq', 1407, true);
+SELECT pg_catalog.setval('artist_artist_id_seq', 1458, true);
 
 
 --
@@ -289,7 +293,7 @@ ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 -- Name: file_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('file_file_id_seq', 233, true);
+SELECT pg_catalog.setval('file_file_id_seq', 302, true);
 
 
 --
@@ -316,7 +320,7 @@ ALTER SEQUENCE metatrack_metatrack_id_seq OWNED BY metatrack.metatrack_id;
 -- Name: metatrack_metatrack_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('metatrack_metatrack_id_seq', 3265, true);
+SELECT pg_catalog.setval('metatrack_metatrack_id_seq', 5433, true);
 
 
 --
@@ -371,7 +375,7 @@ ALTER SEQUENCE setting_class_setting_class_id_seq OWNED BY setting_class.setting
 -- Name: setting_class_setting_class_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('setting_class_setting_class_id_seq', 5, true);
+SELECT pg_catalog.setval('setting_class_setting_class_id_seq', 9, true);
 
 
 --
@@ -398,7 +402,7 @@ ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
 -- Name: setting_setting_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('setting_setting_id_seq', 47, true);
+SELECT pg_catalog.setval('setting_setting_id_seq', 64, true);
 
 
 --
@@ -425,7 +429,7 @@ ALTER SEQUENCE track_track_id_seq OWNED BY track.track_id;
 -- Name: track_track_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
 --
 
-SELECT pg_catalog.setval('track_track_id_seq', 8230, true);
+SELECT pg_catalog.setval('track_track_id_seq', 8421, true);
 
 
 --
