@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Template;
 
-my $file = '../templates/main.tmpl';
+my $file = 'main.tmpl';
 my $vars = {
 	message  => "Hello world"
 };
@@ -11,8 +11,7 @@ my $vars = {
 print "Content-type: text/html\n\n";
 
 my $template = Template->new({
-		INCLUDE_PATH => '../templates',
-		RELATIVE => 1
+		INCLUDE_PATH => '../templates'
 	});
 
 $template->process($file, $vars) || die "Template process failed: ", $template->error(), "\n";
