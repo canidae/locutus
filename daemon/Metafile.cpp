@@ -72,26 +72,28 @@ Match Metafile::compareWithMetatrack(const Metatrack &metatrack) const {
 	for (list<string>::size_type a = 0; a < values.size(); ++a)
 		used_col[a] = false;
 	for (int a = 0; a < 4; ++a) {
-		for (list<string>::size_type b = 0; b < values.size(); ++b) {
-			if (used_col[b])
+		int best_row = -1;
+		list<string>::size_type best_col = -1;
+		double best_score = -1.0;
+		for (int r = 0; r < 4; ++r) {
+			if (used_row[r])
 				continue;
-			int best_row = -1;
-			list<string>::size_type best_col = -1;
-			double best_score = -1.0;
-			for (int c = 0; c < 4; ++c) {
-				if (used_row[c])
+			for (list<string>::size_type c = 0; c < values.size(); ++c) {
+				if (used_col[c])
 					continue;
-				if (scores[c][b] > best_score) {
-					best_row = c;
-					best_col = b;
-					best_score = scores[c][b];
+				if (scores[r][c] > best_score) {
+					best_row = r;
+					best_col = c;
+					best_score = scores[r][c];
 				}
 			}
-			if (best_row >= 0) {
-				scores[best_row][0] = best_score;
-				used_row[best_row] = true;
-				used_col[best_col] = true;
-			}
+		}
+		if (best_row >= 0) {
+			scores[best_row][0] = best_score;
+			used_row[best_row] = true;
+			used_col[best_col] = true;
+		} else {
+			break;
 		}
 	}
 	m.puid_match = (puid != "" && puid == metatrack.puid);
