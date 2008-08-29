@@ -45,11 +45,11 @@ bool Metatrack::saveToCache() const {
 	string e_album_mbid = locutus->database->escapeString(album_mbid);
 	string e_album_title = locutus->database->escapeString(album_title);
 	ostringstream query;
-	query << "DELETE FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'";
+	query << "INSERT INTO metatrack(track_mbid, track_title, duration, tracknumber, artist_mbid, artist_name, album_mbid, album_title) SELECT '" << e_track_mbid << "', '" << e_track_title << "', " << duration << ", " << tracknumber << ", '" << e_artist_mbid << "', '" << e_artist_name << "', '" << e_album_mbid << "', '" << e_album_title << "' WHERE NOT EXISTS (SELECT true FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
 	if (!locutus->database->query(query.str()))
-		locutus->debug(DEBUG_NOTICE, "Unable to delete from metatrack, query failed. See error above");
+		locutus->debug(DEBUG_NOTICE, "Unable to save metatrack, query failed. See error above");
 	query.str("");
-	query << "INSERT INTO metatrack(track_mbid, track_title, duration, tracknumber, artist_mbid, artist_name, album_mbid, album_title) VALUES ('" << e_track_mbid << "', '" << e_track_title << "', " << duration << ", " << tracknumber << ", '" << e_artist_mbid << "', '" << e_artist_name << "', '" << e_album_mbid << "', '" << e_album_title << "')";
+	query << "UPDATE metatrack SET track_title = '" << e_track_title << "', duration = " << duration << ", tracknumber = " << tracknumber << ", artist_mbid = '" << e_artist_mbid << "', artist_name = '" << artist_name << "', album_mbid = '" << e_album_mbid << "', album_title = '" << e_album_title << "' WHERE track_mbid = '" << e_track_mbid << "'";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save metatrack, query failed. See error above");
 	return true;
