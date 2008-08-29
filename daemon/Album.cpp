@@ -22,7 +22,7 @@ bool Album::loadFromCache(const string &mbid) {
 	/* fetch album from cache */
 	if (locutus == NULL)
 		return false;
-	if (mbid.size() != 36) {
+	if (mbid.size() != 36 || mbid[8] != '-' || mbid[13] != '-' || mbid[18] != '-' || mbid[23] != '-') {
 		string msg = "Unable to load album from cache. Illegal MusicBrainz ID: ";
 		msg.append(mbid);
 		locutus->debug(DEBUG_NOTICE, msg);

@@ -21,7 +21,7 @@ void WebService::loadSettings() {
 }
 
 XMLNode *WebService::lookupAlbum(const string &mbid) {
-	if (mbid.size() != 36)
+	if (mbid.size() != 36 || mbid[8] != '-' || mbid[13] != '-' || mbid[18] != '-' || mbid[23] != '-') {
 		return NULL;
 	string url = release_lookup_url;
 	url.append(mbid);
