@@ -216,6 +216,16 @@ CREATE VIEW v_file_lookup AS
 ALTER TABLE public.v_file_lookup OWNER TO canidae;
 
 --
+-- Name: v_file_match_metatrack; Type: VIEW; Schema: public; Owner: canidae
+--
+
+CREATE VIEW v_file_match_metatrack AS
+    SELECT f.file_id, f.filename, f.artist AS file_artist_name, f.musicbrainz_artistid AS file_artist_mbid, f.album AS file_album_title, f.musicbrainz_albumid AS file_album_mbid, f.title AS file_track_title, f.musicbrainz_trackid AS file_track_mbid, f.tracknumber AS file_tracknumber, f.duration AS file_duration, mt.artist_name AS metatrack_artist_name, mt.artist_mbid AS metatrack_artist_mbid, mt.album_title AS metatrack_album_title, mt.album_mbid AS metatrack_album_mbid, mt.track_title AS metatrack_track_title, mt.track_mbid AS metatrack_track_mbid, mt.tracknumber AS metatrack_tracknumber, mt.duration AS metatrack_duration, m.mbid_match, m.puid_match, m.meta_score FROM ((file f JOIN match m ON ((f.file_id = m.file_id))) JOIN metatrack mt ON ((m.metatrack_id = mt.metatrack_id))) ORDER BY f.file_id, m.mbid_match DESC, m.puid_match DESC, m.meta_score DESC;
+
+
+ALTER TABLE public.v_file_match_metatrack OWNER TO canidae;
+
+--
 -- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
 --
 
@@ -233,13 +243,6 @@ ALTER TABLE public.album_album_id_seq OWNER TO canidae;
 --
 
 ALTER SEQUENCE album_album_id_seq OWNED BY album.album_id;
-
-
---
--- Name: album_album_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
---
-
-SELECT pg_catalog.setval('album_album_id_seq', 1486, true);
 
 
 --
@@ -263,13 +266,6 @@ ALTER SEQUENCE artist_artist_id_seq OWNED BY artist.artist_id;
 
 
 --
--- Name: artist_artist_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
---
-
-SELECT pg_catalog.setval('artist_artist_id_seq', 1458, true);
-
-
---
 -- Name: file_file_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
 --
 
@@ -290,13 +286,6 @@ ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 
 
 --
--- Name: file_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
---
-
-SELECT pg_catalog.setval('file_file_id_seq', 302, true);
-
-
---
 -- Name: metatrack_metatrack_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
 --
 
@@ -314,13 +303,6 @@ ALTER TABLE public.metatrack_metatrack_id_seq OWNER TO canidae;
 --
 
 ALTER SEQUENCE metatrack_metatrack_id_seq OWNED BY metatrack.metatrack_id;
-
-
---
--- Name: metatrack_metatrack_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
---
-
-SELECT pg_catalog.setval('metatrack_metatrack_id_seq', 5433, true);
 
 
 --
@@ -345,13 +327,6 @@ ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
 
 
 --
--- Name: puid_puid_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
---
-
-SELECT pg_catalog.setval('puid_puid_id_seq', 1, false);
-
-
---
 -- Name: setting_class_setting_class_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
 --
 
@@ -369,13 +344,6 @@ ALTER TABLE public.setting_class_setting_class_id_seq OWNER TO canidae;
 --
 
 ALTER SEQUENCE setting_class_setting_class_id_seq OWNED BY setting_class.setting_class_id;
-
-
---
--- Name: setting_class_setting_class_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
---
-
-SELECT pg_catalog.setval('setting_class_setting_class_id_seq', 9, true);
 
 
 --
@@ -399,13 +367,6 @@ ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
 
 
 --
--- Name: setting_setting_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
---
-
-SELECT pg_catalog.setval('setting_setting_id_seq', 64, true);
-
-
---
 -- Name: track_track_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
 --
 
@@ -423,13 +384,6 @@ ALTER TABLE public.track_track_id_seq OWNER TO canidae;
 --
 
 ALTER SEQUENCE track_track_id_seq OWNED BY track.track_id;
-
-
---
--- Name: track_track_id_seq; Type: SEQUENCE SET; Schema: public; Owner: canidae
---
-
-SELECT pg_catalog.setval('track_track_id_seq', 8421, true);
 
 
 --
@@ -486,86 +440,6 @@ ALTER TABLE setting_class ALTER COLUMN setting_class_id SET DEFAULT nextval('set
 --
 
 ALTER TABLE track ALTER COLUMN track_id SET DEFAULT nextval('track_track_id_seq'::regclass);
-
-
---
--- Data for Name: album; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY album (album_id, artist_id, mbid, type, title, released, custom_artist_sortname, last_updated) FROM stdin;
-\.
-
-
---
--- Data for Name: artist; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY artist (artist_id, mbid, name, sortname) FROM stdin;
-\.
-
-
---
--- Data for Name: file; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY file (file_id, track_id, filename, last_updated, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released) FROM stdin;
-\.
-
-
---
--- Data for Name: match; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY match (file_id, metatrack_id, mbid_match, puid_match, meta_score) FROM stdin;
-\.
-
-
---
--- Data for Name: metatrack; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY metatrack (metatrack_id, track_mbid, track_title, duration, tracknumber, artist_mbid, artist_name, album_mbid, album_title, last_updated) FROM stdin;
-\.
-
-
---
--- Data for Name: puid; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY puid (puid_id, puid) FROM stdin;
-\.
-
-
---
--- Data for Name: puid_metatrack; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY puid_metatrack (puid_id, metatrack_id, last_updated) FROM stdin;
-\.
-
-
---
--- Data for Name: setting; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY setting (setting_id, setting_class_id, key, value, user_changed, description) FROM stdin;
-\.
-
-
---
--- Data for Name: setting_class; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY setting_class (setting_class_id, name, description) FROM stdin;
-\.
-
-
---
--- Data for Name: track; Type: TABLE DATA; Schema: public; Owner: canidae
---
-
-COPY track (track_id, album_id, artist_id, mbid, title, duration, tracknumber) FROM stdin;
-\.
 
 
 --
