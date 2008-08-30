@@ -267,9 +267,12 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 			}
 		}
 	}
-	if (only_save_if_all_match && total_matched != files.size())
+	if (save_files.size() <= 0 || (only_save_if_all_match && total_matched != files.size()))
 		return;
 	/* set new metadata */
+	locutus->debug(DEBUG_INFO, "Should save the following files:");
+	for (map<string, Track *>::iterator s = save_files.begin(); s != save_files.end(); ++s)
+		locutus->debug(DEBUG_INFO, s->first);
 }
 
 bool Matcher::saveMatchToCache(const string &filename, const string &track_mbid, const Match &match) const {
