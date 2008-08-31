@@ -1,10 +1,7 @@
 #ifndef FILEREADER_H
 /* defines */
 #define FILEREADER_H
-/* setting class */
-#define FILEREADER_CLASS "FileReader"
-#define FILEREADER_CLASS_DESCRIPTION "TODO"
-/* music locations */
+/* settings */
 #define MUSIC_OUTPUT_KEY "output_directory"
 #define MUSIC_OUTPUT_VALUE "/music/sorted/"
 #define MUSIC_OUTPUT_DESCRIPTION "Output directory"

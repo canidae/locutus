@@ -22,10 +22,9 @@ class Settings {
 		~Settings();
 
 		/* methods */
-		int loadClassID(const string &name, const string &description) const;
-		double loadSetting(int class_id, const string &key, double default_value, const string &description) const;
-		int loadSetting(int class_id, const string &key, int default_value, const string &description) const;
-		string loadSetting(int class_id, const string &key, const string &default_value, const string &description) const;
+		double loadSetting(const string &key, double default_value, const string &description) const;
+		int loadSetting(const string &key, int default_value, const string &description) const;
+		string loadSetting(const string &key, const string &default_value, const string &description) const;
 
 	private:
 		/* variables */

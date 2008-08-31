@@ -1,10 +1,7 @@
 #ifndef MATCHER_H
 /* defines */
 #define MATCHER_H
-/* setting class */
-#define MATCHER_CLASS "Matcher"
-#define MATCHER_CLASS_DESCRIPTION "TODO"
-/* default values */
+/* settings */
 #define PUID_MIN_SCORE_KEY "puid_min_score"
 #define PUID_MIN_SCORE_VALUE 0.50
 #define PUID_MIN_SCORE_DESCRIPTION "Minimum value for when a PUID lookup is considered a match. Must be between 0.0 and 1.0"

@@ -16,5 +16,4 @@ void PUIDGenerator::generatePUIDs() {
 }
 
 void PUIDGenerator::loadSettings() {
-	setting_class_id = locutus->settings->loadClassID(FILEREADER_CLASS, FILEREADER_CLASS_DESCRIPTION);
 }

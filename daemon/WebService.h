@@ -2,8 +2,6 @@
 /* defines */
 #define WEBSERVICE_H
 /* settings */
-#define WEBSERVICE_CLASS "WebService"
-#define WEBSERVICE_CLASS_DESCRIPTION "Settings for looking up data on a WebService"
 #define METADATA_SEARCH_URL_KEY "metadata_search_url"
 #define METADATA_SEARCH_URL_VALUE "http://musicbrainz.org/ws/1/track/"
 #define METADATA_SEARCH_URL_DESCRIPTION "URL to search after metadata"

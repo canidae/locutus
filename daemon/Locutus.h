@@ -6,8 +6,6 @@
 #define DEBUG_NOTICE 1 // usually follows a warning for more context
 #define DEBUG_INFO 0 // just telling the user what we're doing
 /* settings */
-#define LOCUTUS_CLASS "Locutus"
-#define LOCUTUS_CLASS_DESCRIPTION "General settings for Locutus"
 #define ALBUM_CACHE_LIFETIME_KEY "album_cache_lifetime"
 #define ALBUM_CACHE_LIFETIME_VALUE 3
 #define ALBUM_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."

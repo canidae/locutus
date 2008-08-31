@@ -154,7 +154,6 @@ ALTER TABLE public.puid_metatrack OWNER TO canidae;
 
 CREATE TABLE setting (
     setting_id integer NOT NULL,
-    setting_class_id integer NOT NULL,
     key character varying NOT NULL,
     value character varying NOT NULL,
     user_changed boolean DEFAULT false NOT NULL,
@@ -163,19 +162,6 @@ CREATE TABLE setting (
 
 
 ALTER TABLE public.setting OWNER TO canidae;
-
---
--- Name: setting_class; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
---
-
-CREATE TABLE setting_class (
-    setting_class_id integer NOT NULL,
-    name character varying NOT NULL,
-    description character varying NOT NULL
-);
-
-
-ALTER TABLE public.setting_class OWNER TO canidae;
 
 --
 -- Name: track; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
@@ -337,26 +323,6 @@ ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
 
 
 --
--- Name: setting_class_setting_class_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
---
-
-CREATE SEQUENCE setting_class_setting_class_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.setting_class_setting_class_id_seq OWNER TO canidae;
-
---
--- Name: setting_class_setting_class_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
---
-
-ALTER SEQUENCE setting_class_setting_class_id_seq OWNED BY setting_class.setting_class_id;
-
-
---
 -- Name: setting_setting_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
 --
 
@@ -436,13 +402,6 @@ ALTER TABLE puid ALTER COLUMN puid_id SET DEFAULT nextval('puid_puid_id_seq'::re
 --
 
 ALTER TABLE setting ALTER COLUMN setting_id SET DEFAULT nextval('setting_setting_id_seq'::regclass);
-
-
---
--- Name: setting_class_id; Type: DEFAULT; Schema: public; Owner: canidae
---
-
-ALTER TABLE setting_class ALTER COLUMN setting_class_id SET DEFAULT nextval('setting_class_setting_class_id_seq'::regclass);
 
 
 --
@@ -549,35 +508,11 @@ ALTER TABLE ONLY puid
 
 
 --
--- Name: setting_class_name_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
---
-
-ALTER TABLE ONLY setting_class
-    ADD CONSTRAINT setting_class_name_key UNIQUE (name);
-
-
---
--- Name: setting_class_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
---
-
-ALTER TABLE ONLY setting_class
-    ADD CONSTRAINT setting_class_pkey PRIMARY KEY (setting_class_id);
-
-
---
 -- Name: setting_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
 --
 
 ALTER TABLE ONLY setting
     ADD CONSTRAINT setting_pkey PRIMARY KEY (setting_id);
-
-
---
--- Name: setting_setting_class_id_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
---
-
-ALTER TABLE ONLY setting
-    ADD CONSTRAINT setting_setting_class_id_key UNIQUE (setting_class_id, key);
 
 
 --
@@ -650,14 +585,6 @@ ALTER TABLE ONLY puid_metatrack
 
 ALTER TABLE ONLY puid_metatrack
     ADD CONSTRAINT puid_metatrack_puid_id_fkey FOREIGN KEY (puid_id) REFERENCES puid(puid_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: setting_setting_class_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
---
-
-ALTER TABLE ONLY setting
-    ADD CONSTRAINT setting_setting_class_id_fkey FOREIGN KEY (setting_class_id) REFERENCES setting_class(setting_class_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -767,16 +694,6 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE setting TO locutus;
 
 
 --
--- Name: setting_class; Type: ACL; Schema: public; Owner: canidae
---
-
-REVOKE ALL ON TABLE setting_class FROM PUBLIC;
-REVOKE ALL ON TABLE setting_class FROM canidae;
-GRANT ALL ON TABLE setting_class TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE setting_class TO locutus;
-
-
---
 -- Name: track; Type: ACL; Schema: public; Owner: canidae
 --
 
@@ -797,6 +714,16 @@ GRANT SELECT ON TABLE v_album_lookup TO locutus;
 
 
 --
+-- Name: v_album_match_file; Type: ACL; Schema: public; Owner: canidae
+--
+
+REVOKE ALL ON TABLE v_album_match_file FROM PUBLIC;
+REVOKE ALL ON TABLE v_album_match_file FROM canidae;
+GRANT ALL ON TABLE v_album_match_file TO canidae;
+GRANT SELECT ON TABLE v_album_match_file TO locutus;
+
+
+--
 -- Name: v_file_lookup; Type: ACL; Schema: public; Owner: canidae
 --
 
@@ -804,6 +731,16 @@ REVOKE ALL ON TABLE v_file_lookup FROM PUBLIC;
 REVOKE ALL ON TABLE v_file_lookup FROM canidae;
 GRANT ALL ON TABLE v_file_lookup TO canidae;
 GRANT SELECT ON TABLE v_file_lookup TO locutus;
+
+
+--
+-- Name: v_file_match_metatrack; Type: ACL; Schema: public; Owner: canidae
+--
+
+REVOKE ALL ON TABLE v_file_match_metatrack FROM PUBLIC;
+REVOKE ALL ON TABLE v_file_match_metatrack FROM canidae;
+GRANT ALL ON TABLE v_file_match_metatrack TO canidae;
+GRANT SELECT ON TABLE v_file_match_metatrack TO locutus;
 
 
 --
@@ -854,16 +791,6 @@ REVOKE ALL ON SEQUENCE puid_puid_id_seq FROM PUBLIC;
 REVOKE ALL ON SEQUENCE puid_puid_id_seq FROM canidae;
 GRANT ALL ON SEQUENCE puid_puid_id_seq TO canidae;
 GRANT SELECT,UPDATE ON SEQUENCE puid_puid_id_seq TO locutus;
-
-
---
--- Name: setting_class_setting_class_id_seq; Type: ACL; Schema: public; Owner: canidae
---
-
-REVOKE ALL ON SEQUENCE setting_class_setting_class_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE setting_class_setting_class_id_seq FROM canidae;
-GRANT ALL ON SEQUENCE setting_class_setting_class_id_seq TO canidae;
-GRANT SELECT,UPDATE ON SEQUENCE setting_class_setting_class_id_seq TO locutus;
 
 
 --

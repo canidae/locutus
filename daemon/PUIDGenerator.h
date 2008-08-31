@@ -1,9 +1,6 @@
 #ifndef PUIDGENERATOR_H
 /* defines */
 #define PUIDGENERATOR_H
-/* setting class */
-#define PUIDGENERATOR_CLASS "PUIDGenerator"
-#define PUIDGENERATOR_CLASS_DESCRIPTION "TODO"
 
 /* forward declare */
 class PUIDGenerator;
