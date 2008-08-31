@@ -1,0 +1,46 @@
+[% INCLUDE header.tmpl
+  title = 'File'
+%]
+<table>
+  <tr>
+    <th>Filename</th>
+    <td>[% file.filename %]</td>
+  </tr>
+  <tr>
+  </tr>
+  <tr>
+    <th>File ID</th>
+    <td>[% file.file_id %]</td>
+    <th>Last updated</th>
+    <td>[% file.last_updated %]</td>
+  </tr>
+  <tr>
+    <th>Channels</th>
+    <td>[% file.channels %]</td>
+    <th>Bitrate</th>
+    <td>[% file.bitrate %]</td>
+    <th>Samplerate</th>
+    <td>[% file.samplerate %]</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th>Artist</th>
+    <th>Album</th>
+    <th>Track</th>
+    <th>Tracknumber</th>
+    <th>Duration</th>
+    <th>Score</th>
+  </tr>
+  [% FOREACH metatrack IN metatracks %]
+  <tr>
+    <td>[% metatrack.artist %]</td>
+    <td>[% metatrack.album %]</td>
+    <td>[% metatrack.track %]</td>
+    <td>[% metatrack.tracknumber %]</td>
+    <td>[% metatrack.duration %]</td>
+    <td>[% metatrack.score %]</td>
+  </tr>
+  [% END %]
+</table>
+[% INCLUDE footer.tmpl %]
