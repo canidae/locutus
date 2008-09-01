@@ -1,0 +1,20 @@
+[% INCLUDE header.tmpl
+  title = 'Config'
+%]
+<table>
+  <tr>
+    <th>Key</th>
+    <th>Value</th>
+    <th>Description</th>
+    <th>Reset on next run</th>
+  </tr>
+  [% FOREACH setting IN settings %]
+  <tr>
+    <td>[% setting.key %]</td>
+    <td>[% setting.value %]</td>
+    <td>[% setting.description %]</td>
+    <td>(checkbox)</td>
+  </tr>
+  [% END %]
+</table>
+[% INCLUDE footer.tmpl %]
