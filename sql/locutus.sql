@@ -155,9 +155,10 @@ ALTER TABLE public.puid_metatrack OWNER TO canidae;
 CREATE TABLE setting (
     setting_id integer NOT NULL,
     key character varying NOT NULL,
+    default_value character varying NOT NULL,
     value character varying NOT NULL,
-    user_changed boolean DEFAULT false NOT NULL,
-    description character varying NOT NULL
+    description character varying NOT NULL,
+    user_changed boolean DEFAULT false NOT NULL
 );
 
 
@@ -357,6 +358,7 @@ ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
 --
 
 CREATE SEQUENCE setting_setting_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE

@@ -29,7 +29,7 @@ string Settings::loadSetting(const string &key, const string &default_value, con
 	query << "SELECT value, user_changed FROM setting WHERE key = '" << e_key << "'";
 	if (!locutus->database->query(query.str()))
 		return back;
-	string escaped_value = locutus->database->escapeString(default_value);
+	string e_value = locutus->database->escapeString(default_value);
 	string e_description = locutus->database->escapeString(description);
 	if (locutus->database->getRows() > 0) {
 		back = locutus->database->getString(0, 0);
@@ -38,14 +38,14 @@ string Settings::loadSetting(const string &key, const string &default_value, con
 			 * update database */
 			back = default_value;
 			query.str("");
-			query << "UPDATE setting SET value = '" << escaped_value << "', description = '" << e_description << "' WHERE key = '" << e_key << "'";
+			query << "UPDATE setting SET value = '" << e_value << "', description = '" << e_description << "' WHERE key = '" << e_key << "'";
 			if (!locutus->database->query(query.str()))
 				return back;
 		}
 	} else {
 		/* this key is missing, add it */
 		query.str("");
-		query << "INSERT INTO setting(key, value, description) VALUES ('" << e_key << "', '" << escaped_value << "', '" << e_description << "')";
+		query << "INSERT INTO setting(key, default_value, value, description) VALUES ('" << e_key << "', '" << e_value << "', '" << e_value << "', '" << e_description << "')";
 		if (!locutus->database->query(query.str()))
 			return back;
 	}
