@@ -49,7 +49,7 @@ bool Metatrack::saveToCache() const {
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save metatrack, query failed. See error above");
 	query.str("");
-	query << "UPDATE metatrack SET track_title = '" << e_track_title << "', duration = " << duration << ", tracknumber = " << tracknumber << ", artist_mbid = '" << e_artist_mbid << "', artist_name = '" << artist_name << "', album_mbid = '" << e_album_mbid << "', album_title = '" << e_album_title << "' WHERE track_mbid = '" << e_track_mbid << "'";
+	query << "UPDATE metatrack SET track_title = '" << e_track_title << "', duration = " << duration << ", tracknumber = " << tracknumber << ", artist_mbid = '" << e_artist_mbid << "', artist_name = '" << e_artist_name << "', album_mbid = '" << e_album_mbid << "', album_title = '" << e_album_title << "' WHERE track_mbid = '" << e_track_mbid << "'";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save metatrack, query failed. See error above");
 	return true;
