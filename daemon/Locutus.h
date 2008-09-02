@@ -44,6 +44,7 @@ class Locutus;
 #include <iostream>
 #include <map>
 #include <string>
+#include <sys/stat.h>
 #include <vector>
 #include "Album.h"
 #include "Database.h"
@@ -99,6 +100,7 @@ class Locutus {
 
 		/* methods */
 		void loadSettings();
+		void removeGoneFiles();
 		void scanDirectory(const string &directory);
 };
 #endif
