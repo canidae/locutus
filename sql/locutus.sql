@@ -178,7 +178,7 @@ CREATE TABLE track (
     tracknumber integer NOT NULL,
     CONSTRAINT track_duration_check CHECK ((duration >= 0)),
     CONSTRAINT track_mbid_check CHECK ((length(mbid) = 36)),
-    CONSTRAINT track_tracknumber_check CHECK ((tracknumber >= 0))
+    CONSTRAINT track_tracknumber_check CHECK ((tracknumber > 0))
 );
 
 
