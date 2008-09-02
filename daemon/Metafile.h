@@ -16,6 +16,7 @@
 #define TRACKNUMBER "TRACKNUMBER"
 #define DATE "DATE"
 /* file types */
+#define FILETYPE_UNDEFINED 0
 #define FILETYPE_OGG_VORBIS 1
 #define FILETYPE_OGG_FLAC 2
 #define FILETYPE_OGG_SPEEX 3
@@ -120,6 +121,7 @@ class Metafile {
 		bool loadFromCache(const string &filename);
 		bool readFromFile(const string &filename);
 		bool saveToCache() const;
+		bool saveToFile();
 
 	private:
 		/* variables */
@@ -130,5 +132,8 @@ class Metafile {
 		void readAudioProperties(const AudioProperties *ap);
 		void readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const ID3v1::Tag *id3v1);
 		void readXiphComment(const Ogg::XiphComment *tag);
+		void saveAPETag(APE::Tag *tag);
+		void saveID3v2Tag(ID3v2::Tag *tag);
+		void saveXiphComment(Ogg::XiphComment *tag);
 };
 #endif

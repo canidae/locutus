@@ -17,6 +17,7 @@ Metafile::Metafile(Locutus *locutus) {
 	artist = "";
 	artistsort = "";
 	filename = "";
+	filetype = FILETYPE_UNDEFINED;
 	musicbrainz_albumartistid = "";
 	musicbrainz_albumid = "";
 	musicbrainz_artistid = "";
@@ -284,6 +285,57 @@ bool Metafile::saveToCache() const {
 	return true;
 }
 
+bool Metafile::saveToFile() {
+	if (filetype == FILETYPE_OGG_VORBIS) {
+		Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), false);
+		saveXiphComment(file->tag());
+		delete file;
+		return true;
+	} else if (filetype == FILETYPE_OGG_FLAC) {
+		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), false);
+		saveXiphComment(file->tag());
+		delete file;
+		return true;
+	/*
+	} else if (filetype == FILETYPE_OGG_SPEEX) {
+		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), false);
+		saveXiphComment(file->tag());
+		delete file;
+		return true;
+	*/
+	} else if (filetype == FILETYPE_FLAC) {
+		FLAC::File *file = new FLAC::File(filename.c_str(), false);
+		saveXiphComment(file->xiphComment(true));
+		delete file;
+		return true;
+	} else if (filetype == FILETYPE_MPEG) {
+		MPEG::File *file = new MPEG::File(filename.c_str(), false);
+		saveID3v2Tag(file->ID3v2Tag(true));
+		delete file;
+		return true;
+	} else if (filetype == FILETYPE_MPC) {
+		MPC::File *file = new MPC::File(filename.c_str(), false);
+		saveAPETag(file->APETag(true));
+		delete file;
+		return true;
+	/*
+	} else if (filetype == FILETYPE_WAVPACK) {
+		WavPack::File *file = new WavPack::File(filename.c_str(), false);
+		saveAPETag(file->APETag(true));
+		delete file;
+		return true;
+	*/
+	/*
+	} else if (filetype == FILETYPE_TRUEAUDIO) {
+		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), false);
+		saveAPETag(file->APETag(true));
+		delete file;
+		return true;
+	*/
+	}
+	return false;
+}
+
 /* private methods */
 void Metafile::readAudioProperties(const AudioProperties *ap) {
 	if (ap == NULL)
@@ -363,6 +415,9 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 				musicbrainz_trackid.resize(36);
 			}
 		}
+		frames = map["TPE2"];
+		if (!frames.isEmpty())
+			albumartist = frames.front()->toString().to8Bit(true);
 		frames = map["TSOP"];
 		if (!frames.isEmpty())
 			artistsort = frames.front()->toString().to8Bit(true);
@@ -430,4 +485,90 @@ void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 		released = map[DATE].front().to8Bit(true);
 	if (!map[MUSICIP_PUID].isEmpty())
 		puid = map[MUSICIP_PUID].front().to8Bit(true);
+}
+
+void Metafile::saveAPETag(APE::Tag *tag) {
+	tag->addValue(APEALBUM, album, true);
+	tag->addValue(APEALBUMARTIST, albumartist, true);
+	tag->addValue(APEALBUMARTISTSORT, albumartistsort, true);
+	tag->addValue(APEARTIST, artist, true);
+	tag->addValue(APEARTISTSORT, artistsort, true);
+	tag->addValue(APEMUSICBRAINZ_ALBUMARTISTID, musicbrainz_albumartistid, true);
+	tag->addValue(APEMUSICBRAINZ_ALBUMID, musicbrainz_albumid, true);
+	tag->addValue(APEMUSICBRAINZ_ARTISTID, musicbrainz_artistid, true);
+	tag->addValue(APEMUSICBRAINZ_TRACKID, musicbrainz_trackid, true);
+	tag->addValue(APETITLE, title, true);
+	tag->addValue(APETRACKNUMBER, tracknumber, true);
+	tag->addValue(APEDATE, released, true);
+	tag->addValue(APEMUSICIP_PUID, puid, true);
+}
+
+void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
+	/* album */
+	tag->setAlbum(album);
+	/* albumartist */
+	ID3v2::TextIdentificationFrame *tpe2 = new ID3v2::TextIdentificationFrame(ByteVector("TPE2"), TagLib::String::UTF8);
+	tag->removeFrame(tpe2, false);
+	tpe2->setText(albumartist);
+	tag->addFrame(tpe2);
+	/* albumartistsort */
+	ID3v2::UserTextIdentificationFrame *txxxaas = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	tag->removeFrame(txxxaas, false);
+	txxxaas->setText(albumartistsort);
+	tag->addFrame(txxxaas);
+	/* artist */
+	tag->setArtist(artist);
+	/* artistsort */
+	ID3v2::TextIdentificationFrame *tsop = new ID3v2::TextIdentificationFrame(ByteVector("TSOP"), TagLib::String::UTF8);
+	tag->removeFrame(tsop, false);
+	tsop->setText(artistsort);
+	tag->addFrame(tsop);
+	/* musicbrainz_albumartistid */
+	ID3v2::UserTextIdentificationFrame *txxxaai = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	tag->removeFrame(txxxaai, false);
+	txxxaai->setText(musicbrainz_albumartistid);
+	tag->addFrame(txxxaai);
+	/* musicbrainz_albumid */
+	ID3v2::UserTextIdentificationFrame *txxxali = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	tag->removeFrame(txxxali, false);
+	txxxali->setText(musicbrainz_albumid);
+	tag->addFrame(txxxali);
+	/* musicbrainz_artistid */
+	ID3v2::UserTextIdentificationFrame *txxxari = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	tag->removeFrame(txxxari, false);
+	txxxari->setText(musicbrainz_artistid);
+	tag->addFrame(txxxari);
+	/* musicbrainz_trackid */
+	tag->removeFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector()));
+	tag->addFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector(musicbrainz_trackid.c_str())));
+	/* title */
+	tag->setTitle(title);
+	/* tracknumber */
+	tag->setTrack(atoi(tracknumber.c_str()));
+	/* date */
+	ID3v2::TextIdentificationFrame *tdrc = new ID3v2::TextIdentificationFrame(ByteVector("TDRC"), TagLib::String::UTF8);
+	tag->removeFrame(tdrc, false);
+	tdrc->setText(released);
+	tag->addFrame(tdrc);
+	/* puid */
+	ID3v2::UserTextIdentificationFrame *txxxpuid = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	tag->removeFrame(txxxpuid, false);
+	txxxpuid->setText(puid);
+	tag->addFrame(txxxpuid);
+}
+
+void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
+	tag->addField(ALBUM, album, true);
+	tag->addField(ALBUMARTIST, albumartist, true);
+	tag->addField(ALBUMARTISTSORT, albumartistsort, true);
+	tag->addField(ARTIST, artist, true);
+	tag->addField(ARTISTSORT, artistsort, true);
+	tag->addField(MUSICBRAINZ_ALBUMARTISTID, musicbrainz_albumartistid, true);
+	tag->addField(MUSICBRAINZ_ALBUMID, musicbrainz_albumid, true);
+	tag->addField(MUSICBRAINZ_ARTISTID, musicbrainz_artistid, true);
+	tag->addField(MUSICBRAINZ_TRACKID, musicbrainz_trackid, true);
+	tag->addField(TITLE, title, true);
+	tag->addField(TRACKNUMBER, tracknumber, true);
+	tag->addField(DATE, released, true);
+	tag->addField(MUSICIP_PUID, puid, true);
 }
