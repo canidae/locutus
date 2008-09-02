@@ -358,7 +358,6 @@ ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
 --
 
 CREATE SEQUENCE setting_setting_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
