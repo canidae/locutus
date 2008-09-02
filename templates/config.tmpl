@@ -4,6 +4,7 @@
 <table>
   <tr>
     <th>Key</th>
+    <th>Default value</th>
     <th>Value</th>
     <th>Description</th>
     <th>Reset on next run</th>
@@ -11,6 +12,7 @@
   [% FOREACH setting IN settings %]
   <tr>
     <td>[% setting.key %]</td>
+    <td>[% setting.default_value %]</td>
     <td>[% setting.value %]</td>
     <td>[% setting.description %]</td>
     <td>(checkbox)</td>
