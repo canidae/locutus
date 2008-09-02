@@ -56,6 +56,17 @@ bool Album::loadFromCache(const string &mbid) {
 		 * it's hardly necessary to improve this, though */
 		Artist *track_artist = new Artist(locutus);
 		Track *track = new Track(locutus, this, track_artist);
+		int trackindex = track->tracknumber - 1;
+		if (trackindex >= (int) tracks.size()) {
+			/* this really shouldn't happen.
+			 * seemingly we're missing entries in the track table */
+			string msg = "Tracknumber exceed album track count. Did you erase data in the track table? MusicBrainz Album ID: ";
+			msg.append(mbid);
+			locutus->debug(DEBUG_WARNING, msg);
+			for (vector<Track *>::size_type t = 0; t < tracks.size(); ++t)
+				delete tracks[t];
+			return false;
+		}
 		/* track data */
 		track->mbid = locutus->database->getString(t, 7);
 		track->title = locutus->database->getString(t, 8);
@@ -65,7 +76,7 @@ bool Album::loadFromCache(const string &mbid) {
 		track_artist->mbid = locutus->database->getString(t, 11);
 		track_artist->name = locutus->database->getString(t, 12);
 		track_artist->sortname = locutus->database->getString(t, 13);
-		tracks[track->tracknumber - 1] = track;
+		tracks[trackindex] = track;
 	}
 	return true;
 }

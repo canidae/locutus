@@ -176,7 +176,9 @@ CREATE TABLE track (
     title character varying NOT NULL,
     duration integer DEFAULT 0 NOT NULL,
     tracknumber integer NOT NULL,
-    CONSTRAINT track_mbid_check CHECK ((length(mbid) = 36))
+    CONSTRAINT track_duration_check CHECK ((duration >= 0)),
+    CONSTRAINT track_mbid_check CHECK ((length(mbid) = 36)),
+    CONSTRAINT track_tracknumber_check CHECK ((tracknumber >= 0))
 );
 
 
@@ -544,6 +546,14 @@ ALTER TABLE ONLY puid
 
 ALTER TABLE ONLY setting
     ADD CONSTRAINT setting_pkey PRIMARY KEY (setting_id);
+
+
+--
+-- Name: track_album_id_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+--
+
+ALTER TABLE ONLY track
+    ADD CONSTRAINT track_album_id_key UNIQUE (album_id, tracknumber);
 
 
 --

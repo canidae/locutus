@@ -1,9 +1,10 @@
-daemon
-------
-* locutus crash if eg. track with tracknumber 1 is removed from the track table and that album got more than 1 tracks. should do something clever here (order by tracknumber desc and seeing if first tracknumber equals rows?)
+bugs:
+-----
+* reading metadata from file is quite crude. need to check for errors & such
+
 
 missing features:
-0. album matching
-1. saving
-2. generate puids
-3. "genre" by fetching from audioscrobbler
+-----------------
+* moving files
+* "genre" by fetching from audioscrobbler
+* generate puids
