@@ -120,8 +120,8 @@ class Metafile {
 		string getGroup() const;
 		bool loadFromCache(const string &filename);
 		bool readFromFile(const string &filename);
+		bool saveMetadata();
 		bool saveToCache() const;
-		bool saveToFile();
 
 	private:
 		/* variables */
