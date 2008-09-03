@@ -48,7 +48,6 @@ class WebService : public URLStream, public XMLStream {
 		Locutus *locutus;
 		vector<Metatrack> *tracks;
 		URLStream::Error status;
-		int setting_class_id;
 		string metadata_search_url;
 		string release_lookup_url;
 		XMLNode *root;

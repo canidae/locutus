@@ -96,7 +96,6 @@ class Locutus {
 	private:
 		/* variables */
 		ofstream *debugfile;
-		int setting_class_id;
 
 		/* methods */
 		void loadSettings();

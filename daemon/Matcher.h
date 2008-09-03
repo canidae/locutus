@@ -49,7 +49,6 @@ class Matcher {
 		/* variables */
 		Locutus *locutus;
 		map<string, MatchGroup> mgs;
-		int setting_class_id;
 		double puid_min_score;
 		double metadata_min_score;
 

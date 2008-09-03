@@ -130,8 +130,6 @@ void Locutus::scanDirectory(const string &directory) {
 	files.clear();
 	/* parse directory */
 	filereader->scanFiles(directory);
-	/* generate puids */
-	puidgen->generatePUIDs();
 }
 
 /* main */

@@ -48,7 +48,6 @@ class FileReader {
 		Locutus *locutus;
 		list<string> dir_queue;
 		list<string> file_queue;
-		int setting_class_id;
 
 		/* methods */
 		bool parseDirectory();
