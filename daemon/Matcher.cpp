@@ -270,8 +270,9 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		return;
 	/* set new metadata */
 	locutus->debug(DEBUG_INFO, "Should save the following files:");
-	for (map<string, Track *>::iterator s = save_files.begin(); s != save_files.end(); ++s)
+	for (map<string, Track *>::iterator s = save_files.begin(); s != save_files.end(); ++s) {
 		locutus->debug(DEBUG_INFO, s->first);
+	}
 }
 
 bool Matcher::saveMatchToCache(const string &filename, const string &track_mbid, const Match &match) const {

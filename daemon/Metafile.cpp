@@ -244,49 +244,49 @@ bool Metafile::readFromFile(const string &filename) {
 	return true;
 }
 
-bool Metafile::saveMetadata() {
+bool Metafile::saveMetadata(const Track *track) {
 	if (filetype == FILETYPE_OGG_VORBIS) {
 		Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), false);
-		saveXiphComment(file->tag());
+		saveXiphComment(file->tag(), track);
 		file->save();
 		delete file;
 		return true;
 	} else if (filetype == FILETYPE_OGG_FLAC) {
 		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), false);
-		saveXiphComment(file->tag());
+		saveXiphComment(file->tag(), track);
 		file->save();
 		delete file;
 		return true;
 	/*
 	} else if (filetype == FILETYPE_OGG_SPEEX) {
 		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), false);
-		saveXiphComment(file->tag());
+		saveXiphComment(file->tag(), track);
 		file->save();
 		delete file;
 		return true;
 	*/
 	} else if (filetype == FILETYPE_FLAC) {
 		FLAC::File *file = new FLAC::File(filename.c_str(), false);
-		saveXiphComment(file->xiphComment(true));
+		saveXiphComment(file->xiphComment(), track);
 		file->save();
 		delete file;
 		return true;
 	} else if (filetype == FILETYPE_MPEG) {
 		MPEG::File *file = new MPEG::File(filename.c_str(), false);
-		saveID3v2Tag(file->ID3v2Tag(true));
+		saveID3v2Tag(file->ID3v2Tag(), track);
 		file->save();
 		delete file;
 		return true;
 	} else if (filetype == FILETYPE_MPC) {
 		MPC::File *file = new MPC::File(filename.c_str(), false);
-		saveAPETag(file->APETag(true));
+		saveAPETag(file->APETag(), track);
 		file->save();
 		delete file;
 		return true;
 	/*
 	} else if (filetype == FILETYPE_WAVPACK) {
 		WavPack::File *file = new WavPack::File(filename.c_str(), false);
-		saveAPETag(file->APETag(true));
+		saveAPETag(file->APETag(), track);
 		file->save();
 		delete file;
 		return true;
@@ -294,7 +294,7 @@ bool Metafile::saveMetadata() {
 	/*
 	} else if (filetype == FILETYPE_TRUEAUDIO) {
 		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), false);
-		saveAPETag(file->APETag(true));
+		saveAPETag(file->APETag(), track);
 		file->save();
 		delete file;
 		return true;
@@ -495,88 +495,94 @@ void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 		puid = map[MUSICIP_PUID].front().to8Bit(true);
 }
 
-void Metafile::saveAPETag(APE::Tag *tag) {
-	tag->addValue(APEALBUM, album, true);
-	tag->addValue(APEALBUMARTIST, albumartist, true);
-	tag->addValue(APEALBUMARTISTSORT, albumartistsort, true);
-	tag->addValue(APEARTIST, artist, true);
-	tag->addValue(APEARTISTSORT, artistsort, true);
-	tag->addValue(APEMUSICBRAINZ_ALBUMARTISTID, musicbrainz_albumartistid, true);
-	tag->addValue(APEMUSICBRAINZ_ALBUMID, musicbrainz_albumid, true);
-	tag->addValue(APEMUSICBRAINZ_ARTISTID, musicbrainz_artistid, true);
-	tag->addValue(APEMUSICBRAINZ_TRACKID, musicbrainz_trackid, true);
-	tag->addValue(APETITLE, title, true);
-	tag->addValue(APETRACKNUMBER, tracknumber, true);
-	tag->addValue(APEDATE, released, true);
-	tag->addValue(APEMUSICIP_PUID, puid, true);
+void Metafile::saveAPETag(APE::Tag *tag, const Track *track) {
+	tag->addValue(APEALBUM, track->album->title, true);
+	tag->addValue(APEALBUMARTIST, track->album->artist->name, true);
+	tag->addValue(APEALBUMARTISTSORT, track->album->artist->sortname, true);
+	tag->addValue(APEARTIST, track->artist->name, true);
+	tag->addValue(APEARTISTSORT, track->artist->sortname, true);
+	tag->addValue(APEMUSICBRAINZ_ALBUMARTISTID, track->album->artist->mbid, true);
+	tag->addValue(APEMUSICBRAINZ_ALBUMID, track->album->mbid, true);
+	tag->addValue(APEMUSICBRAINZ_ARTISTID, track->artist->mbid, true);
+	tag->addValue(APEMUSICBRAINZ_TRACKID, track->mbid, true);
+	tag->addValue(APETITLE, track->title, true);
+	ostringstream tracknum;
+	tracknum << track->tracknumber;
+	tag->addValue(APETRACKNUMBER, tracknum.str(), true);
+	tag->addValue(APEDATE, track->album->released, true);
+	//tag->addValue(APEMUSICIP_PUID, track->puid, true);
 }
 
-void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
+void Metafile::saveID3v2Tag(ID3v2::Tag *tag, const Track *track) {
 	/* album */
-	tag->setAlbum(album);
+	tag->setAlbum(track->album->title);
 	/* albumartist */
 	ID3v2::TextIdentificationFrame *tpe2 = new ID3v2::TextIdentificationFrame(ByteVector("TPE2"), TagLib::String::UTF8);
 	tag->removeFrame(tpe2, false);
-	tpe2->setText(albumartist);
+	tpe2->setText(track->album->artist->name);
 	tag->addFrame(tpe2);
 	/* albumartistsort */
 	ID3v2::UserTextIdentificationFrame *txxxaas = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
 	tag->removeFrame(txxxaas, false);
-	txxxaas->setText(albumartistsort);
+	txxxaas->setText(track->album->artist->sortname);
 	tag->addFrame(txxxaas);
 	/* artist */
-	tag->setArtist(artist);
+	tag->setArtist(track->artist->name);
 	/* artistsort */
 	ID3v2::TextIdentificationFrame *tsop = new ID3v2::TextIdentificationFrame(ByteVector("TSOP"), TagLib::String::UTF8);
 	tag->removeFrame(tsop, false);
-	tsop->setText(artistsort);
+	tsop->setText(track->artist->sortname);
 	tag->addFrame(tsop);
 	/* musicbrainz_albumartistid */
 	ID3v2::UserTextIdentificationFrame *txxxaai = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
 	tag->removeFrame(txxxaai, false);
-	txxxaai->setText(musicbrainz_albumartistid);
+	txxxaai->setText(track->album->artist->mbid);
 	tag->addFrame(txxxaai);
 	/* musicbrainz_albumid */
 	ID3v2::UserTextIdentificationFrame *txxxali = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
 	tag->removeFrame(txxxali, false);
-	txxxali->setText(musicbrainz_albumid);
+	txxxali->setText(track->album->mbid);
 	tag->addFrame(txxxali);
 	/* musicbrainz_artistid */
 	ID3v2::UserTextIdentificationFrame *txxxari = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
 	tag->removeFrame(txxxari, false);
-	txxxari->setText(musicbrainz_artistid);
+	txxxari->setText(track->artist->mbid);
 	tag->addFrame(txxxari);
 	/* musicbrainz_trackid */
 	tag->removeFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector()));
-	tag->addFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector(musicbrainz_trackid.c_str())));
+	tag->addFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector(track->mbid.c_str())));
 	/* title */
-	tag->setTitle(title);
+	tag->setTitle(track->title);
 	/* tracknumber */
-	tag->setTrack(atoi(tracknumber.c_str()));
+	tag->setTrack(track->tracknumber);
 	/* date */
 	ID3v2::TextIdentificationFrame *tdrc = new ID3v2::TextIdentificationFrame(ByteVector("TDRC"), TagLib::String::UTF8);
 	tag->removeFrame(tdrc, false);
-	tdrc->setText(released);
+	tdrc->setText(track->album->released);
 	tag->addFrame(tdrc);
 	/* puid */
+	/*
 	ID3v2::UserTextIdentificationFrame *txxxpuid = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
 	tag->removeFrame(txxxpuid, false);
-	txxxpuid->setText(puid);
+	txxxpuid->setText(track->puid);
 	tag->addFrame(txxxpuid);
+	*/
 }
 
-void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
-	tag->addField(ALBUM, album, true);
-	tag->addField(ALBUMARTIST, albumartist, true);
-	tag->addField(ALBUMARTISTSORT, albumartistsort, true);
-	tag->addField(ARTIST, artist, true);
-	tag->addField(ARTISTSORT, artistsort, true);
-	tag->addField(MUSICBRAINZ_ALBUMARTISTID, musicbrainz_albumartistid, true);
-	tag->addField(MUSICBRAINZ_ALBUMID, musicbrainz_albumid, true);
-	tag->addField(MUSICBRAINZ_ARTISTID, musicbrainz_artistid, true);
-	tag->addField(MUSICBRAINZ_TRACKID, musicbrainz_trackid, true);
-	tag->addField(TITLE, title, true);
-	tag->addField(TRACKNUMBER, tracknumber, true);
-	tag->addField(DATE, released, true);
-	tag->addField(MUSICIP_PUID, puid, true);
+void Metafile::saveXiphComment(Ogg::XiphComment *tag, const Track *track) {
+	tag->addField(ALBUM, track->album->title, true);
+	tag->addField(ALBUMARTIST, track->album->artist->name, true);
+	tag->addField(ALBUMARTISTSORT, track->album->artist->sortname, true);
+	tag->addField(ARTIST, track->artist->name, true);
+	tag->addField(ARTISTSORT, track->artist->sortname, true);
+	tag->addField(MUSICBRAINZ_ALBUMARTISTID, track->album->artist->mbid, true);
+	tag->addField(MUSICBRAINZ_ALBUMID, track->album->mbid, true);
+	tag->addField(MUSICBRAINZ_ARTISTID, track->artist->mbid, true);
+	tag->addField(MUSICBRAINZ_TRACKID, track->mbid, true);
+	tag->addField(TITLE, track->title, true);
+	ostringstream tracknum;
+	tracknum << track->tracknumber;
+	tag->addField(TRACKNUMBER, tracknum.str(), true);
+	tag->addField(DATE, track->album->released, true);
+	//tag->addField(MUSICIP_PUID, track->puid, true);
 }

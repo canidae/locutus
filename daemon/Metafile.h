@@ -120,7 +120,7 @@ class Metafile {
 		string getGroup() const;
 		bool loadFromCache(const string &filename);
 		bool readFromFile(const string &filename);
-		bool saveMetadata();
+		bool saveMetadata(const Track *track);
 		bool saveToCache() const;
 
 	private:
@@ -132,8 +132,8 @@ class Metafile {
 		void readAudioProperties(const AudioProperties *ap);
 		void readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const ID3v1::Tag *id3v1);
 		void readXiphComment(const Ogg::XiphComment *tag);
-		void saveAPETag(APE::Tag *tag);
-		void saveID3v2Tag(ID3v2::Tag *tag);
-		void saveXiphComment(Ogg::XiphComment *tag);
+		void saveAPETag(APE::Tag *tag, const Track *track);
+		void saveID3v2Tag(ID3v2::Tag *tag, const Track *track);
+		void saveXiphComment(Ogg::XiphComment *tag, const Track *track);
 };
 #endif
