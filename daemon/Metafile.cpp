@@ -248,39 +248,46 @@ bool Metafile::saveMetadata() {
 	if (filetype == FILETYPE_OGG_VORBIS) {
 		Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), false);
 		saveXiphComment(file->tag());
+		file->save();
 		delete file;
 		return true;
 	} else if (filetype == FILETYPE_OGG_FLAC) {
 		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), false);
 		saveXiphComment(file->tag());
+		file->save();
 		delete file;
 		return true;
 	/*
 	} else if (filetype == FILETYPE_OGG_SPEEX) {
 		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), false);
 		saveXiphComment(file->tag());
+		file->save();
 		delete file;
 		return true;
 	*/
 	} else if (filetype == FILETYPE_FLAC) {
 		FLAC::File *file = new FLAC::File(filename.c_str(), false);
 		saveXiphComment(file->xiphComment(true));
+		file->save();
 		delete file;
 		return true;
 	} else if (filetype == FILETYPE_MPEG) {
 		MPEG::File *file = new MPEG::File(filename.c_str(), false);
 		saveID3v2Tag(file->ID3v2Tag(true));
+		file->save();
 		delete file;
 		return true;
 	} else if (filetype == FILETYPE_MPC) {
 		MPC::File *file = new MPC::File(filename.c_str(), false);
 		saveAPETag(file->APETag(true));
+		file->save();
 		delete file;
 		return true;
 	/*
 	} else if (filetype == FILETYPE_WAVPACK) {
 		WavPack::File *file = new WavPack::File(filename.c_str(), false);
 		saveAPETag(file->APETag(true));
+		file->save();
 		delete file;
 		return true;
 	*/
@@ -288,6 +295,7 @@ bool Metafile::saveMetadata() {
 	} else if (filetype == FILETYPE_TRUEAUDIO) {
 		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), false);
 		saveAPETag(file->APETag(true));
+		file->save();
 		delete file;
 		return true;
 	*/

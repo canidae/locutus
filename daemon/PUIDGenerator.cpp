@@ -15,7 +15,7 @@ const string &PUIDGenerator::generatePUID(const string &filename, int filetype) 
 	AVCodec *codec;
 	switch (filetype) {
 		case FILETYPE_UNDEFINED:
-			return puid;
+			break;
 
 		case FILETYPE_OGG_VORBIS:
 			codec = avcodec_find_decoder(CODEC_ID_VORBIS);
@@ -115,6 +115,7 @@ const string &PUIDGenerator::generatePUID(const string &filename, int filetype) 
 	avcodec_close(c);
 	av_free(c);
 
+	/* TODO: actually generate fingerprint */
 	return puid;
 }
 
