@@ -27,7 +27,7 @@ using namespace std;
 /* structs */
 struct MatchGroup {
 	Album *album;
-	vector<map<string, Match> > scores; // tracknum, filename, match
+	vector<map<Metafile *, Match> > scores; // tracknum, file, match
 };
 
 /* Matcher */
