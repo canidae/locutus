@@ -10,44 +10,37 @@ PUIDGenerator::~PUIDGenerator() {
 }
 
 /* methods */
-const string &PUIDGenerator::generatePUID(const string &filename, int filetype) {
+const string &PUIDGenerator::generatePUID(const string &filename) {
 	puid.clear();
 	AVCodec *codec;
-	switch (filetype) {
-		case FILETYPE_UNDEFINED:
-			break;
-
-		case FILETYPE_OGG_VORBIS:
-			codec = avcodec_find_decoder(CODEC_ID_VORBIS);
-			break;
-
-		case FILETYPE_OGG_FLAC:
-		case FILETYPE_FLAC:
-			codec = avcodec_find_decoder(CODEC_ID_FLAC);
-			break;
-
-		case FILETYPE_OGG_SPEEX:
-			break;
-
-		case FILETYPE_MPEG:
-			codec = avcodec_find_decoder(CODEC_ID_MP3);
-			break;
-
-		case FILETYPE_MPC:
-			codec = avcodec_find_decoder(CODEC_ID_MUSEPACK7);
-			break;
-
-		case FILETYPE_WAVPACK:
-			codec = avcodec_find_decoder(CODEC_ID_WAVPACK);
-			break;
-
-		case FILETYPE_TRUEAUDIO:
-			codec = avcodec_find_decoder(CODEC_ID_TTA);
-			break;
+	string::size_type pos = filename.find_last_of('.');
+	string ext = "";
+	if (pos != string::npos) {
+		ext = filename.substr(pos + 1);
+		for (string::size_type a = 0; a < ext.size(); ++a) {
+			if (ext[a] >= 97 && ext[a] <= 122)
+				ext[a] -= 32;
+		}
 	}
+	if (ext == "OGG")
+		codec = avcodec_find_decoder(CODEC_ID_VORBIS);
+	else if (ext == "FLAC")
+		codec = avcodec_find_decoder(CODEC_ID_FLAC);
+	/*
+	else if (ext == "SPX")
+		codec = avcodec_find_decoder(CODEC_ID_SPEEX);
+	*/
+	else if (ext == "MP3")
+		codec = avcodec_find_decoder(CODEC_ID_MP3);
+	else if (ext == "MPC")
+		codec = avcodec_find_decoder(CODEC_ID_MUSEPACK7);
+	else if (ext == "WV")
+		codec = avcodec_find_decoder(CODEC_ID_WAVPACK);
+	else if (ext == "TTA")
+		codec = avcodec_find_decoder(CODEC_ID_TTA);
 	if (!codec) {
 		ostringstream error;
-		error << "Codec not found for filetype " << filetype << ". File: " << filename;
+		error << "Codec not found for file '" << filename << "'";
 		locutus->debug(DEBUG_NOTICE, error.str());
 		return puid;
 	}
@@ -58,7 +51,7 @@ const string &PUIDGenerator::generatePUID(const string &filename, int filetype) 
 	if (avcodec_open(c, codec) < 0) {
 		av_free(c);                                                                                                                                    
 		ostringstream error;
-		error << "Unable to open codec for filetype " << filetype << ". File: " << filename;
+		error << "Unable to open codec for file '" << filename << "'";
 		locutus->debug(DEBUG_NOTICE, error.str());
 		return puid;
 	}

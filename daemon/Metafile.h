@@ -15,16 +15,6 @@
 #define TITLE "TITLE"
 #define TRACKNUMBER "TRACKNUMBER"
 #define DATE "DATE"
-/* file types */
-#define FILETYPE_UNDEFINED 0
-#define FILETYPE_OGG_VORBIS 1
-#define FILETYPE_OGG_FLAC 2
-#define FILETYPE_OGG_SPEEX 3
-#define FILETYPE_FLAC 4
-#define FILETYPE_MPEG 5
-#define FILETYPE_MPC 6
-#define FILETYPE_WAVPACK 7
-#define FILETYPE_TRUEAUDIO 8
 /* id3 crap */
 #define ID3_TXXX_ALBUMARTISTSORT "ALBUMARTISTSORT"
 #define ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID "MusicBrainz Album Artist Id"
@@ -126,7 +116,6 @@ class Metafile {
 	private:
 		/* variables */
 		Locutus *locutus;
-		int filetype;
 
 		/* methods */
 		void readAudioProperties(const AudioProperties *ap);

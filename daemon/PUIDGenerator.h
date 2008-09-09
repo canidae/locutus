@@ -28,7 +28,7 @@ class PUIDGenerator {
 		~PUIDGenerator();
 
 		/* methods */
-		const string &generatePUID(const string &filename, int filetype);
+		const string &generatePUID(const string &filename);
 		void loadSettings();
 
 	private:

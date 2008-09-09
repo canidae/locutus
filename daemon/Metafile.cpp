@@ -17,7 +17,6 @@ Metafile::Metafile(Locutus *locutus) {
 	artist = "";
 	artistsort = "";
 	filename = "";
-	filetype = FILETYPE_UNDEFINED;
 	musicbrainz_albumartistid = "";
 	musicbrainz_albumid = "";
 	musicbrainz_artistid = "";
@@ -178,56 +177,48 @@ bool Metafile::loadFromCache(const string &filename) {
 bool Metafile::readFromFile(const string &filename) {
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos) {
-		string ext = filename.substr(pos);
+		string ext = filename.substr(pos + 1);
 		for (string::size_type a = 0; a < ext.size(); ++a) {
 			if (ext[a] >= 97 && ext[a] <= 122)
 				ext[a] -= 32;
 		}
-		if (ext == ".OGG") {
-			filetype = FILETYPE_OGG_VORBIS;
+		if (ext == "OGG") {
 			Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
 			readXiphComment(file->tag());
 			readAudioProperties(file->audioProperties());
 			delete file;
-		} else if (ext == ".MP3") {
-			filetype = FILETYPE_MPEG;
+		} else if (ext == "MP3") {
 			MPEG::File *file = new MPEG::File(filename.c_str(), true, AudioProperties::Accurate);
 			readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
 			readAudioProperties(file->audioProperties());
 			delete file;
-		} else if (ext == ".FLAC") {
-			filetype = FILETYPE_FLAC;
+		} else if (ext == "FLAC") {
 			FLAC::File *file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
 			readXiphComment(file->xiphComment());
 			readAudioProperties(file->audioProperties());
 			delete file;
-		} else if (ext == ".MPC") {
-			filetype = FILETYPE_MPC;
+		} else if (ext == "MPC") {
 			MPC::File *file = new MPC::File(filename.c_str(), true, AudioProperties::Accurate);
 			readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
 			readAudioProperties(file->audioProperties());
 			delete file;
-		} else if (ext == ".OGA") {
-			filetype = FILETYPE_OGG_FLAC;
+		} else if (ext == "OGA") {
 			Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
 			readXiphComment(file->tag());
 			readAudioProperties(file->audioProperties());
 			delete file;
 		/*
-		} else if (ext == ".WV") {
-			filetype = FILETYPE_WAVPACK;
+		} else if (ext == "WV") {
 			WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
 			readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
 			readAudioProperties(file->audioProperties());
 			delete file;
-		} else if (ext == ".SPX") {
-			filetype = FILETYPE_OGG_SPEEX;
+		} else if (ext == "SPX") {
 			Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
 			readXiphComment(file->tag());
 			readAudioProperties(file->audioProperties());
 			delete file;
-		} else if (ext == ".TTA") {
-			filetype = FILETYPE_TRUEAUDIO;
+		} else if (ext == "TTA") {
 			TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
 			readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
 			readAudioProperties(file->audioProperties());
@@ -245,60 +236,68 @@ bool Metafile::readFromFile(const string &filename) {
 }
 
 bool Metafile::saveMetadata(const Track *track) {
-	if (filetype == FILETYPE_OGG_VORBIS) {
+	string::size_type pos = filename.find_last_of('.');
+	string ext = "";
+	if (pos != string::npos) {
+		ext = filename.substr(pos + 1);
+		for (string::size_type a = 0; a < ext.size(); ++a) {
+			if (ext[a] >= 97 && ext[a] <= 122)
+				ext[a] -= 32;
+		}
+	}
+	if (ext == "OGG") {
 		Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), false);
 		saveXiphComment(file->tag(), track);
 		file->save();
 		delete file;
 		return true;
-	} else if (filetype == FILETYPE_OGG_FLAC) {
-		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), false);
-		saveXiphComment(file->tag(), track);
-		file->save();
-		delete file;
-		return true;
-	/*
-	} else if (filetype == FILETYPE_OGG_SPEEX) {
-		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), false);
-		saveXiphComment(file->tag(), track);
-		file->save();
-		delete file;
-		return true;
-	*/
-	} else if (filetype == FILETYPE_FLAC) {
-		FLAC::File *file = new FLAC::File(filename.c_str(), false);
-		saveXiphComment(file->xiphComment(), track);
-		file->save();
-		delete file;
-		return true;
-	} else if (filetype == FILETYPE_MPEG) {
+	} else if (ext == "MP3") {
 		MPEG::File *file = new MPEG::File(filename.c_str(), false);
 		saveID3v2Tag(file->ID3v2Tag(), track);
 		file->save();
 		delete file;
 		return true;
-	} else if (filetype == FILETYPE_MPC) {
+	} else if (ext == "FLAC") {
+		FLAC::File *file = new FLAC::File(filename.c_str(), false);
+		saveXiphComment(file->xiphComment(), track);
+		file->save();
+		delete file;
+		return true;
+	} else if (ext == "MPC") {
 		MPC::File *file = new MPC::File(filename.c_str(), false);
 		saveAPETag(file->APETag(), track);
 		file->save();
 		delete file;
 		return true;
+	} else if (ext == "OGA") {
+		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+		readXiphComment(file->tag());
+		readAudioProperties(file->audioProperties());
+		delete file;
 	/*
-	} else if (filetype == FILETYPE_WAVPACK) {
+	} else if (ext == "WV") {
 		WavPack::File *file = new WavPack::File(filename.c_str(), false);
 		saveAPETag(file->APETag(), track);
 		file->save();
 		delete file;
 		return true;
-	*/
-	/*
-	} else if (filetype == FILETYPE_TRUEAUDIO) {
+	} else if (ext == "SPX") {
+		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), false);
+		saveXiphComment(file->tag(), track);
+		file->save();
+		delete file;
+		return true;
+	} else if (ext == "TTA") {
 		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), false);
 		saveAPETag(file->APETag(), track);
 		file->save();
 		delete file;
 		return true;
 	*/
+	} else {
+		ostringstream tmp;
+		tmp << "Unable to save file '" << filename << "': Unknown filetype";
+		locutus->debug(DEBUG_WARNING, tmp.str());
 	}
 	return false;
 }
@@ -514,42 +513,45 @@ void Metafile::saveAPETag(APE::Tag *tag, const Track *track) {
 }
 
 void Metafile::saveID3v2Tag(ID3v2::Tag *tag, const Track *track) {
+	/* first clear the frames we're gonna use */
+	tag->removeFrames(ByteVector("TDRC"));
+	tag->removeFrames(ByteVector("TPE2"));
+	tag->removeFrames(ByteVector("TSOP"));
+	tag->removeFrames(ByteVector("TXXX"));
+	tag->removeFrames(ByteVector("UFID"));
 	/* album */
 	tag->setAlbum(track->album->title);
 	/* albumartist */
 	ID3v2::TextIdentificationFrame *tpe2 = new ID3v2::TextIdentificationFrame(ByteVector("TPE2"), TagLib::String::UTF8);
-	tag->removeFrame(tpe2, false);
 	tpe2->setText(track->album->artist->name);
 	tag->addFrame(tpe2);
 	/* albumartistsort */
 	ID3v2::UserTextIdentificationFrame *txxxaas = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	tag->removeFrame(txxxaas, false);
+	txxxaas->setDescription("ALBUMARTISTSORT");
 	txxxaas->setText(track->album->artist->sortname);
 	tag->addFrame(txxxaas);
 	/* artist */
 	tag->setArtist(track->artist->name);
 	/* artistsort */
 	ID3v2::TextIdentificationFrame *tsop = new ID3v2::TextIdentificationFrame(ByteVector("TSOP"), TagLib::String::UTF8);
-	tag->removeFrame(tsop, false);
 	tsop->setText(track->artist->sortname);
 	tag->addFrame(tsop);
 	/* musicbrainz_albumartistid */
 	ID3v2::UserTextIdentificationFrame *txxxaai = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	tag->removeFrame(txxxaai, false);
+	txxxaai->setDescription("MusicBrainz Album Artist Id");
 	txxxaai->setText(track->album->artist->mbid);
 	tag->addFrame(txxxaai);
 	/* musicbrainz_albumid */
 	ID3v2::UserTextIdentificationFrame *txxxali = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	tag->removeFrame(txxxali, false);
+	txxxali->setDescription("MusicBrainz Album Id");
 	txxxali->setText(track->album->mbid);
 	tag->addFrame(txxxali);
 	/* musicbrainz_artistid */
 	ID3v2::UserTextIdentificationFrame *txxxari = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	tag->removeFrame(txxxari, false);
+	txxxari->setDescription("MusicBrainz Artist Id");
 	txxxari->setText(track->artist->mbid);
 	tag->addFrame(txxxari);
 	/* musicbrainz_trackid */
-	tag->removeFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector()));
 	tag->addFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector(track->mbid.c_str())));
 	/* title */
 	tag->setTitle(track->title);
@@ -557,13 +559,11 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag, const Track *track) {
 	tag->setTrack(track->tracknumber);
 	/* date */
 	ID3v2::TextIdentificationFrame *tdrc = new ID3v2::TextIdentificationFrame(ByteVector("TDRC"), TagLib::String::UTF8);
-	tag->removeFrame(tdrc, false);
 	tdrc->setText(track->album->released);
 	tag->addFrame(tdrc);
 	/* puid */
 	/*
 	ID3v2::UserTextIdentificationFrame *txxxpuid = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	tag->removeFrame(txxxpuid, false);
 	txxxpuid->setText(track->puid);
 	tag->addFrame(txxxpuid);
 	*/
