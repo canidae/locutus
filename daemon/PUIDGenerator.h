@@ -8,7 +8,9 @@
 class PUIDGenerator;
 
 /* includes */
-#include <avcodec.h>
+extern "C" {
+	#include <avcodec.h>
+}
 #include <string>
 #include "Metafile.h"
 #include "Locutus.h"

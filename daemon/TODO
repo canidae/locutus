@@ -7,4 +7,4 @@ missing features:
 -----------------
 * moving files
 * "genre" by fetching from audioscrobbler
-* generate puids
+* generate puids (libofa)
