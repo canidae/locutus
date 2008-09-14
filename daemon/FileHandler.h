@@ -1,6 +1,6 @@
-#ifndef FILEREADER_H
+#ifndef FILEHANDLER_H
 /* defines */
-#define FILEREADER_H
+#define FILEHANDLER_H
 /* settings */
 #define MUSIC_OUTPUT_KEY "output_directory"
 #define MUSIC_OUTPUT_VALUE "/media/music/sorted/"
@@ -13,7 +13,7 @@
 #define MUSIC_DUPLICATE_DESCRIPTION "Directory for duplicate files"
 
 /* forward declare */
-class FileReader;
+class FileHandler;
 
 /* includes */
 #include <list>
@@ -24,8 +24,8 @@ class FileReader;
 /* namespaces */
 using namespace std;
 
-/* FileReader */
-class FileReader {
+/* FileHandler */
+class FileHandler {
 	public:
 		/* variables */
 		bool ready;
@@ -34,10 +34,10 @@ class FileReader {
 		string output_dir;
 
 		/* constructors */
-		FileReader(Locutus *locutus);
+		FileHandler(Locutus *locutus);
 
 		/* destructors */
-		~FileReader();
+		~FileHandler();
 
 		/* methods */
 		void loadSettings();

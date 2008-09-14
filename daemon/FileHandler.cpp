@@ -1,22 +1,22 @@
-#include "FileReader.h"
+#include "FileHandler.h"
 
 /* constructors */
-FileReader::FileReader(Locutus *locutus) {
+FileHandler::FileHandler(Locutus *locutus) {
 	this->locutus = locutus;
 }
 
 /* destructors */
-FileReader::~FileReader() {
+FileHandler::~FileHandler() {
 }
 
 /* methods */
-void FileReader::loadSettings() {
+void FileHandler::loadSettings() {
 	input_dir = locutus->settings->loadSetting(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
 	output_dir = locutus->settings->loadSetting(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
 	duplicate_dir = locutus->settings->loadSetting(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
 }
 
-void FileReader::scanFiles(const string &directory) {
+void FileHandler::scanFiles(const string &directory) {
 	dir_queue.push_back(directory);
 	while (dir_queue.size() > 0 || file_queue.size() > 0) {
 		/* first files */
@@ -29,7 +29,7 @@ void FileReader::scanFiles(const string &directory) {
 }
 
 /* private methods */
-bool FileReader::parseDirectory() {
+bool FileHandler::parseDirectory() {
 	if (dir_queue.size() <= 0)
 		return false;
 	string directory(*dir_queue.begin());
@@ -59,7 +59,7 @@ bool FileReader::parseDirectory() {
 	return true;
 }
 
-bool FileReader::parseFile() {
+bool FileHandler::parseFile() {
 	if (file_queue.size() <= 0)
 		return false;
 	string filename(*file_queue.begin());

@@ -7,7 +7,7 @@ Locutus::Locutus() {
 	levenshtein = new Levenshtein();
 	settings = new Settings(this);
 	webservice = new WebService(this);
-	filereader = new FileReader(this);
+	filereader = new FileHandler(this);
 	puidgen = new PUIDGenerator(this);
 	matcher = new Matcher(this);
 }

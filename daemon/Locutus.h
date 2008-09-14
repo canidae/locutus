@@ -48,7 +48,7 @@ class Locutus;
 #include <vector>
 #include "Album.h"
 #include "Database.h"
-#include "FileReader.h"
+#include "FileHandler.h"
 #include "Levenshtein.h"
 #include "Metafile.h"
 #include "PUIDGenerator.h"
@@ -67,7 +67,7 @@ class Locutus {
 		Levenshtein *levenshtein;
 		Settings *settings;
 		WebService *webservice;
-		FileReader *filereader;
+		FileHandler *filereader;
 		PUIDGenerator *puidgen;
 		Matcher *matcher;
 		vector<Metafile *> files;
