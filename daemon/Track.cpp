@@ -5,6 +5,7 @@ Track::Track(Locutus *locutus, Album *album, Artist *artist) {
 	this->locutus = locutus;
 	this->album = album;
 	this->artist = artist;
+	id = -1;
 	duration = 0;
 	tracknumber = 0;
 	mbid = "";

@@ -7,6 +7,7 @@ Metafile::Metafile(Locutus *locutus) {
 	mbid_lookup = false;
 	puid_lookup = false;
 	save = false;
+	id = -1;
 	bitrate = 0;
 	channels = 0;
 	duration = 0;

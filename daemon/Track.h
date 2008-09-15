@@ -21,6 +21,7 @@ class Track {
 		/* variables */
 		Album *album;
 		Artist *artist;
+		int id;
 		int duration;
 		int tracknumber;
 		string mbid;

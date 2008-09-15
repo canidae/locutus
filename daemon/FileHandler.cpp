@@ -22,9 +22,31 @@ void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
 		locutus->debug(DEBUG_INFO, s->first->filename);
 		/* first save metadata */
 		s->first->saveMetadata(s->second);
-		/* TODO: update database */
 		/* TODO: then move file */
-		/* TODO: update database */
+		/* and finally update file table */
+		ostringstream query;
+		query << "UPDATE file SET filename = '" << locutus->database->escapeString(s->first->filename) << "', ";
+		query << "last_updated = now(), ";
+		query << "puid_id = (SELECT puid_id FROM puid WHERE puid = '" << locutus->database->escapeString(s->first->puid) << "'), ";
+		query << "album = '" << locutus->database->escapeString(s->first->album) << "', ";
+		query << "albumartist = '" << locutus->database->escapeString(s->first->albumartist) << "', ";
+		query << "albumartistsort = '" << locutus->database->escapeString(s->first->albumartistsort) << "', ";
+		query << "artist = '" << locutus->database->escapeString(s->first->artist) << "', ";
+		query << "artistsort = '" << locutus->database->escapeString(s->first->artistsort) << "', ";
+		query << "musicbrainz_albumartistid = '" << locutus->database->escapeString(s->first->musicbrainz_albumartistid) << "', ";
+		query << "musicbrainz_albumid = '" << locutus->database->escapeString(s->first->musicbrainz_albumid) << "', ";
+		query << "musicbrainz_artistid = '" << locutus->database->escapeString(s->first->musicbrainz_artistid) << "', ";
+		query << "musicbrainz_trackid = '" << locutus->database->escapeString(s->first->musicbrainz_trackid) << "', ";
+		query << "title = '" << locutus->database->escapeString(s->first->title) << "', ";
+		query << "tracknumber = '" << locutus->database->escapeString(s->first->tracknumber) << "', ";
+		query << "released = '" << locutus->database->escapeString(s->first->released) << "', ";
+		query << "track_id = " << s->second->id << " ";
+		query << "WHERE file_id = " << s->first->id;
+		if (!locutus->database->query(query.str())) {
+			query.str("");
+			query << "Unable to update database entry for file '" << s->first->filename << "'";
+			locutus->debug(DEBUG_WARNING, query.str());
+		}
 	}
 }
 

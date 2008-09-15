@@ -5,6 +5,7 @@ bugs:
 
 missing features:
 -----------------
+* add "id" to track, album, artist, metafile, ...
 * moving files
 * "genre" by fetching from audioscrobbler
 * generate puids (libofa)
