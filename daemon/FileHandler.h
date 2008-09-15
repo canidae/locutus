@@ -70,6 +70,7 @@ class FileHandler {
 	private:
 		/* variables */
 		Locutus *locutus;
+		string file_format;
 		list<string> dir_queue;
 		list<string> file_queue;
 
