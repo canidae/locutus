@@ -16,6 +16,18 @@ void FileHandler::loadSettings() {
 	duplicate_dir = locutus->settings->loadSetting(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
 }
 
+void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
+	locutus->debug(DEBUG_INFO, "Saving files:");
+	for (map<Metafile *, Track *>::const_iterator s = files.begin(); s != files.end(); ++s) {
+		locutus->debug(DEBUG_INFO, s->first->filename);
+		/* first save metadata */
+		s->first->saveMetadata(s->second);
+		/* TODO: update database */
+		/* TODO: then move file */
+		/* TODO: update database */
+	}
+}
+
 void FileHandler::scanFiles(const string &directory) {
 	dir_queue.push_back(directory);
 	while (dir_queue.size() > 0 || file_queue.size() > 0) {

@@ -7,7 +7,7 @@ Locutus::Locutus() {
 	levenshtein = new Levenshtein();
 	settings = new Settings(this);
 	webservice = new WebService(this);
-	filereader = new FileHandler(this);
+	filehandler = new FileHandler(this);
 	puidgen = new PUIDGenerator(this);
 	matcher = new Matcher(this);
 }
@@ -22,7 +22,7 @@ Locutus::~Locutus() {
 	delete matcher;
 	delete webservice;
 	delete settings;
-	delete filereader;
+	delete filehandler;
 	delete levenshtein;
 	delete database;
 }
@@ -64,10 +64,10 @@ long Locutus::run() {
 	loadSettings();
 	/* parse sorted directory */
 	debug(DEBUG_INFO, "Scanning output directory");
-	scanDirectory(filereader->output_dir);
+	scanDirectory(filehandler->output_dir);
 	/* parse unsorted directory */
 	debug(DEBUG_INFO, "Scanning input directory");
-	scanDirectory(filereader->input_dir);
+	scanDirectory(filehandler->input_dir);
 	/* match files */
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf)
 		matcher->match(gf->first, gf->second);
@@ -96,7 +96,7 @@ void Locutus::loadSettings() {
 	tracknumber_weight = settings->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 
 	/* load settings for other classes */
-	filereader->loadSettings();
+	filehandler->loadSettings();
 	webservice->loadSettings();
 	puidgen->loadSettings();
 	matcher->loadSettings();
@@ -129,7 +129,7 @@ void Locutus::scanDirectory(const string &directory) {
 	grouped_files.clear();
 	files.clear();
 	/* parse directory */
-	filereader->scanFiles(directory);
+	filehandler->scanFiles(directory);
 }
 
 /* main */

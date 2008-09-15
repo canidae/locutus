@@ -67,7 +67,7 @@ class Locutus {
 		Levenshtein *levenshtein;
 		Settings *settings;
 		WebService *webservice;
-		FileHandler *filereader;
+		FileHandler *filehandler;
 		PUIDGenerator *puidgen;
 		Matcher *matcher;
 		vector<Metafile *> files;
