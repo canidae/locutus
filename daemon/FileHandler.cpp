@@ -47,16 +47,53 @@ void FileHandler::scanFiles(const string &directory) {
 
 /* private methods */
 void FileHandler::createFileFormatList(const string &file_format) {
-	if (file_format.size() <= 0) {
+	file_format_list.clear();
+	string::size_type stop = 0;
+	string::size_type start = 0;
+	while (start < file_format.size() && (stop = file_format.find_first_of("%", start)) != string::npos) {
+		file_format_list.push_back(file_format.substr(start, stop - start));
+		start = stop + 1;
+	}
+	if (start < file_format.size())
+		file_format_list.push_back(file_format.substr(start));
+	if (file_format_list.size() <= 0)
 		locutus->debug(DEBUG_WARNING, "Output file format is empty, won't be able to save files");
-		return;
-	}
-	string::size_type pos = -1;
-	while ((pos = file_format.find_first_of("%", pos + 1)) != string::npos) {
-	}
 }
 
 bool FileHandler::moveFile(Metafile *file) {
+	string filename = output_dir;
+	for (list<string>::iterator entry = file_format_list.begin(); entry != file_format_list.end(); ++entry) {
+		if ((*entry)[0] != '%' || entry->size() <= 1) {
+			/* static entry */
+			filename.append(*entry);
+			continue;
+		}
+		int limit = -1;
+		string::size_type limit_stop = entry->find_first_not_of("%0123456789");
+		string token;
+		if (limit_stop != string::npos) {
+			/* entry should be limited */
+			limit = atoi(entry->substr(1, limit_stop).c_str());
+			token = entry->substr(limit_stop);
+		} else {
+			token = entry->substr(1);
+		}
+		if (token == "album") {
+		} else if (token == "albumartist") {
+		} else if (token == "albumartistsort") {
+		} else if (token == "artist") {
+		} else if (token == "artistsort") {
+		} else if (token == "musicbrainz_albumartistid") {
+		} else if (token == "musicbrainz_albumid") {
+		} else if (token == "musicbrainz_artistid") {
+		} else if (token == "musicbrainz_trackid") {
+		} else if (token == "musicip_puid") {
+		} else if (token == "title") {
+		} else if (token == "tracknumber") {
+		} else if (token == "date") {
+		} else if (token == "custom_artist") {
+		}
+	}
 	return false;
 }
 
