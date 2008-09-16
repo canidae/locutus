@@ -167,12 +167,16 @@ bool Album::saveToCache() const {
 	/* save album */
 	query.str("");
 	query << "INSERT INTO album(artist_id, mbid, type, title, released) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), '" << e_mbid << "', '" << e_type << "', '" << e_title << "', " << e_released << " WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << e_mbid << "')";
-	if (!locutus->database->query(query.str()))
+	if (!locutus->database->query(query.str())) {
 		locutus->debug(DEBUG_NOTICE, "Unable to save album in cache, query failed. See error above");
+		return false;
+	}
 	query.str("");
 	query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), type = '" << e_type << "', title = '" << e_title << "', released = " << e_released << ", last_updated = now() WHERE mbid = '" << e_mbid << "'";
-	if (!locutus->database->query(query.str()))
+	if (!locutus->database->query(query.str())) {
 		locutus->debug(DEBUG_NOTICE, "Unable to save album in cache, query failed. See error above");
+		return false;
+	}
 	/* save tracks */
 	bool status = true;
 	for (vector<Track *>::const_iterator track = tracks.begin(); track != tracks.end(); ++track) {

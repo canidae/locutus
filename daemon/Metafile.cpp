@@ -7,7 +7,7 @@ Metafile::Metafile(Locutus *locutus) {
 	mbid_lookup = false;
 	puid_lookup = false;
 	save = false;
-	id = -1;
+	id = UNDEFINED_FILE_ID;
 	bitrate = 0;
 	channels = 0;
 	duration = 0;
@@ -155,23 +155,24 @@ bool Metafile::loadFromCache(const string &filename) {
 		return false;
 	}
 	this->filename = filename;
-	duration = locutus->database->getInt(0, 1);
-	channels = locutus->database->getInt(0, 2);
-	bitrate = locutus->database->getInt(0, 3);
-	samplerate = locutus->database->getInt(0, 4);
-	puid = locutus->database->getString(0, 5);
-	album = locutus->database->getString(0, 6);
-	albumartist = locutus->database->getString(0, 7);
-	albumartistsort = locutus->database->getString(0, 8);
-	artist = locutus->database->getString(0, 9);
-	artistsort = locutus->database->getString(0, 10);
-	musicbrainz_albumartistid = locutus->database->getString(0, 11);
-	musicbrainz_albumid = locutus->database->getString(0, 12);
-	musicbrainz_artistid = locutus->database->getString(0, 13);
-	musicbrainz_trackid = locutus->database->getString(0, 14);
-	title = locutus->database->getString(0, 15);
-	tracknumber = locutus->database->getString(0, 16);
-	released = locutus->database->getString(0, 17);
+	id = locutus->database->getInt(0, 1);
+	duration = locutus->database->getInt(0, 2);
+	channels = locutus->database->getInt(0, 3);
+	bitrate = locutus->database->getInt(0, 4);
+	samplerate = locutus->database->getInt(0, 5);
+	puid = locutus->database->getString(0, 6);
+	album = locutus->database->getString(0, 7);
+	albumartist = locutus->database->getString(0, 8);
+	albumartistsort = locutus->database->getString(0, 9);
+	artist = locutus->database->getString(0, 10);
+	artistsort = locutus->database->getString(0, 11);
+	musicbrainz_albumartistid = locutus->database->getString(0, 12);
+	musicbrainz_albumid = locutus->database->getString(0, 13);
+	musicbrainz_artistid = locutus->database->getString(0, 14);
+	musicbrainz_trackid = locutus->database->getString(0, 15);
+	title = locutus->database->getString(0, 16);
+	tracknumber = locutus->database->getString(0, 17);
+	released = locutus->database->getString(0, 18);
 	return true;
 }
 
@@ -246,61 +247,55 @@ bool Metafile::saveMetadata(const Track *track) {
 				ext[a] -= 32;
 		}
 	}
+	bool ok = false;
 	if (ext == "OGG") {
 		Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), false);
 		saveXiphComment(file->tag(), track);
-		file->save();
+		ok = file->save();
 		delete file;
-		return true;
 	} else if (ext == "MP3") {
 		MPEG::File *file = new MPEG::File(filename.c_str(), false);
 		saveID3v2Tag(file->ID3v2Tag(), track);
-		file->save();
+		ok = file->save();
 		delete file;
-		return true;
 	} else if (ext == "FLAC") {
 		FLAC::File *file = new FLAC::File(filename.c_str(), false);
 		saveXiphComment(file->xiphComment(), track);
-		file->save();
+		ok = file->save();
 		delete file;
-		return true;
 	} else if (ext == "MPC") {
 		MPC::File *file = new MPC::File(filename.c_str(), false);
 		saveAPETag(file->APETag(), track);
-		file->save();
+		ok = file->save();
 		delete file;
-		return true;
 	} else if (ext == "OGA") {
 		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
-		readXiphComment(file->tag());
-		readAudioProperties(file->audioProperties());
+		saveXiphComment(file->tag(), track);
+		ok = file->save();
 		delete file;
 	/*
 	} else if (ext == "WV") {
 		WavPack::File *file = new WavPack::File(filename.c_str(), false);
 		saveAPETag(file->APETag(), track);
-		file->save();
+		ok = file->save();
 		delete file;
-		return true;
 	} else if (ext == "SPX") {
 		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), false);
 		saveXiphComment(file->tag(), track);
-		file->save();
+		ok = file->save();
 		delete file;
-		return true;
 	} else if (ext == "TTA") {
 		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), false);
 		saveAPETag(file->APETag(), track);
-		file->save();
+		ok = file->save();
 		delete file;
-		return true;
 	*/
 	} else {
 		ostringstream tmp;
 		tmp << "Unable to save file '" << filename << "': Unknown filetype";
 		locutus->debug(DEBUG_WARNING, tmp.str());
 	}
-	return false;
+	return ok;
 }
 
 bool Metafile::saveToCache() const {
@@ -311,32 +306,36 @@ bool Metafile::saveToCache() const {
 		if (!locutus->database->query(query.str()))
 			locutus->debug(DEBUG_NOTICE, "Unable to store PUID in database. See error above");
 	}
+	string e_filename = locutus->database->escapeString(filename);
+	string e_album = locutus->database->escapeString(album);
+	string e_albumartist = locutus->database->escapeString(albumartist);
+	string e_albumartistsort = locutus->database->escapeString(albumartistsort);
+	string e_artist = locutus->database->escapeString(artist);
+	string e_artistsort = locutus->database->escapeString(artistsort);
+	string e_musicbrainz_albumartistid = locutus->database->escapeString(musicbrainz_albumartistid);
+	string e_musicbrainz_albumid = locutus->database->escapeString(musicbrainz_albumid);
+	string e_musicbrainz_artistid = locutus->database->escapeString(musicbrainz_artistid);
+	string e_musicbrainz_trackid = locutus->database->escapeString(musicbrainz_trackid);
+	string e_title = locutus->database->escapeString(title);
+	string e_tracknumber = locutus->database->escapeString(tracknumber);
+	string e_released = locutus->database->escapeString(released);
 	query.str("");
-	query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, ";
+	if (id == UNDEFINED_FILE_ID) {
+		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released) SELECT '" << e_filename << "', " << duration << ", " << channels << ", " << bitrate << ", " << samplerate << ", ";
+		if (puid != "")
+			query << "(SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
+		else
+			query << "NULL, ";
+		query << "'" << e_album << "', '" << e_albumartist << "', '" << e_albumartistsort << "', '" << e_artist << "', '" << e_artistsort << "', '" << e_musicbrainz_albumartistid << "', '" << e_musicbrainz_albumid << "', '" << e_musicbrainz_artistid << "', '" << e_musicbrainz_trackid << "', '" << e_title << "', '" << e_tracknumber << "', '" << e_released << "' WHERE NOT EXISTS (SELECT true FROM file WHERE file_id = " << id << ")";
+		if (!locutus->database->query(query.str())) {
+			locutus->debug(DEBUG_NOTICE, "Unable to store file in database. See error above");
+			return false;
+		}
+	}
+	query << "UPDATE file SET filename = '" << e_filename << "', duration = " << duration << ", channels = " << channels << ", bitrate = " << bitrate << ", samplerate = " << samplerate << ", ";
 	if (puid != "")
-		query << "puid_id, ";
-	query << "album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released) VALUES ('";
-	query << locutus->database->escapeString(filename) << "', ";
-	query << duration << ", ";
-	query << channels << ", ";
-	query << bitrate << ", ";
-	query << samplerate << ", ";
-	if (puid != "")
-		query << "(SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), '";
-	else
-		query << "'";
-	query << locutus->database->escapeString(album) << "', '";
-	query << locutus->database->escapeString(albumartist) << "', '";
-	query << locutus->database->escapeString(albumartistsort) << "', '";
-	query << locutus->database->escapeString(artist) << "', '";
-	query << locutus->database->escapeString(artistsort) << "', '";
-	query << locutus->database->escapeString(musicbrainz_albumartistid) << "', '";
-	query << locutus->database->escapeString(musicbrainz_albumid) << "', '";
-	query << locutus->database->escapeString(musicbrainz_artistid) << "', '";
-	query << locutus->database->escapeString(musicbrainz_trackid) << "', '";
-	query << locutus->database->escapeString(title) << "', '";
-	query << locutus->database->escapeString(tracknumber) << "', '";
-	query << locutus->database->escapeString(released) << "')";
+		query << "puid = (SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
+	query << "album = '" << e_album << "', albumartist = '" << e_albumartist << "', albumartistsort = '" << e_albumartistsort << "', artist = '" << e_artist << "', artistsort = '" << e_artistsort << "', musicbrainz_albumartistid = '" << e_musicbrainz_albumartistid << "', musicbrainz_albumid = '" << e_musicbrainz_albumid << "', musicbrainz_artistid = '" << e_musicbrainz_artistid << "', musicbrainz_trackid = '" << e_musicbrainz_trackid << "', title = '" << e_title << "', tracknumber = '" << e_tracknumber << "', released = '" << e_released << "' WHERE file_id = " << id;
 	if (!locutus->database->query(query.str())) {
 		locutus->debug(DEBUG_NOTICE, "Unable to store file in database. See error above");
 		return false;

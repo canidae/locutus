@@ -14,7 +14,7 @@ void FileHandler::loadSettings() {
 	input_dir = locutus->settings->loadSetting(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
 	output_dir = locutus->settings->loadSetting(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
 	duplicate_dir = locutus->settings->loadSetting(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
-	file_format = locutus->settings->loadSetting(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
+	createFileFormatList(locutus->settings->loadSetting(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION));
 }
 
 void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
@@ -22,32 +22,14 @@ void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
 	for (map<Metafile *, Track *>::const_iterator s = files.begin(); s != files.end(); ++s) {
 		locutus->debug(DEBUG_INFO, s->first->filename);
 		/* first save metadata */
-		s->first->saveMetadata(s->second);
-		/* TODO: then move file */
-		/* and finally update file table */
-		ostringstream query;
-		query << "UPDATE file SET filename = '" << locutus->database->escapeString(s->first->filename) << "', ";
-		query << "last_updated = now(), ";
-		query << "puid_id = (SELECT puid_id FROM puid WHERE puid = '" << locutus->database->escapeString(s->first->puid) << "'), ";
-		query << "album = '" << locutus->database->escapeString(s->first->album) << "', ";
-		query << "albumartist = '" << locutus->database->escapeString(s->first->albumartist) << "', ";
-		query << "albumartistsort = '" << locutus->database->escapeString(s->first->albumartistsort) << "', ";
-		query << "artist = '" << locutus->database->escapeString(s->first->artist) << "', ";
-		query << "artistsort = '" << locutus->database->escapeString(s->first->artistsort) << "', ";
-		query << "musicbrainz_albumartistid = '" << locutus->database->escapeString(s->first->musicbrainz_albumartistid) << "', ";
-		query << "musicbrainz_albumid = '" << locutus->database->escapeString(s->first->musicbrainz_albumid) << "', ";
-		query << "musicbrainz_artistid = '" << locutus->database->escapeString(s->first->musicbrainz_artistid) << "', ";
-		query << "musicbrainz_trackid = '" << locutus->database->escapeString(s->first->musicbrainz_trackid) << "', ";
-		query << "title = '" << locutus->database->escapeString(s->first->title) << "', ";
-		query << "tracknumber = '" << locutus->database->escapeString(s->first->tracknumber) << "', ";
-		query << "released = '" << locutus->database->escapeString(s->first->released) << "', ";
-		query << "track_id = " << s->second->id << " ";
-		query << "WHERE file_id = " << s->first->id;
-		if (!locutus->database->query(query.str())) {
-			query.str("");
-			query << "Unable to update database entry for file '" << s->first->filename << "'";
-			locutus->debug(DEBUG_WARNING, query.str());
+		if (!s->first->saveMetadata(s->second)) {
+			/* unable to save metadata */
+			continue;
 		}
+		/* move file */
+		moveFile(s->first);
+		/* and finally update file table */
+		s->first->saveToCache();
 	}
 }
 
@@ -64,6 +46,20 @@ void FileHandler::scanFiles(const string &directory) {
 }
 
 /* private methods */
+void FileHandler::createFileFormatList(const string &file_format) {
+	if (file_format.size() <= 0) {
+		locutus->debug(DEBUG_WARNING, "Output file format is empty, won't be able to save files");
+		return;
+	}
+	string::size_type pos = -1;
+	while ((pos = file_format.find_first_of("%", pos + 1)) != string::npos) {
+	}
+}
+
+bool FileHandler::moveFile(Metafile *file) {
+	return false;
+}
+
 bool FileHandler::parseDirectory() {
 	if (dir_queue.size() <= 0)
 		return false;

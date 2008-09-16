@@ -36,6 +36,8 @@
 #define APETITLE "Title"
 #define APETRACKNUMBER "Track"
 #define APEDATE "Year"
+/* undefined file_id */
+#define UNDEFINED_FILE_ID -1
 
 /* forward declare */
 class Metafile;

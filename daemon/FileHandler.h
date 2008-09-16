@@ -70,11 +70,13 @@ class FileHandler {
 	private:
 		/* variables */
 		Locutus *locutus;
-		string file_format;
 		list<string> dir_queue;
 		list<string> file_queue;
+		list<string> file_format_list;
 
 		/* methods */
+		void createFileFormatList(const string &file_format);
+		bool moveFile(Metafile *file);
 		bool parseDirectory();
 		bool parseFile();
 };
