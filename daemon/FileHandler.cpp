@@ -50,49 +50,67 @@ void FileHandler::createFileFormatList(const string &file_format) {
 	file_format_list.clear();
 	string::size_type stop = 0;
 	string::size_type start = 0;
-	while (start < file_format.size() && (stop = file_format.find_first_of("%", start)) != string::npos) {
-		file_format_list.push_back(file_format.substr(start, stop - start));
-		start = stop + 1;
+	FilenameEntry entry;
+	while (stop != string::npos && start < file_format.size()) {
+		start = stop;
+		stop = file_format.find_first_of("%", stop + 1);
+		if (file_format[start] != '%' || stop - start == 1) {
+			/* static entry */
+			entry.limit = -1;
+			entry.type = TYPE_STATIC;
+			entry.custom = file_format.substr(start, stop - start);
+			file_format_list.push_back(entry);
+			continue;
+		}
+		string::size_type limit_stop = file_format.find_first_not_of("%0123456789", start);
+		entry.custom = file_format.substr(limit_stop, stop - limit_stop);
+		if (limit_stop != string::npos)
+			entry.limit = atoi(file_format.substr(start + 1, limit_stop - start - 1).c_str()); // limit entry
+		else
+			entry.limit = -1;
+		if (entry.custom == "album")
+			entry.type = TYPE_ALBUM;
+		else if (entry.custom == "albumartist")
+			entry.type = TYPE_ALBUMARTIST;
+		else if (entry.custom == "albumartistsort")
+			entry.type = TYPE_ALBUMARTISTSORT;
+		else if (entry.custom == "artist")
+			entry.type = TYPE_ARTIST;
+		else if (entry.custom == "artistsort")
+			entry.type = TYPE_ARTISTSORT;
+		else if (entry.custom == "musicbrainz_albumartistid")
+			entry.type = TYPE_MUSICBRAINZ_ALBUMARTISTID;
+		else if (entry.custom == "musicbrainz_albumid")
+			entry.type = TYPE_MUSICBRAINZ_ALBUMID;
+		else if (entry.custom == "musicbrainz_artistid")
+			entry.type = TYPE_MUSICBRAINZ_ARTISTID;
+		else if (entry.custom == "musicbrainz_trackid")
+			entry.type = TYPE_MUSICBRAINZ_TRACKID;
+		else if (entry.custom == "musicip_puid")
+			entry.type = TYPE_MUSICIP_PUID;
+		else if (entry.custom == "title")
+			entry.type = TYPE_TITLE;
+		else if (entry.custom == "tracknumber")
+			entry.type = TYPE_TRACKNUMBER;
+		else if (entry.custom == "date")
+			entry.type = TYPE_DATE;
+		else if (entry.custom == "custom_artist")
+			entry.type = TYPE_CUSTOM_ARTIST;
+		else
+			entry.type = TYPE_STATIC;
+		if (entry.type == TYPE_STATIC)
+			entry.custom = file_format.substr(start, stop - start);
+		else
+			entry.custom.clear();
+		file_format_list.push_back(entry);
 	}
-	if (start < file_format.size())
-		file_format_list.push_back(file_format.substr(start));
 	if (file_format_list.size() <= 0)
 		locutus->debug(DEBUG_WARNING, "Output file format is empty, won't be able to save files");
 }
 
 bool FileHandler::moveFile(Metafile *file) {
 	string filename = output_dir;
-	for (list<string>::iterator entry = file_format_list.begin(); entry != file_format_list.end(); ++entry) {
-		if ((*entry)[0] != '%' || entry->size() <= 1) {
-			/* static entry */
-			filename.append(*entry);
-			continue;
-		}
-		int limit = -1;
-		string::size_type limit_stop = entry->find_first_not_of("%0123456789");
-		string token;
-		if (limit_stop != string::npos) {
-			/* entry should be limited */
-			limit = atoi(entry->substr(1, limit_stop).c_str());
-			token = entry->substr(limit_stop);
-		} else {
-			token = entry->substr(1);
-		}
-		if (token == "album") {
-		} else if (token == "albumartist") {
-		} else if (token == "albumartistsort") {
-		} else if (token == "artist") {
-		} else if (token == "artistsort") {
-		} else if (token == "musicbrainz_albumartistid") {
-		} else if (token == "musicbrainz_albumid") {
-		} else if (token == "musicbrainz_artistid") {
-		} else if (token == "musicbrainz_trackid") {
-		} else if (token == "musicip_puid") {
-		} else if (token == "title") {
-		} else if (token == "tracknumber") {
-		} else if (token == "date") {
-		} else if (token == "custom_artist") {
-		}
+	for (list<FilenameEntry>::iterator entry = file_format_list.begin(); entry != file_format_list.end(); ++entry) {
 	}
 	return false;
 }

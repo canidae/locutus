@@ -12,6 +12,22 @@
 #define MUSIC_DUPLICATE_KEY "duplicate_directory"
 #define MUSIC_DUPLICATE_VALUE "/media/music/duplicates/"
 #define MUSIC_DUPLICATE_DESCRIPTION "Directory for duplicate files"
+/* file naming */
+#define TYPE_STATIC 0
+#define TYPE_ALBUM 1
+#define TYPE_ALBUMARTIST 2
+#define TYPE_ALBUMARTISTSORT 3
+#define TYPE_ARTIST 4
+#define TYPE_ARTISTSORT 5
+#define TYPE_MUSICBRAINZ_ALBUMARTISTID 6
+#define TYPE_MUSICBRAINZ_ALBUMID 7
+#define TYPE_MUSICBRAINZ_ARTISTID 8
+#define TYPE_MUSICBRAINZ_TRACKID 9
+#define TYPE_MUSICIP_PUID 10
+#define TYPE_TITLE 11
+#define TYPE_TRACKNUMBER 12
+#define TYPE_DATE 13
+#define TYPE_CUSTOM_ARTIST 14
 /* album
  * albumartist
  * albumartistsort
@@ -47,6 +63,13 @@ class FileHandler;
 /* namespaces */
 using namespace std;
 
+/* struct for saving */
+struct FilenameEntry {
+	int type;
+	int limit;
+	string custom;
+};
+
 /* FileHandler */
 class FileHandler {
 	public:
@@ -72,7 +95,7 @@ class FileHandler {
 		Locutus *locutus;
 		list<string> dir_queue;
 		list<string> file_queue;
-		list<string> file_format_list;
+		list<FilenameEntry> file_format_list;
 
 		/* methods */
 		void createFileFormatList(const string &file_format);
