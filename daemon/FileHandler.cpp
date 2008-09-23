@@ -3,6 +3,20 @@
 /* constructors */
 FileHandler::FileHandler(Locutus *locutus) {
 	this->locutus = locutus;
+	format_mapping["%album%"] = TYPE_ALBUM;
+	format_mapping["%albumartist%"] = TYPE_ALBUMARTIST;
+	format_mapping["%albumartistsort%"] = TYPE_ALBUMARTISTSORT;
+	format_mapping["%artist%"] = TYPE_ARTIST;
+	format_mapping["%artistsort%"] = TYPE_ARTISTSORT;
+	format_mapping["%musicbrainz_albumartistid%"] = TYPE_MUSICBRAINZ_ALBUMARTISTID;
+	format_mapping["%musicbrainz_albumid%"] = TYPE_MUSICBRAINZ_ALBUMID;
+	format_mapping["%musicbrainz_artistid%"] = TYPE_MUSICBRAINZ_ARTISTID;
+	format_mapping["%musicbrainz_trackid%"] = TYPE_MUSICBRAINZ_TRACKID;
+	format_mapping["%musicip_puid%"] = TYPE_MUSICIP_PUID;
+	format_mapping["%title%"] = TYPE_TITLE;
+	format_mapping["%tracknumber%"] = TYPE_TRACKNUMBER;
+	format_mapping["%date%"] = TYPE_DATE;
+	format_mapping["%custom_artist%"] = TYPE_CUSTOM_ARTIST;
 }
 
 /* destructors */
@@ -14,7 +28,7 @@ void FileHandler::loadSettings() {
 	input_dir = locutus->settings->loadSetting(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
 	output_dir = locutus->settings->loadSetting(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
 	duplicate_dir = locutus->settings->loadSetting(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
-	createFileFormatList(locutus->settings->loadSetting(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION));
+	file_format = locutus->settings->loadSetting(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
 }
 
 void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
@@ -46,72 +60,99 @@ void FileHandler::scanFiles(const string &directory) {
 }
 
 /* private methods */
-void FileHandler::createFileFormatList(const string &file_format) {
-	file_format_list.clear();
-	string::size_type stop = 0;
-	string::size_type start = 0;
-	FilenameEntry entry;
-	while (stop != string::npos && start < file_format.size()) {
-		start = stop;
-		stop = file_format.find_first_of("%", stop + 1);
-		if (file_format[start] != '%' || stop - start == 1) {
-			/* static entry */
-			entry.limit = -1;
-			entry.type = TYPE_STATIC;
-			entry.custom = file_format.substr(start, stop - start);
-			file_format_list.push_back(entry);
-			continue;
-		}
-		string::size_type limit_stop = file_format.find_first_not_of("%0123456789", start);
-		entry.custom = file_format.substr(limit_stop, stop - limit_stop);
-		if (limit_stop != string::npos)
-			entry.limit = atoi(file_format.substr(start + 1, limit_stop - start - 1).c_str()); // limit entry
-		else
-			entry.limit = -1;
-		if (entry.custom == "album")
-			entry.type = TYPE_ALBUM;
-		else if (entry.custom == "albumartist")
-			entry.type = TYPE_ALBUMARTIST;
-		else if (entry.custom == "albumartistsort")
-			entry.type = TYPE_ALBUMARTISTSORT;
-		else if (entry.custom == "artist")
-			entry.type = TYPE_ARTIST;
-		else if (entry.custom == "artistsort")
-			entry.type = TYPE_ARTISTSORT;
-		else if (entry.custom == "musicbrainz_albumartistid")
-			entry.type = TYPE_MUSICBRAINZ_ALBUMARTISTID;
-		else if (entry.custom == "musicbrainz_albumid")
-			entry.type = TYPE_MUSICBRAINZ_ALBUMID;
-		else if (entry.custom == "musicbrainz_artistid")
-			entry.type = TYPE_MUSICBRAINZ_ARTISTID;
-		else if (entry.custom == "musicbrainz_trackid")
-			entry.type = TYPE_MUSICBRAINZ_TRACKID;
-		else if (entry.custom == "musicip_puid")
-			entry.type = TYPE_MUSICIP_PUID;
-		else if (entry.custom == "title")
-			entry.type = TYPE_TITLE;
-		else if (entry.custom == "tracknumber")
-			entry.type = TYPE_TRACKNUMBER;
-		else if (entry.custom == "date")
-			entry.type = TYPE_DATE;
-		else if (entry.custom == "custom_artist")
-			entry.type = TYPE_CUSTOM_ARTIST;
-		else
-			entry.type = TYPE_STATIC;
-		if (entry.type == TYPE_STATIC)
-			entry.custom = file_format.substr(start, stop - start);
-		else
-			entry.custom.clear();
-		file_format_list.push_back(entry);
-	}
-	if (file_format_list.size() <= 0)
-		locutus->debug(DEBUG_WARNING, "Output file format is empty, won't be able to save files");
-}
-
 bool FileHandler::moveFile(Metafile *file) {
-	string filename = output_dir;
-	for (list<FilenameEntry>::iterator entry = file_format_list.begin(); entry != file_format_list.end(); ++entry) {
+	if (file_format.size() <= 0) {
+		locutus->debug(DEBUG_WARNING, "File format for output is way too short, refuse to save file");
+		return false;
 	}
+	string filename = output_dir;
+	string::size_type start = filename.size() - 1;
+	filename.append(file_format);
+	while (start != string::npos) {
+		start = filename.find('%', start + 1);
+		for (map<string, int>::iterator replace = format_mapping.begin(); replace != format_mapping.end() && start != string::npos; ++replace) {
+			if (filename.find(replace->first, start) != start)
+				continue;
+			string tmp;
+			switch (replace->second) {
+				case TYPE_ALBUM:
+					tmp = file->album;
+					break;
+
+				case TYPE_ALBUMARTIST:
+					tmp = file->albumartist;
+					break;
+
+				case TYPE_ALBUMARTISTSORT:
+					tmp = file->albumartistsort;
+					break;
+
+				case TYPE_ARTIST:
+					tmp = file->artist;
+					break;
+
+				case TYPE_ARTISTSORT:
+					tmp = file->artistsort;
+					break;
+
+				case TYPE_MUSICBRAINZ_ALBUMARTISTID:
+					tmp = file->musicbrainz_albumartistid;
+					break;
+
+				case TYPE_MUSICBRAINZ_ALBUMID:
+					tmp = file->musicbrainz_albumid;
+					break;
+
+				case TYPE_MUSICBRAINZ_ARTISTID:
+					tmp = file->musicbrainz_artistid;
+					break;
+
+				case TYPE_MUSICBRAINZ_TRACKID:
+					tmp = file->musicbrainz_trackid;
+					break;
+
+				case TYPE_MUSICIP_PUID:
+					tmp = file->puid;
+					break;
+
+				case TYPE_TITLE:
+					tmp = file->title;
+					break;
+
+				case TYPE_TRACKNUMBER:
+					tmp = file->tracknumber;
+					break;
+
+				case TYPE_DATE:
+					tmp = file->released;
+					break;
+
+				case TYPE_CUSTOM_ARTIST:
+					/*
+					   if (file->custom_artist_sortname != "") {
+					   tmp = file->custom_artist_sortname;
+					   } else {
+					   */
+					if (file->musicbrainz_artistid != VARIOUS_ARTISTS_MBID) {
+						tmp = file->albumartistsort;
+					} else {
+						tmp = file->artistsort;
+					}
+					/*
+					   }
+					   */
+					break;
+
+				default:
+					/* this shouldn't happen */
+					locutus->debug(DEBUG_WARNING, "Unexpected entry type in file format. The devs didn't do their work properly");
+					continue;
+			}
+			filename.erase(start, replace->first.size());
+			filename.insert(start, tmp);
+		}
+	}
+	locutus->debug(DEBUG_INFO, filename);
 	return false;
 }
 
