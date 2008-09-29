@@ -9,9 +9,7 @@ class Album;
 #include <string>
 #include <vector>
 #include "Artist.h"
-#include "Locutus.h"
 #include "Track.h"
-#include "XMLNode.h"
 
 /* namespaces */
 using namespace std;
@@ -20,26 +18,17 @@ using namespace std;
 class Album {
 	public:
 		/* variables */
-		Artist *artist;
+		Artist artist;
 		string mbid;
 		string released;
 		string title;
 		string type;
-		vector<Track *> tracks;
+		vector<Track> tracks;
 
 		/* constructors */
-		Album(Locutus *locutus = NULL);
+		Album(const string &mbid = "");
 
 		/* destructors */
 		~Album();
-
-		/* methods */
-		bool loadFromCache(const string &mbid);
-		bool retrieveFromWebService(const string &mbid);
-		bool saveToCache() const;
-
-	private:
-		/* variables */
-		Locutus *locutus;
 };
 #endif

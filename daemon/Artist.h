@@ -7,7 +7,6 @@ class Artist;
 
 /* includes */
 #include <string>
-#include "Locutus.h"
 
 /* namespaces */
 using namespace std;
@@ -21,16 +20,9 @@ class Artist {
 		string sortname;
 
 		/* constructors */
-		Artist(Locutus *locutus);
+		Artist();
 
 		/* destructors */
 		~Artist();
-
-		/* methods */
-		bool saveToCache() const;
-
-	private:
-		/* variables */
-		Locutus *locutus;
 };
 #endif

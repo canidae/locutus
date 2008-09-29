@@ -1,20 +1,18 @@
 #ifndef DATABASE_H
 /* defines */
 #define DATABASE_H
-/* connection (FIXME: should be config file) */
-#define CONNECTION_STRING "host=localhost user=locutus password=locutus dbname=locutus"
-//#define CONNECTION_STRING "host=sql.samfundet.no user=locutus password=locutus dbname=locutus"
 
 /* forward declare */
 class Database;
 
 /* includes */
-extern "C" {
-	#include <libpq-fe.h>
-}
-#include <iostream>
 #include <string>
+#include "Album.h"
+#include "Artist.h"
 #include "Locutus.h"
+#include "Metafile.h"
+#include "Metatrack.h"
+#include "Track.h"
 
 /* namespaces */
 using namespace std;
@@ -26,27 +24,22 @@ class Database {
 		Database(Locutus *locutus);
 
 		/* destructors */
-		~Database();
+		virtual ~Database();
 
 		/* methods */
-		string escapeString(const string &str) const;
-		bool getBool(int row, int col) const;
-		double getDouble(int row, int col) const;
-		int getInt(int row, int col) const;
-		int getRows() const;
-		string getString(int row, int col) const;
-		bool isNull(int row, int col) const;
-		bool query(const string &q);
+		virtual bool load(Album *album);
+		virtual bool load(Metafile *metafile);
+		virtual double loadSetting(const string &key, double default_value, const string &description);
+		virtual int loadSetting(const string &key, int default_value, const string &description);
+		virtual string loadSetting(const string &key, const string &default_value, const string &description);
+		virtual bool save(const Album &album);
+		virtual bool save(const Artist &artist);
+		virtual bool save(const Metafile &metafile);
+		virtual bool save(const Metatrack &metatrack);
+		virtual bool save(const Track &track);
 
-	private:
+	protected:
 		/* variables */
 		Locutus *locutus;
-		bool got_result;
-		PGconn *pg_connection;
-		PGresult *pg_result;
-
-		/* methods */
-		void clear();
-		bool doQuery(const char *q);
 };
 #endif

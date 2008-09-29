@@ -7,7 +7,6 @@ class Metatrack;
 
 /* includes */
 #include <string>
-#include "Locutus.h"
 #include "XMLNode.h"
 
 /* namespaces */
@@ -28,7 +27,7 @@ class Metatrack {
 		string puid;
 
 		/* constructors */
-		Metatrack(Locutus *locutus);
+		Metatrack();
 
 		/* destructors */
 		~Metatrack();
@@ -36,9 +35,5 @@ class Metatrack {
 		/* methods */
 		bool readFromXML(XMLNode *track);
 		bool saveToCache() const;
-
-	private:
-		/* variables */
-		Locutus *locutus;
 };
 #endif

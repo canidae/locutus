@@ -11,8 +11,8 @@ Matcher::~Matcher() {
 
 /* methods */
 void Matcher::loadSettings() {
-	puid_min_score = locutus->settings->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
-	metadata_min_score = locutus->settings->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
+	puid_min_score = locutus->database->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
+	metadata_min_score = locutus->database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
 }
 
 void Matcher::match(const string &group, const vector<Metafile *> &files) {
@@ -40,7 +40,7 @@ void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *>
 		for (vector<Track *>::size_type t = 0; t < album->tracks.size(); ++t) {
 			if (mgs[mbid].scores[t].find(*mf) != mgs[mbid].scores[t].end())
 				continue;
-			Metatrack mt = album->tracks[t]->getAsMetatrack();
+			Metatrack mt = album->tracks[t].getAsMetatrack();
 			Match m = (*mf)->compareWithMetatrack(mt);
 			if (m.meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
@@ -107,10 +107,10 @@ bool Matcher::loadAlbum(const string &mbid) {
 		return false;
 	if (mgs.find(mbid) != mgs.end())
 		return true; // already loaded
-	Album *album = new Album(locutus);
-	if (!album->loadFromCache(mbid)) {
-		if (album->retrieveFromWebService(mbid))
-			album->saveToCache();
+	Album *album = new Album(mbid);
+	if (!locutus->database->load(album)) {
+		if (locutus->webservice->lookupAlbum(album))
+			locutus->database->save(album);
 	}
 	if (album->mbid != mbid) {
 		/* hmm, didn't find the album? */
@@ -242,9 +242,9 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 					}
 				}
 				if (best_track != -1) {
-					used_files[best_file->first] = mg->second.album->tracks[best_track];
+					used_files[best_file->first] = &mg->second.album->tracks[best_track];
 					used_tracks[best_track] = true;
-					album_files[best_file->first] = mg->second.album->tracks[best_track];
+					album_files[best_file->first] = &mg->second.album->tracks[best_track];
 					album_score += best_track_score;
 					++files_matched;
 				}
@@ -272,6 +272,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 }
 
 bool Matcher::saveMatchToCache(const string &filename, const string &track_mbid, const Match &match) const {
+	/*
 	if (filename == "" || track_mbid.size() != 36)
 		return false;
 	string e_filename = locutus->database->escapeString(filename);
@@ -284,6 +285,7 @@ bool Matcher::saveMatchToCache(const string &filename, const string &track_mbid,
 	query << "UPDATE match SET mbid_match = " << (match.mbid_match ? "true" : "false") << ", puid_match = "  << (match.puid_match ? "true" : "false") << ", meta_score = " << match.meta_score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
 	if (!locutus->database->query(query.str()))
 		locutus->debug(DEBUG_NOTICE, "Unable to save metadata match in cache, query failed. See error above");
+	*/
 	return true;
 }
 

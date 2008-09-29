@@ -15,19 +15,63 @@ WebService::~WebService() {
 
 /* methods */
 void WebService::loadSettings() {
-	metadata_search_url = locutus->settings->loadSetting(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
-	release_lookup_url = locutus->settings->loadSetting(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
+	metadata_search_url = locutus->database->loadSetting(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
+	release_lookup_url = locutus->database->loadSetting(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 }
 
-XMLNode *WebService::lookupAlbum(const string &mbid) {
-	if (mbid.size() != 36 || mbid[8] != '-' || mbid[13] != '-' || mbid[18] != '-' || mbid[23] != '-')
-		return NULL;
+bool WebService::lookupAlbum(Album *album) {
+	if (album == NULL || album->mbid.size() != 36 || album->mbid[8] != '-' || album->mbid[13] != '-' || album->mbid[18] != '-' || album->mbid[23] != '-')
+		return false;
 	string url = release_lookup_url;
-	url.append(mbid);
+	url.append(album->mbid);
 	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
-	if (fetch(url.c_str()))
-		return root;
-	return NULL;
+	if (!fetch(url.c_str()))
+		return false;
+	/* album data */
+	if (root == NULL)
+		return false;
+	if (root->children["metadata"].size() <= 0)
+		return false;
+	XMLNode *xml_album = root->children["metadata"][0]->children["release"][0];
+	album->mbid = xml_album->children["id"][0]->value;
+	album->type = xml_album->children["type"][0]->value;
+	album->title = xml_album->children["title"][0]->value;
+	if (xml_album->children["release-event-list"].size() > 0) {
+		album->released = xml_album->children["release-event-list"][0]->children["event"][0]->children["date"][0]->value;
+		if (album->released.size() == 10 && album->released[4] == '-' && album->released[7] == '-') {
+			/* ok as it is, probably a valid date */
+		} else if (album->released.size() == 4) {
+			/* only year, make month & day 01 */
+			album->released.append("-01-01");
+		} else {
+			/* possibly not a valid date, ignore it */
+			album->released = "";
+		}
+	}
+	/* artist data */
+	album->artist.mbid = xml_album->children["artist"][0]->children["id"][0]->value;
+	album->artist.name = xml_album->children["artist"][0]->children["name"][0]->value;
+	album->artist.sortname = xml_album->children["artist"][0]->children["sort-name"][0]->value;
+	/* track data */
+	album->tracks.resize(xml_album->children["track-list"][0]->children["track"].size(), NULL);
+	for (vector<XMLNode *>::size_type a = 0; a < xml_album->children["track-list"][0]->children["track"].size(); ++a) {
+		/* track data */
+		album->tracks[a].mbid = xml_album->children["track-list"][0]->children["track"][a]->children["id"][0]->value;
+		album->tracks[a].title = xml_album->children["track-list"][0]->children["track"][a]->children["title"][0]->value;
+		album->tracks[a].duration = atoi(xml_album->children["track-list"][0]->children["track"][a]->children["duration"][0]->value.c_str());
+		album->tracks[a].tracknumber = a + 1;
+		/* track artist data */
+		if (xml_album->children["track-list"][0]->children["track"][a]->children["artist"].size() > 0) {
+			album->tracks[a].artist.mbid = xml_album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["id"][0]->value;
+			album->tracks[a].artist.name = xml_album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["name"][0]->value;
+			album->tracks[a].artist.sortname = xml_album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["sort-name"][0]->value;
+		} else {
+			album->tracks[a].artist.mbid = album->artist.mbid;
+			album->tracks[a].artist.name = album->artist.name;
+			album->tracks[a].artist.sortname = album->artist.sortname;
+		}
+	}
+	return true;
 }
 
 vector<Metatrack> *WebService::searchMetadata(const string &wsquery) {
@@ -39,7 +83,7 @@ vector<Metatrack> *WebService::searchMetadata(const string &wsquery) {
 	url.append(wsquery);
 	if (fetch(url.c_str()) && root->children["metadata"].size() > 0 && root->children["metadata"][0]->children["track-list"].size() > 0) {
 		for (vector<XMLNode *>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
-			Metatrack track(locutus);
+			Metatrack track;
 			track.readFromXML(root->children["metadata"][0]->children["track-list"][0]->children["track"][a]);
 			tracks->push_back(track);
 		}

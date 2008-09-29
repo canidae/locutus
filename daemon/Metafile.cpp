@@ -140,42 +140,6 @@ string Metafile::getGroup() const {
 	return "";
 }
 
-bool Metafile::loadFromCache(const string &filename) {
-	if (filename.size() <= 0) {
-		locutus->debug(DEBUG_NOTICE, "Length of filename is 0 or less? Can't load that from cache");
-		return false;
-	}
-	string e_filename = locutus->database->escapeString(filename);
-	ostringstream query;
-	query << "SELECT * FROM v_file_lookup WHERE filename = '" << e_filename << "'";
-	if (!locutus->database->query(query.str()) || locutus->database->getRows() <= 0) {
-		string msg = "Didn't find file in database: ";
-		msg.append(filename);
-		locutus->debug(DEBUG_NOTICE, msg);
-		return false;
-	}
-	this->filename = filename;
-	id = locutus->database->getInt(0, 1);
-	duration = locutus->database->getInt(0, 2);
-	channels = locutus->database->getInt(0, 3);
-	bitrate = locutus->database->getInt(0, 4);
-	samplerate = locutus->database->getInt(0, 5);
-	puid = locutus->database->getString(0, 6);
-	album = locutus->database->getString(0, 7);
-	albumartist = locutus->database->getString(0, 8);
-	albumartistsort = locutus->database->getString(0, 9);
-	artist = locutus->database->getString(0, 10);
-	artistsort = locutus->database->getString(0, 11);
-	musicbrainz_albumartistid = locutus->database->getString(0, 12);
-	musicbrainz_albumid = locutus->database->getString(0, 13);
-	musicbrainz_artistid = locutus->database->getString(0, 14);
-	musicbrainz_trackid = locutus->database->getString(0, 15);
-	title = locutus->database->getString(0, 16);
-	tracknumber = locutus->database->getString(0, 17);
-	released = locutus->database->getString(0, 18);
-	return true;
-}
-
 bool Metafile::readFromFile(const string &filename) {
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos) {
@@ -299,13 +263,13 @@ bool Metafile::saveMetadata(const Track *track) {
 		return false;
 	/* save ok, update tags "cached" */
 	album = track->album->title;
-	albumartist = track->album->artist->name;
-	albumartistsort = track->album->artist->sortname;
-	artist = track->artist->name;
-	artistsort = track->artist->sortname;
-	musicbrainz_albumartistid = track->album->artist->mbid;
+	albumartist = track->album->artist.name;
+	albumartistsort = track->album->artist.sortname;
+	artist = track->artist.name;
+	artistsort = track->artist.sortname;
+	musicbrainz_albumartistid = track->album->artist.mbid;
 	musicbrainz_albumid = track->album->mbid;
-	musicbrainz_artistid = track->artist->mbid;
+	musicbrainz_artistid = track->artist.mbid;
 	musicbrainz_trackid = track->mbid;
 	title = track->title;
 	ostringstream tracknum;
@@ -313,52 +277,6 @@ bool Metafile::saveMetadata(const Track *track) {
 	tracknumber = tracknum.str();
 	released = track->album->released;
 	//puid = track->puid;
-	return true;
-}
-
-bool Metafile::saveToCache() const {
-	ostringstream query;
-	string e_puid = locutus->database->escapeString(puid);
-	if (puid != "") {
-		query << "INSERT INTO puid(puid) SELECT '" << e_puid << "' WHERE NOT EXISTS (SELECT true FROM puid WHERE puid = '" << e_puid << "')";
-		if (!locutus->database->query(query.str()))
-			locutus->debug(DEBUG_NOTICE, "Unable to store PUID in database. See error above");
-	}
-	string e_filename = locutus->database->escapeString(filename);
-	string e_album = locutus->database->escapeString(album);
-	string e_albumartist = locutus->database->escapeString(albumartist);
-	string e_albumartistsort = locutus->database->escapeString(albumartistsort);
-	string e_artist = locutus->database->escapeString(artist);
-	string e_artistsort = locutus->database->escapeString(artistsort);
-	string e_musicbrainz_albumartistid = locutus->database->escapeString(musicbrainz_albumartistid);
-	string e_musicbrainz_albumid = locutus->database->escapeString(musicbrainz_albumid);
-	string e_musicbrainz_artistid = locutus->database->escapeString(musicbrainz_artistid);
-	string e_musicbrainz_trackid = locutus->database->escapeString(musicbrainz_trackid);
-	string e_title = locutus->database->escapeString(title);
-	string e_tracknumber = locutus->database->escapeString(tracknumber);
-	string e_released = locutus->database->escapeString(released);
-	if (id == UNDEFINED_FILE_ID) {
-		query.str("");
-		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released) SELECT '" << e_filename << "', " << duration << ", " << channels << ", " << bitrate << ", " << samplerate << ", ";
-		if (puid != "")
-			query << "(SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
-		else
-			query << "NULL, ";
-		query << "'" << e_album << "', '" << e_albumartist << "', '" << e_albumartistsort << "', '" << e_artist << "', '" << e_artistsort << "', '" << e_musicbrainz_albumartistid << "', '" << e_musicbrainz_albumid << "', '" << e_musicbrainz_artistid << "', '" << e_musicbrainz_trackid << "', '" << e_title << "', '" << e_tracknumber << "', '" << e_released << "' WHERE NOT EXISTS (SELECT true FROM file WHERE file_id = " << id << ")";
-		if (!locutus->database->query(query.str())) {
-			locutus->debug(DEBUG_NOTICE, "Unable to store file in database. See error above");
-			return false;
-		}
-	}
-	query.str("");
-	query << "UPDATE file SET filename = '" << e_filename << "', duration = " << duration << ", channels = " << channels << ", bitrate = " << bitrate << ", samplerate = " << samplerate << ", ";
-	if (puid != "")
-		query << "puid = (SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
-	query << "album = '" << e_album << "', albumartist = '" << e_albumartist << "', albumartistsort = '" << e_albumartistsort << "', artist = '" << e_artist << "', artistsort = '" << e_artistsort << "', musicbrainz_albumartistid = '" << e_musicbrainz_albumartistid << "', musicbrainz_albumid = '" << e_musicbrainz_albumid << "', musicbrainz_artistid = '" << e_musicbrainz_artistid << "', musicbrainz_trackid = '" << e_musicbrainz_trackid << "', title = '" << e_title << "', tracknumber = '" << e_tracknumber << "', released = '" << e_released << "' WHERE file_id = " << id;
-	if (!locutus->database->query(query.str())) {
-		locutus->debug(DEBUG_NOTICE, "Unable to store file in database. See error above");
-		return false;
-	}
 	return true;
 }
 
@@ -515,13 +433,13 @@ void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 
 void Metafile::saveAPETag(APE::Tag *tag, const Track *track) {
 	tag->addValue(APEALBUM, track->album->title, true);
-	tag->addValue(APEALBUMARTIST, track->album->artist->name, true);
-	tag->addValue(APEALBUMARTISTSORT, track->album->artist->sortname, true);
-	tag->addValue(APEARTIST, track->artist->name, true);
-	tag->addValue(APEARTISTSORT, track->artist->sortname, true);
-	tag->addValue(APEMUSICBRAINZ_ALBUMARTISTID, track->album->artist->mbid, true);
+	tag->addValue(APEALBUMARTIST, track->album->artist.name, true);
+	tag->addValue(APEALBUMARTISTSORT, track->album->artist.sortname, true);
+	tag->addValue(APEARTIST, track->artist.name, true);
+	tag->addValue(APEARTISTSORT, track->artist.sortname, true);
+	tag->addValue(APEMUSICBRAINZ_ALBUMARTISTID, track->album->artist.mbid, true);
 	tag->addValue(APEMUSICBRAINZ_ALBUMID, track->album->mbid, true);
-	tag->addValue(APEMUSICBRAINZ_ARTISTID, track->artist->mbid, true);
+	tag->addValue(APEMUSICBRAINZ_ARTISTID, track->artist.mbid, true);
 	tag->addValue(APEMUSICBRAINZ_TRACKID, track->mbid, true);
 	tag->addValue(APETITLE, track->title, true);
 	ostringstream tracknum;
@@ -542,23 +460,23 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag, const Track *track) {
 	tag->setAlbum(track->album->title);
 	/* albumartist */
 	ID3v2::TextIdentificationFrame *tpe2 = new ID3v2::TextIdentificationFrame(ByteVector("TPE2"), TagLib::String::UTF8);
-	tpe2->setText(track->album->artist->name);
+	tpe2->setText(track->album->artist.name);
 	tag->addFrame(tpe2);
 	/* albumartistsort */
 	ID3v2::UserTextIdentificationFrame *txxxaas = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
 	txxxaas->setDescription("ALBUMARTISTSORT");
-	txxxaas->setText(track->album->artist->sortname);
+	txxxaas->setText(track->album->artist.sortname);
 	tag->addFrame(txxxaas);
 	/* artist */
-	tag->setArtist(track->artist->name);
+	tag->setArtist(track->artist.name);
 	/* artistsort */
 	ID3v2::TextIdentificationFrame *tsop = new ID3v2::TextIdentificationFrame(ByteVector("TSOP"), TagLib::String::UTF8);
-	tsop->setText(track->artist->sortname);
+	tsop->setText(track->artist.sortname);
 	tag->addFrame(tsop);
 	/* musicbrainz_albumartistid */
 	ID3v2::UserTextIdentificationFrame *txxxaai = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
 	txxxaai->setDescription("MusicBrainz Album Artist Id");
-	txxxaai->setText(track->album->artist->mbid);
+	txxxaai->setText(track->album->artist.mbid);
 	tag->addFrame(txxxaai);
 	/* musicbrainz_albumid */
 	ID3v2::UserTextIdentificationFrame *txxxali = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
@@ -568,7 +486,7 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag, const Track *track) {
 	/* musicbrainz_artistid */
 	ID3v2::UserTextIdentificationFrame *txxxari = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
 	txxxari->setDescription("MusicBrainz Artist Id");
-	txxxari->setText(track->artist->mbid);
+	txxxari->setText(track->artist.mbid);
 	tag->addFrame(txxxari);
 	/* musicbrainz_trackid */
 	tag->addFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector(track->mbid.c_str())));
@@ -590,13 +508,13 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag, const Track *track) {
 
 void Metafile::saveXiphComment(Ogg::XiphComment *tag, const Track *track) {
 	tag->addField(ALBUM, track->album->title, true);
-	tag->addField(ALBUMARTIST, track->album->artist->name, true);
-	tag->addField(ALBUMARTISTSORT, track->album->artist->sortname, true);
-	tag->addField(ARTIST, track->artist->name, true);
-	tag->addField(ARTISTSORT, track->artist->sortname, true);
-	tag->addField(MUSICBRAINZ_ALBUMARTISTID, track->album->artist->mbid, true);
+	tag->addField(ALBUMARTIST, track->album->artist.name, true);
+	tag->addField(ALBUMARTISTSORT, track->album->artist.sortname, true);
+	tag->addField(ARTIST, track->artist.name, true);
+	tag->addField(ARTISTSORT, track->artist.sortname, true);
+	tag->addField(MUSICBRAINZ_ALBUMARTISTID, track->album->artist.mbid, true);
 	tag->addField(MUSICBRAINZ_ALBUMID, track->album->mbid, true);
-	tag->addField(MUSICBRAINZ_ARTISTID, track->artist->mbid, true);
+	tag->addField(MUSICBRAINZ_ARTISTID, track->artist.mbid, true);
 	tag->addField(MUSICBRAINZ_TRACKID, track->mbid, true);
 	tag->addField(TITLE, track->title, true);
 	ostringstream tracknum;

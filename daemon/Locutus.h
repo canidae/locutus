@@ -53,8 +53,8 @@ extern "C" {
 #include "FileHandler.h"
 #include "Levenshtein.h"
 #include "Metafile.h"
+#include "PostgreSQL.h"
 #include "PUIDGenerator.h"
-#include "Settings.h"
 #include "Matcher.h"
 #include "WebService.h"
 
@@ -67,7 +67,6 @@ class Locutus {
 		/* variables */
 		Database *database;
 		Levenshtein *levenshtein;
-		Settings *settings;
 		WebService *webservice;
 		FileHandler *filehandler;
 		PUIDGenerator *puidgen;

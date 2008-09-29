@@ -39,7 +39,7 @@ class WebService : public URLStream, public XMLStream {
 
 		/* methods */
 		void loadSettings();
-		XMLNode *lookupAlbum(const string &mbid);
+		bool lookupAlbum(Album *album);
 		vector<Metatrack> *searchMetadata(const string &wsquery);
 		vector<Metatrack> *searchPUID(const string &puid);
 

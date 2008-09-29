@@ -9,7 +9,6 @@ class Track;
 #include <string>
 #include "Album.h"
 #include "Artist.h"
-#include "Locutus.h"
 #include "Metatrack.h"
 
 /* namespaces */
@@ -20,7 +19,7 @@ class Track {
 	public:
 		/* variables */
 		Album *album;
-		Artist *artist;
+		Artist artist;
 		int id;
 		int duration;
 		int tracknumber;
@@ -28,17 +27,12 @@ class Track {
 		string title;
 
 		/* constructors */
-		Track(Locutus *locutus, Album *album, Artist *artist);
+		Track(Album *album = NULL);
 
 		/* destructors */
 		~Track();
 
 		/* methods */
 		Metatrack getAsMetatrack() const;
-		bool saveToCache() const;
-
-	private:
-		/* variables */
-		Locutus *locutus;
 };
 #endif
