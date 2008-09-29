@@ -68,6 +68,16 @@ bool FileHandler::moveFile(Metafile *file) {
 	string filename = output_dir;
 	string::size_type start = filename.size() - 1;
 	filename.append(file_format);
+	string::size_type stop = file->filename.find_last_of('.');
+	if (stop != string::npos)
+		filename.push_back('.'); // we need the "." before the extension (if any)
+	while (stop != string::npos && stop++ < file->filename.size()) {
+		if (file->filename[stop] >= 'A' && file->filename[stop] <= 'Z')
+			filename.push_back(file->filename[stop] + 32);
+		else
+			filename.push_back(file->filename[stop]);
+	}
+
 	while (start < filename.size() && (start = filename.find('%', start + 1)) != string::npos) {
 		string::size_type stop = filename.find('%', start + 1);
 		if (stop == string::npos)

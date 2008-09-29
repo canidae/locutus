@@ -181,7 +181,7 @@ bool Metafile::readFromFile(const string &filename) {
 	if (pos != string::npos) {
 		string ext = filename.substr(pos + 1);
 		for (string::size_type a = 0; a < ext.size(); ++a) {
-			if (ext[a] >= 97 && ext[a] <= 122)
+			if (ext[a] >= 'a' && ext[a] <= 'z')
 				ext[a] -= 32;
 		}
 		if (ext == "OGG") {
@@ -243,7 +243,7 @@ bool Metafile::saveMetadata(const Track *track) {
 	if (pos != string::npos) {
 		ext = filename.substr(pos + 1);
 		for (string::size_type a = 0; a < ext.size(); ++a) {
-			if (ext[a] >= 97 && ext[a] <= 122)
+			if (ext[a] >= 'a' && ext[a] <= 'z')
 				ext[a] -= 32;
 		}
 	}
