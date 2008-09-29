@@ -68,11 +68,13 @@ bool FileHandler::moveFile(Metafile *file) {
 	string filename = output_dir;
 	string::size_type start = filename.size() - 1;
 	filename.append(file_format);
-	while (start != string::npos) {
-		start = filename.find('%', start + 1);
-		for (map<string, int>::iterator replace = format_mapping.begin(); replace != format_mapping.end() && start != string::npos; ++replace) {
-			if (filename.find(replace->first, start) != start)
-				continue;
+	while (start < filename.size() && (start = filename.find('%', start + 1)) != string::npos) {
+		string::size_type stop = filename.find('%', start + 1);
+		if (stop == string::npos)
+			break; // no more '%'
+		map<string, int>::iterator replace = format_mapping.find(filename.substr(start, stop - start + 1)); // "+ 1" to include last '%'
+		if (replace != format_mapping.end()) {
+			/* we should replace something */
 			string tmp;
 			switch (replace->second) {
 				case TYPE_ALBUM:
@@ -129,27 +131,28 @@ bool FileHandler::moveFile(Metafile *file) {
 
 				case TYPE_CUSTOM_ARTIST:
 					/*
-					   if (file->custom_artist_sortname != "") {
-					   tmp = file->custom_artist_sortname;
-					   } else {
-					   */
+					if (file->custom_artist_sortname != "") {
+						tmp = file->custom_artist_sortname;
+					} else {
+					*/
 					if (file->musicbrainz_artistid != VARIOUS_ARTISTS_MBID) {
 						tmp = file->albumartistsort;
 					} else {
 						tmp = file->artistsort;
 					}
 					/*
-					   }
-					   */
+					}
+					*/
 					break;
 
 				default:
-					/* this shouldn't happen */
-					locutus->debug(DEBUG_WARNING, "Unexpected entry type in file format. The devs didn't do their work properly");
-					continue;
+					/* didn't match anything, probably static entry */
+					tmp = replace->first;
+					break;
 			}
 			filename.erase(start, replace->first.size());
 			filename.insert(start, tmp);
+			start += tmp.size();
 		}
 	}
 	locutus->debug(DEBUG_INFO, filename);

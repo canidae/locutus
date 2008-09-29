@@ -295,7 +295,25 @@ bool Metafile::saveMetadata(const Track *track) {
 		tmp << "Unable to save file '" << filename << "': Unknown filetype";
 		locutus->debug(DEBUG_WARNING, tmp.str());
 	}
-	return ok;
+	if (!ok)
+		return false;
+	/* save ok, update tags "cached" */
+	album = track->album->title;
+	albumartist = track->album->artist->name;
+	albumartistsort = track->album->artist->sortname;
+	artist = track->artist->name;
+	artistsort = track->artist->sortname;
+	musicbrainz_albumartistid = track->album->artist->mbid;
+	musicbrainz_albumid = track->album->mbid;
+	musicbrainz_artistid = track->artist->mbid;
+	musicbrainz_trackid = track->mbid;
+	title = track->title;
+	ostringstream tracknum;
+	tracknum << track->tracknumber;
+	tracknumber = tracknum.str();
+	released = track->album->released;
+	//puid = track->puid;
+	return true;
 }
 
 bool Metafile::saveToCache() const {
