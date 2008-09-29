@@ -41,10 +41,12 @@
 class Locutus;
 
 /* includes */
+extern "C" {
+	#include <sys/stat.h>
+};
 #include <iostream>
 #include <map>
 #include <string>
-#include <sys/stat.h>
 #include <vector>
 #include "Album.h"
 #include "Database.h"

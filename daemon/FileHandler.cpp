@@ -66,12 +66,14 @@ bool FileHandler::moveFile(Metafile *file) {
 		return false;
 	}
 	string filename = output_dir;
+	if (filename[filename.size() - 1] != '/')
+		filename.push_back('/');
 	string::size_type start = filename.size() - 1;
 	filename.append(file_format);
 	string::size_type stop = file->filename.find_last_of('.');
 	if (stop != string::npos)
 		filename.push_back('.'); // we need the "." before the extension (if any)
-	while (stop != string::npos && stop++ < file->filename.size()) {
+	while (stop != string::npos && ++stop < file->filename.size()) {
 		if (file->filename[stop] >= 'A' && file->filename[stop] <= 'Z')
 			filename.push_back(file->filename[stop] + 32);
 		else
@@ -165,7 +167,34 @@ bool FileHandler::moveFile(Metafile *file) {
 			start += tmp.size();
 		}
 	}
-	locutus->debug(DEBUG_INFO, filename);
+	start = 0;
+	string dirname;
+	mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IXOTH;
+	struct stat data;
+	int result;
+	while ((start = filename.find_first_of('/', start + 1)) != string::npos) {
+		dirname = filename.substr(0, start);
+		result = stat(dirname.c_str(), &data);
+		if (result == 0 && S_ISDIR(data.st_mode))
+			continue; // directory already exist
+		result = mkdir(dirname.c_str(), mode);
+		if (result == 0)
+			continue;
+		/* unable to create directory */
+		dirname.insert(0, "Unable to create directory: ");
+		locutus->debug(DEBUG_WARNING, dirname);
+		return false;
+	}
+	/* TODO: currently it overwrites files, not good */
+	if (rename(file->filename.c_str(), filename.c_str()) == 0) {
+		/* was able to move file, let's also try changing the permissions to 0664 */
+		mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+		chmod(filename.c_str(), mode);
+		return true;
+	}
+	/* unable to move file for some reason */
+	filename.insert(0, "Unable to move file: ");
+	locutus->debug(DEBUG_WARNING, filename);
 	return false;
 }
 

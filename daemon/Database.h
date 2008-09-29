@@ -9,10 +9,10 @@
 class Database;
 
 /* includes */
-#include <iostream>
 extern "C" {
 	#include <libpq-fe.h>
 }
+#include <iostream>
 #include <string>
 #include "Locutus.h"
 
