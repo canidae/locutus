@@ -337,8 +337,8 @@ bool Metafile::saveToCache() const {
 	string e_title = locutus->database->escapeString(title);
 	string e_tracknumber = locutus->database->escapeString(tracknumber);
 	string e_released = locutus->database->escapeString(released);
-	query.str("");
 	if (id == UNDEFINED_FILE_ID) {
+		query.str("");
 		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released) SELECT '" << e_filename << "', " << duration << ", " << channels << ", " << bitrate << ", " << samplerate << ", ";
 		if (puid != "")
 			query << "(SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
@@ -350,6 +350,7 @@ bool Metafile::saveToCache() const {
 			return false;
 		}
 	}
+	query.str("");
 	query << "UPDATE file SET filename = '" << e_filename << "', duration = " << duration << ", channels = " << channels << ", bitrate = " << bitrate << ", samplerate = " << samplerate << ", ";
 	if (puid != "")
 		query << "puid = (SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";

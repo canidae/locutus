@@ -190,6 +190,7 @@ bool FileHandler::moveFile(Metafile *file) {
 		/* was able to move file, let's also try changing the permissions to 0664 */
 		mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
 		chmod(filename.c_str(), mode);
+		file->filename = filename;
 		return true;
 	}
 	/* unable to move file for some reason */
