@@ -2,6 +2,7 @@
 #include "Database.h"
 #include "Debug.h"
 #include "FileHandler.h"
+#include "Levenshtein.h"
 #include "Locutus.h"
 #include "Metafile.h"
 #include "PostgreSQL.h"
@@ -110,13 +111,20 @@ void Locutus::scanDirectory(const string &directory) {
 /* main */
 int main() {
 	//while (true) {
+		/* initialize static classes */
 		Debug::open("locutus.log");
+		Levenshtein::initialize();
+
 		Locutus *locutus = new Locutus();
 		Debug::info("Checking files...");
 		long sleeptime = locutus->run();
 		Debug::info("Finished checking files");
 		delete locutus;
+
+		/* clear static classes */
+		Levenshtein::clear();
 		Debug::close();
+
 		usleep(sleeptime);
 	//}
 	return 0;

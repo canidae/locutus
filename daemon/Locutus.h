@@ -40,11 +40,9 @@ extern "C" {
 #include <string>
 #include <vector>
 
-class Album;
 class Database;
 class FileHandler;
 class Metafile;
-class PostgreSQL;
 class PUIDGenerator;
 class Matcher;
 class WebService;
