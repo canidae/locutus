@@ -1,35 +1,25 @@
 #ifndef METATRACK_H
-/* defines */
 #define METATRACK_H
 
-/* forward declare */
-class Metatrack;
-
-/* includes */
 #include <string>
-#include "XMLNode.h"
 
-/* namespaces */
-using namespace std;
+class XMLNode;
 
-/* Metatrack */
 class Metatrack {
 	public:
 		/* variables */
 		int duration;
 		int tracknumber;
-		string track_mbid;
-		string track_title;
-		string artist_mbid;
-		string artist_name;
-		string album_mbid;
-		string album_title;
-		string puid;
+		std::string track_mbid;
+		std::string track_title;
+		std::string artist_mbid;
+		std::string artist_name;
+		std::string album_mbid;
+		std::string album_title;
+		std::string puid;
 
-		/* constructors */
+		/* constructors/destructor */
 		Metatrack();
-
-		/* destructors */
 		~Metatrack();
 
 		/* methods */

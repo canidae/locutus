@@ -1,6 +1,8 @@
 #include "Album.h"
 
-/* constructors */
+using namespace std;
+
+/* constructors/destructor */
 Album::Album(const string &mbid) {
 	artist = Artist();
 	this->mbid = mbid;
@@ -9,6 +11,5 @@ Album::Album(const string &mbid) {
 	type = "";
 }
 
-/* destructors */
 Album::~Album() {
 }

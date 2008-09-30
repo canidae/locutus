@@ -1,5 +1,4 @@
 #ifndef MATCHER_H
-/* defines */
 #define MATCHER_H
 /* settings */
 #define PUID_MIN_SCORE_KEY "puid_min_score"
@@ -9,59 +8,54 @@
 #define METADATA_MIN_SCORE_VALUE 0.75
 #define METADATA_MIN_SCORE_DESCRIPTION "Minimum value for when a metadata lookup is considered a match. Must be between 0.0 and 1.0"
 
-/* forward declare */
-class Matcher;
-
-/* includes */
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
-#include "Album.h"
 #include "Metafile.h"
 #include "Metatrack.h"
-#include "Locutus.h"
 
-/* namespaces */
-using namespace std;
+/* XXX */
+#include "Database.h"
+#include "FileHandler.h"
+#include "WebService.h"
+/* XXX */
 
-/* structs */
+class Album;
+class Locutus;
+
 struct MatchGroup {
 	Album *album;
-	vector<map<Metafile *, Match> > scores; // tracknum, file, match
+	std::vector<std::map<Metafile *, Match> > scores; // tracknum, file, match
 };
 
-/* Matcher */
 class Matcher {
 	public:
-		/* variables */
-
-		/* constructors */
+		/* constructors/destructor */
 		Matcher(Locutus *locutus);
-
-		/* destructors */
 		~Matcher();
 
 		/* methods */
 		void loadSettings();
-		void match(const string &group, const vector<Metafile *> &files);
+		void match(const std::string &group, const std::vector<Metafile *> &files);
 
 	private:
 		/* variables */
 		Locutus *locutus;
-		map<string, MatchGroup> mgs;
+		std::map<std::string, MatchGroup> mgs;
 		double puid_min_score;
 		double metadata_min_score;
 
 		/* methods */
-		void compareFilesWithAlbum(const string &mbid, const vector<Metafile *> &files);
+		void compareFilesWithAlbum(const std::string &mbid, const std::vector<Metafile *> &files);
 		void clearMatchGroup();
-		string escapeWSString(const string &text) const;
-		bool loadAlbum(const string &mbid);
-		void lookupMBIDs(const vector<Metafile *> &files);
-		void lookupPUIDs(const vector<Metafile *> &files);
-		string makeWSTrackQuery(const string &group, const Metafile &mf) const;
-		void matchFilesToAlbums(const vector<Metafile *> &files);
-		bool saveMatchToCache(const string &filename, const string &track_mbid, const Match &match) const;
-		void searchMetadata(const string &group, const vector<Metafile *> &files);
+		std::string escapeWSString(const std::string &text) const;
+		bool loadAlbum(const std::string &mbid);
+		void lookupMBIDs(const std::vector<Metafile *> &files);
+		void lookupPUIDs(const std::vector<Metafile *> &files);
+		std::string makeWSTrackQuery(const std::string &group, const Metafile &mf) const;
+		void matchFilesToAlbums(const std::vector<Metafile *> &files);
+		bool saveMatchToCache(const std::string &filename, const std::string &track_mbid, const Match &match) const;
+		void searchMetadata(const std::string &group, const std::vector<Metafile *> &files);
 };
 #endif

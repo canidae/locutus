@@ -1,13 +1,19 @@
+#include "Album.h"
 #include "WebService.h"
+#include "XMLNode.h"
 
-/* constructors */
+#include "Locutus.h" // XXX
+
+using namespace ost;
+using namespace std;
+
+/* constructors/destructor */
 WebService::WebService(Locutus *locutus) {
 	this->locutus = locutus;
 	root = new XMLNode;
 	tracks = new vector<Metatrack>;
 }
 
-/* destructors */
 WebService::~WebService() {
 	delete root;
 	delete tracks;

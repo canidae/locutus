@@ -1,5 +1,4 @@
 #ifndef METAFILE_H
-/* defines */
 #define METAFILE_H
 /* fields */
 #define ALBUM "ALBUM"
@@ -39,45 +38,41 @@
 /* undefined file_id */
 #define UNDEFINED_FILE_ID -1
 
-/* forward declare */
-class Metafile;
-
-/* structs */
-struct Match {
-	bool mbid_match;
-	bool puid_match;
-	double meta_score;
-};
-
-/* includes */
 #include <apetag.h>
 #include <fileref.h>
 #include <flacfile.h>
 #include <id3v1tag.h>
 #include <id3v2tag.h>
-#include <list>
 #include <mpcfile.h>
 #include <mpegfile.h>
 #include <oggflacfile.h>
+#include <sstream>
 #include <string>
 #include <textidentificationframe.h>
 #include <tfile.h>
 #include <tstring.h>
 #include <uniquefileidentifierframe.h>
 #include <vorbisfile.h>
-#include "Locutus.h"
-#include "Metatrack.h"
-#include "Track.h"
 
-/* namespaces */
-using namespace std;
-using namespace TagLib;
+/* XXX */
+#include "Album.h"
+#include "Levenshtein.h"
+/* XXX */
 
-/* Metafile */
+class Locutus;
+class Metatrack;
+class Track;
+
+struct Match {
+	bool mbid_match;
+	bool puid_match;
+	double meta_score;
+};
+
 class Metafile {
 	public:
 		/* variables */
-		string filename;
+		std::string filename;
 		bool puid_lookup;
 		bool mbid_lookup;
 		bool meta_lookup;
@@ -87,19 +82,19 @@ class Metafile {
 		int channels;
 		int duration;
 		int samplerate;
-		string album;
-		string albumartist;
-		string albumartistsort;
-		string artist;
-		string artistsort;
-		string musicbrainz_albumartistid;
-		string musicbrainz_albumid;
-		string musicbrainz_artistid;
-		string musicbrainz_trackid;
-		string puid;
-		string title;
-		string tracknumber;
-		string released;
+		std::string album;
+		std::string albumartist;
+		std::string albumartistsort;
+		std::string artist;
+		std::string artistsort;
+		std::string musicbrainz_albumartistid;
+		std::string musicbrainz_albumid;
+		std::string musicbrainz_artistid;
+		std::string musicbrainz_trackid;
+		std::string puid;
+		std::string title;
+		std::string tracknumber;
+		std::string released;
 
 		/* constructors */
 		Metafile(Locutus *locutus);
@@ -109,23 +104,21 @@ class Metafile {
 
 		/* methods */
 		Match compareWithMetatrack(const Metatrack &metatrack) const;
-		string getBaseNameWithoutExtension() const;
-		string getGroup() const;
-		bool loadFromCache(const string &filename);
-		bool readFromFile(const string &filename);
+		std::string getBaseNameWithoutExtension() const;
+		std::string getGroup() const;
+		bool readFromFile(const std::string &filename);
 		bool saveMetadata(const Track *track);
-		bool saveToCache() const;
 
 	private:
 		/* variables */
 		Locutus *locutus;
 
 		/* methods */
-		void readAudioProperties(const AudioProperties *ap);
-		void readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const ID3v1::Tag *id3v1);
-		void readXiphComment(const Ogg::XiphComment *tag);
-		void saveAPETag(APE::Tag *tag, const Track *track);
-		void saveID3v2Tag(ID3v2::Tag *tag, const Track *track);
-		void saveXiphComment(Ogg::XiphComment *tag, const Track *track);
+		void readAudioProperties(const TagLib::AudioProperties *ap);
+		void readCrapTags(const TagLib::APE::Tag *ape, const TagLib::ID3v2::Tag *id3v2, const TagLib::ID3v1::Tag *id3v1);
+		void readXiphComment(const TagLib::Ogg::XiphComment *tag);
+		void saveAPETag(TagLib::APE::Tag *tag, const Track *track);
+		void saveID3v2Tag(TagLib::ID3v2::Tag *tag, const Track *track);
+		void saveXiphComment(TagLib::Ogg::XiphComment *tag, const Track *track);
 };
 #endif

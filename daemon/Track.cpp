@@ -1,6 +1,9 @@
+#include "Album.h"
 #include "Track.h"
 
-/* constructors */
+using namespace std;
+
+/* constructors/destructor */
 Track::Track(Album *album) {
 	this->album = album;
 	artist = Artist();
@@ -11,7 +14,6 @@ Track::Track(Album *album) {
 	title = "";
 }
 
-/* destructors */
 Track::~Track() {
 }
 

@@ -1,6 +1,12 @@
+#include "Locutus.h"
 #include "Metafile.h"
+#include "Metatrack.h"
+#include "Track.h"
 
-/* constructors */
+using namespace std;
+using namespace TagLib;
+
+/* constructors/destructor */
 Metafile::Metafile(Locutus *locutus) {
 	this->locutus = locutus;
 	meta_lookup = false;
@@ -28,7 +34,6 @@ Metafile::Metafile(Locutus *locutus) {
 	released = "";
 }
 
-/* destructors */
 Metafile::~Metafile() {
 }
 

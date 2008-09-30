@@ -1,11 +1,12 @@
 #include "Levenshtein.h"
 
-/* constructors */
+using namespace std;
+
+/* constructors/destructor */
 Levenshtein::Levenshtein() {
 	createMatrix(MATRIX_SIZE);
 }
 
-/* destructors */
 Levenshtein::~Levenshtein() {
 	deleteMatrix();
 }

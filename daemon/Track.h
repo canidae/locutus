@@ -1,20 +1,12 @@
 #ifndef TRACK_H
-/* defines */
 #define TRACK_H
 
-/* forward declare */
-class Track;
-
-/* includes */
 #include <string>
-#include "Album.h"
 #include "Artist.h"
 #include "Metatrack.h"
 
-/* namespaces */
-using namespace std;
+class Album;
 
-/* Track */
 class Track {
 	public:
 		/* variables */
@@ -23,13 +15,11 @@ class Track {
 		int id;
 		int duration;
 		int tracknumber;
-		string mbid;
-		string title;
+		std::string mbid;
+		std::string title;
 
-		/* constructors */
+		/* constructors/destructor */
 		Track(Album *album = NULL);
-
-		/* destructors */
 		~Track();
 
 		/* methods */

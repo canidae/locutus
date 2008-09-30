@@ -1,11 +1,14 @@
+#include "Album.h"
+#include "Locutus.h"
 #include "Matcher.h"
 
-/* constructors */
+using namespace std;
+
+/* constructors/destructor */
 Matcher::Matcher(Locutus *locutus) {
 	this->locutus = locutus;
 }
 
-/* destructors */
 Matcher::~Matcher() {
 }
 
@@ -45,7 +48,7 @@ void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *>
 			if (m.meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
 			mgs[mbid].scores[t][*mf] = m;
-			mt.saveToCache();
+			locutus->database->save(mt);
 			saveMatchToCache((*mf)->filename, mt.track_mbid, m);
 		}
 	}
@@ -146,7 +149,7 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 			/* puid search won't return puid, so let's set it manually */
 			mt->puid = mf->puid;
 			Match m = mf->compareWithMetatrack(*mt);
-			mt->saveToCache();
+			locutus->database->save(*mt);
 			saveMatchToCache(mf->filename, mt->track_mbid, m);
 			if (m.meta_score < puid_min_score)
 				continue;
@@ -297,7 +300,7 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 		vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group, *mf));
 		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
 			Match m = mf->compareWithMetatrack(*mt);
-			mt->saveToCache();
+			locutus->database->save(*mt);
 			saveMatchToCache(mf->filename, mt->track_mbid, m);
 			if (m.meta_score < metadata_min_score)
 				continue;

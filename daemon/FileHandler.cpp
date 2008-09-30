@@ -1,6 +1,11 @@
 #include "FileHandler.h"
+#include "Locutus.h"
+#include "Metafile.h"
+#include "Track.h"
 
-/* constructors */
+using namespace std;
+
+/* constructors/destructor */
 FileHandler::FileHandler(Locutus *locutus) {
 	this->locutus = locutus;
 	format_mapping["%album%"] = TYPE_ALBUM;
@@ -19,7 +24,6 @@ FileHandler::FileHandler(Locutus *locutus) {
 	format_mapping["%custom_artist%"] = TYPE_CUSTOM_ARTIST;
 }
 
-/* destructors */
 FileHandler::~FileHandler() {
 }
 
@@ -43,7 +47,7 @@ void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
 		/* move file */
 		moveFile(s->first);
 		/* and finally update file table */
-		s->first->saveToCache();
+		locutus->database->save(*(s->first));
 	}
 }
 
@@ -236,10 +240,11 @@ bool FileHandler::parseFile() {
 	locutus->debug(DEBUG_INFO, filename);
 	file_queue.pop_front();
 	Metafile *mf = new Metafile(locutus);
-	if (!mf->loadFromCache(filename)) {
+	mf->filename = filename;
+	if (!locutus->database->load(mf)) {
 		if (mf->readFromFile(filename)) {
 			/* save file to cache */
-			mf->saveToCache();
+			locutus->database->save(*mf);
 		} else {
 			/* unable to read this file */
 			delete mf;

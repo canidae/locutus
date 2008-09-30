@@ -1,7 +1,17 @@
 #include "PostgreSQL.h"
+#include "Album.h"
+#include "Artist.h"
+#include "Metafile.h"
+#include "Metatrack.h"
+#include "Track.h"
 
-/* constructors */
-PostgreSQL::PostgreSQL(Locutus *locutus, string connection) : Database(locutus) {
+#include "Locutus.h" // XXX
+
+using namespace std;
+
+/* constructors/destructor */
+PostgreSQL::PostgreSQL(Locutus *locutus, const string connection) : Database() {
+	this->locutus = locutus; // XXX
 	got_result = false;
 	pg_connection = PQconnectdb(connection.c_str());
 	if (PQstatus(pg_connection) != CONNECTION_OK) {
@@ -10,13 +20,12 @@ PostgreSQL::PostgreSQL(Locutus *locutus, string connection) : Database(locutus) 
 	}
 }
 
-/* destructor */
 PostgreSQL::~PostgreSQL() {
 	clear();
 	PQfinish(pg_connection);
 }
 
-/* public methods */
+/* methods */
 bool PostgreSQL::load(Album *album) {
 	/* fetch album from cache */
 	if (locutus == NULL || album == NULL)

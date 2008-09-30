@@ -1,5 +1,4 @@
 #ifndef WEBSERVICE_H
-/* defines */
 #define WEBSERVICE_H
 /* settings */
 #define METADATA_SEARCH_URL_KEY "metadata_search_url"
@@ -9,47 +8,38 @@
 #define RELEASE_LOOKUP_URL_VALUE "http://musicbrainz.org/ws/1/release/"
 #define RELEASE_LOOKUP_URL_DESCRIPTION "URL to lookup a release"
 
-/* forward declare */
-class WebService;
-
-/* includes */
 #include <cc++/common.h>
 #include <map>
 #include <string>
 #include <vector>
-#include "Album.h"
-#include "Locutus.h"
 #include "Metatrack.h"
-#include "XMLNode.h"
 
-/* namespaces */
-using namespace ost;
-using namespace std;
+#include "Database.h" // XXX
 
-/* WebService */
-class WebService : public URLStream, public XMLStream {
+class Album;
+class XMLNode;
+
+class Locutus; // XXX
+
+class WebService : public ost::URLStream, public ost::XMLStream {
 	public:
-		/* variables */
-
-		/* constructors */
+		/* constructors/destructor */
 		WebService(Locutus *locutus);
-
-		/* destructors */
 		~WebService();
 
 		/* methods */
 		void loadSettings();
 		bool lookupAlbum(Album *album);
-		vector<Metatrack> *searchMetadata(const string &wsquery);
-		vector<Metatrack> *searchPUID(const string &puid);
+		std::vector<Metatrack> *searchMetadata(const std::string &wsquery);
+		std::vector<Metatrack> *searchPUID(const std::string &puid);
 
 	private:
 		/* variables */
 		Locutus *locutus;
-		vector<Metatrack> *tracks;
+		std::vector<Metatrack> *tracks;
 		URLStream::Error status;
-		string metadata_search_url;
-		string release_lookup_url;
+		std::string metadata_search_url;
+		std::string release_lookup_url;
 		XMLNode *root;
 		XMLNode *curnode;
 

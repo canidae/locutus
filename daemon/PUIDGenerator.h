@@ -1,41 +1,28 @@
 #ifndef PUIDGENERATOR_H
-/* defines */
 #define PUIDGENERATOR_H
-/* buffer */
 #define INBUF_SIZE 4096
 
-/* forward declare */
-class PUIDGenerator;
-
-/* includes */
 extern "C" {
 	#include <avcodec.h>
 }
+#include <sstream>
 #include <string>
-#include "Metafile.h"
-#include "Locutus.h"
 
-/* namespaces */
-using namespace std;
+class Locutus; // XXX
 
-/* PUIDGenerator */
 class PUIDGenerator {
 	public:
-		/* variables */
-
-		/* constructors */
+		/* constructors/destructor */
 		PUIDGenerator(Locutus *locutus);
-
-		/* destructors */
 		~PUIDGenerator();
 
 		/* methods */
-		const string &generatePUID(const string &filename);
+		const std::string &generatePUID(const std::string &filename);
 		void loadSettings();
 
 	private:
 		/* variables */
 		Locutus *locutus;
-		string puid;
+		std::string puid;
 };
 #endif

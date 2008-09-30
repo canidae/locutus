@@ -1,11 +1,14 @@
 #include "PUIDGenerator.h"
 
-/* constructors */
+#include "Locutus.h" // XXX
+
+using namespace std;
+
+/* constructors/destructor */
 PUIDGenerator::PUIDGenerator(Locutus *locutus) {
-	this->locutus = locutus;
+	this->locutus = locutus; // XXX
 }
 
-/* destructors */
 PUIDGenerator::~PUIDGenerator() {
 }
 

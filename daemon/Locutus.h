@@ -1,5 +1,4 @@
 #ifndef LOCUTUS_H
-/* defines */
 #define LOCUTUS_H
 #define DEBUG_ERROR 3 // error that will kill locutus
 #define DEBUG_WARNING 2 // a serious problem, but won't kill locutus
@@ -37,10 +36,6 @@
 #define TRACKNUMBER_WEIGHT_VALUE 100.0
 #define TRACKNUMBER_WEIGHT_DESCRIPTION ""
 
-/* forward declare */
-class Locutus;
-
-/* includes */
 extern "C" {
 	#include <sys/stat.h>
 };
@@ -48,20 +43,17 @@ extern "C" {
 #include <map>
 #include <string>
 #include <vector>
-#include "Album.h"
-#include "Database.h"
-#include "FileHandler.h"
-#include "Levenshtein.h"
-#include "Metafile.h"
-#include "PostgreSQL.h"
-#include "PUIDGenerator.h"
-#include "Matcher.h"
-#include "WebService.h"
 
-/* namespace */
-using namespace std;
+class Album;
+class Database;
+class FileHandler;
+class Levenshtein;
+class Metafile;
+class PostgreSQL;
+class PUIDGenerator;
+class Matcher;
+class WebService;
 
-/* Locutus */
 class Locutus {
 	public:
 		/* variables */
@@ -71,8 +63,8 @@ class Locutus {
 		FileHandler *filehandler;
 		PUIDGenerator *puidgen;
 		Matcher *matcher;
-		vector<Metafile *> files;
-		map<string, vector<Metafile *> > grouped_files;
+		std::vector<Metafile *> files;
+		std::map<std::string, std::vector<Metafile *> > grouped_files;
 		double album_weight;
 		double artist_weight;
 		double combine_threshold;
@@ -84,23 +76,21 @@ class Locutus {
 		int metatrack_cache_lifetime;
 		int puid_cache_lifetime;
 
-		/* constructors */
+		/* constructors/destructor */
 		Locutus();
-
-		/* destructors */
 		~Locutus();
 
 		/* methods */
-		void debug(int level, const string &text);
+		void debug(int level, const std::string &text);
 		long run();
 
 	private:
 		/* variables */
-		ofstream *debugfile;
+		std::ofstream *debugfile;
 
 		/* methods */
 		void loadSettings();
 		void removeGoneFiles();
-		void scanDirectory(const string &directory);
+		void scanDirectory(const std::string &directory);
 };
 #endif

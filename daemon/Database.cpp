@@ -1,11 +1,16 @@
+#include "Album.h"
+#include "Artist.h"
 #include "Database.h"
+#include "Metafile.h"
+#include "Metatrack.h"
+#include "Track.h"
 
-/* constructors */
-Database::Database(Locutus *locutus) {
-	this->locutus = locutus;
+using namespace std;
+
+/* constructors/destructor */
+Database::Database() {
 }
 
-/* destructors */
 Database::~Database() {
 }
 

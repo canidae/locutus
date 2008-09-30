@@ -1,6 +1,17 @@
+#include "Album.h"
+#include "Database.h"
+#include "FileHandler.h"
+#include "Levenshtein.h"
 #include "Locutus.h"
+#include "Metafile.h"
+#include "PostgreSQL.h"
+#include "PUIDGenerator.h"
+#include "Matcher.h"
+#include "WebService.h"
 
-/* constructors */
+using namespace std;
+
+/* constructors/destructor */
 Locutus::Locutus() {
 	debugfile = new ofstream("locutus.log", ios::app);
 	database = new PostgreSQL(this, "host=localhost user=locutus password=locutus dbname=locutus");
@@ -11,7 +22,6 @@ Locutus::Locutus() {
 	matcher = new Matcher(this);
 }
 
-/* destructors */
 Locutus::~Locutus() {
 	for (vector<Metafile *>::iterator mf = files.begin(); mf != files.end(); ++mf)
 		delete (*mf);

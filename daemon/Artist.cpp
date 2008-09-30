@@ -1,12 +1,13 @@
 #include "Artist.h"
 
-/* constructors */
+using namespace std;
+
+/* constructors/destructor */
 Artist::Artist() {
 	mbid = "";
 	name = "";
 	sortname = "";
 }
 
-/* destructors */
 Artist::~Artist() {
 }

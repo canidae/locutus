@@ -1,5 +1,4 @@
 #ifndef FILEHANDLER_H
-/* defines */
 #define FILEHANDLER_H
 #define VARIOUS_ARTISTS_MBID "89ad4ac3-39f7-470e-963a-56509c546377"
 /* settings */
@@ -31,11 +30,8 @@
 #define FILENAME_FORMAT_VALUE "%custom_artist%/%album% - %tracknumber% - %artist% - %title%"
 #define FILENAME_FORMAT_DESCRIPTION "Output filename format. Available keys: %album%, %albumartist%, %albumartistsort%, %artist%, %artistsort%, %musicbrainz_albumartistid%, %musicbrainz_albumid%, %musicbrainz_artistid%, %musicbrainz_trackid%, %musicip_puid%, %title%, %tracknumber%, %date%, %custom_artist%."
 
-/* forward declare */
-class FileHandler;
-
-/* includes */
 extern "C" {
+	#include <dirent.h>
 	#include <stdio.h>
 	#include <sys/stat.h>
 	#include <sys/types.h>
@@ -44,42 +40,38 @@ extern "C" {
 #include <list>
 #include <map>
 #include <string>
-#include <vector>
+
+/* XXX */
 #include "Database.h"
-#include "Locutus.h"
-#include "Metafile.h"
-#include "Track.h"
 
-/* namespaces */
-using namespace std;
+class Locutus;
+class Metafile;
+class Track;
 
-/* FileHandler */
 class FileHandler {
 	public:
 		/* variables */
 		bool ready;
-		string duplicate_dir;
-		string input_dir;
-		string output_dir;
+		std::string duplicate_dir;
+		std::string input_dir;
+		std::string output_dir;
 
-		/* constructors */
+		/* constructors/destructor */
 		FileHandler(Locutus *locutus);
-
-		/* destructors */
 		~FileHandler();
 
 		/* methods */
 		void loadSettings();
-		void saveFiles(const map<Metafile *, Track*> &files);
-		void scanFiles(const string &directory);
+		void saveFiles(const std::map<Metafile *, Track*> &files);
+		void scanFiles(const std::string &directory);
 
 	private:
 		/* variables */
 		Locutus *locutus;
-		list<string> dir_queue;
-		list<string> file_queue;
-		string file_format;
-		map<string, int> format_mapping;
+		std::list<std::string> dir_queue;
+		std::list<std::string> file_queue;
+		std::string file_format;
+		std::map<std::string, int> format_mapping;
 
 		/* methods */
 		bool moveFile(Metafile *file);

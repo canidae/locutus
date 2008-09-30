@@ -1,6 +1,9 @@
 #include "Metatrack.h"
+#include "XMLNode.h"
 
-/* constructors */
+using namespace std;
+
+/* constructors/destructor */
 Metatrack::Metatrack() {
 	duration = 0;
 	tracknumber = 0;
@@ -13,7 +16,6 @@ Metatrack::Metatrack() {
 	puid = "";
 }
 
-/* destructors */
 Metatrack::~Metatrack() {
 }
 

@@ -1,26 +1,17 @@
 #ifndef LEVENSHTEIN_H
-/* defines */
 #define LEVENSHTEIN_H
-/* initial size matrix */
 #define MATRIX_SIZE 64
 
-/* includes */
 #include <string>
 
-/* namespaces */
-using namespace std;
-
-/* Levenshtein */
 class Levenshtein {
 	public:
-		/* constructors */
+		/* constructors/destructor */
 		Levenshtein();
-
-		/* destructors */
 		~Levenshtein();
 
 		/* methods */
-		double similarity(const string &source, const string &target);
+		double similarity(const std::string &source, const std::string &target);
 
 	private:
 		/* variables */
