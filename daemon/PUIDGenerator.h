@@ -3,7 +3,7 @@
 #define INBUF_SIZE 4096
 
 extern "C" {
-	#include <avcodec.h>
+#include <avcodec.h>
 }
 #include <sstream>
 #include <string>

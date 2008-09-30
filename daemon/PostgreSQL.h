@@ -2,7 +2,7 @@
 #define POSTGRESQL_H
 
 extern "C" {
-	#include <libpq-fe.h>
+#include <libpq-fe.h>
 }
 #include <string>
 #include "Database.h"

@@ -31,11 +31,11 @@
 #define FILENAME_FORMAT_DESCRIPTION "Output filename format. Available keys: %album%, %albumartist%, %albumartistsort%, %artist%, %artistsort%, %musicbrainz_albumartistid%, %musicbrainz_albumid%, %musicbrainz_artistid%, %musicbrainz_trackid%, %musicip_puid%, %title%, %tracknumber%, %date%, %custom_artist%."
 
 extern "C" {
-	#include <dirent.h>
-	#include <stdio.h>
-	#include <sys/stat.h>
-	#include <sys/types.h>
-	#include <unistd.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 };
 #include <list>
 #include <map>

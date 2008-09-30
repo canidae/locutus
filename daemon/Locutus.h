@@ -32,10 +32,6 @@
 #define TRACKNUMBER_WEIGHT_VALUE 100.0
 #define TRACKNUMBER_WEIGHT_DESCRIPTION ""
 
-extern "C" {
-	#include <sys/stat.h>
-};
-#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
