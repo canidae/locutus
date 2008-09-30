@@ -2,33 +2,50 @@
 
 using namespace std;
 
-/* constructors/destructor */
-Debug::Debug() {
-	debugfile.open("locutus.log", ios::app);
-}
+/* static variables */
+bool Debug::initialized = false;
+string Debug::timestamp;
+ofstream Debug::debugfile;
 
-Debug::~Debug() {
-	debugfile.close();
-}
-
-/* methods */
+/* static methods */
 void Debug::error(const string &text) {
+	if (!initialized)
+		return;
 	debugfile << "[" << printTime() << "] [ERROR  ] " << text << endl;
 }
 
 void Debug::info(const string &text) {
+	if (!initialized)
+		return;
 	debugfile << "[" << printTime() << "] [INFO   ] " << text << endl;
 }
 
 void Debug::notice(const string &text) {
+	if (!initialized)
+		return;
 	debugfile << "[" << printTime() << "] [NOTICE ] " << text << endl;
 }
 
 void Debug::warning(const string &text) {
+	if (!initialized)
+		return;
 	debugfile << "[" << printTime() << "] [WARNING] " << text << endl;
 }
 
-/* private methods */
+bool Debug::close() {
+	if (!initialized)
+		return true;
+	debugfile.close();
+	return true;
+}
+
+bool Debug::open(const string &file) {
+	initialized = true;
+	debugfile.open(file.c_str(), ios::app);
+	return true;
+}
+
+/* private static methods */
 string &Debug::printTime() {
 	time_t rawtime;
 	time(&rawtime);
