@@ -1,4 +1,5 @@
 #include "Debug.h"
+#include "Levenshtein.h"
 #include "Locutus.h"
 #include "Metafile.h"
 #include "Metatrack.h"
@@ -66,9 +67,9 @@ Match Metafile::compareWithMetatrack(const Metatrack &metatrack) const {
 	double scores[4][values.size()];
 	int pos = 0;
 	for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
-		scores[0][pos] = locutus->levenshtein->similarity(*v, metatrack.album_title);
-		scores[1][pos] = locutus->levenshtein->similarity(*v, metatrack.artist_name);
-		scores[2][pos] = locutus->levenshtein->similarity(*v, metatrack.track_title);
+		scores[0][pos] = Levenshtein::similarity(*v, metatrack.album_title);
+		scores[1][pos] = Levenshtein::similarity(*v, metatrack.artist_name);
+		scores[2][pos] = Levenshtein::similarity(*v, metatrack.track_title);
 		scores[3][pos] = (atoi(v->c_str()) == metatrack.tracknumber) ? 1.0 : 0.0;
 		++pos;
 	}

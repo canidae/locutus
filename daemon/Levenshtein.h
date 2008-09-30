@@ -6,21 +6,17 @@
 
 class Levenshtein {
 	public:
-		/* constructors/destructor */
-		Levenshtein();
-		~Levenshtein();
-
-		/* methods */
-		double similarity(const std::string &source, const std::string &target);
+		static void clear();
+		static void initialize();
+		static double similarity(const std::string &source, const std::string &target);
 
 	private:
-		/* variables */
-		int **matrix;
-		int matrix_size;
+		static bool initialized;
+		static int **matrix;
+		static int matrix_size;
 
-		/* methods */
-		void createMatrix(int size);
-		void deleteMatrix();
-		void resizeMatrix(int size);
+		static void createMatrix(int size);
+		static void deleteMatrix();
+		static void resizeMatrix(int size);
 };
 #endif

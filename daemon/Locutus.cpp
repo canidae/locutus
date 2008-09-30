@@ -2,7 +2,6 @@
 #include "Database.h"
 #include "Debug.h"
 #include "FileHandler.h"
-#include "Levenshtein.h"
 #include "Locutus.h"
 #include "Metafile.h"
 #include "PostgreSQL.h"
@@ -15,7 +14,6 @@ using namespace std;
 /* constructors/destructor */
 Locutus::Locutus() {
 	database = new PostgreSQL(this, "host=localhost user=locutus password=locutus dbname=locutus");
-	levenshtein = new Levenshtein();
 	webservice = new WebService(this);
 	filehandler = new FileHandler(this);
 	puidgen = new PUIDGenerator(this);
@@ -29,7 +27,6 @@ Locutus::~Locutus() {
 	delete matcher;
 	delete webservice;
 	delete filehandler;
-	delete levenshtein;
 	delete database;
 }
 

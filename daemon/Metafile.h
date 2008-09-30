@@ -56,7 +56,6 @@
 
 /* XXX */
 #include "Album.h"
-#include "Levenshtein.h"
 /* XXX */
 
 class Locutus;

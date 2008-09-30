@@ -36,10 +36,13 @@ bool Debug::close() {
 	if (!initialized)
 		return true;
 	debugfile.close();
+	initialized = false;
 	return true;
 }
 
 bool Debug::open(const string &file) {
+	if (initialized)
+		close();
 	initialized = true;
 	debugfile.open(file.c_str(), ios::app);
 	return true;

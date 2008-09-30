@@ -43,7 +43,6 @@ extern "C" {
 class Album;
 class Database;
 class FileHandler;
-class Levenshtein;
 class Metafile;
 class PostgreSQL;
 class PUIDGenerator;
@@ -54,7 +53,6 @@ class Locutus {
 	public:
 		/* variables */
 		Database *database;
-		Levenshtein *levenshtein;
 		WebService *webservice;
 		FileHandler *filehandler;
 		PUIDGenerator *puidgen;

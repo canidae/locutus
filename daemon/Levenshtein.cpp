@@ -2,17 +2,29 @@
 
 using namespace std;
 
-/* constructors/destructor */
-Levenshtein::Levenshtein() {
-	createMatrix(MATRIX_SIZE);
-}
+/* static variables */
+bool Levenshtein::initialized = false;
+int **Levenshtein::matrix = NULL;
+int Levenshtein::matrix_size = 0;
 
-Levenshtein::~Levenshtein() {
+/* static methods */
+void Levenshtein::clear() {
+	if (!initialized)
+		return;
+	initialized = false;
 	deleteMatrix();
 }
 
-/* methods */
+void Levenshtein::initialize() {
+	if (initialized)
+		return;
+	initialized = true;
+	createMatrix(MATRIX_SIZE);
+}
+
 double Levenshtein::similarity(const string &source, const string &target) {
+	if (!initialized)
+		initialize();
 	int sl = source.length();
 	int tl = target.length();
 	if (sl == 0 || tl == 0)
@@ -52,7 +64,7 @@ double Levenshtein::similarity(const string &source, const string &target) {
 	return 1.0 - (double) matrix[sl][tl] / (double) size;
 }
 
-/* private methods */
+/* private static methods */
 void Levenshtein::createMatrix(int size) {
 	matrix_size = size;
 	matrix = new int*[matrix_size];
