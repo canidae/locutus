@@ -1,3 +1,4 @@
+#include "Debug.h"
 #include "FileHandler.h"
 #include "Locutus.h"
 #include "Metafile.h"
@@ -36,9 +37,9 @@ void FileHandler::loadSettings() {
 }
 
 void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
-	locutus->debug(DEBUG_INFO, "Saving files:");
+	Debug::info("Saving files:");
 	for (map<Metafile *, Track *>::const_iterator s = files.begin(); s != files.end(); ++s) {
-		locutus->debug(DEBUG_INFO, s->first->filename);
+		Debug::info(s->first->filename);
 		/* first save metadata */
 		if (!s->first->saveMetadata(s->second)) {
 			/* unable to save metadata */
@@ -66,7 +67,7 @@ void FileHandler::scanFiles(const string &directory) {
 /* private methods */
 bool FileHandler::moveFile(Metafile *file) {
 	if (file_format.size() <= 0) {
-		locutus->debug(DEBUG_WARNING, "File format for output is way too short, refuse to save file");
+		Debug::warning("File format for output is way too short, refuse to save file");
 		return false;
 	}
 	string filename = output_dir;
@@ -186,7 +187,7 @@ bool FileHandler::moveFile(Metafile *file) {
 			continue;
 		/* unable to create directory */
 		dirname.insert(0, "Unable to create directory: ");
-		locutus->debug(DEBUG_WARNING, dirname);
+		Debug::warning(dirname);
 		return false;
 	}
 	/* TODO: currently it overwrites files, not good */
@@ -199,7 +200,7 @@ bool FileHandler::moveFile(Metafile *file) {
 	}
 	/* unable to move file for some reason */
 	filename.insert(0, "Unable to move file: ");
-	locutus->debug(DEBUG_WARNING, filename);
+	Debug::warning(filename);
 	return false;
 }
 
@@ -207,7 +208,7 @@ bool FileHandler::parseDirectory() {
 	if (dir_queue.size() <= 0)
 		return false;
 	string directory(*dir_queue.begin());
-	locutus->debug(DEBUG_INFO, directory);
+	Debug::info(directory);
 	dir_queue.pop_front();
 	DIR *dir = opendir(directory.c_str());
 	if (dir == NULL)
@@ -237,7 +238,7 @@ bool FileHandler::parseFile() {
 	if (file_queue.size() <= 0)
 		return false;
 	string filename(*file_queue.begin());
-	locutus->debug(DEBUG_INFO, filename);
+	Debug::info(filename);
 	file_queue.pop_front();
 	Metafile *mf = new Metafile(locutus);
 	mf->filename = filename;

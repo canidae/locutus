@@ -1,3 +1,4 @@
+#include "Debug.h"
 #include "PUIDGenerator.h"
 
 #include "Locutus.h" // XXX
@@ -44,7 +45,7 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 	if (!codec) {
 		ostringstream error;
 		error << "Codec not found for file '" << filename << "'";
-		locutus->debug(DEBUG_NOTICE, error.str());
+		Debug::notice(error.str());
 		return puid;
 	}
 
@@ -55,7 +56,7 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 		av_free(c);                                                                                                                                    
 		ostringstream error;
 		error << "Unable to open codec for file '" << filename << "'";
-		locutus->debug(DEBUG_NOTICE, error.str());
+		Debug::notice(error.str());
 		return puid;
 	}
 
@@ -65,7 +66,7 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 		av_free(c);                                                                                                                                    
 		ostringstream error;
 		error << "Unable to open file: " << filename;
-		locutus->debug(DEBUG_NOTICE, error.str());
+		Debug::notice(error.str());
 		return puid;
 	}
 	FILE *outfile = fopen("/tmp/locutus.tmp.wav", "wb"); // FIXME: configurable tmp location
@@ -73,7 +74,7 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 		fclose(f);
 		avcodec_close(c);
 		av_free(c);                                                                                                                                    
-		locutus->debug(DEBUG_NOTICE, "Unable to open temporary file");
+		Debug::notice("Unable to open temporary file");
 		return puid;
 	}
 

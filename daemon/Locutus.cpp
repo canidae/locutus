@@ -1,5 +1,6 @@
 #include "Album.h"
 #include "Database.h"
+#include "Debug.h"
 #include "FileHandler.h"
 #include "Levenshtein.h"
 #include "Locutus.h"
@@ -13,7 +14,6 @@ using namespace std;
 
 /* constructors/destructor */
 Locutus::Locutus() {
-	debugfile = new ofstream("locutus.log", ios::app);
 	database = new PostgreSQL(this, "host=localhost user=locutus password=locutus dbname=locutus");
 	levenshtein = new Levenshtein();
 	webservice = new WebService(this);
@@ -31,50 +31,18 @@ Locutus::~Locutus() {
 	delete filehandler;
 	delete levenshtein;
 	delete database;
-	debugfile->close();
-	delete debugfile;
 }
 
 /* methods */
-void Locutus::debug(int level, const string &text) {
-	time_t rawtime;
-	time(&rawtime);
-	string t = asctime(localtime(&rawtime));
-	t.erase(t.size() - 1);
-	*debugfile << "[" << t << "] ";
-	switch (level) {
-		case DEBUG_ERROR:
-			*debugfile << "[ERROR  ] ";
-			break;
-
-		case DEBUG_WARNING:
-			*debugfile << "[WARNING] ";
-			break;
-
-		case DEBUG_NOTICE:
-			*debugfile << "[NOTICE ] ";
-			break;
-
-		case DEBUG_INFO:
-			*debugfile << "[INFO   ] ";
-			break;
-
-		default:
-			*debugfile << "[UNKNOWN] ";
-			break;
-	}
-	*debugfile << text << endl;
-}
-
 long Locutus::run() {
 	/* load settings */
-	debug(DEBUG_INFO, "Loading settings");
+	Debug::info("Loading settings");
 	loadSettings();
 	/* parse sorted directory */
-	debug(DEBUG_INFO, "Scanning output directory");
+	Debug::info("Scanning output directory");
 	scanDirectory(filehandler->output_dir);
 	/* parse unsorted directory */
-	debug(DEBUG_INFO, "Scanning input directory");
+	Debug::info("Scanning input directory");
 	scanDirectory(filehandler->input_dir);
 	/* match files */
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf)
@@ -145,11 +113,13 @@ void Locutus::scanDirectory(const string &directory) {
 /* main */
 int main() {
 	//while (true) {
+		Debug::open("locutus.log");
 		Locutus *locutus = new Locutus();
-		locutus->debug(DEBUG_INFO, "Checking files...");
+		Debug::info("Checking files...");
 		long sleeptime = locutus->run();
-		locutus->debug(DEBUG_INFO, "Finished checking files");
+		Debug::info("Finished checking files");
 		delete locutus;
+		Debug::close();
 		usleep(sleeptime);
 	//}
 	return 0;

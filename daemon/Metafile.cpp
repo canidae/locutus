@@ -1,3 +1,4 @@
+#include "Debug.h"
 #include "Locutus.h"
 #include "Metafile.h"
 #include "Metatrack.h"
@@ -198,7 +199,7 @@ bool Metafile::readFromFile(const string &filename) {
 		} else {
 			string msg = "Unsupported file format (well, extension): ";
 			msg.append(filename);
-			locutus->debug(DEBUG_NOTICE, msg);
+			Debug::notice(msg);
 			return false;
 		}
 	}
@@ -262,7 +263,7 @@ bool Metafile::saveMetadata(const Track *track) {
 	} else {
 		ostringstream tmp;
 		tmp << "Unable to save file '" << filename << "': Unknown filetype";
-		locutus->debug(DEBUG_WARNING, tmp.str());
+		Debug::warning(tmp.str());
 	}
 	if (!ok)
 		return false;

@@ -1,9 +1,5 @@
 #ifndef LOCUTUS_H
 #define LOCUTUS_H
-#define DEBUG_ERROR 3 // error that will kill locutus
-#define DEBUG_WARNING 2 // a serious problem, but won't kill locutus
-#define DEBUG_NOTICE 1 // usually follows a warning for more context
-#define DEBUG_INFO 0 // just telling the user what we're doing
 /* settings */
 #define ALBUM_CACHE_LIFETIME_KEY "album_cache_lifetime"
 #define ALBUM_CACHE_LIFETIME_VALUE 3
@@ -81,13 +77,9 @@ class Locutus {
 		~Locutus();
 
 		/* methods */
-		void debug(int level, const std::string &text);
 		long run();
 
 	private:
-		/* variables */
-		std::ofstream *debugfile;
-
 		/* methods */
 		void loadSettings();
 		void removeGoneFiles();

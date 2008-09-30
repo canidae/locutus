@@ -1,4 +1,5 @@
 #include "Album.h"
+#include "Debug.h"
 #include "WebService.h"
 #include "XMLNode.h"
 
@@ -123,12 +124,12 @@ void WebService::endElement(const unsigned char *name) {
 bool WebService::fetch(const char *url) {
 	char *urle = new char[65536];
 	urle = urlEncode(url, urle, 65536);
-	locutus->debug(DEBUG_INFO, urle);
+	Debug::info(urle);
 	status = get(urle);
 	delete [] urle;
 	if (status) {
 		//cout << "failed; reason=" << status << endl;
-		locutus->debug(DEBUG_WARNING, "Unable to fetch data");
+		Debug::warning("Unable to fetch data");
 		close();
 		return false;
 	}
@@ -139,7 +140,7 @@ bool WebService::fetch(const char *url) {
 	root->value = "";
 	curnode = root;
 	if (!parse())
-		locutus->debug(DEBUG_WARNING, "XML is not well formed");
+		Debug::warning("XML is not well formed");
 	close();
 	//printXML(root, 0);
 	return true;

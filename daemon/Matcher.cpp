@@ -1,4 +1,5 @@
 #include "Album.h"
+#include "Debug.h"
 #include "Locutus.h"
 #include "Matcher.h"
 
@@ -158,7 +159,7 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 			int trackcount = (int) mgs[mt->album_mbid].album->tracks.size();
 			if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
 				/* this should never happen */
-				locutus->debug(DEBUG_NOTICE, "PUID search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
+				Debug::notice("PUID search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 				continue;
 			}
 			/* since we've already calculated the score, save it */
@@ -283,11 +284,11 @@ bool Matcher::saveMatchToCache(const string &filename, const string &track_mbid,
 	ostringstream query;
 	query << "INSERT INTO match(file_id, metatrack_id, mbid_match, puid_match, meta_score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'), " << (match.mbid_match ? "true" : "false") << ", " << (match.puid_match ? "true" : "false") << ", " << match.meta_score << " WHERE NOT EXISTS (SELECT true FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'))";
 	if (!locutus->database->query(query.str()))
-		locutus->debug(DEBUG_NOTICE, "Unable to save metadata match in cache, query failed. See error above");
+		Debug::notice("Unable to save metadata match in cache, query failed. See error above");
 	query.str("");
 	query << "UPDATE match SET mbid_match = " << (match.mbid_match ? "true" : "false") << ", puid_match = "  << (match.puid_match ? "true" : "false") << ", meta_score = " << match.meta_score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
 	if (!locutus->database->query(query.str()))
-		locutus->debug(DEBUG_NOTICE, "Unable to save metadata match in cache, query failed. See error above");
+		Debug::notice("Unable to save metadata match in cache, query failed. See error above");
 	*/
 	return true;
 }
@@ -309,7 +310,7 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 			int trackcount = (int) mgs[mt->album_mbid].album->tracks.size();
 			if (mt->tracknumber > trackcount || mt->tracknumber <= 0) {
 				/* this should never happen */
-				locutus->debug(DEBUG_NOTICE, "Metadata search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
+				Debug::notice("Metadata search returned a tracknumber that doesn't exist on the album. This shouldn't happen, though");
 				continue;
 			}
 			/* since we've already calculated the score, save it */
