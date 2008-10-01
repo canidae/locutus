@@ -21,8 +21,14 @@ Locutus::Locutus(Database *database) : database(database) {
 	matcher = new Matcher(this);
 
 	input_dir = database->loadSetting(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
+	if (input_dir.size() <= 0 || input_dir[input_dir.size() - 1] != '/')
+		input_dir.push_back('/');
 	output_dir = database->loadSetting(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
+	if (output_dir.size() <= 0 || output_dir[output_dir.size() - 1] != '/')
+		output_dir.push_back('/');
 	duplicate_dir = database->loadSetting(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
+	if (duplicate_dir.size() <= 0 || duplicate_dir[duplicate_dir.size() - 1] != '/')
+		duplicate_dir.push_back('/');
 }
 
 Locutus::~Locutus() {
@@ -141,8 +147,6 @@ void Locutus::saveFiles(const map<Metafile *, Track *> &files) {
 		}
 		/* move file */
 		string filename = output_dir;
-		if (filename.size() <= 0 || filename[filename.size() - 1] != '/')
-			filename.push_back('/');
 		filename.append(filenamer->getFilename(s->first));
 		moveFile(s->first, filename);
 		/* and finally update file table */
