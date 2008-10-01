@@ -4,10 +4,11 @@
 #include "FileNamer.h"
 #include "Levenshtein.h"
 #include "Locutus.h"
+#include "Matcher.h"
 #include "Metafile.h"
 #include "PostgreSQL.h"
 #include "PUIDGenerator.h"
-#include "Matcher.h"
+#include "Track.h"
 #include "WebService.h"
 
 using namespace std;
@@ -15,9 +16,13 @@ using namespace std;
 /* constructors/destructor */
 Locutus::Locutus(Database *database) : database(database) {
 	webservice = new WebService(database);
-	filenamer = new FileNamer(this);
+	filenamer = new FileNamer(database);
 	puidgen = new PUIDGenerator();
 	matcher = new Matcher(this);
+
+	input_dir = database->loadSetting(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
+	output_dir = database->loadSetting(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
+	duplicate_dir = database->loadSetting(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
 }
 
 Locutus::~Locutus() {
@@ -36,10 +41,10 @@ long Locutus::run() {
 	loadSettings();
 	/* parse sorted directory */
 	Debug::info("Scanning output directory");
-	scanDirectory(filenamer->output_dir);
+	scanDirectory(output_dir);
 	/* parse unsorted directory */
 	Debug::info("Scanning input directory");
-	scanDirectory(filenamer->input_dir);
+	scanDirectory(input_dir);
 	/* match files */
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf)
 		matcher->match(gf->first, gf->second);
@@ -67,6 +72,40 @@ void Locutus::loadSettings() {
 	tracknumber_weight = database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 }
 
+bool Locutus::moveFile(Metafile *file, const string &filename) {
+	string::size_type start = 0;
+	string dirname;
+	mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IXOTH;
+	struct stat data;
+	int result;
+	while ((start = filename.find_first_of('/', start + 1)) != string::npos) {
+		dirname = filename.substr(0, start);
+		result = stat(dirname.c_str(), &data);
+		if (result == 0 && S_ISDIR(data.st_mode))
+			continue; // directory already exist
+		result = mkdir(dirname.c_str(), mode);
+		if (result == 0)
+			continue;                                                                                                                      
+		/* unable to create directory */
+		dirname.insert(0, "Unable to create directory: ");
+		Debug::warning(dirname);
+		return false;
+	}
+	/* TODO: currently it overwrites files, not good */
+	if (rename(file->filename.c_str(), filename.c_str()) == 0) {
+		/* was able to move file, let's also try changing the permissions to 0664 */
+		mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+		chmod(filename.c_str(), mode);
+		file->filename = filename;
+		return true;
+	}
+	/* unable to move file for some reason */
+	dirname = "Unable to move file: ";
+	dirname.append(filename);
+	Debug::warning(dirname);
+	return false;
+}
+
 void Locutus::removeGoneFiles() {
 	/* FIXME: broke this when changing making database an own layer
 	if (!database->query("SELECT file_id, filename FROM file"))
@@ -91,12 +130,98 @@ void Locutus::removeGoneFiles() {
 	*/
 }
 
+void Locutus::saveFiles(const map<Metafile *, Track *> &files) {
+	Debug::info("Saving files:");
+	for (map<Metafile *, Track *>::const_iterator s = files.begin(); s != files.end(); ++s) {
+		Debug::info(s->first->filename);
+		/* first save metadata */
+		if (!s->first->saveMetadata(s->second)) {
+			/* unable to save metadata */
+			continue;
+		}
+		/* move file */
+		//filenamer->getFilename(s->first);
+		/* and finally update file table */
+		database->save(*(s->first));
+	}
+}
+
 void Locutus::scanDirectory(const string &directory) {
 	/* clear data */
 	grouped_files.clear();
 	files.clear();
 	/* parse directory */
-	filenamer->scanFiles(directory);
+	scanFiles(directory);
+}
+
+void Locutus::scanFiles(const string &directory) {
+	dir_queue.push_back(directory);
+	while (dir_queue.size() > 0 || file_queue.size() > 0) {
+		/* first files */
+		if (parseFile())
+			continue;
+		/* then directories */
+		if (parseDirectory())
+			continue;
+	}
+}
+
+bool Locutus::parseDirectory() {
+	if (dir_queue.size() <= 0)
+		return false;
+	string directory(*dir_queue.begin());
+	Debug::info(directory);
+	dir_queue.pop_front();
+	DIR *dir = opendir(directory.c_str());
+	if (dir == NULL)
+		return true;
+	dirent *entity;
+	while ((entity = readdir(dir)) != NULL) {
+		string entityname = entity->d_name;
+		if (entityname == "." || entityname == "..")
+			continue;
+		string ford = directory;
+		if (ford[ford.size() - 1] != '/')
+			ford.append("/");
+		ford.append(entityname);
+		/* why isn't always "entity->d_type == DT_DIR" when the entity is a directory? */
+		DIR *tmpdir = opendir(ford.c_str());
+		if (tmpdir != NULL)
+			dir_queue.push_back(ford);
+		else
+			file_queue.push_back(ford);
+		closedir(tmpdir);
+	}
+	closedir(dir);
+	return true;
+}
+
+bool Locutus::parseFile() {
+	if (file_queue.size() <= 0)
+		return false;
+	string filename(*file_queue.begin());
+	Debug::info(filename);
+	file_queue.pop_front();
+	Metafile *mf = new Metafile(this);
+	mf->filename = filename;
+	if (!database->load(mf)) {
+		if (mf->readFromFile(filename)) {
+			/* save file to cache */
+			database->save(*mf);
+		} else {
+			/* unable to read this file */
+			delete mf;
+			return false;
+		}
+	}
+	/* TODO:
+	 * should be settings which lookups we want to run */
+	mf->puid_lookup = true;
+	mf->mbid_lookup = true;
+	mf->meta_lookup = true;
+	files.push_back(mf);
+	grouped_files[mf->getGroup()].push_back(mf);
+	return true;
 }
 
 /* main */

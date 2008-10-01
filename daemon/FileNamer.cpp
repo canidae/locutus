@@ -1,14 +1,12 @@
+#include "Database.h"
 #include "Debug.h"
 #include "FileNamer.h"
-#include "Locutus.h"
 #include "Metafile.h"
-#include "Track.h"
 
 using namespace std;
 
 /* constructors/destructor */
-FileNamer::FileNamer(Locutus *locutus) {
-	this->locutus = locutus;
+FileNamer::FileNamer(Database *database) : database(database) {
 	format_mapping["%album%"] = TYPE_ALBUM;
 	format_mapping["%albumartist%"] = TYPE_ALBUMARTIST;
 	format_mapping["%albumartistsort%"] = TYPE_ALBUMARTISTSORT;
@@ -23,55 +21,22 @@ FileNamer::FileNamer(Locutus *locutus) {
 	format_mapping["%tracknumber%"] = TYPE_TRACKNUMBER;
 	format_mapping["%date%"] = TYPE_DATE;
 	format_mapping["%custom_artist%"] = TYPE_CUSTOM_ARTIST;
-	input_dir = locutus->database->loadSetting(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
-	output_dir = locutus->database->loadSetting(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
-	duplicate_dir = locutus->database->loadSetting(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
-	file_format = locutus->database->loadSetting(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
+
+	file_format = database->loadSetting(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
 }
 
 FileNamer::~FileNamer() {
 }
 
 /* methods */
-void FileNamer::saveFiles(const map<Metafile *, Track *> &files) {
-	Debug::info("Saving files:");
-	for (map<Metafile *, Track *>::const_iterator s = files.begin(); s != files.end(); ++s) {
-		Debug::info(s->first->filename);
-		/* first save metadata */
-		if (!s->first->saveMetadata(s->second)) {
-			/* unable to save metadata */
-			continue;
-		}
-		/* move file */
-		moveFile(s->first);
-		/* and finally update file table */
-		locutus->database->save(*(s->first));
-	}
-}
-
-void FileNamer::scanFiles(const string &directory) {
-	dir_queue.push_back(directory);
-	while (dir_queue.size() > 0 || file_queue.size() > 0) {
-		/* first files */
-		if (parseFile())
-			continue;
-		/* then directories */
-		if (parseDirectory())
-			continue;
-	}
-}
-
-/* private methods */
-bool FileNamer::moveFile(Metafile *file) {
+const string &FileNamer::getFilename(Metafile *file) {
 	if (file_format.size() <= 0) {
+		filename.clear();
 		Debug::warning("File format for output is way too short, refuse to save file");
-		return false;
+		return filename;
 	}
-	string filename = output_dir;
-	if (filename[filename.size() - 1] != '/')
-		filename.push_back('/');
-	string::size_type start = filename.size() - 1;
-	filename.append(file_format);
+	string::size_type start = 0;
+	filename = file_format;
 	string::size_type stop = file->filename.find_last_of('.');
 	if (stop != string::npos)
 		filename.push_back('.'); // we need the "." before the extension (if any)
@@ -169,92 +134,5 @@ bool FileNamer::moveFile(Metafile *file) {
 			start += tmp.size();
 		}
 	}
-	start = 0;
-	string dirname;
-	mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IXOTH;
-	struct stat data;
-	int result;
-	while ((start = filename.find_first_of('/', start + 1)) != string::npos) {
-		dirname = filename.substr(0, start);
-		result = stat(dirname.c_str(), &data);
-		if (result == 0 && S_ISDIR(data.st_mode))
-			continue; // directory already exist
-		result = mkdir(dirname.c_str(), mode);
-		if (result == 0)
-			continue;
-		/* unable to create directory */
-		dirname.insert(0, "Unable to create directory: ");
-		Debug::warning(dirname);
-		return false;
-	}
-	/* TODO: currently it overwrites files, not good */
-	if (rename(file->filename.c_str(), filename.c_str()) == 0) {
-		/* was able to move file, let's also try changing the permissions to 0664 */
-		mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
-		chmod(filename.c_str(), mode);
-		file->filename = filename;
-		return true;
-	}
-	/* unable to move file for some reason */
-	filename.insert(0, "Unable to move file: ");
-	Debug::warning(filename);
-	return false;
-}
-
-bool FileNamer::parseDirectory() {
-	if (dir_queue.size() <= 0)
-		return false;
-	string directory(*dir_queue.begin());
-	Debug::info(directory);
-	dir_queue.pop_front();
-	DIR *dir = opendir(directory.c_str());
-	if (dir == NULL)
-		return true;
-	dirent *entity;
-	while ((entity = readdir(dir)) != NULL) {
-		string entityname = entity->d_name;
-		if (entityname == "." || entityname == "..")
-			continue;
-		string ford = directory;
-		if (ford[ford.size() - 1] != '/')
-			ford.append("/");
-		ford.append(entityname);
-		/* why isn't always "entity->d_type == DT_DIR" when the entity is a directory? */
-		DIR *tmpdir = opendir(ford.c_str());
-		if (tmpdir != NULL)
-			dir_queue.push_back(ford);
-		else
-			file_queue.push_back(ford);
-		closedir(tmpdir);
-	}
-	closedir(dir);
-	return true;
-}
-
-bool FileNamer::parseFile() {
-	if (file_queue.size() <= 0)
-		return false;
-	string filename(*file_queue.begin());
-	Debug::info(filename);
-	file_queue.pop_front();
-	Metafile *mf = new Metafile(locutus);
-	mf->filename = filename;
-	if (!locutus->database->load(mf)) {
-		if (mf->readFromFile(filename)) {
-			/* save file to cache */
-			locutus->database->save(*mf);
-		} else {
-			/* unable to read this file */
-			delete mf;
-			return false;
-		}
-	}
-	/* TODO:
-	 * should be settings which lookups we want to run */
-	mf->puid_lookup = true;
-	mf->mbid_lookup = true;
-	mf->meta_lookup = true;
-	locutus->files.push_back(mf);
-	locutus->grouped_files[mf->getGroup()].push_back(mf);
-	return true;
+	return filename;
 }
