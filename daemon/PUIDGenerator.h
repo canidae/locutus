@@ -14,7 +14,6 @@ class PUIDGenerator {
 		~PUIDGenerator();
 
 		const std::string &generatePUID(const std::string &filename);
-		void loadSettings();
 
 	private:
 		std::string puid;

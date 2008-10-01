@@ -112,6 +112,3 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 	/* TODO: actually generate fingerprint */
 	return puid;
 }
-
-void PUIDGenerator::loadSettings() {
-}
