@@ -140,7 +140,11 @@ void Locutus::saveFiles(const map<Metafile *, Track *> &files) {
 			continue;
 		}
 		/* move file */
-		//filenamer->getFilename(s->first);
+		string filename = output_dir;
+		if (filename.size() <= 0 || filename[filename.size() - 1] != '/')
+			filename.push_back('/');
+		filename.append(filenamer->getFilename(s->first));
+		moveFile(s->first, filename);
 		/* and finally update file table */
 		database->save(*(s->first));
 	}
