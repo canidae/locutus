@@ -17,7 +17,7 @@
 
 /* XXX */
 #include "Database.h"
-#include "FileHandler.h"
+#include "FileNamer.h"
 #include "WebService.h"
 /* XXX */
 

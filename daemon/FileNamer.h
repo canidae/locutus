@@ -1,5 +1,5 @@
-#ifndef FILEHANDLER_H
-#define FILEHANDLER_H
+#ifndef FILENAMER_H
+#define FILENAMER_H
 #define VARIOUS_ARTISTS_MBID "89ad4ac3-39f7-470e-963a-56509c546377"
 /* settings */
 #define MUSIC_OUTPUT_KEY "output_directory"
@@ -48,15 +48,15 @@ class Locutus;
 class Metafile;
 class Track;
 
-class FileHandler {
+class FileNamer {
 	public:
 		bool ready;
 		std::string duplicate_dir;
 		std::string input_dir;
 		std::string output_dir;
 
-		FileHandler(Locutus *locutus);
-		~FileHandler();
+		FileNamer(Locutus *locutus);
+		~FileNamer();
 
 		void saveFiles(const std::map<Metafile *, Track*> &files);
 		void scanFiles(const std::string &directory);

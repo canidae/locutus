@@ -1,7 +1,7 @@
 #include "Album.h"
 #include "Database.h"
 #include "Debug.h"
-#include "FileHandler.h"
+#include "FileNamer.h"
 #include "Levenshtein.h"
 #include "Locutus.h"
 #include "Metafile.h"
@@ -15,7 +15,7 @@ using namespace std;
 /* constructors/destructor */
 Locutus::Locutus(Database *database) : database(database) {
 	webservice = new WebService(database);
-	filehandler = new FileHandler(this);
+	filenamer = new FileNamer(this);
 	puidgen = new PUIDGenerator();
 	matcher = new Matcher(this);
 }
@@ -26,7 +26,7 @@ Locutus::~Locutus() {
 	delete puidgen;
 	delete matcher;
 	delete webservice;
-	delete filehandler;
+	delete filenamer;
 }
 
 /* methods */
@@ -36,10 +36,10 @@ long Locutus::run() {
 	loadSettings();
 	/* parse sorted directory */
 	Debug::info("Scanning output directory");
-	scanDirectory(filehandler->output_dir);
+	scanDirectory(filenamer->output_dir);
 	/* parse unsorted directory */
 	Debug::info("Scanning input directory");
-	scanDirectory(filehandler->input_dir);
+	scanDirectory(filenamer->input_dir);
 	/* match files */
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf)
 		matcher->match(gf->first, gf->second);
@@ -96,7 +96,7 @@ void Locutus::scanDirectory(const string &directory) {
 	grouped_files.clear();
 	files.clear();
 	/* parse directory */
-	filehandler->scanFiles(directory);
+	filenamer->scanFiles(directory);
 }
 
 /* main */
@@ -117,6 +117,7 @@ int main() {
 
 		usleep(sleeptime);
 	//}
+
 	/* disconnect from database */
 	delete database;
 

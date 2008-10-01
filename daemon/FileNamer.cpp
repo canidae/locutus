@@ -1,5 +1,5 @@
 #include "Debug.h"
-#include "FileHandler.h"
+#include "FileNamer.h"
 #include "Locutus.h"
 #include "Metafile.h"
 #include "Track.h"
@@ -7,7 +7,7 @@
 using namespace std;
 
 /* constructors/destructor */
-FileHandler::FileHandler(Locutus *locutus) {
+FileNamer::FileNamer(Locutus *locutus) {
 	this->locutus = locutus;
 	format_mapping["%album%"] = TYPE_ALBUM;
 	format_mapping["%albumartist%"] = TYPE_ALBUMARTIST;
@@ -29,11 +29,11 @@ FileHandler::FileHandler(Locutus *locutus) {
 	file_format = locutus->database->loadSetting(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
 }
 
-FileHandler::~FileHandler() {
+FileNamer::~FileNamer() {
 }
 
 /* methods */
-void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
+void FileNamer::saveFiles(const map<Metafile *, Track *> &files) {
 	Debug::info("Saving files:");
 	for (map<Metafile *, Track *>::const_iterator s = files.begin(); s != files.end(); ++s) {
 		Debug::info(s->first->filename);
@@ -49,7 +49,7 @@ void FileHandler::saveFiles(const map<Metafile *, Track *> &files) {
 	}
 }
 
-void FileHandler::scanFiles(const string &directory) {
+void FileNamer::scanFiles(const string &directory) {
 	dir_queue.push_back(directory);
 	while (dir_queue.size() > 0 || file_queue.size() > 0) {
 		/* first files */
@@ -62,7 +62,7 @@ void FileHandler::scanFiles(const string &directory) {
 }
 
 /* private methods */
-bool FileHandler::moveFile(Metafile *file) {
+bool FileNamer::moveFile(Metafile *file) {
 	if (file_format.size() <= 0) {
 		Debug::warning("File format for output is way too short, refuse to save file");
 		return false;
@@ -201,7 +201,7 @@ bool FileHandler::moveFile(Metafile *file) {
 	return false;
 }
 
-bool FileHandler::parseDirectory() {
+bool FileNamer::parseDirectory() {
 	if (dir_queue.size() <= 0)
 		return false;
 	string directory(*dir_queue.begin());
@@ -231,7 +231,7 @@ bool FileHandler::parseDirectory() {
 	return true;
 }
 
-bool FileHandler::parseFile() {
+bool FileNamer::parseFile() {
 	if (file_queue.size() <= 0)
 		return false;
 	string filename(*file_queue.begin());

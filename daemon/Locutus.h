@@ -37,7 +37,7 @@
 #include <vector>
 
 class Database;
-class FileHandler;
+class FileNamer;
 class Metafile;
 class PUIDGenerator;
 class Matcher;
@@ -47,7 +47,7 @@ class Locutus {
 	public:
 		Database *database;
 		WebService *webservice;
-		FileHandler *filehandler;
+		FileNamer *filenamer;
 		PUIDGenerator *puidgen;
 		Matcher *matcher;
 		std::vector<Metafile *> files;
