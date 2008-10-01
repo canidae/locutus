@@ -9,7 +9,6 @@ class Album;
 
 class Track {
 	public:
-		/* variables */
 		Album *album;
 		Artist artist;
 		int id;
@@ -18,11 +17,9 @@ class Track {
 		std::string mbid;
 		std::string title;
 
-		/* constructors/destructor */
 		Track(Album *album = NULL);
 		~Track();
 
-		/* methods */
 		Metatrack getAsMetatrack() const;
 };
 #endif

@@ -7,7 +7,6 @@ class XMLNode;
 
 class Metatrack {
 	public:
-		/* variables */
 		int duration;
 		int tracknumber;
 		std::string track_mbid;
@@ -18,11 +17,9 @@ class Metatrack {
 		std::string album_title;
 		std::string puid;
 
-		/* constructors/destructor */
 		Metatrack();
 		~Metatrack();
 
-		/* methods */
 		bool readFromXML(XMLNode *track);
 		bool saveToCache() const;
 };

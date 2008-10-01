@@ -11,11 +11,9 @@ class Track;
 
 class Database {
 	public:
-		/* constructors/destructor */
 		Database();
 		virtual ~Database();
 
-		/* methods */
 		virtual bool load(Album *album);
 		virtual bool load(Metafile *metafile);
 		virtual double loadSetting(const std::string &key, double default_value, const std::string &description);

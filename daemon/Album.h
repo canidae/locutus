@@ -8,7 +8,6 @@
 
 class Album {
 	public:
-		/* variables */
 		Artist artist;
 		std::string mbid;
 		std::string released;
@@ -16,7 +15,6 @@ class Album {
 		std::string type;
 		std::vector<Track> tracks;
 
-		/* constructors/destructor */
 		Album(const std::string &mbid = "");
 		~Album();
 };

@@ -45,7 +45,6 @@ class WebService;
 
 class Locutus {
 	public:
-		/* variables */
 		Database *database;
 		WebService *webservice;
 		FileHandler *filehandler;
@@ -64,15 +63,12 @@ class Locutus {
 		int metatrack_cache_lifetime;
 		int puid_cache_lifetime;
 
-		/* constructors/destructor */
 		Locutus();
 		~Locutus();
 
-		/* methods */
 		long run();
 
 	private:
-		/* methods */
 		void loadSettings();
 		void removeGoneFiles();
 		void scanDirectory(const std::string &directory);

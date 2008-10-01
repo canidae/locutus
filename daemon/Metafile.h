@@ -70,7 +70,6 @@ struct Match {
 
 class Metafile {
 	public:
-		/* variables */
 		std::string filename;
 		bool puid_lookup;
 		bool mbid_lookup;
@@ -95,13 +94,10 @@ class Metafile {
 		std::string tracknumber;
 		std::string released;
 
-		/* constructors */
 		Metafile(Locutus *locutus);
 
-		/* destructors */
 		~Metafile();
 
-		/* methods */
 		Match compareWithMetatrack(const Metatrack &metatrack) const;
 		std::string getBaseNameWithoutExtension() const;
 		std::string getGroup() const;
@@ -109,10 +105,8 @@ class Metafile {
 		bool saveMetadata(const Track *track);
 
 	private:
-		/* variables */
 		Locutus *locutus;
 
-		/* methods */
 		void readAudioProperties(const TagLib::AudioProperties *ap);
 		void readCrapTags(const TagLib::APE::Tag *ape, const TagLib::ID3v2::Tag *id3v2, const TagLib::ID3v1::Tag *id3v1);
 		void readXiphComment(const TagLib::Ogg::XiphComment *tag);

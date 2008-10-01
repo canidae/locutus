@@ -23,18 +23,15 @@ class Locutus; // XXX
 
 class WebService : public ost::URLStream, public ost::XMLStream {
 	public:
-		/* constructors/destructor */
 		WebService(Locutus *locutus);
 		~WebService();
 
-		/* methods */
 		void loadSettings();
 		bool lookupAlbum(Album *album);
 		std::vector<Metatrack> *searchMetadata(const std::string &wsquery);
 		std::vector<Metatrack> *searchPUID(const std::string &puid);
 
 	private:
-		/* variables */
 		Locutus *locutus;
 		std::vector<Metatrack> *tracks;
 		URLStream::Error status;
@@ -43,7 +40,6 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		XMLNode *root;
 		XMLNode *curnode;
 
-		/* methods */
 		void characters(const unsigned char *text, size_t len);
 		void close();
 		void endElement(const unsigned char *name);

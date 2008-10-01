@@ -50,30 +50,25 @@ class Track;
 
 class FileHandler {
 	public:
-		/* variables */
 		bool ready;
 		std::string duplicate_dir;
 		std::string input_dir;
 		std::string output_dir;
 
-		/* constructors/destructor */
 		FileHandler(Locutus *locutus);
 		~FileHandler();
 
-		/* methods */
 		void loadSettings();
 		void saveFiles(const std::map<Metafile *, Track*> &files);
 		void scanFiles(const std::string &directory);
 
 	private:
-		/* variables */
 		Locutus *locutus;
 		std::list<std::string> dir_queue;
 		std::list<std::string> file_queue;
 		std::string file_format;
 		std::map<std::string, int> format_mapping;
 
-		/* methods */
 		bool moveFile(Metafile *file);
 		bool parseDirectory();
 		bool parseFile();

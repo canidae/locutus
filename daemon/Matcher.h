@@ -31,22 +31,18 @@ struct MatchGroup {
 
 class Matcher {
 	public:
-		/* constructors/destructor */
 		Matcher(Locutus *locutus);
 		~Matcher();
 
-		/* methods */
 		void loadSettings();
 		void match(const std::string &group, const std::vector<Metafile *> &files);
 
 	private:
-		/* variables */
 		Locutus *locutus;
 		std::map<std::string, MatchGroup> mgs;
 		double puid_min_score;
 		double metadata_min_score;
 
-		/* methods */
 		void compareFilesWithAlbum(const std::string &mbid, const std::vector<Metafile *> &files);
 		void clearMatchGroup();
 		std::string escapeWSString(const std::string &text) const;

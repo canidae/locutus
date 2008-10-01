@@ -17,11 +17,9 @@ class Track;
 
 class PostgreSQL : public Database {
 	public:
-		/* constructors/destructor */
 		PostgreSQL(Locutus *locutus, const std::string connection);
 		~PostgreSQL();
 
-		/* methods */
 		bool load(Album *album);
 		bool load(Metafile *metafile);
 		virtual double loadSetting(const std::string &key, double default_value, const std::string &description);
@@ -34,13 +32,11 @@ class PostgreSQL : public Database {
 		bool save(const Track &track);
 
 	private:
-		/* variables */
 		Locutus *locutus; // XXX
 		bool got_result;
 		PGconn *pg_connection;
 		PGresult *pg_result;
 
-		/* methods */
 		void clear();
 		bool doQuery(const char *q);
 		std::string escapeString(const std::string &str) const;
