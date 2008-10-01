@@ -32,8 +32,7 @@ Locutus::Locutus(Database *database) : database(database) {
 }
 
 Locutus::~Locutus() {
-	for (vector<Metafile *>::iterator mf = files.begin(); mf != files.end(); ++mf)
-		delete (*mf);
+	clearFiles();
 	delete puidgen;
 	delete matcher;
 	delete webservice;
@@ -65,6 +64,13 @@ long Locutus::run() {
 }
 
 /* private methods */
+void Locutus::clearFiles() {
+	for (vector<Metafile *>::iterator mf = files.begin(); mf != files.end(); ++mf)
+		delete (*mf);
+	files.clear();
+	grouped_files.clear();
+}
+
 void Locutus::loadSettings() {
 	/* load general settings */
         metatrack_cache_lifetime = database->loadSetting(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
@@ -155,9 +161,8 @@ void Locutus::saveFiles(const map<Metafile *, Track *> &files) {
 }
 
 void Locutus::scanDirectory(const string &directory) {
-	/* clear data */
-	grouped_files.clear();
-	files.clear();
+	/* clear files */
+	clearFiles();
 	/* parse directory */
 	scanFiles(directory);
 }

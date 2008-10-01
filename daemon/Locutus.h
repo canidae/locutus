@@ -98,6 +98,7 @@ class Locutus {
 		std::string input_dir;
 		std::string output_dir;
 
+		void clearFiles();
 		void loadSettings();
 		bool moveFile(Metafile *file, const std::string &filename);
 		bool parseDirectory();
