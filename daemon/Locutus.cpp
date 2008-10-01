@@ -50,6 +50,13 @@ long Locutus::run() {
 	/* parse unsorted directory */
 	Debug::info("Scanning input directory");
 	scanDirectory(input_dir);
+	/* FIXME
+	 * currently the matcher is telling locutus which files to save,
+	 * this is mildly broken.
+	 * matcher should flag files which got new metadata, then locutus
+	 * should save metadata, move files & update database.
+	 * this must be done inside the following loop (that is, for each
+	 * group and not after all groups are matched) */
 	/* match files */
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf)
 		matcher->match(gf->first, gf->second);
