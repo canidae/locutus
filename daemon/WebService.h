@@ -23,7 +23,6 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		WebService(Database *database);
 		~WebService();
 
-		void loadSettings();
 		bool lookupAlbum(Album *album);
 		std::vector<Metatrack> *searchMetadata(const std::string &wsquery);
 		std::vector<Metatrack> *searchPUID(const std::string &puid);

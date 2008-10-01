@@ -70,7 +70,6 @@ void Locutus::loadSettings() {
 
 	/* load settings for other classes */
 	filehandler->loadSettings();
-	webservice->loadSettings();
 	puidgen->loadSettings();
 	matcher->loadSettings();
 }

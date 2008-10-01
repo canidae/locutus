@@ -11,6 +11,8 @@ using namespace std;
 WebService::WebService(Database *database) : database(database) {
 	root = new XMLNode;
 	tracks = new vector<Metatrack>;
+	metadata_search_url = database->loadSetting(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
+	release_lookup_url = database->loadSetting(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 }
 
 WebService::~WebService() {
@@ -19,11 +21,6 @@ WebService::~WebService() {
 }
 
 /* methods */
-void WebService::loadSettings() {
-	metadata_search_url = database->loadSetting(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
-	release_lookup_url = database->loadSetting(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
-}
-
 bool WebService::lookupAlbum(Album *album) {
 	if (album == NULL || album->mbid.size() != 36 || album->mbid[8] != '-' || album->mbid[13] != '-' || album->mbid[18] != '-' || album->mbid[23] != '-')
 		return false;
