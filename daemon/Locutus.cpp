@@ -67,9 +67,6 @@ void Locutus::loadSettings() {
 	duration_weight = database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
 	title_weight = database->loadSetting(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
 	tracknumber_weight = database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
-
-	/* load settings for other classes */
-	filehandler->loadSettings();
 }
 
 void Locutus::removeGoneFiles() {

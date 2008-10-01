@@ -58,7 +58,6 @@ class FileHandler {
 		FileHandler(Locutus *locutus);
 		~FileHandler();
 
-		void loadSettings();
 		void saveFiles(const std::map<Metafile *, Track*> &files);
 		void scanFiles(const std::string &directory);
 
