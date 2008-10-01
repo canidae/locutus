@@ -63,7 +63,7 @@ class Locutus {
 		int metatrack_cache_lifetime;
 		int puid_cache_lifetime;
 
-		Locutus();
+		Locutus(Database *database);
 		~Locutus();
 
 		long run();

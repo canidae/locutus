@@ -13,8 +13,7 @@
 using namespace std;
 
 /* constructors/destructor */
-Locutus::Locutus() {
-	database = new PostgreSQL("host=localhost user=locutus password=locutus dbname=locutus");
+Locutus::Locutus(Database *database) : database(database) {
 	webservice = new WebService(database);
 	filehandler = new FileHandler(this);
 	puidgen = new PUIDGenerator();
@@ -28,7 +27,6 @@ Locutus::~Locutus() {
 	delete matcher;
 	delete webservice;
 	delete filehandler;
-	delete database;
 }
 
 /* methods */
@@ -103,22 +101,28 @@ void Locutus::scanDirectory(const string &directory) {
 
 /* main */
 int main() {
-	//while (true) {
-		/* initialize static classes */
-		Debug::open("locutus.log");
-		Levenshtein::initialize();
+	/* initialize static classes */
+	Debug::open("locutus.log");
+	Levenshtein::initialize();
 
-		Locutus *locutus = new Locutus();
+	/* connect to database */
+	Database *database = new PostgreSQL("host=localhost user=locutus password=locutus dbname=locutus");
+
+	//while (true) {
+		Locutus *locutus = new Locutus(database);
 		Debug::info("Checking files...");
 		long sleeptime = locutus->run();
 		Debug::info("Finished checking files");
 		delete locutus;
 
-		/* clear static classes */
-		Levenshtein::clear();
-		Debug::close();
-
 		usleep(sleeptime);
 	//}
+	/* disconnect from database */
+	delete database;
+
+	/* clear static classes */
+	Levenshtein::clear();
+	Debug::close();
+
 	return 0;
 }
