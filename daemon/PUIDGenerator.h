@@ -8,18 +8,15 @@ extern "C" {
 #include <sstream>
 #include <string>
 
-class Locutus; // XXX
-
 class PUIDGenerator {
 	public:
-		PUIDGenerator(Locutus *locutus);
+		PUIDGenerator();
 		~PUIDGenerator();
 
 		const std::string &generatePUID(const std::string &filename);
 		void loadSettings();
 
 	private:
-		Locutus *locutus;
 		std::string puid;
 };
 #endif

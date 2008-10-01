@@ -14,16 +14,13 @@
 #include <vector>
 #include "Metatrack.h"
 
-#include "Database.h" // XXX
-
 class Album;
+class Database;
 class XMLNode;
-
-class Locutus; // XXX
 
 class WebService : public ost::URLStream, public ost::XMLStream {
 	public:
-		WebService(Locutus *locutus);
+		WebService(Database *database);
 		~WebService();
 
 		void loadSettings();
@@ -32,7 +29,7 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		std::vector<Metatrack> *searchPUID(const std::string &puid);
 
 	private:
-		Locutus *locutus;
+		Database *database;
 		std::vector<Metatrack> *tracks;
 		URLStream::Error status;
 		std::string metadata_search_url;

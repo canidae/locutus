@@ -15,9 +15,9 @@ using namespace std;
 /* constructors/destructor */
 Locutus::Locutus() {
 	database = new PostgreSQL(this, "host=localhost user=locutus password=locutus dbname=locutus");
-	webservice = new WebService(this);
+	webservice = new WebService(database);
 	filehandler = new FileHandler(this);
-	puidgen = new PUIDGenerator(this);
+	puidgen = new PUIDGenerator();
 	matcher = new Matcher(this);
 }
 

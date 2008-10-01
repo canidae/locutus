@@ -1,16 +1,14 @@
 #include "Album.h"
+#include "Database.h"
 #include "Debug.h"
 #include "WebService.h"
 #include "XMLNode.h"
-
-#include "Locutus.h" // XXX
 
 using namespace ost;
 using namespace std;
 
 /* constructors/destructor */
-WebService::WebService(Locutus *locutus) {
-	this->locutus = locutus;
+WebService::WebService(Database *database) : database(database) {
 	root = new XMLNode;
 	tracks = new vector<Metatrack>;
 }
@@ -22,8 +20,8 @@ WebService::~WebService() {
 
 /* methods */
 void WebService::loadSettings() {
-	metadata_search_url = locutus->database->loadSetting(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
-	release_lookup_url = locutus->database->loadSetting(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
+	metadata_search_url = database->loadSetting(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
+	release_lookup_url = database->loadSetting(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 }
 
 bool WebService::lookupAlbum(Album *album) {
