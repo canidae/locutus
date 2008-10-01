@@ -14,7 +14,7 @@ using namespace std;
 
 /* constructors/destructor */
 Locutus::Locutus() {
-	database = new PostgreSQL(this, "host=localhost user=locutus password=locutus dbname=locutus");
+	database = new PostgreSQL("host=localhost user=locutus password=locutus dbname=locutus");
 	webservice = new WebService(database);
 	filehandler = new FileHandler(this);
 	puidgen = new PUIDGenerator();
@@ -58,7 +58,6 @@ long Locutus::run() {
 /* private methods */
 void Locutus::loadSettings() {
 	/* load general settings */
-        album_cache_lifetime = database->loadSetting(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
         metatrack_cache_lifetime = database->loadSetting(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
         puid_cache_lifetime = database->loadSetting(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
 	album_weight = database->loadSetting(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);

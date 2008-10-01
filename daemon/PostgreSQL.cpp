@@ -6,19 +6,18 @@
 #include "PostgreSQL.h"
 #include "Track.h"
 
-#include "Locutus.h" // XXX
-
 using namespace std;
 
 /* constructors/destructor */
-PostgreSQL::PostgreSQL(Locutus *locutus, const string connection) : Database() {
-	this->locutus = locutus; // XXX
+PostgreSQL::PostgreSQL(const string connection) : Database() {
 	got_result = false;
+	pg_result = NULL;
 	pg_connection = PQconnectdb(connection.c_str());
 	if (PQstatus(pg_connection) != CONNECTION_OK) {
 		Debug::error("Unable to connect to the database");
 		exit(1);
 	}
+	album_cache_lifetime = loadSetting(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
 }
 
 PostgreSQL::~PostgreSQL() {
@@ -29,7 +28,7 @@ PostgreSQL::~PostgreSQL() {
 /* methods */
 bool PostgreSQL::load(Album *album) {
 	/* fetch album from cache */
-	if (locutus == NULL || album == NULL)
+	if (album == NULL)
 		return false;
 	if (album->mbid.size() != 36 || album->mbid[8] != '-' || album->mbid[13] != '-' || album->mbid[18] != '-' || album->mbid[23] != '-') {
 		string msg = "Unable to load album from cache. Illegal MusicBrainz ID: ";
@@ -38,7 +37,7 @@ bool PostgreSQL::load(Album *album) {
 		return false;
 	}
 	ostringstream query;
-	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << escapeString(album->mbid) << "' AND last_updated + INTERVAL '" << locutus->album_cache_lifetime << " months' > now()";
+	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << escapeString(album->mbid) << "' AND last_updated + INTERVAL '" << album_cache_lifetime << " months' > now()";
 	if (!doQuery(query.str()) || getRows() <= 0) {
 		/* album not in cache */
 		string msg = "Unable to load album from cache. MusicBrainz ID not found or cache is too old: ";
@@ -82,7 +81,7 @@ bool PostgreSQL::load(Album *album) {
 }
 
 bool PostgreSQL::load(Metafile *metafile) {
-	if (locutus == NULL || metafile == NULL)
+	if (metafile == NULL)
 		return false;
 	if (metafile->filename.size() <= 0) {
 		Debug::notice("Length of filename is 0 or less? Can't load that from cache");
@@ -162,8 +161,6 @@ string PostgreSQL::loadSetting(const string &key, const string &default_value, c
 
 bool PostgreSQL::save(const Album &album) {
 	/* save album to cache */
-	if (locutus == NULL)
-		return false;
 	if (album.mbid.size() != 36) {
 		string msg = "Unable to save album in cache. Illegal MusicBrainz ID: ";
 		msg.append(album.mbid);

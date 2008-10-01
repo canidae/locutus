@@ -1,13 +1,14 @@
 #ifndef POSTGRESQL_H
 #define POSTGRESQL_H
+#define ALBUM_CACHE_LIFETIME_KEY "album_cache_lifetime"
+#define ALBUM_CACHE_LIFETIME_VALUE 3
+#define ALBUM_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
 
 extern "C" {
 #include <libpq-fe.h>
 }
 #include <string>
 #include "Database.h"
-
-class Locutus; // XXX
 
 class Album;
 class Artist;
@@ -17,14 +18,14 @@ class Track;
 
 class PostgreSQL : public Database {
 	public:
-		PostgreSQL(Locutus *locutus, const std::string connection);
+		PostgreSQL(const std::string connection);
 		~PostgreSQL();
 
 		bool load(Album *album);
 		bool load(Metafile *metafile);
-		virtual double loadSetting(const std::string &key, double default_value, const std::string &description);
-		virtual int loadSetting(const std::string &key, int default_value, const std::string &description);
-		virtual std::string loadSetting(const std::string &key, const std::string &default_value, const std::string &description);
+		double loadSetting(const std::string &key, double default_value, const std::string &description);
+		int loadSetting(const std::string &key, int default_value, const std::string &description);
+		std::string loadSetting(const std::string &key, const std::string &default_value, const std::string &description);
 		bool save(const Album &album);
 		bool save(const Artist &artist);
 		bool save(const Metafile &metafile);
@@ -32,10 +33,10 @@ class PostgreSQL : public Database {
 		bool save(const Track &track);
 
 	private:
-		Locutus *locutus; // XXX
-		bool got_result;
 		PGconn *pg_connection;
 		PGresult *pg_result;
+		bool got_result;
+		int album_cache_lifetime;
 
 		void clear();
 		bool doQuery(const char *q);
