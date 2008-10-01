@@ -70,7 +70,6 @@ void Locutus::loadSettings() {
 
 	/* load settings for other classes */
 	filehandler->loadSettings();
-	matcher->loadSettings();
 }
 
 void Locutus::removeGoneFiles() {

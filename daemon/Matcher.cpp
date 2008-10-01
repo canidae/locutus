@@ -8,17 +8,14 @@ using namespace std;
 /* constructors/destructor */
 Matcher::Matcher(Locutus *locutus) {
 	this->locutus = locutus;
+	puid_min_score = locutus->database->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
+	metadata_min_score = locutus->database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
 }
 
 Matcher::~Matcher() {
 }
 
 /* methods */
-void Matcher::loadSettings() {
-	puid_min_score = locutus->database->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
-	metadata_min_score = locutus->database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
-}
-
 void Matcher::match(const string &group, const vector<Metafile *> &files) {
 	/* look up puids first */
 	lookupPUIDs(files);

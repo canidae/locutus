@@ -34,7 +34,6 @@ class Matcher {
 		Matcher(Locutus *locutus);
 		~Matcher();
 
-		void loadSettings();
 		void match(const std::string &group, const std::vector<Metafile *> &files);
 
 	private:
