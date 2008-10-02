@@ -28,7 +28,7 @@ class Metafile;
 
 class FileNamer {
 	public:
-		FileNamer(Database *database);
+		explicit FileNamer(Database *database);
 		~FileNamer();
 
 		const std::string &getFilename(Metafile *file);

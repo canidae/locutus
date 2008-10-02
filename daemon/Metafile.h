@@ -94,8 +94,7 @@ class Metafile {
 		std::string tracknumber;
 		std::string released;
 
-		Metafile(Locutus *locutus);
-
+		explicit Metafile(Locutus *locutus);
 		~Metafile();
 
 		Match compareWithMetatrack(const Metatrack &metatrack) const;

@@ -18,7 +18,7 @@ class Track;
 
 class PostgreSQL : public Database {
 	public:
-		PostgreSQL(const std::string connection);
+		explicit PostgreSQL(const std::string connection);
 		~PostgreSQL();
 
 		bool load(Album *album);

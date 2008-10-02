@@ -15,7 +15,7 @@ class Album {
 		std::string type;
 		std::vector<Track> tracks;
 
-		Album(const std::string &mbid = "");
+		explicit Album(const std::string &mbid = "");
 		~Album();
 };
 #endif

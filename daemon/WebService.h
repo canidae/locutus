@@ -26,7 +26,7 @@ class Database;
 
 class WebService : public ost::URLStream, public ost::XMLStream {
 	public:
-		WebService(Database *database);
+		explicit WebService(Database *database);
 		~WebService();
 
 		bool lookupAlbum(Album *album);

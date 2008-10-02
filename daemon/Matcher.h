@@ -31,7 +31,7 @@ struct MatchGroup {
 
 class Matcher {
 	public:
-		Matcher(Locutus *locutus);
+		explicit Matcher(Locutus *locutus);
 		~Matcher();
 
 		void match(const std::string &group, const std::vector<Metafile *> &files);
