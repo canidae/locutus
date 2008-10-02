@@ -196,13 +196,13 @@ bool Matcher::loadAlbum(const string &mbid) {
 		return true; // already loaded
 	Album *album = new Album(mbid);
 	if (!database->load(album)) {
-		if (webservice->lookupAlbum(album))
+		if (webservice->lookupAlbum(album)) {
 			database->save(*album);
-	}
-	if (album->mbid != mbid) {
-		/* hmm, didn't find the album? */
-		delete album;
-		return false;
+		} else {
+			/* hmm, didn't find the album? */
+			delete album;
+			return false;
+		}
 	}
 	mgs[mbid].album = album;
 	mgs[mbid].scores.resize((int) album->tracks.size());
