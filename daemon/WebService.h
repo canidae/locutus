@@ -24,12 +24,13 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		~WebService();
 
 		bool lookupAlbum(Album *album);
-		std::vector<Metatrack> *searchMetadata(const std::string &wsquery);
-		std::vector<Metatrack> *searchPUID(const std::string &puid);
+		const std::vector<Metatrack> &searchMetadata(const std::string &wsquery);
+		const std::vector<Metatrack> &searchPUID(const std::string &puid);
 
 	private:
 		Database *database;
-		std::vector<Metatrack> *tracks;
+		Metatrack metatrack;
+		std::vector<Metatrack> tracks;
 		URLStream::Error status;
 		std::string metadata_search_url;
 		std::string release_lookup_url;
@@ -40,6 +41,7 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		void close();
 		void endElement(const unsigned char *name);
 		bool fetch(const char *url);
+		bool getMetatrack(XMLNode *track);
 		void printXML(XMLNode *startnode, int indent) const;
 		int read(unsigned char *buffer, size_t len);
 		void startElement(const unsigned char *name, const unsigned char **attr);

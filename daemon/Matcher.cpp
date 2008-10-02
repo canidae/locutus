@@ -142,8 +142,8 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 		Metafile *mf = *file;
 		if (!mf->puid_lookup || mf->puid.size() != 36)
 			continue;
-		vector<Metatrack> *tracks = locutus->webservice->searchPUID(mf->puid);
-		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
+		vector<Metatrack> tracks = locutus->webservice->searchPUID(mf->puid);
+		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			/* puid search won't return puid, so let's set it manually */
 			mt->puid = mf->puid;
 			Match m = mf->compareWithMetatrack(*mt);
@@ -296,8 +296,8 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 		Metafile *mf = *file;
 		if (!mf->meta_lookup)
 			continue;
-		vector<Metatrack> *tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group, *mf));
-		for (vector<Metatrack>::iterator mt = tracks->begin(); mt != tracks->end(); ++mt) {
+		vector<Metatrack> tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group, *mf));
+		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			Match m = mf->compareWithMetatrack(*mt);
 			locutus->database->save(*mt);
 			saveMatchToCache(mf->filename, mt->track_mbid, m);

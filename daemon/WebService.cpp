@@ -10,14 +10,12 @@ using namespace std;
 /* constructors/destructor */
 WebService::WebService(Database *database) : database(database) {
 	root = new XMLNode;
-	tracks = new vector<Metatrack>;
 	metadata_search_url = database->loadSetting(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = database->loadSetting(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 }
 
 WebService::~WebService() {
 	delete root;
-	delete tracks;
 }
 
 /* methods */
@@ -76,8 +74,8 @@ bool WebService::lookupAlbum(Album *album) {
 	return true;
 }
 
-vector<Metatrack> *WebService::searchMetadata(const string &wsquery) {
-	tracks->clear();
+const vector<Metatrack> &WebService::searchMetadata(const string &wsquery) {
+	tracks.clear();
 	if (wsquery == "")
 		return tracks;
 	string url = metadata_search_url;
@@ -85,16 +83,15 @@ vector<Metatrack> *WebService::searchMetadata(const string &wsquery) {
 	url.append(wsquery);
 	if (fetch(url.c_str()) && root->children["metadata"].size() > 0 && root->children["metadata"][0]->children["track-list"].size() > 0) {
 		for (vector<XMLNode *>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
-			Metatrack track;
-			track.readFromXML(root->children["metadata"][0]->children["track-list"][0]->children["track"][a]);
-			tracks->push_back(track);
+			if (getMetatrack(root->children["metadata"][0]->children["track-list"][0]->children["track"][a]))
+				tracks.push_back(metatrack);
 		}
 	}
 	return tracks;
 }
 
-vector<Metatrack> *WebService::searchPUID(const string &puid) {
-	tracks->clear();
+const vector<Metatrack> &WebService::searchPUID(const string &puid) {
+	tracks.clear();
 	if (puid.size() != 36)
 		return tracks;
 	string wsquery = "puid=";
@@ -138,6 +135,20 @@ bool WebService::fetch(const char *url) {
 		Debug::warning("XML is not well formed");
 	close();
 	//printXML(root, 0);
+	return true;
+}
+
+bool WebService::getMetatrack(XMLNode *track) {
+	metatrack.track_mbid = track->children["id"][0]->value;
+	metatrack.track_title = track->children["title"][0]->value;
+	if (track->children["duration"].size() > 0)
+		metatrack.duration = atoi(track->children["duration"][0]->value.c_str());
+	metatrack.artist_mbid = track->children["artist"][0]->children["id"][0]->value;
+	metatrack.artist_name = track->children["artist"][0]->children["name"][0]->value;
+	metatrack.album_mbid = track->children["release-list"][0]->children["release"][0]->children["id"][0]->value;
+	metatrack.album_title = track->children["release-list"][0]->children["release"][0]->children["title"][0]->value;
+	string offset = track->children["release-list"][0]->children["release"][0]->children["track-list"][0]->children["offset"][0]->value;
+	metatrack.tracknumber = atoi(offset.c_str()) + 1;
 	return true;
 }
 

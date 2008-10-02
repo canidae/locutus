@@ -3,8 +3,6 @@
 
 #include <string>
 
-class XMLNode;
-
 class Metatrack {
 	public:
 		int duration;
@@ -19,8 +17,5 @@ class Metatrack {
 
 		Metatrack();
 		~Metatrack();
-
-		bool readFromXML(XMLNode *track);
-		bool saveToCache() const;
 };
 #endif

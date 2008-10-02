@@ -53,7 +53,7 @@ long Locutus::run() {
 	/* match files */
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf) {
 		matcher->match(gf->first, gf->second);
-		/* save files who's metadata has been updated */
+		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
 			if (!(*f)->metadata_changed)
 				continue;
@@ -68,8 +68,6 @@ long Locutus::run() {
 		}
 	}
 	/* submit new puids? */
-	// TODO
-	/* save changes */
 	// TODO
 	/* remove file entries where file doesn't exist */
 	removeGoneFiles();
