@@ -14,9 +14,15 @@
 #include <vector>
 #include "Metatrack.h"
 
+struct XMLNode {
+	XMLNode *parent;
+	std::map<std::string, std::vector<XMLNode *> > children;
+	std::string key;
+	std::string value;
+};
+
 class Album;
 class Database;
-class XMLNode;
 
 class WebService : public ost::URLStream, public ost::XMLStream {
 	public:
@@ -38,6 +44,7 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		XMLNode *curnode;
 
 		void characters(const unsigned char *text, size_t len);
+		void clearXMLNode(XMLNode *node);
 		void close();
 		void endElement(const unsigned char *name);
 		bool fetch(const char *url);

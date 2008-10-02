@@ -2,7 +2,6 @@
 #include "Database.h"
 #include "Debug.h"
 #include "WebService.h"
-#include "XMLNode.h"
 
 using namespace ost;
 using namespace std;
@@ -15,6 +14,7 @@ WebService::WebService(Database *database) : database(database) {
 }
 
 WebService::~WebService() {
+	clearXMLNode(root);
 	delete root;
 }
 
@@ -28,8 +28,6 @@ bool WebService::lookupAlbum(Album *album) {
 	if (!fetch(url.c_str()))
 		return false;
 	/* album data */
-	if (root == NULL)
-		return false;
 	if (root->children["metadata"].size() <= 0)
 		return false;
 	XMLNode *xml_album = root->children["metadata"][0]->children["release"][0];
@@ -104,6 +102,15 @@ void WebService::characters(const unsigned char *text, size_t len) {
 	curnode->value = string((char *) text, len);
 }
 
+void WebService::clearXMLNode(XMLNode *node) {
+	for (map<string, vector<XMLNode *> >::iterator it = node->children.begin(); it != node->children.end(); ++it) {
+		for (vector<XMLNode *>::size_type a = 0; a < it->second.size(); ++a) {
+			clearXMLNode(it->second[a]);
+			delete it->second[a];
+		}
+	}
+}
+
 void WebService::close() {
 	URLStream::close();
 }
@@ -114,8 +121,8 @@ void WebService::endElement(const unsigned char *name) {
 }
 
 bool WebService::fetch(const char *url) {
-	char *urle = new char[65536];
-	urle = urlEncode(url, urle, 65536);
+	char *urle = new char[4096];
+	urle = urlEncode(url, urle, 4096);
 	Debug::info(urle);
 	status = get(urle);
 	delete [] urle;
@@ -125,6 +132,7 @@ bool WebService::fetch(const char *url) {
 		close();
 		return false;
 	}
+	clearXMLNode(root);
 	delete root;
 	root = new XMLNode;
 	root->parent = NULL;

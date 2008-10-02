@@ -2,7 +2,7 @@ CXX = g++
 RM = rm -f
 CXXFLAGS = -O0 -Wall -g -I/usr/include/postgresql -I/usr/include/ffmpeg `taglib-config --cflags`
 LDFLAGS = -lccgnu2 -lccext2 -lpq -lavcodec `taglib-config --libs`
-OBJECTS = Album.o Artist.o Database.o Debug.o FileNamer.o Levenshtein.o Locutus.o Metafile.o Metatrack.o PostgreSQL.o PUIDGenerator.o Track.o Matcher.o WebService.o XMLNode.o
+OBJECTS = Album.o Artist.o Database.o Debug.o FileNamer.o Levenshtein.o Locutus.o Metafile.o Metatrack.o PostgreSQL.o PUIDGenerator.o Track.o Matcher.o WebService.o
 
 locutus: $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LDFLAGS) -o locutus
@@ -21,7 +21,6 @@ PUIDGenerator.o: PUIDGenerator.h PUIDGenerator.cpp
 Track.o: Track.h Track.cpp
 Matcher.o: Matcher.h Matcher.cpp
 WebService.o: WebService.h WebService.cpp
-XMLNode.o: XMLNode.h XMLNode.cpp
 
 .PHONY: clean
 clean:
