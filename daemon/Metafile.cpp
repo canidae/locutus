@@ -1,6 +1,7 @@
+#include "Album.h"
 #include "Debug.h"
 #include "Levenshtein.h"
-#include "Locutus.h"
+#include "Database.h"
 #include "Metafile.h"
 #include "Metatrack.h"
 #include "Track.h"
@@ -9,8 +10,7 @@ using namespace std;
 using namespace TagLib;
 
 /* constructors/destructor */
-Metafile::Metafile(Locutus *locutus) {
-	this->locutus = locutus;
+Metafile::Metafile(Database *database) : database(database) {
 	meta_lookup = false;
 	mbid_lookup = false;
 	puid_lookup = false;
@@ -34,6 +34,13 @@ Metafile::Metafile(Locutus *locutus) {
 	title = "";
 	tracknumber = "";
 	released = "";
+
+	album_weight = database->loadSetting(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
+	artist_weight = database->loadSetting(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
+	duration_limit = database->loadSetting(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
+	duration_weight = database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
+	title_weight = database->loadSetting(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
+	tracknumber_weight = database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 }
 
 Metafile::~Metafile() {
@@ -106,14 +113,14 @@ Match Metafile::compareWithMetatrack(const Metatrack &metatrack) const {
 	}
 	m.puid_match = (puid != "" && puid == metatrack.puid);
 	m.mbid_match = (musicbrainz_trackid != "" && musicbrainz_trackid == metatrack.track_mbid);
-	m.meta_score = scores[0][0] * locutus->album_weight;
-	m.meta_score += scores[1][0] * locutus->artist_weight;
-	m.meta_score += scores[2][0] * locutus->title_weight;
-	m.meta_score += scores[3][0] * locutus->tracknumber_weight;
+	m.meta_score = scores[0][0] * album_weight;
+	m.meta_score += scores[1][0] * artist_weight;
+	m.meta_score += scores[2][0] * title_weight;
+	m.meta_score += scores[3][0] * tracknumber_weight;
 	int durationdiff = abs(metatrack.duration - duration);
-	if (durationdiff < locutus->duration_limit)
-		m.meta_score += (1.0 - durationdiff / locutus->duration_limit) * locutus->duration_weight;
-	m.meta_score /= locutus->album_weight + locutus->artist_weight + locutus->title_weight + locutus->tracknumber_weight + locutus->duration_weight;
+	if (durationdiff < duration_limit)
+		m.meta_score += (1.0 - durationdiff / duration_limit) * duration_weight;
+	m.meta_score /= album_weight + artist_weight + title_weight + tracknumber_weight + duration_weight;
 	return m;
 }
 

@@ -1,5 +1,24 @@
 #ifndef METAFILE_H
 #define METAFILE_H
+/* settings */
+#define ALBUM_WEIGHT_KEY "album_weight"
+#define ALBUM_WEIGHT_VALUE 100.0
+#define ALBUM_WEIGHT_DESCRIPTION ""
+#define ARTIST_WEIGHT_KEY "artist_weight"
+#define ARTIST_WEIGHT_VALUE 100.0
+#define ARTIST_WEIGHT_DESCRIPTION ""
+#define DURATION_LIMIT_KEY "duration_limit"
+#define DURATION_LIMIT_VALUE 15000.0
+#define DURATION_LIMIT_DESCRIPTION ""
+#define DURATION_WEIGHT_KEY "duration_weight"
+#define DURATION_WEIGHT_VALUE 100.0
+#define DURATION_WEIGHT_DESCRIPTION ""
+#define TITLE_WEIGHT_KEY "title_weight"
+#define TITLE_WEIGHT_VALUE 100.0
+#define TITLE_WEIGHT_DESCRIPTION ""
+#define TRACKNUMBER_WEIGHT_KEY "tracknumber_weight"
+#define TRACKNUMBER_WEIGHT_VALUE 100.0
+#define TRACKNUMBER_WEIGHT_DESCRIPTION ""
 /* fields */
 #define ALBUM "ALBUM"
 #define ALBUMARTIST "ALBUMARTIST"
@@ -54,11 +73,7 @@
 #include <uniquefileidentifierframe.h>
 #include <vorbisfile.h>
 
-/* XXX */
-#include "Album.h"
-/* XXX */
-
-class Locutus;
+class Database;
 class Metatrack;
 class Track;
 
@@ -94,7 +109,7 @@ class Metafile {
 		std::string tracknumber;
 		std::string released;
 
-		explicit Metafile(Locutus *locutus);
+		explicit Metafile(Database *database);
 		~Metafile();
 
 		Match compareWithMetatrack(const Metatrack &metatrack) const;
@@ -105,7 +120,13 @@ class Metafile {
 		bool setMetadata(const Track *track);
 
 	private:
-		Locutus *locutus;
+		Database *database;
+		double album_weight;
+		double artist_weight;
+		double duration_weight;
+		double duration_limit;
+		double title_weight;
+		double tracknumber_weight;
 
 		void readAudioProperties(const TagLib::AudioProperties *ap);
 		void readCrapTags(const TagLib::APE::Tag *ape, const TagLib::ID3v2::Tag *id3v2, const TagLib::ID3v1::Tag *id3v1);
