@@ -43,10 +43,10 @@ Locutus::~Locutus() {
 long Locutus::run() {
 	/* parse sorted directory */
 	Debug::info("Scanning output directory");
-	scanDirectory(output_dir);
+	scanFiles(output_dir);
 	/* parse unsorted directory */
 	Debug::info("Scanning input directory");
-	scanDirectory(input_dir);
+	scanFiles(input_dir);
 	/* match files */
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf) {
 		matcher->match(gf->first, gf->second);
@@ -136,13 +136,6 @@ void Locutus::removeGoneFiles() {
 	remove << ")";
 	database->query(remove.str());
 	*/
-}
-
-void Locutus::scanDirectory(const string &directory) {
-	/* clear files */
-	clearFiles();
-	/* parse directory */
-	scanFiles(directory);
 }
 
 void Locutus::scanFiles(const string &directory) {
