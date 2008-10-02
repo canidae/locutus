@@ -18,6 +18,8 @@ PostgreSQL::PostgreSQL(const string connection) : Database() {
 		exit(1);
 	}
 	album_cache_lifetime = loadSetting(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
+	metatrack_cache_lifetime = loadSetting(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
+	puid_cache_lifetime = loadSetting(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
 }
 
 PostgreSQL::~PostgreSQL() {

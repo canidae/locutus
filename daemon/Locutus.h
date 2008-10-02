@@ -10,18 +10,6 @@
 #define MUSIC_DUPLICATE_KEY "duplicate_directory"
 #define MUSIC_DUPLICATE_VALUE "/media/music/duplicates/"
 #define MUSIC_DUPLICATE_DESCRIPTION "Directory for duplicate files"
-#define ALBUM_CACHE_LIFETIME_KEY "album_cache_lifetime"
-#define ALBUM_CACHE_LIFETIME_VALUE 3
-#define ALBUM_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
-#define METATRACK_CACHE_LIFETIME_KEY "metatrack_cache_lifetime"
-#define METATRACK_CACHE_LIFETIME_VALUE 3
-#define METATRACK_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since metatrack was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
-#define PUID_CACHE_LIFETIME_KEY "puid_cache_lifetime"
-#define PUID_CACHE_LIFETIME_VALUE 3
-#define PUID_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since puid was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
-#define COMBINE_THRESHOLD_KEY "combine_threshold"
-#define COMBINE_THRESHOLD_VALUE 0.80
-#define COMBINE_THRESHOLD_DESCRIPTION ""
 
 extern "C" {
 #include <dirent.h>
@@ -51,12 +39,6 @@ class Locutus {
 		FileNamer *filenamer;
 		PUIDGenerator *puidgen;
 		Matcher *matcher;
-
-		/* FIXME: [most of] these variables probably shouldn't be here */
-		double combine_threshold;
-		int album_cache_lifetime;
-		int metatrack_cache_lifetime;
-		int puid_cache_lifetime;
 
 		explicit Locutus(Database *database);
 		~Locutus();

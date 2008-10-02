@@ -25,22 +25,24 @@
 #define TRACKNUMBER_WEIGHT_KEY "tracknumber_weight"
 #define TRACKNUMBER_WEIGHT_VALUE 100.0
 #define TRACKNUMBER_WEIGHT_DESCRIPTION ""
+#define COMBINE_THRESHOLD_KEY "combine_threshold"
+#define COMBINE_THRESHOLD_VALUE 0.80
+#define COMBINE_THRESHOLD_DESCRIPTION ""
 
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Metafile.h"
-#include "Metatrack.h"
 
 /* XXX */
 #include "Database.h"
-#include "FileNamer.h"
 #include "WebService.h"
 /* XXX */
 
 class Album;
 class Locutus;
+class Metafile;
+class Metatrack;
 
 struct Match {
 	bool mbid_match;
@@ -55,13 +57,14 @@ struct MatchGroup {
 
 class Matcher {
 	public:
-		explicit Matcher(Locutus *locutus);
+		Matcher(Database *database, WebService *webservice);
 		~Matcher();
 
 		void match(const std::string &group, const std::vector<Metafile *> &files);
 
 	private:
-		Locutus *locutus;
+		Database *database;
+		WebService *webservice;
 		std::map<std::string, MatchGroup> mgs;
 		double puid_min_score;
 		double metadata_min_score;
@@ -71,6 +74,7 @@ class Matcher {
 		double duration_limit;
 		double title_weight;
 		double tracknumber_weight;
+		double combine_threshold;
 
 		void compareFilesWithAlbum(const std::string &mbid, const std::vector<Metafile *> &files);
 		Match compareMetafileWithMetatrack(const Metafile &metafile, const Metatrack &metatrack);

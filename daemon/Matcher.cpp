@@ -3,21 +3,22 @@
 #include "Levenshtein.h"
 #include "Locutus.h"
 #include "Matcher.h"
+#include "Metafile.h"
+#include "Metatrack.h"
 
 using namespace std;
 
 /* constructors/destructor */
-Matcher::Matcher(Locutus *locutus) {
-	this->locutus = locutus;
-	puid_min_score = locutus->database->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
-	metadata_min_score = locutus->database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
+Matcher::Matcher(Database *database, WebService *webservice) : database(database), webservice(webservice) {
+	puid_min_score = database->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
+	metadata_min_score = database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
 
-	album_weight = locutus->database->loadSetting(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
-	artist_weight = locutus->database->loadSetting(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
-	duration_limit = locutus->database->loadSetting(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
-	duration_weight = locutus->database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
-	title_weight = locutus->database->loadSetting(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
-	tracknumber_weight = locutus->database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
+	album_weight = database->loadSetting(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
+	artist_weight = database->loadSetting(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
+	duration_limit = database->loadSetting(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
+	duration_weight = database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
+	title_weight = database->loadSetting(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
+	tracknumber_weight = database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 }
 
 Matcher::~Matcher() {
@@ -60,7 +61,7 @@ void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *>
 			if (m.meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
 			mgs[mbid].scores[t][*mf] = m;
-			locutus->database->save(mt);
+			database->save(mt);
 			saveMatchToCache((*mf)->filename, mt.track_mbid, m);
 		}
 	}
@@ -194,9 +195,9 @@ bool Matcher::loadAlbum(const string &mbid) {
 	if (mgs.find(mbid) != mgs.end())
 		return true; // already loaded
 	Album *album = new Album(mbid);
-	if (!locutus->database->load(album)) {
-		if (locutus->webservice->lookupAlbum(album))
-			locutus->database->save(*album);
+	if (!database->load(album)) {
+		if (webservice->lookupAlbum(album))
+			database->save(*album);
 	}
 	if (album->mbid != mbid) {
 		/* hmm, didn't find the album? */
@@ -227,12 +228,12 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 		Metafile *mf = *file;
 		if (!mf->puid_lookup || mf->puid.size() != 36)
 			continue;
-		vector<Metatrack> tracks = locutus->webservice->searchPUID(mf->puid);
+		vector<Metatrack> tracks = webservice->searchPUID(mf->puid);
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			/* puid search won't return puid, so let's set it manually */
 			mt->puid = mf->puid;
 			Match m = compareMetafileWithMetatrack(*mf, *mt);
-			locutus->database->save(*mt);
+			database->save(*mt);
 			saveMatchToCache(mf->filename, mt->track_mbid, m);
 			if (m.meta_score < puid_min_score)
 				continue;
@@ -362,15 +363,15 @@ bool Matcher::saveMatchToCache(const string &filename, const string &track_mbid,
 	/*
 	if (filename == "" || track_mbid.size() != 36)
 		return false;
-	string e_filename = locutus->database->escapeString(filename);
-	string e_track_mbid = locutus->database->escapeString(track_mbid);
+	string e_filename = database->escapeString(filename);
+	string e_track_mbid = database->escapeString(track_mbid);
 	ostringstream query;
 	query << "INSERT INTO match(file_id, metatrack_id, mbid_match, puid_match, meta_score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'), " << (match.mbid_match ? "true" : "false") << ", " << (match.puid_match ? "true" : "false") << ", " << match.meta_score << " WHERE NOT EXISTS (SELECT true FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'))";
-	if (!locutus->database->query(query.str()))
+	if (!database->query(query.str()))
 		Debug::notice("Unable to save metadata match in cache, query failed. See error above");
 	query.str("");
 	query << "UPDATE match SET mbid_match = " << (match.mbid_match ? "true" : "false") << ", puid_match = "  << (match.puid_match ? "true" : "false") << ", meta_score = " << match.meta_score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
-	if (!locutus->database->query(query.str()))
+	if (!database->query(query.str()))
 		Debug::notice("Unable to save metadata match in cache, query failed. See error above");
 	*/
 	return true;
@@ -381,10 +382,10 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 		Metafile *mf = *file;
 		if (!mf->meta_lookup)
 			continue;
-		vector<Metatrack> tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group, *mf));
+		vector<Metatrack> tracks = webservice->searchMetadata(makeWSTrackQuery(group, *mf));
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			Match m = compareMetafileWithMetatrack(*mf, *mt);
-			locutus->database->save(*mt);
+			database->save(*mt);
 			saveMatchToCache(mf->filename, mt->track_mbid, m);
 			if (m.meta_score < metadata_min_score)
 				continue;
