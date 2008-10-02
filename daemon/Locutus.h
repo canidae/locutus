@@ -86,8 +86,6 @@ class Locutus {
 		~Locutus();
 
 		long run();
-		/* FIXME? make this method private? */
-		void saveFiles(const std::map<Metafile *, Track *> &files);
 
 	private:
 		std::vector<Metafile *> files;

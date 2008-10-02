@@ -50,16 +50,23 @@ long Locutus::run() {
 	/* parse unsorted directory */
 	Debug::info("Scanning input directory");
 	scanDirectory(input_dir);
-	/* FIXME
-	 * currently the matcher is telling locutus which files to save,
-	 * this is mildly broken.
-	 * matcher should flag files which got new metadata, then locutus
-	 * should save metadata, move files & update database.
-	 * this must be done inside the following loop (that is, for each
-	 * group and not after all groups are matched) */
 	/* match files */
-	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf)
+	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf) {
 		matcher->match(gf->first, gf->second);
+		/* save files who's metadata has been updated */
+		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
+			if (!(*f)->metadata_changed)
+				continue;
+			if (!(*f)->save())
+				continue;
+			/* move file */
+			string filename = output_dir;
+			filename.append(filenamer->getFilename(*f));
+			moveFile(*f, filename);
+			/* and finally update file table */
+			database->save(**f);
+		}
+	}
 	/* submit new puids? */
 	// TODO
 	/* save changes */
@@ -147,24 +154,6 @@ void Locutus::removeGoneFiles() {
 	remove << ")";
 	database->query(remove.str());
 	*/
-}
-
-void Locutus::saveFiles(const map<Metafile *, Track *> &files) {
-	Debug::info("Saving files:");
-	for (map<Metafile *, Track *>::const_iterator s = files.begin(); s != files.end(); ++s) {
-		Debug::info(s->first->filename);
-		/* first save metadata */
-		if (!s->first->saveMetadata(s->second)) {
-			/* unable to save metadata */
-			continue;
-		}
-		/* move file */
-		string filename = output_dir;
-		filename.append(filenamer->getFilename(s->first));
-		moveFile(s->first, filename);
-		/* and finally update file table */
-		database->save(*(s->first));
-	}
 }
 
 void Locutus::scanDirectory(const string &directory) {

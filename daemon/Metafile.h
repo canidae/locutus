@@ -74,7 +74,7 @@ class Metafile {
 		bool puid_lookup;
 		bool mbid_lookup;
 		bool meta_lookup;
-		bool save;
+		bool metadata_changed;
 		int id;
 		int bitrate;
 		int channels;
@@ -102,7 +102,8 @@ class Metafile {
 		std::string getBaseNameWithoutExtension() const;
 		std::string getGroup() const;
 		bool readFromFile(const std::string &filename);
-		bool saveMetadata(const Track *track);
+		bool save();
+		bool setMetadata(const Track *track);
 
 	private:
 		Locutus *locutus;
@@ -110,8 +111,8 @@ class Metafile {
 		void readAudioProperties(const TagLib::AudioProperties *ap);
 		void readCrapTags(const TagLib::APE::Tag *ape, const TagLib::ID3v2::Tag *id3v2, const TagLib::ID3v1::Tag *id3v1);
 		void readXiphComment(const TagLib::Ogg::XiphComment *tag);
-		void saveAPETag(TagLib::APE::Tag *tag, const Track *track);
-		void saveID3v2Tag(TagLib::ID3v2::Tag *tag, const Track *track);
-		void saveXiphComment(TagLib::Ogg::XiphComment *tag, const Track *track);
+		void saveAPETag(TagLib::APE::Tag *tag);
+		void saveID3v2Tag(TagLib::ID3v2::Tag *tag);
+		void saveXiphComment(TagLib::Ogg::XiphComment *tag);
 };
 #endif
