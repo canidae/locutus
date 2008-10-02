@@ -1,16 +1,13 @@
 #include "Album.h"
 #include "Debug.h"
-#include "Levenshtein.h"
-#include "Database.h"
 #include "Metafile.h"
-#include "Metatrack.h"
 #include "Track.h"
 
 using namespace std;
 using namespace TagLib;
 
 /* constructors/destructor */
-Metafile::Metafile(Database *database) : database(database) {
+Metafile::Metafile() {
 	meta_lookup = false;
 	mbid_lookup = false;
 	puid_lookup = false;
@@ -34,96 +31,12 @@ Metafile::Metafile(Database *database) : database(database) {
 	title = "";
 	tracknumber = "";
 	released = "";
-
-	album_weight = database->loadSetting(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
-	artist_weight = database->loadSetting(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
-	duration_limit = database->loadSetting(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
-	duration_weight = database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
-	title_weight = database->loadSetting(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
-	tracknumber_weight = database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 }
 
 Metafile::~Metafile() {
 }
 
 /* methods */
-Match Metafile::compareWithMetatrack(const Metatrack &metatrack) const {
-	Match m;
-	m.puid_match = false;
-	m.mbid_match = false;
-	m.meta_score = 0.0;
-	list<string> values;
-	if (album != "")
-		values.push_back(album);
-	if (albumartist != "")
-		values.push_back(albumartist);
-	if (artist != "")
-		values.push_back(artist);
-	if (title != "")
-		values.push_back(title);
-	if (tracknumber != "")
-		values.push_back(tracknumber);
-	string group = getGroup();
-	if (group != "" && group != album)
-		values.push_back(group);
-	string basename = getBaseNameWithoutExtension();
-	/* TODO: basename */
-	if (values.size() <= 0)
-		return m;
-	/* find highest score */
-	double scores[4][values.size()];
-	int pos = 0;
-	for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
-		scores[0][pos] = Levenshtein::similarity(*v, metatrack.album_title);
-		scores[1][pos] = Levenshtein::similarity(*v, metatrack.artist_name);
-		scores[2][pos] = Levenshtein::similarity(*v, metatrack.track_title);
-		scores[3][pos] = (atoi(v->c_str()) == metatrack.tracknumber) ? 1.0 : 0.0;
-		++pos;
-	}
-	bool used_row[4];
-	for (int a = 0; a < 4; ++a)
-		used_row[a] = false;
-	bool used_col[4];
-	for (list<string>::size_type a = 0; a < values.size(); ++a)
-		used_col[a] = false;
-	for (int a = 0; a < 4; ++a) {
-		int best_row = -1;
-		list<string>::size_type best_col = -1;
-		double best_score = -1.0;
-		for (int r = 0; r < 4; ++r) {
-			if (used_row[r])
-				continue;
-			for (list<string>::size_type c = 0; c < values.size(); ++c) {
-				if (used_col[c])
-					continue;
-				if (scores[r][c] > best_score) {
-					best_row = r;
-					best_col = c;
-					best_score = scores[r][c];
-				}
-			}
-		}
-		if (best_row >= 0) {
-			scores[best_row][0] = best_score;
-			used_row[best_row] = true;
-			used_col[best_col] = true;
-		} else {
-			break;
-		}
-	}
-	m.puid_match = (puid != "" && puid == metatrack.puid);
-	m.mbid_match = (musicbrainz_trackid != "" && musicbrainz_trackid == metatrack.track_mbid);
-	m.meta_score = scores[0][0] * album_weight;
-	m.meta_score += scores[1][0] * artist_weight;
-	m.meta_score += scores[2][0] * title_weight;
-	m.meta_score += scores[3][0] * tracknumber_weight;
-	int durationdiff = abs(metatrack.duration - duration);
-	if (durationdiff < duration_limit)
-		m.meta_score += (1.0 - durationdiff / duration_limit) * duration_weight;
-	m.meta_score /= album_weight + artist_weight + title_weight + tracknumber_weight + duration_weight;
-	return m;
-}
-
 string Metafile::getBaseNameWithoutExtension() const {
 	/* return basename without extension, duh */
 	string::size_type pos = filename.find_last_of('/');

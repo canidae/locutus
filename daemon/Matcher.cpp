@@ -1,5 +1,6 @@
 #include "Album.h"
 #include "Debug.h"
+#include "Levenshtein.h"
 #include "Locutus.h"
 #include "Matcher.h"
 
@@ -10,6 +11,13 @@ Matcher::Matcher(Locutus *locutus) {
 	this->locutus = locutus;
 	puid_min_score = locutus->database->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
 	metadata_min_score = locutus->database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
+
+	album_weight = locutus->database->loadSetting(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
+	artist_weight = locutus->database->loadSetting(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
+	duration_limit = locutus->database->loadSetting(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
+	duration_weight = locutus->database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
+	title_weight = locutus->database->loadSetting(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
+	tracknumber_weight = locutus->database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 }
 
 Matcher::~Matcher() {
@@ -33,6 +41,12 @@ void Matcher::match(const string &group, const vector<Metafile *> &files) {
 }
 
 /* private methods */
+void Matcher::clearMatchGroup() {
+	for (map<string, MatchGroup>::iterator mg = mgs.begin(); mg != mgs.end(); ++mg)
+		delete mg->second.album;
+	mgs.clear();
+}
+
 void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *> &files) {
 	if (mgs.find(mbid) == mgs.end())
 		return;
@@ -42,7 +56,7 @@ void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *>
 			if (mgs[mbid].scores[t].find(*mf) != mgs[mbid].scores[t].end())
 				continue;
 			Metatrack mt = album->tracks[t].getAsMetatrack();
-			Match m = (*mf)->compareWithMetatrack(mt);
+			Match m = compareMetafileWithMetatrack(**mf, mt);
 			if (m.meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
 			mgs[mbid].scores[t][*mf] = m;
@@ -52,10 +66,81 @@ void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *>
 	}
 }
 
-void Matcher::clearMatchGroup() {
-	for (map<string, MatchGroup>::iterator mg = mgs.begin(); mg != mgs.end(); ++mg)
-		delete mg->second.album;
-	mgs.clear();
+Match Matcher::compareMetafileWithMetatrack(const Metafile &metafile, const Metatrack &metatrack) {
+	Match m;
+	m.puid_match = false;
+	m.mbid_match = false;
+	m.meta_score = 0.0;
+	list<string> values;
+	if (metafile.album != "")
+		values.push_back(metafile.album);
+	if (metafile.albumartist != "")
+		values.push_back(metafile.albumartist);
+	if (metafile.artist != "")
+		values.push_back(metafile.artist);
+	if (metafile.title != "")
+		values.push_back(metafile.title);
+	if (metafile.tracknumber != "")
+		values.push_back(metafile.tracknumber);
+	string group = metafile.getGroup();
+	if (group != "" && group != metafile.album)
+		values.push_back(group);
+	string basename = metafile.getBaseNameWithoutExtension();
+	/* TODO: basename */
+	if (values.size() <= 0)
+		return m;
+	/* find highest score */
+	double scores[4][values.size()];
+	int pos = 0;
+	for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
+		scores[0][pos] = Levenshtein::similarity(*v, metatrack.album_title);
+		scores[1][pos] = Levenshtein::similarity(*v, metatrack.artist_name);
+		scores[2][pos] = Levenshtein::similarity(*v, metatrack.track_title);
+		scores[3][pos] = (atoi(v->c_str()) == metatrack.tracknumber) ? 1.0 : 0.0;
+		++pos;
+	}
+	bool used_row[4];
+	for (int a = 0; a < 4; ++a)
+		used_row[a] = false;
+	bool used_col[4];
+	for (list<string>::size_type a = 0; a < values.size(); ++a)
+		used_col[a] = false;
+	for (int a = 0; a < 4; ++a) {
+		int best_row = -1;
+		list<string>::size_type best_col = -1;
+		double best_score = -1.0;
+		for (int r = 0; r < 4; ++r) {
+			if (used_row[r])
+				continue;
+			for (list<string>::size_type c = 0; c < values.size(); ++c) {
+				if (used_col[c])
+					continue;
+				if (scores[r][c] > best_score) {
+					best_row = r;
+					best_col = c;
+					best_score = scores[r][c];
+				}
+			}
+		}
+		if (best_row >= 0) {
+			scores[best_row][0] = best_score;
+			used_row[best_row] = true;
+			used_col[best_col] = true;
+		} else {
+			break;
+		}
+	}
+	m.puid_match = (metafile.puid != "" && metafile.puid == metatrack.puid);
+	m.mbid_match = (metafile.musicbrainz_trackid != "" && metafile.musicbrainz_trackid == metatrack.track_mbid);
+	m.meta_score = scores[0][0] * album_weight;
+	m.meta_score += scores[1][0] * artist_weight;
+	m.meta_score += scores[2][0] * title_weight;
+	m.meta_score += scores[3][0] * tracknumber_weight;
+	int durationdiff = abs(metatrack.duration - metafile.duration);
+	if (durationdiff < duration_limit)
+		m.meta_score += (1.0 - durationdiff / duration_limit) * duration_weight;
+	m.meta_score /= album_weight + artist_weight + title_weight + tracknumber_weight + duration_weight;
+	return m;
 }
 
 string Matcher::escapeWSString(const string &text) const {
@@ -146,7 +231,7 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			/* puid search won't return puid, so let's set it manually */
 			mt->puid = mf->puid;
-			Match m = mf->compareWithMetatrack(*mt);
+			Match m = compareMetafileWithMetatrack(*mf, *mt);
 			locutus->database->save(*mt);
 			saveMatchToCache(mf->filename, mt->track_mbid, m);
 			if (m.meta_score < puid_min_score)
@@ -298,7 +383,7 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 			continue;
 		vector<Metatrack> tracks = locutus->webservice->searchMetadata(makeWSTrackQuery(group, *mf));
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
-			Match m = mf->compareWithMetatrack(*mt);
+			Match m = compareMetafileWithMetatrack(*mf, *mt);
 			locutus->database->save(*mt);
 			saveMatchToCache(mf->filename, mt->track_mbid, m);
 			if (m.meta_score < metadata_min_score)

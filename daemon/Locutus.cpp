@@ -198,7 +198,7 @@ bool Locutus::parseFile() {
 	string filename(*file_queue.begin());
 	Debug::info(filename);
 	file_queue.pop_front();
-	Metafile *mf = new Metafile(database);
+	Metafile *mf = new Metafile();
 	mf->filename = filename;
 	if (!database->load(mf)) {
 		if (mf->readFromFile(filename)) {
