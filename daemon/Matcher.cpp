@@ -144,51 +144,6 @@ Match Matcher::compareMetafileWithMetatrack(const Metafile &metafile, const Meta
 	return m;
 }
 
-string Matcher::escapeWSString(const string &text) const {
-	/* escape these characters:
-	 * + - && || ! ( ) { } [ ] ^ " ~ * ? : \ */
-	/* also change "_" to " " */
-	ostringstream str;
-	for (string::size_type a = 0; a < text.size(); ++a) {
-		char c = text[a];
-		switch (c) {
-			case '+':
-			case '-':
-			case '!':
-			case '(':
-			case ')':
-			case '{':
-			case '}':
-			case '[':
-			case ']':
-			case '^':
-			case '"':
-			case '~':
-			case '*':
-			case '?':
-			case ':':
-			case '\\':
-				str << '\\';
-				break;
-
-			case '&':
-			case '|':
-				if (a + 1 < text.size() && text[a + 1] == c)
-					str << '\\';
-				break;
-
-			case '_':
-				c = ' ';
-				break;
-
-			default:
-				break;
-		}
-		str << c;
-	}
-	return str.str();
-}
-
 bool Matcher::loadAlbum(const string &mbid) {
 	if (mbid.size() != 36)
 		return false;
@@ -251,25 +206,6 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 			mf->meta_lookup = false;
 		}
 	}
-}
-
-string Matcher::makeWSTrackQuery(const string &group, const Metafile &mf) const {
-	ostringstream query;
-	string e_group = escapeWSString(group);
-	string bnwe = escapeWSString(mf.getBaseNameWithoutExtension());
-	query << "limit=25&query=";
-	query << "tnum:(" << escapeWSString(mf.tracknumber) << " " << bnwe << ") ";
-	if (mf.duration > 0) {
-		int lower = mf.duration / 1000 - 10;
-		int upper = mf.duration / 1000 + 10;
-		if (lower < 0)
-			lower = 0;
-		query << "qdur:[" << lower << " TO " << upper << "] ";
-	}
-	query << "artist:(" << escapeWSString(mf.artist) << " " << bnwe << " " << e_group << ") ";
-	query << "track:(" << escapeWSString(mf.title) << " " << bnwe << " " << ") ";
-	query << "release:(" << escapeWSString(mf.album) << " " << bnwe << " " << e_group << ") ";
-	return query.str();
 }
 
 void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
@@ -382,7 +318,7 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 		Metafile *mf = *file;
 		if (!mf->meta_lookup)
 			continue;
-		vector<Metatrack> tracks = webservice->searchMetadata(makeWSTrackQuery(group, *mf));
+		vector<Metatrack> tracks = webservice->searchMetadata(group, *mf);
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			Match m = compareMetafileWithMetatrack(*mf, *mt);
 			database->save(*mt);

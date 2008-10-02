@@ -79,11 +79,9 @@ class Matcher {
 		void compareFilesWithAlbum(const std::string &mbid, const std::vector<Metafile *> &files);
 		Match compareMetafileWithMetatrack(const Metafile &metafile, const Metatrack &metatrack);
 		void clearMatchGroup();
-		std::string escapeWSString(const std::string &text) const;
 		bool loadAlbum(const std::string &mbid);
 		void lookupMBIDs(const std::vector<Metafile *> &files);
 		void lookupPUIDs(const std::vector<Metafile *> &files);
-		std::string makeWSTrackQuery(const std::string &group, const Metafile &mf) const;
 		void matchFilesToAlbums(const std::vector<Metafile *> &files);
 		bool saveMatchToCache(const std::string &filename, const std::string &track_mbid, const Match &match) const;
 		void searchMetadata(const std::string &group, const std::vector<Metafile *> &files);

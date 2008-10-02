@@ -1,6 +1,7 @@
 #include "Album.h"
 #include "Database.h"
 #include "Debug.h"
+#include "Metafile.h"
 #include "WebService.h"
 
 using namespace ost;
@@ -80,29 +81,32 @@ bool WebService::lookupAlbum(Album *album) {
 	return true;
 }
 
-const vector<Metatrack> &WebService::searchMetadata(const string &wsquery) {
-	tracks.clear();
-	if (wsquery == "")
-		return tracks;
-	string url = metadata_search_url;
-	url.append("?type=xml&");
-	url.append(wsquery);
-	if (fetch(url.c_str()) && root->children["metadata"].size() > 0 && root->children["metadata"][0]->children["track-list"].size() > 0) {
-		for (vector<XMLNode *>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
-			if (getMetatrack(root->children["metadata"][0]->children["track-list"][0]->children["track"][a]))
-				tracks.push_back(metatrack);
-		}
+const vector<Metatrack> &WebService::searchMetadata(const string &group, const Metafile &metafile) {
+	ostringstream query;
+	string e_group = escapeString(group);
+	string bnwe = escapeString(metafile.getBaseNameWithoutExtension());
+	query << "limit=25&query=";
+	query << "tnum:(" << escapeString(metafile.tracknumber) << " " << bnwe << ") ";
+	if (metafile.duration > 0) {
+		int lower = metafile.duration / 1000 - 10;
+		int upper = metafile.duration / 1000 + 10;
+		if (lower < 0)
+			lower = 0;
+		query << "qdur:[" << lower << " TO " << upper << "] ";
 	}
-	return tracks;
+	query << "artist:(" << escapeString(metafile.artist) << " " << bnwe << " " << e_group << ") ";
+	query << "track:(" << escapeString(metafile.title) << " " << bnwe << " " << ") ";
+	query << "release:(" << escapeString(metafile.album) << " " << bnwe << " " << e_group << ") ";
+	return searchMetadata(query.str());
 }
 
 const vector<Metatrack> &WebService::searchPUID(const string &puid) {
 	tracks.clear();
 	if (puid.size() != 36)
 		return tracks;
-	string wsquery = "puid=";
-	wsquery.append(puid);
-	return searchMetadata(wsquery);
+	string query = "puid=";
+	query.append(puid);
+	return searchMetadata(query);
 }
 
 /* private methods */
@@ -126,6 +130,51 @@ void WebService::close() {
 void WebService::endElement(const unsigned char *name) {
 	if (curnode != NULL)
 		curnode = curnode->parent;
+}
+
+string WebService::escapeString(const string &text) {
+	/* escape these characters:
+	 * + - && || ! ( ) { } [ ] ^ " ~ * ? : \ */
+	/* also change "_" to " " */
+	ostringstream str;
+	for (string::size_type a = 0; a < text.size(); ++a) {
+		char c = text[a];
+		switch (c) {
+			case '+':
+			case '-':
+			case '!':
+			case '(':
+			case ')':
+			case '{':
+			case '}':
+			case '[':
+			case ']':
+			case '^':
+			case '"':
+			case '~':
+			case '*':
+			case '?':
+			case ':':
+			case '\\':
+				str << '\\';
+				break;
+
+			case '&':
+			case '|':
+				if (a + 1 < text.size() && text[a + 1] == c)
+					str << '\\';
+				break;
+
+			case '_':
+				c = ' ';
+				break;                                                                                                                 
+
+			default:
+				break;
+		}
+		str << c;
+	}
+	return str.str();
 }
 
 bool WebService::fetch(const char *url) {
@@ -202,6 +251,22 @@ void WebService::printXML(XMLNode *startnode, int indent) const {
 int WebService::read(unsigned char *buffer, size_t len) {
 	URLStream::read((char *) buffer, len);
 	return gcount();
+}
+
+const vector<Metatrack> &WebService::searchMetadata(const string &query) {
+	tracks.clear();
+	if (query == "")
+		return tracks;
+	string url = metadata_search_url;
+	url.append("?type=xml&");
+	url.append(query);
+	if (fetch(url.c_str()) && root->children["metadata"].size() > 0 && root->children["metadata"][0]->children["track-list"].size() > 0) {
+		for (vector<XMLNode *>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
+			if (getMetatrack(root->children["metadata"][0]->children["track-list"][0]->children["track"][a]))
+				tracks.push_back(metatrack);
+		}
+	}
+	return tracks;
 }
 
 void WebService::startElement(const unsigned char *name, const unsigned char **attr) {

@@ -23,6 +23,7 @@ struct XMLNode {
 
 class Album;
 class Database;
+class Metafile;
 
 class WebService : public ost::URLStream, public ost::XMLStream {
 	public:
@@ -30,7 +31,7 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		~WebService();
 
 		bool lookupAlbum(Album *album);
-		const std::vector<Metatrack> &searchMetadata(const std::string &wsquery);
+		const std::vector<Metatrack> &searchMetadata(const std::string &group, const Metafile &metafile);
 		const std::vector<Metatrack> &searchPUID(const std::string &puid);
 
 	private:
@@ -47,10 +48,12 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		void clearXMLNode(XMLNode *node);
 		void close();
 		void endElement(const unsigned char *name);
+		std::string escapeString(const std::string &text);
 		bool fetch(const char *url);
 		bool getMetatrack(XMLNode *track);
 		void printXML(XMLNode *startnode, int indent) const;
 		int read(unsigned char *buffer, size_t len);
+		const std::vector<Metatrack> &searchMetadata(const std::string &query);
 		void startElement(const unsigned char *name, const unsigned char **attr);
 };
 #endif
