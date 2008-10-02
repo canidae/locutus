@@ -28,7 +28,6 @@ class FileNamer;
 class Matcher;
 class Metafile;
 class PUIDGenerator;
-class Track;
 class WebService;
 
 class Locutus {

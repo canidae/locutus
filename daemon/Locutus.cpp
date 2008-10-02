@@ -1,4 +1,3 @@
-#include "Album.h"
 #include "Database.h"
 #include "Debug.h"
 #include "FileNamer.h"
@@ -8,7 +7,6 @@
 #include "Metafile.h"
 #include "PostgreSQL.h"
 #include "PUIDGenerator.h"
-#include "Track.h"
 #include "WebService.h"
 
 using namespace std;
