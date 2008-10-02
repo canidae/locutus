@@ -33,19 +33,17 @@ class WebService;
 
 class Locutus {
 	public:
-		/* FIXME: these variables should be private */
-		Database *database;
-		WebService *webservice;
-		FileNamer *filenamer;
-		PUIDGenerator *puidgen;
-		Matcher *matcher;
-
 		explicit Locutus(Database *database);
 		~Locutus();
 
 		long run();
 
 	private:
+		Database *database;
+		WebService *webservice;
+		FileNamer *filenamer;
+		PUIDGenerator *puidgen;
+		Matcher *matcher;
 		std::vector<Metafile *> files;
 		std::map<std::string, std::vector<Metafile *> > grouped_files;
 		std::list<std::string> dir_queue;
