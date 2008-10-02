@@ -28,14 +28,14 @@ bool WebService::lookupAlbum(Album *album) {
 	if (!fetch(url.c_str()))
 		return false;
 	/* album data */
-	if (root->children["metadata"].size() <= 0)
+	if (root->children["metadata"].size() <= 0 || root->children["metadata"][0]->children["release"].size() <= 0)
 		return false;
-	XMLNode *xml_album = root->children["metadata"][0]->children["release"][0];
-	album->mbid = xml_album->children["id"][0]->value;
-	album->type = xml_album->children["type"][0]->value;
-	album->title = xml_album->children["title"][0]->value;
-	if (xml_album->children["release-event-list"].size() > 0) {
-		album->released = xml_album->children["release-event-list"][0]->children["event"][0]->children["date"][0]->value;
+	XMLNode *tmp = root->children["metadata"][0]->children["release"][0];
+	album->mbid = (tmp->children["id"].size() > 0) ? tmp->children["id"][0]->value : "";
+	album->type = (tmp->children["type"].size() > 0) ? tmp->children["type"][0]->value : "";
+	album->title = (tmp->children["title"].size() > 0) ? tmp->children["title"][0]->value : "";
+	if (tmp->children["release-event-list"].size() > 0 && tmp->children["release-event-list"][0]->children["event"].size() > 0 && tmp->children["release-event-list"][0]->children["event"][0]->children["date"].size() > 0) {
+		album->released = tmp->children["release-event-list"][0]->children["event"][0]->children["date"][0]->value;
 		if (album->released.size() == 10 && album->released[4] == '-' && album->released[7] == '-') {
 			/* ok as it is, probably a valid date */
 		} else if (album->released.size() == 4) {
@@ -47,22 +47,30 @@ bool WebService::lookupAlbum(Album *album) {
 		}
 	}
 	/* artist data */
-	album->artist.mbid = xml_album->children["artist"][0]->children["id"][0]->value;
-	album->artist.name = xml_album->children["artist"][0]->children["name"][0]->value;
-	album->artist.sortname = xml_album->children["artist"][0]->children["sort-name"][0]->value;
+	if (tmp->children["artist"].size() <= 0)
+		return false;
+	XMLNode *tmp2 = tmp->children["artist"][0];
+	album->artist.mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
+	album->artist.name = (tmp2->children["name"].size() > 0) ? tmp2->children["name"][0]->value : "";
+	album->artist.sortname = (tmp2->children["sort-name"].size() > 0) ? tmp2->children["sort-name"][0]->value : "";
 	/* track data */
-	album->tracks.resize(xml_album->children["track-list"][0]->children["track"].size(), Track(album));
-	for (vector<XMLNode *>::size_type a = 0; a < xml_album->children["track-list"][0]->children["track"].size(); ++a) {
+	if (tmp->children["track-list"].size() <= 0 || tmp->children["track-list"][0]->children["track"].size() <= 0)
+		return false;
+	tmp = tmp->children["track-list"][0];
+	album->tracks.resize(tmp->children["track"].size(), Track(album));
+	for (vector<XMLNode *>::size_type a = 0; a < tmp->children["track"].size(); ++a) {
 		/* track data */
-		album->tracks[a].mbid = xml_album->children["track-list"][0]->children["track"][a]->children["id"][0]->value;
-		album->tracks[a].title = xml_album->children["track-list"][0]->children["track"][a]->children["title"][0]->value;
-		album->tracks[a].duration = atoi(xml_album->children["track-list"][0]->children["track"][a]->children["duration"][0]->value.c_str());
+		tmp2 = tmp->children["track"][a];
+		album->tracks[a].mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
+		album->tracks[a].title = (tmp2->children["title"].size() > 0) ? tmp2->children["title"][0]->value : "";
+		album->tracks[a].duration = (tmp2->children["duration"].size() > 0) ? atoi(tmp2->children["duration"][0]->value.c_str()) : 0;
 		album->tracks[a].tracknumber = a + 1;
 		/* track artist data */
-		if (xml_album->children["track-list"][0]->children["track"][a]->children["artist"].size() > 0) {
-			album->tracks[a].artist.mbid = xml_album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["id"][0]->value;
-			album->tracks[a].artist.name = xml_album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["name"][0]->value;
-			album->tracks[a].artist.sortname = xml_album->children["track-list"][0]->children["track"][a]->children["artist"][0]->children["sort-name"][0]->value;
+		if (tmp2->children["artist"].size() > 0) {
+			tmp2 = tmp2->children["artist"][0];
+			album->tracks[a].artist.mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
+			album->tracks[a].artist.name = (tmp2->children["name"].size() > 0) ? tmp2->children["name"][0]->value : "";
+			album->tracks[a].artist.sortname = (tmp2->children["sort-name"].size() > 0) ? tmp2->children["sort-name"][0]->value : "";
 		} else {
 			album->tracks[a].artist.mbid = album->artist.mbid;
 			album->tracks[a].artist.name = album->artist.name;
@@ -147,16 +155,32 @@ bool WebService::fetch(const char *url) {
 }
 
 bool WebService::getMetatrack(XMLNode *track) {
-	metatrack.track_mbid = track->children["id"][0]->value;
-	metatrack.track_title = track->children["title"][0]->value;
-	if (track->children["duration"].size() > 0)
-		metatrack.duration = atoi(track->children["duration"][0]->value.c_str());
-	metatrack.artist_mbid = track->children["artist"][0]->children["id"][0]->value;
-	metatrack.artist_name = track->children["artist"][0]->children["name"][0]->value;
-	metatrack.album_mbid = track->children["release-list"][0]->children["release"][0]->children["id"][0]->value;
-	metatrack.album_title = track->children["release-list"][0]->children["release"][0]->children["title"][0]->value;
-	string offset = track->children["release-list"][0]->children["release"][0]->children["track-list"][0]->children["offset"][0]->value;
-	metatrack.tracknumber = atoi(offset.c_str()) + 1;
+	if (track == NULL)
+		return false;
+	metatrack.track_mbid = (track->children["id"].size() > 0) ? track->children["id"][0]->value : "";
+	metatrack.track_title = (track->children["title"].size() > 0) ? track->children["title"][0]->value : "";
+	metatrack.duration = (track->children["duration"].size() > 0) ? atoi(track->children["duration"][0]->value.c_str()) : 0;
+	if (track->children["artist"].size() <= 0) {
+		metatrack.artist_mbid = "";
+		metatrack.artist_name = "";
+		metatrack.album_mbid = "";
+		metatrack.album_title = "";
+		metatrack.tracknumber = 0;
+		return false;
+	}
+	XMLNode *tmp = track->children["artist"][0];
+	metatrack.artist_mbid = (tmp->children["id"].size() > 0) ? tmp->children["id"][0]->value : "";
+	metatrack.artist_name = (tmp->children["name"].size() > 0) ? tmp->children["name"][0]->value : "";
+	if (track->children["release-list"].size() <= 0 || track->children["release-list"][0]->children["release"].size() <= 0) {
+		metatrack.album_mbid = "";
+		metatrack.album_title = "";
+		metatrack.tracknumber = 0;
+		return false;
+	}
+	tmp = track->children["release-list"][0]->children["release"][0];
+	metatrack.album_mbid = (tmp->children["id"].size() > 0) ? tmp->children["id"][0]->value : "";
+	metatrack.album_title = (tmp->children["title"].size() > 0) ? tmp->children["title"][0]->value : "";
+	metatrack.tracknumber = (tmp->children["track-list"].size() > 0 && tmp->children["track-list"][0]->children["offset"].size() > 0) ? atoi(tmp->children["track-list"][0]->children["offset"][0]->value.c_str()) + 1: 0;
 	return true;
 }
 
