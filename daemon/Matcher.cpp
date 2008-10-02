@@ -111,7 +111,7 @@ bool Matcher::loadAlbum(const string &mbid) {
 	Album *album = new Album(mbid);
 	if (!locutus->database->load(album)) {
 		if (locutus->webservice->lookupAlbum(album))
-			locutus->database->save(album);
+			locutus->database->save(*album);
 	}
 	if (album->mbid != mbid) {
 		/* hmm, didn't find the album? */

@@ -160,7 +160,6 @@ string PostgreSQL::loadSetting(const string &key, const string &default_value, c
 }
 
 bool PostgreSQL::save(const Album &album) {
-	/* save album to cache */
 	if (album.mbid.size() != 36) {
 		string msg = "Unable to save album in cache. Illegal MusicBrainz ID: ";
 		msg.append(album.mbid);

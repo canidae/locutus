@@ -17,7 +17,7 @@ class Track {
 		std::string mbid;
 		std::string title;
 
-		Track(Album *album = NULL);
+		explicit Track(Album *album = NULL);
 		~Track();
 
 		Metatrack getAsMetatrack() const;
