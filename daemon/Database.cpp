@@ -1,9 +1,4 @@
-#include "Album.h"
-#include "Artist.h"
 #include "Database.h"
-#include "Metafile.h"
-#include "Metatrack.h"
-#include "Track.h"
 
 using namespace std;
 
@@ -40,6 +35,10 @@ bool Database::save(const Album &album) {
 }
 
 bool Database::save(const Artist &artist) {
+	return false;
+}
+
+bool Database::save(const Match &match) {
 	return false;
 }
 

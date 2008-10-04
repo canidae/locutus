@@ -18,6 +18,7 @@ extern "C" {
 
 class Album;
 class Artist;
+class Match;
 class Metafile;
 class Metatrack;
 class Track;
@@ -34,6 +35,7 @@ class PostgreSQL : public Database {
 		std::string loadSetting(const std::string &key, const std::string &default_value, const std::string &description);
 		bool save(const Album &album);
 		bool save(const Artist &artist);
+		bool save(const Match &match);
 		bool save(const Metafile &metafile);
 		bool save(const Metatrack &metatrack);
 		bool save(const Track &track);

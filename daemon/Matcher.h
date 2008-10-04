@@ -1,33 +1,33 @@
 #ifndef MATCHER_H
 #define MATCHER_H
 /* settings */
-#define PUID_MIN_SCORE_KEY "puid_min_score"
-#define PUID_MIN_SCORE_VALUE 0.50
-#define PUID_MIN_SCORE_DESCRIPTION "Minimum value for when a PUID lookup is considered a match. Must be between 0.0 and 1.0"
-#define METADATA_MIN_SCORE_KEY "metadata_min_score"
-#define METADATA_MIN_SCORE_VALUE 0.75
-#define METADATA_MIN_SCORE_DESCRIPTION "Minimum value for when a metadata lookup is considered a match. Must be between 0.0 and 1.0"
 #define ALBUM_WEIGHT_KEY "album_weight"
 #define ALBUM_WEIGHT_VALUE 100.0
 #define ALBUM_WEIGHT_DESCRIPTION ""
 #define ARTIST_WEIGHT_KEY "artist_weight"
 #define ARTIST_WEIGHT_VALUE 100.0
 #define ARTIST_WEIGHT_DESCRIPTION ""
+#define COMBINE_THRESHOLD_KEY "combine_threshold"
+#define COMBINE_THRESHOLD_VALUE 0.80
+#define COMBINE_THRESHOLD_DESCRIPTION ""
 #define DURATION_LIMIT_KEY "duration_limit"
 #define DURATION_LIMIT_VALUE 15000.0
 #define DURATION_LIMIT_DESCRIPTION ""
 #define DURATION_WEIGHT_KEY "duration_weight"
 #define DURATION_WEIGHT_VALUE 100.0
 #define DURATION_WEIGHT_DESCRIPTION ""
+#define METADATA_MIN_SCORE_KEY "metadata_min_score"
+#define METADATA_MIN_SCORE_VALUE 0.75
+#define METADATA_MIN_SCORE_DESCRIPTION "Minimum value for when a metadata lookup is considered a match. Must be between 0.0 and 1.0"
+#define PUID_MIN_SCORE_KEY "puid_min_score"
+#define PUID_MIN_SCORE_VALUE 0.50
+#define PUID_MIN_SCORE_DESCRIPTION "Minimum value for when a PUID lookup is considered a match. Must be between 0.0 and 1.0"
 #define TITLE_WEIGHT_KEY "title_weight"
 #define TITLE_WEIGHT_VALUE 100.0
 #define TITLE_WEIGHT_DESCRIPTION ""
 #define TRACKNUMBER_WEIGHT_KEY "tracknumber_weight"
 #define TRACKNUMBER_WEIGHT_VALUE 100.0
 #define TRACKNUMBER_WEIGHT_DESCRIPTION ""
-#define COMBINE_THRESHOLD_KEY "combine_threshold"
-#define COMBINE_THRESHOLD_VALUE 0.80
-#define COMBINE_THRESHOLD_DESCRIPTION ""
 
 #include <map>
 #include <sstream>
