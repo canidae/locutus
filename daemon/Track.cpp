@@ -4,8 +4,7 @@
 using namespace std;
 
 /* constructors/destructor */
-Track::Track(Album *album) {
-	this->album = album;
+Track::Track(Album *album) : album(album) {
 	artist = Artist();
 	id = -1;
 	duration = 0;

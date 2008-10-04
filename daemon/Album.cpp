@@ -3,9 +3,8 @@
 using namespace std;
 
 /* constructors/destructor */
-Album::Album(const string &mbid) {
+Album::Album(const string &mbid) : mbid(mbid) {
 	artist = Artist();
-	this->mbid = mbid;
 	title = "";
 	released = "";
 	type = "";
