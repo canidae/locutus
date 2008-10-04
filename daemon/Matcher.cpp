@@ -23,6 +23,7 @@ Matcher::Matcher(Database *database, WebService *webservice) : database(database
 }
 
 Matcher::~Matcher() {
+	clearMatchGroup();
 }
 
 /* methods */
