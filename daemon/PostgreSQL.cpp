@@ -226,10 +226,8 @@ bool PostgreSQL::save(const Artist &artist) {
 }
 
 bool PostgreSQL::save(const Match &match) {
-	if (match.metafile == NULL || match.track == NULL)
-		return false;
-	string e_filename = escapeString(match.metafile->filename);
-	string e_track_mbid = escapeString(match.track->mbid);
+	string e_filename = escapeString(match.filename);
+	string e_track_mbid = escapeString(match.track_mbid);
 	ostringstream query;
 	query << "INSERT INTO match(file_id, metatrack_id, mbid_match, puid_match, meta_score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'), " << (match.mbid_match ? "true" : "false") << ", " << (match.puid_match ? "true" : "false") << ", " << match.meta_score << " WHERE NOT EXISTS (SELECT true FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'))";
 	if (!doQuery(query.str()))
