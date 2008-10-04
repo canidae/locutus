@@ -49,7 +49,6 @@ class Locutus {
 		std::string duplicate_dir;
 		std::string input_dir;
 		std::string output_dir;
-		std::vector<Metafile *> files;
 
 		void clearFiles();
 		bool moveFile(Metafile *file, const std::string &filename);

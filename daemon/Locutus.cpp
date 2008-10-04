@@ -72,9 +72,10 @@ long Locutus::run() {
 
 /* private methods */
 void Locutus::clearFiles() {
-	for (vector<Metafile *>::iterator mf = files.begin(); mf != files.end(); ++mf)
-		delete (*mf);
-	files.clear();
+	for (map<string, vector<Metafile *> >::iterator group = grouped_files.begin(); group != grouped_files.end(); ++group) {
+		for (vector<Metafile *>::iterator file = group->second.begin(); file != group->second.end(); ++group)
+			delete (*file);
+	}
 	grouped_files.clear();
 }
 
@@ -200,7 +201,6 @@ bool Locutus::parseFile() {
 	mf->puid_lookup = true;
 	mf->mbid_lookup = true;
 	mf->meta_lookup = true;
-	files.push_back(mf);
 	grouped_files[mf->getGroup()].push_back(mf);
 	return true;
 }
