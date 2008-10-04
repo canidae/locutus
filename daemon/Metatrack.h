@@ -7,13 +7,13 @@ class Metatrack {
 	public:
 		int duration;
 		int tracknumber;
-		std::string track_mbid;
-		std::string track_title;
-		std::string artist_mbid;
-		std::string artist_name;
 		std::string album_mbid;
 		std::string album_title;
+		std::string artist_mbid;
+		std::string artist_name;
 		std::string puid;
+		std::string track_mbid;
+		std::string track_title;
 
 		Metatrack();
 		~Metatrack();

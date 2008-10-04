@@ -61,16 +61,16 @@ class Matcher {
 	private:
 		Database *database;
 		WebService *webservice;
-		std::map<std::string, MatchGroup> mgs;
-		double puid_min_score;
-		double metadata_min_score;
 		double album_weight;
 		double artist_weight;
-		double duration_weight;
+		double combine_threshold;
 		double duration_limit;
+		double duration_weight;
+		double metadata_min_score;
+		double puid_min_score;
 		double title_weight;
 		double tracknumber_weight;
-		double combine_threshold;
+		std::map<std::string, MatchGroup> mgs;
 
 		void compareFilesWithAlbum(const std::string &mbid, const std::vector<Metafile *> &files);
 		Match compareMetafileWithMetatrack(const Metafile &metafile, const Metatrack &metatrack);

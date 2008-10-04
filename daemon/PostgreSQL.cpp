@@ -9,9 +9,7 @@
 using namespace std;
 
 /* constructors/destructor */
-PostgreSQL::PostgreSQL(const string connection) : Database() {
-	got_result = false;
-	pg_result = NULL;
+PostgreSQL::PostgreSQL(const string connection) : Database(), pg_result(NULL), got_result(false) {
 	pg_connection = PQconnectdb(connection.c_str());
 	if (PQstatus(pg_connection) != CONNECTION_OK) {
 		Debug::error("Unable to connect to the database");

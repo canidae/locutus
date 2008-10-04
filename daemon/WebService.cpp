@@ -8,8 +8,7 @@ using namespace ost;
 using namespace std;
 
 /* constructors/destructor */
-WebService::WebService(Database *database) : database(database) {
-	root = new XMLNode;
+WebService::WebService(Database *database) : database(database), root(new XMLNode), curnode(root) {
 	metadata_search_url = database->loadSetting(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = database->loadSetting(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 }

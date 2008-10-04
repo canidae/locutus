@@ -37,12 +37,12 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 	private:
 		Database *database;
 		Metatrack metatrack;
-		std::vector<Metatrack> tracks;
 		URLStream::Error status;
-		std::string metadata_search_url;
-		std::string release_lookup_url;
 		XMLNode *root;
 		XMLNode *curnode;
+		std::string metadata_search_url;
+		std::string release_lookup_url;
+		std::vector<Metatrack> tracks;
 
 		void characters(const unsigned char *text, size_t len);
 		void clearXMLNode(XMLNode *node);

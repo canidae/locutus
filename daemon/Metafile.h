@@ -58,29 +58,29 @@ class Track;
 
 class Metafile {
 	public:
-		std::string filename;
-		bool puid_lookup;
 		bool mbid_lookup;
 		bool meta_lookup;
 		bool metadata_changed;
-		int id;
+		bool puid_lookup;
 		int bitrate;
 		int channels;
 		int duration;
+		int id;
 		int samplerate;
 		std::string album;
 		std::string albumartist;
 		std::string albumartistsort;
 		std::string artist;
 		std::string artistsort;
+		std::string filename;
 		std::string musicbrainz_albumartistid;
 		std::string musicbrainz_albumid;
 		std::string musicbrainz_artistid;
 		std::string musicbrainz_trackid;
 		std::string puid;
+		std::string released;
 		std::string title;
 		std::string tracknumber;
-		std::string released;
 
 		Metafile();
 		~Metafile();

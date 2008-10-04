@@ -35,8 +35,8 @@ class FileNamer {
 
 	private:
 		Database *database;
+		std::map<std::string, int> format_mapping;
 		std::string filename;
 		std::string file_format;
-		std::map<std::string, int> format_mapping;
 };
 #endif

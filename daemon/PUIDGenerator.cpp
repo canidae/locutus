@@ -4,7 +4,7 @@
 using namespace std;
 
 /* constructors/destructor */
-PUIDGenerator::PUIDGenerator() {
+PUIDGenerator::PUIDGenerator() : puid("") {
 }
 
 PUIDGenerator::~PUIDGenerator() {

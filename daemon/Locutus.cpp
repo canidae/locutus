@@ -13,9 +13,9 @@ using namespace std;
 
 /* constructors/destructor */
 Locutus::Locutus(Database *database) : database(database) {
-	webservice = new WebService(database);
 	filenamer = new FileNamer(database);
 	puidgen = new PUIDGenerator();
+	webservice = new WebService(database);
 	matcher = new Matcher(database, webservice);
 
 	input_dir = database->loadSetting(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);

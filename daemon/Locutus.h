@@ -39,17 +39,17 @@ class Locutus {
 
 	private:
 		Database *database;
-		WebService *webservice;
 		FileNamer *filenamer;
-		PUIDGenerator *puidgen;
 		Matcher *matcher;
-		std::vector<Metafile *> files;
-		std::map<std::string, std::vector<Metafile *> > grouped_files;
+		PUIDGenerator *puidgen;
+		WebService *webservice;
 		std::list<std::string> dir_queue;
 		std::list<std::string> file_queue;
+		std::map<std::string, std::vector<Metafile *> > grouped_files;
 		std::string duplicate_dir;
 		std::string input_dir;
 		std::string output_dir;
+		std::vector<Metafile *> files;
 
 		void clearFiles();
 		bool moveFile(Metafile *file, const std::string &filename);
