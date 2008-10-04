@@ -7,7 +7,7 @@ using namespace std;
 using namespace TagLib;
 
 /* constructors/destructor */
-Metafile::Metafile() : mbid_lookup(false), meta_lookup(false), metadata_changed(false), puid_lookup(false), bitrate(0), channels(0), duration(0), id(UNDEFINED_FILE_ID), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber("") {
+Metafile::Metafile(const string &filename) : mbid_lookup(false), meta_lookup(false), metadata_changed(false), puid_lookup(false), bitrate(0), channels(0), duration(0), id(UNDEFINED_FILE_ID), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber("") {
 }
 
 Metafile::~Metafile() {
@@ -44,7 +44,7 @@ string Metafile::getGroup() const {
 	return "";
 }
 
-bool Metafile::readFromFile(const string &filename) {
+bool Metafile::readFromFile() {
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos) {
 		string ext = filename.substr(pos + 1);
@@ -101,7 +101,6 @@ bool Metafile::readFromFile(const string &filename) {
 			return false;
 		}
 	}
-	this->filename = filename;
 	return true;
 }
 

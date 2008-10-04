@@ -82,12 +82,12 @@ class Metafile {
 		std::string title;
 		std::string tracknumber;
 
-		Metafile();
+		Metafile(const std::string &filename);
 		~Metafile();
 
 		std::string getBaseNameWithoutExtension() const;
 		std::string getGroup() const;
-		bool readFromFile(const std::string &filename);
+		bool readFromFile();
 		bool save();
 		bool setMetadata(const Track *track);
 

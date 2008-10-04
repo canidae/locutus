@@ -184,10 +184,9 @@ bool Locutus::parseFile() {
 	string filename(*file_queue.begin());
 	Debug::info(filename);
 	file_queue.pop_front();
-	Metafile *mf = new Metafile();
-	mf->filename = filename;
+	Metafile *mf = new Metafile(filename);
 	if (!database->load(mf)) {
-		if (mf->readFromFile(filename)) {
+		if (mf->readFromFile()) {
 			/* save file to cache */
 			database->save(*mf);
 		} else {
