@@ -51,31 +51,31 @@ bool WebService::lookupAlbum(Album *album) {
 	if (tmp->children["artist"].size() <= 0)
 		return false;
 	XMLNode *tmp2 = tmp->children["artist"][0];
-	album->artist.mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
-	album->artist.name = (tmp2->children["name"].size() > 0) ? tmp2->children["name"][0]->value : "";
-	album->artist.sortname = (tmp2->children["sort-name"].size() > 0) ? tmp2->children["sort-name"][0]->value : "";
+	album->artist->mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
+	album->artist->name = (tmp2->children["name"].size() > 0) ? tmp2->children["name"][0]->value : "";
+	album->artist->sortname = (tmp2->children["sort-name"].size() > 0) ? tmp2->children["sort-name"][0]->value : "";
 	/* track data */
 	if (tmp->children["track-list"].size() <= 0 || tmp->children["track-list"][0]->children["track"].size() <= 0)
 		return false;
 	tmp = tmp->children["track-list"][0];
-	album->tracks.resize(tmp->children["track"].size(), Track(album));
+	album->tracks.resize(tmp->children["track"].size(), new Track(album));
 	for (vector<XMLNode *>::size_type a = 0; a < tmp->children["track"].size(); ++a) {
 		/* track data */
 		tmp2 = tmp->children["track"][a];
-		album->tracks[a].mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
-		album->tracks[a].title = (tmp2->children["title"].size() > 0) ? tmp2->children["title"][0]->value : "";
-		album->tracks[a].duration = (tmp2->children["duration"].size() > 0) ? atoi(tmp2->children["duration"][0]->value.c_str()) : 0;
-		album->tracks[a].tracknumber = a + 1;
+		album->tracks[a]->mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
+		album->tracks[a]->title = (tmp2->children["title"].size() > 0) ? tmp2->children["title"][0]->value : "";
+		album->tracks[a]->duration = (tmp2->children["duration"].size() > 0) ? atoi(tmp2->children["duration"][0]->value.c_str()) : 0;
+		album->tracks[a]->tracknumber = a + 1;
 		/* track artist data */
 		if (tmp2->children["artist"].size() > 0) {
 			tmp2 = tmp2->children["artist"][0];
-			album->tracks[a].artist.mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
-			album->tracks[a].artist.name = (tmp2->children["name"].size() > 0) ? tmp2->children["name"][0]->value : "";
-			album->tracks[a].artist.sortname = (tmp2->children["sort-name"].size() > 0) ? tmp2->children["sort-name"][0]->value : "";
+			album->tracks[a]->artist->mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
+			album->tracks[a]->artist->name = (tmp2->children["name"].size() > 0) ? tmp2->children["name"][0]->value : "";
+			album->tracks[a]->artist->sortname = (tmp2->children["sort-name"].size() > 0) ? tmp2->children["sort-name"][0]->value : "";
 		} else {
-			album->tracks[a].artist.mbid = album->artist.mbid;
-			album->tracks[a].artist.name = album->artist.name;
-			album->tracks[a].artist.sortname = album->artist.sortname;
+			album->tracks[a]->artist->mbid = album->artist->mbid;
+			album->tracks[a]->artist->name = album->artist->name;
+			album->tracks[a]->artist->sortname = album->artist->sortname;
 		}
 	}
 	return true;

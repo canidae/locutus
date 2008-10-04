@@ -193,13 +193,13 @@ bool Metafile::save() {
 
 bool Metafile::setMetadata(const Track *track) {
 	album = track->album->title;
-	albumartist = track->album->artist.name;
-	albumartistsort = track->album->artist.sortname;
-	artist = track->artist.name;
-	artistsort = track->artist.sortname;
-	musicbrainz_albumartistid = track->album->artist.mbid;
+	albumartist = track->album->artist->name;
+	albumartistsort = track->album->artist->sortname;
+	artist = track->artist->name;
+	artistsort = track->artist->sortname;
+	musicbrainz_albumartistid = track->album->artist->mbid;
 	musicbrainz_albumid = track->album->mbid;
-	musicbrainz_artistid = track->artist.mbid;
+	musicbrainz_artistid = track->artist->mbid;
 	musicbrainz_trackid = track->mbid;
 	title = track->title;
 	ostringstream tracknum;

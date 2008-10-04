@@ -6,14 +6,17 @@
 #include "Artist.h"
 #include "Track.h"
 
+class Artist;
+class Track;
+
 class Album {
 	public:
-		Artist artist;
+		Artist *artist;
 		std::string mbid;
 		std::string released;
 		std::string title;
 		std::string type;
-		std::vector<Track> tracks;
+		std::vector<Track *> tracks;
 
 		explicit Album(const std::string &mbid = "");
 		~Album();

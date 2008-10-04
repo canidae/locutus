@@ -48,9 +48,9 @@ bool PostgreSQL::load(Album *album) {
 		return false;
 	}
 	/* artist data */
-	album->artist.mbid = getString(0, 0);
-	album->artist.name = getString(0, 1);
-	album->artist.sortname = getString(0, 2);
+	album->artist->mbid = getString(0, 0);
+	album->artist->name = getString(0, 1);
+	album->artist->sortname = getString(0, 2);
 	/* album data */
 	album->mbid = getString(0, 3);
 	album->type = getString(0, 4);
@@ -58,26 +58,26 @@ bool PostgreSQL::load(Album *album) {
 	album->released = getString(0, 6);
 	/* track data */
 	int trackcount = getRows();
-	album->tracks.resize(trackcount, Track(album));
+	album->tracks.resize(trackcount, new Track(album));
 	for (int t = 0; t < trackcount; ++t) {
 		int trackindex = getInt(t, 10) - 1;
 		if (trackindex < 0 || trackindex >= (int) album->tracks.capacity()) {
 			/* this really shouldn't happen.
 			 * seemingly we're missing entries in the track table */
-			string msg = "Tracknumber either exceed album track count or is less than 1. Did you erase data in the track table? MusicBrainz Album ID: ";
+			string msg = "Tracknumber either exceed album track count or is less than 1. Did you mess with the track table? MusicBrainz Album ID: ";
 			msg.append(album->mbid);
 			Debug::warning(msg);
 			return false;
 		}
 		/* track data */
-		album->tracks[t].mbid = getString(t, 7);
-		album->tracks[t].title = getString(t, 8);
-		album->tracks[t].duration = getInt(t, 9);
-		album->tracks[t].tracknumber = trackindex + 1;
+		album->tracks[t]->mbid = getString(t, 7);
+		album->tracks[t]->title = getString(t, 8);
+		album->tracks[t]->duration = getInt(t, 9);
+		album->tracks[t]->tracknumber = trackindex + 1;
 		/* track artist data */
-		album->tracks[t].artist.mbid = getString(t, 11);
-		album->tracks[t].artist.name = getString(t, 12);
-		album->tracks[t].artist.sortname = getString(t, 13);
+		album->tracks[t]->artist->mbid = getString(t, 11);
+		album->tracks[t]->artist->name = getString(t, 12);
+		album->tracks[t]->artist->sortname = getString(t, 13);
 	}
 	return true;
 }
@@ -168,7 +168,7 @@ bool PostgreSQL::save(const Album &album) {
 		Debug::notice(msg);
 		return false;
 	}
-	string e_artist_mbid = escapeString(album.artist.mbid);
+	string e_artist_mbid = escapeString(album.artist->mbid);
 	string e_mbid = escapeString(album.mbid);
 	string e_title = escapeString(album.title);
 	string e_type = escapeString(album.type);
@@ -183,7 +183,7 @@ bool PostgreSQL::save(const Album &album) {
 	}
 	ostringstream query;
 	/* save artist */
-	if (!save(album.artist))
+	if (!save(*album.artist))
 		Debug::notice("Failed to save album artist in cache. See errors above");
 	/* save album */
 	query.str("");
@@ -200,8 +200,8 @@ bool PostgreSQL::save(const Album &album) {
 	}
 	/* save tracks */
 	bool status = true;
-	for (vector<Track>::const_iterator track = album.tracks.begin(); track != album.tracks.end(); ++track) {
-		if (!save(*track))
+	for (vector<Track *>::const_iterator track = album.tracks.begin(); track != album.tracks.end(); ++track) {
+		if (!save(**track))
 			status = false;
 	}
 	if (!status)
@@ -301,9 +301,9 @@ bool PostgreSQL::save(const Track &track) {
 		Debug::notice(msg);
 		return false;
 	}
-	save(track.artist);
+	save(*track.artist);
 	string e_album_mbid = escapeString(track.album->mbid);
-	string e_artist_mbid = escapeString(track.artist.mbid);
+	string e_artist_mbid = escapeString(track.artist->mbid);
 	string e_mbid = escapeString(track.mbid);
 	string e_title = escapeString(track.title);
 	ostringstream query;

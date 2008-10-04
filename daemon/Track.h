@@ -2,15 +2,15 @@
 #define TRACK_H
 
 #include <string>
-#include "Artist.h"
 #include "Metatrack.h"
 
 class Album;
+class Artist;
 
 class Track {
 	public:
 		Album *album;
-		Artist artist;
+		Artist *artist;
 		int id;
 		int duration;
 		int tracknumber;

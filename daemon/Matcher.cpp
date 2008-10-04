@@ -57,7 +57,7 @@ void Matcher::compareFilesWithAlbum(const string &mbid, const vector<Metafile *>
 		for (vector<Track *>::size_type t = 0; t < album->tracks.size(); ++t) {
 			if (mgs[mbid].scores[t].find(*mf) != mgs[mbid].scores[t].end())
 				continue;
-			Metatrack mt = album->tracks[t].getAsMetatrack();
+			Metatrack mt = album->tracks[t]->getAsMetatrack();
 			Match m = compareMetafileWithMetatrack(**mf, mt);
 			if (m.meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
@@ -266,9 +266,9 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 					}
 				}
 				if (best_track != -1) {
-					used_files[best_file->first] = &mg->second.album->tracks[best_track];
+					used_files[best_file->first] = mg->second.album->tracks[best_track];
 					used_tracks[best_track] = true;
-					album_files[best_file->first] = &mg->second.album->tracks[best_track];
+					album_files[best_file->first] = mg->second.album->tracks[best_track];
 					album_score += best_track_score;
 					++files_matched;
 				}
