@@ -1,10 +1,11 @@
 #include "Album.h"
+#include "Database.h"
 #include "Debug.h"
 #include "Levenshtein.h"
-#include "Locutus.h"
 #include "Matcher.h"
 #include "Metafile.h"
 #include "Metatrack.h"
+#include "WebService.h"
 
 using namespace std;
 

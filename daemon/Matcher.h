@@ -34,15 +34,11 @@
 #include <string>
 #include <vector>
 
-/* XXX */
-#include "Database.h"
-#include "WebService.h"
-/* XXX */
-
 class Album;
-class Locutus;
+class Database;
 class Metafile;
 class Metatrack;
+class WebService;
 
 struct Match {
 	bool mbid_match;

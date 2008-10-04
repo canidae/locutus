@@ -24,5 +24,6 @@ class Database {
 		virtual bool save(const Metafile &metafile);
 		virtual bool save(const Metatrack &metatrack);
 		virtual bool save(const Track &track);
+		/* TODO: new class for a "match", and save */
 };
 #endif
