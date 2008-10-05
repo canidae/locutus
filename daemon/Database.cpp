@@ -18,6 +18,10 @@ bool Database::load(Metafile *metafile) {
 	return false;
 }
 
+bool Database::loadSetting(const string &key, bool default_value, const string &description) {
+	return default_value;
+}
+
 double Database::loadSetting(const string &key, double default_value, const string &description) {
 	return default_value;
 }

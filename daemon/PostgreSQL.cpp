@@ -118,6 +118,11 @@ bool PostgreSQL::load(Metafile *metafile) {
 	return true;
 }
 
+bool PostgreSQL::loadSetting(const string &key, bool default_value, const string &description) {
+	string def_val = (default_value ? "true" : "false");
+	return (loadSetting(key, def_val, description) == "true");
+}
+
 double PostgreSQL::loadSetting(const string &key, double default_value, const string &description) {
 	ostringstream def_val;
 	def_val << default_value;

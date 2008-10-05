@@ -17,6 +17,7 @@ class Database {
 
 		virtual bool load(Album *album);
 		virtual bool load(Metafile *metafile);
+		virtual bool loadSetting(const std::string &key, bool default_value, const std::string &description);
 		virtual double loadSetting(const std::string &key, double default_value, const std::string &description);
 		virtual int loadSetting(const std::string &key, int default_value, const std::string &description);
 		virtual std::string loadSetting(const std::string &key, const std::string &default_value, const std::string &description);

@@ -30,6 +30,7 @@ class PostgreSQL : public Database {
 
 		bool load(Album *album);
 		bool load(Metafile *metafile);
+		bool loadSetting(const std::string &key, bool default_value, const std::string &description);
 		double loadSetting(const std::string &key, double default_value, const std::string &description);
 		int loadSetting(const std::string &key, int default_value, const std::string &description);
 		std::string loadSetting(const std::string &key, const std::string &default_value, const std::string &description);
