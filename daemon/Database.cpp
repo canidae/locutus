@@ -42,7 +42,7 @@ bool Database::save(const Match &match) {
 	return false;
 }
 
-bool Database::save(const Metafile &metafile) {
+bool Database::save(const Metafile &metafile, const string &old_filename) {
 	return false;
 }
 

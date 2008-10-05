@@ -35,8 +35,6 @@
 #define APETITLE "Title"
 #define APETRACKNUMBER "Track"
 #define APEDATE "Year"
-/* undefined file_id */
-#define UNDEFINED_FILE_ID -1
 
 #include <apetag.h>
 #include <fileref.h>
@@ -65,7 +63,6 @@ class Metafile {
 		int bitrate;
 		int channels;
 		int duration;
-		int id;
 		int samplerate;
 		std::string album;
 		std::string albumartist;

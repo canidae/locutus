@@ -57,11 +57,11 @@ long Locutus::run() {
 			/* move file */
 			string filename = output_dir;
 			filename.append(filenamer->getFilename(*f));
-			/* move file if filename is changed */
-			if ((*f)->filename != filename)
-				moveFile(*f, filename);
-			/* and finally update file table */
-			database->save(**f);
+			string old_filename = (*f)->filename;
+			if (!moveFile(*f, filename)) {
+				/* TODO: unable to move file */
+			}
+			database->save(**f, old_filename); // metadata may have changed even if path haven't
 		}
 	}
 	/* submit new puids? */
