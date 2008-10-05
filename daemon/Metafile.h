@@ -56,10 +56,8 @@ class Track;
 
 class Metafile {
 	public:
-		bool mbid_lookup;
 		bool meta_lookup;
 		bool metadata_changed;
-		bool puid_lookup;
 		int bitrate;
 		int channels;
 		int duration;

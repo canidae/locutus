@@ -17,9 +17,11 @@ Matcher::Matcher(Database *database, WebService *webservice) : database(database
 	combine_threshold = database->loadSetting(COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
 	duration_limit = database->loadSetting(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
 	duration_weight = database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
+	mbid_lookup = (database->loadSetting(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION) == 1);
 	metadata_min_score = database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
 	only_save_complete_albums = (database->loadSetting(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION) == 1);
 	only_save_if_all_match = (database->loadSetting(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION) == 1);
+	puid_lookup = (database->loadSetting(PUID_LOOKUP_KEY, PUID_LOOKUP_VALUE, PUID_LOOKUP_DESCRIPTION) == 1);
 	puid_min_score = database->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
 	title_weight = database->loadSetting(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
 	tracknumber_weight = database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
@@ -169,7 +171,7 @@ bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
 void Matcher::lookupMBIDs(const vector<Metafile *> &files) {
 	for (vector<Metafile *>::const_iterator file = files.begin(); file != files.end(); ++file) {
 		Metafile *mf = *file;
-		if (!mf->mbid_lookup || mf->musicbrainz_albumid.size() != 36)
+		if (!mbid_lookup || mf->musicbrainz_albumid.size() != 36)
 			continue;
 		loadAlbum(mf->musicbrainz_albumid, files);
 	}
@@ -182,7 +184,7 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 	 * - matching tracks, but no good mbid/metadata match */
 	for (vector<Metafile *>::const_iterator file = files.begin(); file != files.end(); ++file) {
 		Metafile *mf = *file;
-		if (!mf->puid_lookup || mf->puid.size() != 36)
+		if (!puid_lookup || mf->puid.size() != 36)
 			continue;
 		vector<Metatrack> tracks = webservice->searchPUID(mf->puid);
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {

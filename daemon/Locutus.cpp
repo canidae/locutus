@@ -162,10 +162,6 @@ bool Locutus::parseFile() {
 			return false;
 		}
 	}
-	/* TODO:
-	 * should be settings which lookups we want to run */
-	mf->puid_lookup = true;
-	mf->mbid_lookup = true;
 	mf->meta_lookup = true;
 	grouped_files[mf->getGroup()].push_back(mf);
 	return true;

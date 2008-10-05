@@ -16,6 +16,9 @@
 #define DURATION_WEIGHT_KEY "duration_weight"
 #define DURATION_WEIGHT_VALUE 100.0
 #define DURATION_WEIGHT_DESCRIPTION ""
+#define MBID_LOOKUP_KEY "mbid_lookup"
+#define MBID_LOOKUP_VALUE 1
+#define MBID_LOOKUP_DESCRIPTION "Look up tracks using MBID if it's present"
 #define METADATA_MIN_SCORE_KEY "metadata_min_score"
 #define METADATA_MIN_SCORE_VALUE 0.75
 #define METADATA_MIN_SCORE_DESCRIPTION "Minimum value for when a metadata lookup is considered a match. Must be between 0.0 and 1.0"
@@ -25,6 +28,9 @@
 #define ONLY_SAVE_IF_ALL_MATCH_KEY "only_save_if_all_match"
 #define ONLY_SAVE_IF_ALL_MATCH_VALUE 1
 #define ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION "Only save files if every file in a group match a track"
+#define PUID_LOOKUP_KEY "puid_lookup"
+#define PUID_LOOKUP_VALUE 1
+#define PUID_LOOKUP_DESCRIPTION "Look up tracks using PUID which will be generated if necessary"
 #define PUID_MIN_SCORE_KEY "puid_min_score"
 #define PUID_MIN_SCORE_VALUE 0.50
 #define PUID_MIN_SCORE_DESCRIPTION "Minimum value for when a PUID lookup is considered a match. Must be between 0.0 and 1.0"
@@ -62,8 +68,10 @@ class Matcher {
 	private:
 		Database *database;
 		WebService *webservice;
+		bool mbid_lookup;
 		bool only_save_complete_albums;
 		bool only_save_if_all_match;
+		bool puid_lookup;
 		double album_weight;
 		double artist_weight;
 		double combine_threshold;
