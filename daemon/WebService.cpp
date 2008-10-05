@@ -57,9 +57,10 @@ bool WebService::lookupAlbum(Album *album) {
 	if (tmp->children["track-list"].size() <= 0 || tmp->children["track-list"][0]->children["track"].size() <= 0)
 		return false;
 	tmp = tmp->children["track-list"][0];
-	album->tracks.resize(tmp->children["track"].size(), new Track(album));
+	album->tracks.resize(tmp->children["track"].size());
 	for (vector<XMLNode *>::size_type a = 0; a < tmp->children["track"].size(); ++a) {
 		/* track data */
+		album->tracks[a] = new Track(album);
 		tmp2 = tmp->children["track"][a];
 		album->tracks[a]->mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
 		album->tracks[a]->title = (tmp2->children["title"].size() > 0) ? tmp2->children["title"][0]->value : "";

@@ -57,7 +57,7 @@ bool PostgreSQL::load(Album *album) {
 	album->released = getString(0, 6);
 	/* track data */
 	int trackcount = getRows();
-	album->tracks.resize(trackcount, new Track(album));
+	album->tracks.resize(trackcount);
 	for (int t = 0; t < trackcount; ++t) {
 		int trackindex = getInt(t, 10) - 1;
 		if (trackindex < 0 || trackindex >= (int) album->tracks.capacity()) {
@@ -68,15 +68,16 @@ bool PostgreSQL::load(Album *album) {
 			Debug::warning(msg);
 			return false;
 		}
+		album->tracks[trackindex] = new Track(album);
 		/* track data */
-		album->tracks[t]->mbid = getString(t, 7);
-		album->tracks[t]->title = getString(t, 8);
-		album->tracks[t]->duration = getInt(t, 9);
-		album->tracks[t]->tracknumber = trackindex + 1;
+		album->tracks[trackindex]->mbid = getString(t, 7);
+		album->tracks[trackindex]->title = getString(t, 8);
+		album->tracks[trackindex]->duration = getInt(t, 9);
+		album->tracks[trackindex]->tracknumber = trackindex + 1;
 		/* track artist data */
-		album->tracks[t]->artist->mbid = getString(t, 11);
-		album->tracks[t]->artist->name = getString(t, 12);
-		album->tracks[t]->artist->sortname = getString(t, 13);
+		album->tracks[trackindex]->artist->mbid = getString(t, 11);
+		album->tracks[trackindex]->artist->name = getString(t, 12);
+		album->tracks[trackindex]->artist->sortname = getString(t, 13);
 	}
 	return true;
 }

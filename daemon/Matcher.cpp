@@ -60,7 +60,7 @@ void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &fi
 	for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf) {
 		for (vector<Track *>::iterator t = am->album->tracks.begin(); t != am->album->tracks.end(); ++t) {
 			Metatrack mt = (*t)->getAsMetatrack();
-			Match *m = compareMetafileWithMetatrack(*mf, &mt);
+			Match *m = compareMetafileWithMetatrack(*mf, &mt, *t);
 			if (m == NULL)
 				continue;
 			if (m->mbid_match || (m->puid_match && m->meta_score >= puid_min_score) || m->meta_score >= metadata_min_score)
@@ -281,9 +281,8 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	if (save_files.size() <= 0 || (only_save_if_all_match && total_matched != (int) files.size()))
 		return;
 	/* set new metadata */
-	for (map<string, Match *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf) {
+	for (map<string, Match *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf)
 		sf->second->metafile->setMetadata(sf->second->track);
-	}
 }
 
 void Matcher::searchMetadata(const string &group, const vector<Metafile *> &files) {

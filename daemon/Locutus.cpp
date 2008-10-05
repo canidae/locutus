@@ -72,9 +72,13 @@ long Locutus::run() {
 
 /* private methods */
 void Locutus::clearFiles() {
+	Debug::info("Deleting files...");
 	for (map<string, vector<Metafile *> >::iterator group = grouped_files.begin(); group != grouped_files.end(); ++group) {
-		for (vector<Metafile *>::iterator file = group->second.begin(); file != group->second.end(); ++group)
+		Debug::info(group->first);
+		for (vector<Metafile *>::iterator file = group->second.begin(); file != group->second.end(); ++file) {
+			Debug::info((*file)->filename);
 			delete (*file);
+		}
 	}
 	grouped_files.clear();
 }
