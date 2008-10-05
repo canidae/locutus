@@ -13,6 +13,9 @@
 #define DURATION_LIMIT_KEY "duration_limit"
 #define DURATION_LIMIT_VALUE 15000.0
 #define DURATION_LIMIT_DESCRIPTION ""
+#define DURATION_MUST_MATCH_KEY "duration_must_match"
+#define DURATION_MUST_MATCH_VALUE 1
+#define DURATION_MUST_MATCH_DESCRIPTION "Demand that the difference between duration of file and track we're matching against is less or equal to duration_limit"
 #define DURATION_WEIGHT_KEY "duration_weight"
 #define DURATION_WEIGHT_VALUE 100.0
 #define DURATION_WEIGHT_DESCRIPTION ""
@@ -68,6 +71,7 @@ class Matcher {
 	private:
 		Database *database;
 		WebService *webservice;
+		bool duration_must_match;
 		bool mbid_lookup;
 		bool only_save_complete_albums;
 		bool only_save_if_all_match;

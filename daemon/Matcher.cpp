@@ -16,6 +16,7 @@ Matcher::Matcher(Database *database, WebService *webservice) : database(database
 	artist_weight = database->loadSetting(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
 	combine_threshold = database->loadSetting(COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
 	duration_limit = database->loadSetting(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
+	duration_must_match = (database->loadSetting(DURATION_MUST_MATCH_KEY, DURATION_MUST_MATCH_VALUE, DURATION_MUST_MATCH_DESCRIPTION) == 1);
 	duration_weight = database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
 	mbid_lookup = (database->loadSetting(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION) == 1);
 	metadata_min_score = database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
@@ -77,6 +78,8 @@ void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &fi
 }
 
 Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, Metatrack *metatrack, Track *track) {
+	if (duration_must_match && abs(metafile->duration - metatrack->duration) > duration_limit)
+		return NULL;
 	list<string> values;
 	if (metafile->album != "")
 		values.push_back(metafile->album);
