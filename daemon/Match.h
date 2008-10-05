@@ -3,16 +3,19 @@
 
 #include <string>
 
+class Metafile;
+class Track;
+
 class Match {
 	public:
-		std::string filename;
-		std::string track_mbid;
+		Metafile *metafile;
+		Track *track;
 		bool mbid_match;
 		bool puid_match;
 		double meta_score;
 		double total_score;
 
-		Match(const std::string &filename = "", const std::string &track_mbid = "", bool mbid_match = false, bool puid_match = false, double meta_score = 0.0);
+		explicit Match(Metafile *metafile = NULL, Track *track = NULL, bool mbid_match = false, bool puid_match = false, double meta_score = 0.0);
 		~Match();
 };
 #endif

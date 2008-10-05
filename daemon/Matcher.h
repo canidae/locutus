@@ -33,17 +33,17 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Match.h"
 
 class Album;
 class Database;
+class Match;
 class Metafile;
 class Metatrack;
 class WebService;
 
 struct AlbumMatch {
 	Album *album;
-	std::vector<Match> matches;
+	std::map<std::string, std::vector<Match *> > matches;
 };
 
 class Matcher {
@@ -67,9 +67,9 @@ class Matcher {
 		double tracknumber_weight;
 		std::map<std::string, AlbumMatch> ams;
 
-		void compareFilesWithAlbum(AlbumMatch *am, const std::vector<Metafile *> &files);
-		Match compareMetafileWithMetatrack(const Metafile &metafile, const Metatrack &metatrack);
 		void clearAlbumMatch();
+		void compareFilesWithAlbum(AlbumMatch *am, const std::vector<Metafile *> &files);
+		Match *compareMetafileWithMetatrack(Metafile *metafile, Metatrack *metatrack, Track *track = NULL);
 		bool loadAlbum(const std::string &mbid, const std::vector<Metafile *> files);
 		void lookupMBIDs(const std::vector<Metafile *> &files);
 		void lookupPUIDs(const std::vector<Metafile *> &files);
