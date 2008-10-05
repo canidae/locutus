@@ -57,7 +57,9 @@ long Locutus::run() {
 			/* move file */
 			string filename = output_dir;
 			filename.append(filenamer->getFilename(*f));
-			moveFile(*f, filename);
+			/* move file if filename is changed */
+			if ((*f)->filename != filename)
+				moveFile(*f, filename);
 			/* and finally update file table */
 			database->save(**f);
 		}

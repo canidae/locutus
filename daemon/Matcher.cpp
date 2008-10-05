@@ -57,16 +57,16 @@ void Matcher::clearAlbumMatch() {
 }
 
 void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &files) {
-	for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf) {
-		for (vector<Track *>::iterator t = am->album->tracks.begin(); t != am->album->tracks.end(); ++t) {
-			Metatrack mt = (*t)->getAsMetatrack();
+	for (vector<Track *>::iterator t = am->album->tracks.begin(); t != am->album->tracks.end(); ++t) {
+		Metatrack mt = (*t)->getAsMetatrack();
+		database->save(mt);
+		for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf) {
 			Match *m = compareMetafileWithMetatrack(*mf, &mt, *t);
 			if (m == NULL)
 				continue;
 			if (m->mbid_match || (m->puid_match && m->meta_score >= puid_min_score) || m->meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
 			am->matches[(*t)->mbid].push_back(m);
-			database->save(mt);
 			database->save(*m);
 		}
 	}
