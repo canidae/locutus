@@ -72,13 +72,9 @@ long Locutus::run() {
 
 /* private methods */
 void Locutus::clearFiles() {
-	Debug::info("Deleting files...");
 	for (map<string, vector<Metafile *> >::iterator group = grouped_files.begin(); group != grouped_files.end(); ++group) {
-		Debug::info(group->first);
-		for (vector<Metafile *>::iterator file = group->second.begin(); file != group->second.end(); ++file) {
-			Debug::info((*file)->filename);
+		for (vector<Metafile *>::iterator file = group->second.begin(); file != group->second.end(); ++file)
 			delete (*file);
-		}
 	}
 	grouped_files.clear();
 }
@@ -115,42 +111,6 @@ bool Locutus::moveFile(Metafile *file, const string &filename) {
 	dirname.append(filename);
 	Debug::warning(dirname);
 	return false;
-}
-
-void Locutus::removeGoneFiles() {
-	/* FIXME: broke this when changing making database an own layer
-	if (!database->query("SELECT file_id, filename FROM file"))
-		return;
-	struct stat file_info;
-	ostringstream remove;
-	remove.str("");
-	for (int r = 0; r < database->getRows(); ++r) {
-		if (stat(database->getString(r, 1).c_str(), &file_info) == 0)
-			continue;
-		// unable to get info about this file, remove it from database
-		if (remove.str() == "")
-			remove << "DELETE FROM file WHERE file_id IN (" << database->getInt(r, 0);
-		else
-			remove << ", " << database->getInt(r, 0);
-	}
-	if (remove.str() == "")
-		return;
-	// there are entries in the file table that should go
-	remove << ")";
-	database->query(remove.str());
-	*/
-}
-
-void Locutus::scanFiles(const string &directory) {
-	dir_queue.push_back(directory);
-	while (dir_queue.size() > 0 || file_queue.size() > 0) {
-		/* first files */
-		if (parseFile())
-			continue;
-		/* then directories */
-		if (parseDirectory())
-			continue;
-	}
 }
 
 bool Locutus::parseDirectory() {
@@ -207,6 +167,42 @@ bool Locutus::parseFile() {
 	mf->meta_lookup = true;
 	grouped_files[mf->getGroup()].push_back(mf);
 	return true;
+}
+
+void Locutus::removeGoneFiles() {
+	/* FIXME: broke this when changing making database an own layer
+	if (!database->query("SELECT file_id, filename FROM file"))
+		return;
+	struct stat file_info;
+	ostringstream remove;
+	remove.str("");
+	for (int r = 0; r < database->getRows(); ++r) {
+		if (stat(database->getString(r, 1).c_str(), &file_info) == 0)
+			continue;
+		// unable to get info about this file, remove it from database
+		if (remove.str() == "")
+			remove << "DELETE FROM file WHERE file_id IN (" << database->getInt(r, 0);
+		else
+			remove << ", " << database->getInt(r, 0);
+	}
+	if (remove.str() == "")
+		return;
+	// there are entries in the file table that should go
+	remove << ")";
+	database->query(remove.str());
+	*/
+}
+
+void Locutus::scanFiles(const string &directory) {
+	dir_queue.push_back(directory);
+	while (dir_queue.size() > 0 || file_queue.size() > 0) {
+		/* first files */
+		if (parseFile())
+			continue;
+		/* then directories */
+		if (parseDirectory())
+			continue;
+	}
 }
 
 /* main */

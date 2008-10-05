@@ -16,5 +16,5 @@ Track::~Track() {
 Metatrack Track::getAsMetatrack() const {
 	if (album == NULL || artist == NULL)
 		return Metatrack();
-	return Metatrack(duration, tracknumber, mbid, title, artist->mbid, artist->name, album->mbid, album->title);
+	return Metatrack(duration, tracknumber, album->mbid, album->title, artist->mbid, artist->name, "", mbid, title);
 }

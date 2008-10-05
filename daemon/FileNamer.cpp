@@ -35,7 +35,7 @@ const string &FileNamer::getFilename(Metafile *file) {
 		Debug::warning("File format for output is way too short, refuse to save file");
 		return filename;
 	}
-	string::size_type start = 0;
+	string::size_type start = -1;
 	filename = file_format;
 	string::size_type stop = file->filename.find_last_of('.');
 	if (stop != string::npos)
