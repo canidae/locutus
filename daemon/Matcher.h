@@ -19,6 +19,12 @@
 #define METADATA_MIN_SCORE_KEY "metadata_min_score"
 #define METADATA_MIN_SCORE_VALUE 0.75
 #define METADATA_MIN_SCORE_DESCRIPTION "Minimum value for when a metadata lookup is considered a match. Must be between 0.0 and 1.0"
+#define ONLY_SAVE_COMPLETE_ALBUMS_KEY "only_save_complete_albums"
+#define ONLY_SAVE_COMPLETE_ALBUMS_VALUE 1
+#define ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION "Only save albums where we found a file for every track"
+#define ONLY_SAVE_IF_ALL_MATCH_KEY "only_save_if_all_match"
+#define ONLY_SAVE_IF_ALL_MATCH_VALUE 1
+#define ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION "Only save files if every file in a group match a track"
 #define PUID_MIN_SCORE_KEY "puid_min_score"
 #define PUID_MIN_SCORE_VALUE 0.50
 #define PUID_MIN_SCORE_DESCRIPTION "Minimum value for when a PUID lookup is considered a match. Must be between 0.0 and 1.0"
@@ -56,6 +62,8 @@ class Matcher {
 	private:
 		Database *database;
 		WebService *webservice;
+		bool only_save_complete_albums;
+		bool only_save_if_all_match;
 		double album_weight;
 		double artist_weight;
 		double combine_threshold;
