@@ -35,7 +35,7 @@ const string &FileNamer::getFilename(Metafile *file) {
 		Debug::warning("File format for output is way too short, refuse to save file");
 		return filename;
 	}
-	string::size_type start = -1;
+	string::size_type start = 0;
 	filename = file_format;
 	string::size_type stop = file->filename.find_last_of('.');
 	if (stop != string::npos)
@@ -47,7 +47,7 @@ const string &FileNamer::getFilename(Metafile *file) {
 			filename.push_back(file->filename[stop]);
 	}
 
-	while (start < filename.size() && (start = filename.find('%', start + 1)) != string::npos) {
+	while (start < filename.size() && (start = filename.find('%', start)) != string::npos) {
 		string::size_type stop = filename.find('%', start + 1);
 		if (stop == string::npos)
 			break; // no more '%'
