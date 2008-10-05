@@ -5,7 +5,7 @@
 using namespace std;
 
 /* constructors/destructor */
-Track::Track(Album *album) : album(album), artist(new Artist()), id(-1), duration(0), tracknumber(0), mbid(""), title("") {
+Track::Track(Album *album) : album(album), artist(new Artist()), duration(0), tracknumber(0), mbid(""), title("") {
 }
 
 Track::~Track() {

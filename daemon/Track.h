@@ -11,7 +11,6 @@ class Track {
 	public:
 		Album *album;
 		Artist *artist;
-		int id;
 		int duration;
 		int tracknumber;
 		std::string mbid;

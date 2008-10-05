@@ -172,7 +172,7 @@ bool Locutus::parseFile() {
 }
 
 void Locutus::removeGoneFiles() {
-	/* FIXME: broke this when changing making database an own layer
+	/* FIXME: this broke when we made the database layer
 	if (!database->query("SELECT file_id, filename FROM file"))
 		return;
 	struct stat file_info;
