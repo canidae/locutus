@@ -219,7 +219,6 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	map<string, bool> used_albums;
 	map<string, bool> used_files;
 	map<string, bool> used_tracks;
-	int total_matched = 0;
 	vector<Match *> album_files;
 	vector<Match *> best_album_files;
 	/* find best album */
@@ -273,12 +272,10 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		}
 		if (best_album_files.size() <= 0)
 			continue;
-		for (vector<Match *>::iterator match = best_album_files.begin(); match != best_album_files.end(); ++match) {
+		for (vector<Match *>::iterator match = best_album_files.begin(); match != best_album_files.end(); ++match)
 			save_files[(*match)->metafile->filename] = *match;
-			++total_matched;
-		}
 	}
-	if (save_files.size() <= 0 || (only_save_if_all_match && total_matched != (int) files.size()))
+	if (save_files.size() <= 0 || (only_save_if_all_match && (int) save_files.size() != (int) files.size()))
 		return;
 	/* set new metadata */
 	for (map<string, Match *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf)
