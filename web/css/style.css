@@ -170,9 +170,10 @@ option.optgroup {
 }
 .box {
 	background: #F9F9F9;
+	float: left;
 	padding: 0.5em;
 	width: auto;
-	max-width: 40%;
+	max-width: 20%;
 	border: 1px dotted #babdb6;
 }
 .error {

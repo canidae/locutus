@@ -7,7 +7,7 @@ use Data::Dumper;
 use lib '../include';
 use Locutus;
 
-my $page = 'album';
+my $page = 'albums';
 my %vars = ();
 
 my $dbh = Locutus::db_connect();
