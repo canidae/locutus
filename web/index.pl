@@ -5,7 +5,7 @@ use warnings;
 use lib '../include';
 use Locutus;
 
-my $page = 'index';
+my $page = 'statistics';
 my %vars = ();
 
 my $dbh = Locutus::db_connect();
