@@ -1,22 +1,22 @@
 [% INCLUDE header.tmpl
   title = 'Config'
 %]
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Default value</th>
-    <th>Value</th>
-    <th>Description</th>
-    <th>Reset to default</th>
-  </tr>
-  [% FOREACH setting IN settings %]
-  <tr>
-    <td>[% setting.key %]</td>
-    <td>[% setting.default_value %]</td>
-    <td>[% setting.value %]</td>
-    <td>[% setting.description %]</td>
-    <td>(button that copies default_value to value, or something)</td>
-  </tr>
-  [% END %]
-</table>
+    <table>
+      <tr>
+        <th>Key</th>
+        <th>Default value</th>
+        <th>Value</th>
+        <th>Description</th>
+        <th>Reset to default</th>
+      </tr>
+      [% FOREACH setting IN settings %]
+      <tr>
+        <td>[% setting.key %]</td>
+        <td>[% setting.default_value %]</td>
+        <td>[% setting.value %]</td>
+        <td>[% setting.description %]</td>
+        <td>(button that copies default_value to value, or something)</td>
+      </tr>
+      [% END %]
+    </table>
 [% INCLUDE footer.tmpl %]
