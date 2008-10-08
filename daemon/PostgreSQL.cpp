@@ -139,7 +139,7 @@ string PostgreSQL::loadSetting(const string &key, const string &default_value, c
 	string e_key = escapeString(key);
 	string back = default_value;
 	ostringstream query;
-	query << "SELECT value, user_changed FROM setting WHERE key = '" << e_key << "'";
+	query << "SELECT value, NOT (default_value = value) FROM setting WHERE key = '" << e_key << "'";
 	if (!doQuery(query.str()))
 		return back;
 	string e_value = escapeString(default_value);
@@ -151,7 +151,7 @@ string PostgreSQL::loadSetting(const string &key, const string &default_value, c
 			 * update database */
 			back = default_value;
 			query.str("");
-			query << "UPDATE setting SET value = '" << e_value << "', description = '" << e_description << "' WHERE key = '" << e_key << "'";
+			query << "UPDATE setting SET default_value = '" << e_value << "', value = '" << e_value << "', description = '" << e_description << "' WHERE key = '" << e_key << "'";
 			if (!doQuery(query.str()))
 				return back;
 		}

@@ -156,8 +156,7 @@ CREATE TABLE setting (
     key character varying NOT NULL,
     default_value character varying NOT NULL,
     value character varying NOT NULL,
-    description character varying NOT NULL,
-    user_changed boolean DEFAULT false NOT NULL
+    description character varying NOT NULL
 );
 
 
