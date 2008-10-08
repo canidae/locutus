@@ -139,14 +139,14 @@ string PostgreSQL::loadSetting(const string &key, const string &default_value, c
 	string e_key = escapeString(key);
 	string back = default_value;
 	ostringstream query;
-	query << "SELECT value, NOT (default_value = value) FROM setting WHERE key = '" << e_key << "'";
+	query << "SELECT value, (default_value = value) FROM setting WHERE key = '" << e_key << "'";
 	if (!doQuery(query.str()))
 		return back;
 	string e_value = escapeString(default_value);
 	string e_description = escapeString(description);
 	if (getRows() > 0) {
 		back = getString(0, 0);
-		if (!getBool(0, 1) && back != default_value) {
+		if (getBool(0, 1) && back != default_value) {
 			/* user has not changed value and default value has changed.
 			 * update database */
 			back = default_value;
