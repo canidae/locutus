@@ -1,0 +1,22 @@
+[% INCLUDE header.tmpl
+  title = 'Tracks'
+%]
+    <table>
+      <tr>
+        <th>Artist/Group</th>
+        <th>Album</th>
+        <th>Tracknumber</th>
+        <th>Title</th>
+        <th>Duration</th>
+      </tr>
+      [% FOREACH track IN tracks %]
+      <tr>
+        <th>[% track.artist_name %]</th>
+        <th>[% track.album_name %]</th>
+        <th>[% track.tracknumber %]</th>
+        <th>[% track.title %]</th>
+        <th>[% track.duration %]</th>
+      </tr>
+      [% END %]
+    </table>
+[% INCLUDE footer.tmpl %]
