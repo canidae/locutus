@@ -1,0 +1,17 @@
+[% INCLUDE header.tmpl
+  title = 'FIXME'
+%]
+[% IF artist %]
+    <h1>[% artist.name %]</h1>
+    <h2>Sortname: [% artist.sortname %]</h2>
+    <h3>MusicBraiz Artist ID: <a href="http://musicbrainz.org/artist/[% artist.mbid %].html">[% artist.mbid %]</a></h3>
+  [% IF albums %]
+    <h2>Albums:</h2>
+    <ul>
+    [% FOREACH album IN albums %]
+      <li><a href="album.pl?alid=[% album.album_id %]">[% album.title %] ([% album.tracks %] track[% IF album.tracks != 1 %]s[% END %][% IF album.type %], [% album.type %][% END %][% IF album.released %], released [% album.released %][% END %])</a></li>
+    [% END %]
+    </ul>
+  [% END %]
+[% END %]
+[% INCLUDE footer.tmpl %]

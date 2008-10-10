@@ -26,7 +26,7 @@ h1,h2 {
 	font-weight: bold;
 }
 h1,h2,h3 {
-	margin-left: -0.5em;
+	margin-left: 0.5em;
 }
 
 p, table, dl, fieldset, ul, ol {

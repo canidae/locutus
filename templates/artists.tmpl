@@ -1,53 +1,14 @@
 [% INCLUDE header.tmpl
   title = 'Artists'
 %]
-    <table>
-      <tr>
-        <th>Artist/Group</th>
-        <th>Sortname</th>
-      </tr>
-      [% FOREACH artist IN artists %]
-      <tr>
-        <td>[% artist.name %]</td>
-        <td>[% artist.sortname %]</td>
-      </tr>
-      [% END %]
-    </table>
     <p>
-      <input type="text" value="filter artists here"/>
+      <input type="text" value="filter artists here" />
     </p>
+    [% IF artists %]
     <ul>
-      <li>artist1</li>
-      <li>artist2</li>
-      <li>artist3 - expanded</li>
-      <li>
-        <ul>
-          <li>album1</li>
-          <li>album2 - expanded</li>
-          <li>
-            <ul>
-              <li>track1</li>
-              <li>
-                <ul>
-                  <li>file1</li>
-                  <li>file2</li>
-                </ul>
-              </li>
-              <li>track2</li>
-              <li>
-                <ul>
-                  <li>file1</li>
-                </ul>
-              </li>
-              <li>...</li>
-            </ul>
-          </li>
-          <li>album3</li>
-          <li>album4</li>
-        </ul>
-      </li>
-      <li>artist4</li>
-      <li>artist5</li>
-      <li>...</li>
+      [% FOREACH artist IN artists %]
+      <li><a href="artist.pl?arid=[% artist.artist_id %]">[% artist.name %] (sortname: [% artist.sortname %]), [% artist.albums %] album[% IF artist.albums != 1 %]s[% END %]</a></li>
+      [% END %]
     </ul>
+    [% END %]
 [% INCLUDE footer.tmpl %]
