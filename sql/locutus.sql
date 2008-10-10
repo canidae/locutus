@@ -223,6 +223,36 @@ CREATE VIEW v_match_metatrack AS
 ALTER TABLE public.v_match_metatrack OWNER TO canidae;
 
 --
+-- Name: v_web_album_info; Type: VIEW; Schema: public; Owner: canidae
+--
+
+CREATE VIEW v_web_album_info AS
+    SELECT al.album_id, al.artist_id, al.mbid, al.type, al.title, al.released, al.custom_artist_sortname, al.last_updated, ar.name AS artist_name FROM (album al JOIN artist ar ON ((al.artist_id = ar.artist_id)));
+
+
+ALTER TABLE public.v_web_album_info OWNER TO canidae;
+
+--
+-- Name: v_web_list_albums; Type: VIEW; Schema: public; Owner: canidae
+--
+
+CREATE VIEW v_web_list_albums AS
+    SELECT al.album_id, al.artist_id, al.mbid, al.type, al.title, al.released, al.custom_artist_sortname, al.last_updated, COALESCE((SELECT count(*) AS count FROM track tr WHERE (tr.album_id = al.album_id)), (0)::bigint) AS tracks FROM album al;
+
+
+ALTER TABLE public.v_web_list_albums OWNER TO canidae;
+
+--
+-- Name: v_web_list_artists; Type: VIEW; Schema: public; Owner: canidae
+--
+
+CREATE VIEW v_web_list_artists AS
+    SELECT ar.artist_id, ar.mbid, ar.name, ar.sortname, COALESCE((SELECT count(*) AS count FROM album al WHERE (al.artist_id = ar.artist_id)), (0)::bigint) AS albums FROM artist ar;
+
+
+ALTER TABLE public.v_web_list_artists OWNER TO canidae;
+
+--
 -- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
 --
 
@@ -742,6 +772,36 @@ REVOKE ALL ON TABLE v_match_metatrack FROM PUBLIC;
 REVOKE ALL ON TABLE v_match_metatrack FROM canidae;
 GRANT ALL ON TABLE v_match_metatrack TO canidae;
 GRANT SELECT ON TABLE v_match_metatrack TO locutus;
+
+
+--
+-- Name: v_web_album_info; Type: ACL; Schema: public; Owner: canidae
+--
+
+REVOKE ALL ON TABLE v_web_album_info FROM PUBLIC;
+REVOKE ALL ON TABLE v_web_album_info FROM canidae;
+GRANT ALL ON TABLE v_web_album_info TO canidae;
+GRANT SELECT ON TABLE v_web_album_info TO locutus;
+
+
+--
+-- Name: v_web_list_albums; Type: ACL; Schema: public; Owner: canidae
+--
+
+REVOKE ALL ON TABLE v_web_list_albums FROM PUBLIC;
+REVOKE ALL ON TABLE v_web_list_albums FROM canidae;
+GRANT ALL ON TABLE v_web_list_albums TO canidae;
+GRANT SELECT ON TABLE v_web_list_albums TO locutus;
+
+
+--
+-- Name: v_web_list_artists; Type: ACL; Schema: public; Owner: canidae
+--
+
+REVOKE ALL ON TABLE v_web_list_artists FROM PUBLIC;
+REVOKE ALL ON TABLE v_web_list_artists FROM canidae;
+GRANT ALL ON TABLE v_web_list_artists TO canidae;
+GRANT SELECT ON TABLE v_web_list_artists TO locutus;
 
 
 --
