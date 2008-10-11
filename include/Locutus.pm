@@ -7,7 +7,7 @@ use Template;
 package Locutus;
 
 sub db_connect {
-	my $dbh = DBI->connect("dbi:Pg:dbname=locutus;host=localhost", "locutus", "locutus") || die "Couldn't connect to database: " . DBI::errstr();
+	my $dbh = DBI->connect("dbi:Pg:dbname=locutus;host=sql.samfundet.no", "locutus", "locutus") || die "Couldn't connect to database: " . DBI::errstr();
 	return $dbh;
 }
 
