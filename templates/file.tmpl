@@ -1,0 +1,19 @@
+[% INCLUDE header.tmpl
+  title = 'FIXME'
+%]
+[% IF file %]
+    <h1>[% file.filename %]</h1>
+    <h3>Duration: [% file.duration %]ms</h3>
+    <h3>Bitrate: [% file.bitrate %]kbps</h3>
+    <h3>Channels: [% file.channels %]</h3>
+    <h3>Samplerate: [% file.samplerate %]hz</h3>
+  [% IF files %]
+    <h2>Files:</h2>
+    <ol>
+    [% FOREACH file IN files %]
+      <li><a href="file.pl?fiid=[% file.file_id %]">[% file.filename %]</a>
+    [% END %]
+    </ol>
+  [% END %]
+[% END %]
+[% INCLUDE footer.tmpl %]
