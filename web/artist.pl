@@ -15,7 +15,7 @@ my $dbh = Locutus::db_connect();
 
 my $arid = int(param('arid'));
 
-$vars{'artist'} = $dbh->selectrow_hashref('SELECT * FROM artist WHERE artist_id = ' . $arid, {Slice => {}});
+$vars{'artist'} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_artist WHERE artist_id = ' . $arid, {Slice => {}});
 $vars{'albums'} = $dbh->selectall_arrayref('SELECT * FROM v_web_list_albums WHERE artist_id = ' . $arid, {Slice => {}});
 
 #print Dumper(\%vars);
