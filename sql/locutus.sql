@@ -15,7 +15,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: album; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: album; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE album (
@@ -31,10 +31,8 @@ CREATE TABLE album (
 );
 
 
-ALTER TABLE public.album OWNER TO canidae;
-
 --
--- Name: artist; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: artist; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE artist (
@@ -46,10 +44,8 @@ CREATE TABLE artist (
 );
 
 
-ALTER TABLE public.artist OWNER TO canidae;
-
 --
--- Name: file; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: file; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE file (
@@ -80,10 +76,8 @@ CREATE TABLE file (
 );
 
 
-ALTER TABLE public.file OWNER TO canidae;
-
 --
--- Name: match; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: match; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE match (
@@ -96,10 +90,8 @@ CREATE TABLE match (
 );
 
 
-ALTER TABLE public.match OWNER TO canidae;
-
 --
--- Name: metatrack; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: metatrack; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE metatrack (
@@ -119,10 +111,8 @@ CREATE TABLE metatrack (
 );
 
 
-ALTER TABLE public.metatrack OWNER TO canidae;
-
 --
--- Name: puid; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: puid; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE puid (
@@ -132,10 +122,8 @@ CREATE TABLE puid (
 );
 
 
-ALTER TABLE public.puid OWNER TO canidae;
-
 --
--- Name: puid_metatrack; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: puid_metatrack; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE puid_metatrack (
@@ -145,10 +133,8 @@ CREATE TABLE puid_metatrack (
 );
 
 
-ALTER TABLE public.puid_metatrack OWNER TO canidae;
-
 --
--- Name: setting; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: setting; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE setting (
@@ -160,10 +146,8 @@ CREATE TABLE setting (
 );
 
 
-ALTER TABLE public.setting OWNER TO canidae;
-
 --
--- Name: track; Type: TABLE; Schema: public; Owner: canidae; Tablespace: 
+-- Name: track; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE track (
@@ -180,90 +164,80 @@ CREATE TABLE track (
 );
 
 
-ALTER TABLE public.track OWNER TO canidae;
-
 --
--- Name: v_daemon_load_album; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_daemon_load_album; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_daemon_load_album AS
     SELECT al.album_id, al.mbid AS album_mbid, al.type AS album_type, al.title AS album_title, al.released AS album_released, al.custom_artist_sortname AS album_custom_artist_sortname, al.last_updated AS album_last_updated, ar.artist_id, ar.mbid AS artist_mbid, ar.name AS artist_name, ar.sortname AS artist_sortname FROM (album al JOIN artist ar ON ((al.artist_id = ar.artist_id)));
 
 
-ALTER TABLE public.v_daemon_load_album OWNER TO canidae;
-
 --
--- Name: v_daemon_load_metafile; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_daemon_load_metafile; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_daemon_load_metafile AS
     SELECT f.filename, f.file_id, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released AS year FROM (file f LEFT JOIN puid p ON ((f.puid_id = p.puid_id)));
 
 
-ALTER TABLE public.v_daemon_load_metafile OWNER TO canidae;
-
 --
--- Name: v_web_info_album; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_web_info_album; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_web_info_album AS
     SELECT al.album_id, al.artist_id, al.mbid, al.type, al.title, al.released, al.custom_artist_sortname, al.last_updated, ar.name AS artist_name FROM (album al JOIN artist ar ON ((al.artist_id = ar.artist_id)));
 
 
-ALTER TABLE public.v_web_info_album OWNER TO canidae;
-
 --
--- Name: v_web_info_artist; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_web_info_artist; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_web_info_artist AS
     SELECT artist.artist_id, artist.mbid, artist.name, artist.sortname FROM artist;
 
 
-ALTER TABLE public.v_web_info_artist OWNER TO canidae;
+--
+-- Name: v_web_info_track; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_info_track AS
+    SELECT tr.track_id, tr.album_id, tr.artist_id, tr.mbid, tr.title, tr.duration, tr.tracknumber, ar.name AS artist_name, al.title AS album_title FROM ((track tr LEFT JOIN artist ar ON ((tr.artist_id = ar.artist_id))) LEFT JOIN album al ON ((tr.album_id = al.album_id)));
+
 
 --
--- Name: v_web_list_albums; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_web_list_albums; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_web_list_albums AS
     SELECT al.album_id, al.artist_id, al.mbid, al.type, al.title, al.released, al.custom_artist_sortname, al.last_updated, COALESCE((SELECT count(*) AS count FROM track tr WHERE (tr.album_id = al.album_id)), (0)::bigint) AS tracks, ar.name AS artist_name FROM (album al LEFT JOIN artist ar ON ((al.artist_id = ar.artist_id)));
 
 
-ALTER TABLE public.v_web_list_albums OWNER TO canidae;
-
 --
--- Name: v_web_list_artists; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_web_list_artists; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_web_list_artists AS
     SELECT ar.artist_id, ar.mbid, ar.name, ar.sortname, COALESCE((SELECT count(*) AS count FROM album al WHERE (al.artist_id = ar.artist_id)), (0)::bigint) AS albums FROM artist ar;
 
 
-ALTER TABLE public.v_web_list_artists OWNER TO canidae;
-
 --
--- Name: v_web_list_files; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_web_list_files; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_web_list_files AS
     SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file;
 
 
-ALTER TABLE public.v_web_list_files OWNER TO canidae;
-
 --
--- Name: v_web_list_tracks; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_web_list_tracks; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_web_list_tracks AS
     SELECT tr.track_id, tr.album_id, tr.artist_id, tr.mbid, tr.title, tr.duration, tr.tracknumber, ar.name AS artist_name, al.title AS album_title FROM ((track tr LEFT JOIN artist ar ON ((tr.artist_id = ar.artist_id))) LEFT JOIN album al ON ((tr.album_id = al.album_id)));
 
 
-ALTER TABLE public.v_web_list_tracks OWNER TO canidae;
-
 --
--- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
+-- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE album_album_id_seq
@@ -273,17 +247,15 @@ CREATE SEQUENCE album_album_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.album_album_id_seq OWNER TO canidae;
-
 --
--- Name: album_album_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
+-- Name: album_album_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE album_album_id_seq OWNED BY album.album_id;
 
 
 --
--- Name: artist_artist_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
+-- Name: artist_artist_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE artist_artist_id_seq
@@ -293,17 +265,15 @@ CREATE SEQUENCE artist_artist_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.artist_artist_id_seq OWNER TO canidae;
-
 --
--- Name: artist_artist_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
+-- Name: artist_artist_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE artist_artist_id_seq OWNED BY artist.artist_id;
 
 
 --
--- Name: file_file_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
+-- Name: file_file_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE file_file_id_seq
@@ -313,17 +283,15 @@ CREATE SEQUENCE file_file_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.file_file_id_seq OWNER TO canidae;
-
 --
--- Name: file_file_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
+-- Name: file_file_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 
 
 --
--- Name: metatrack_metatrack_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
+-- Name: metatrack_metatrack_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE metatrack_metatrack_id_seq
@@ -333,17 +301,15 @@ CREATE SEQUENCE metatrack_metatrack_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.metatrack_metatrack_id_seq OWNER TO canidae;
-
 --
--- Name: metatrack_metatrack_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
+-- Name: metatrack_metatrack_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE metatrack_metatrack_id_seq OWNED BY metatrack.metatrack_id;
 
 
 --
--- Name: puid_puid_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
+-- Name: puid_puid_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE puid_puid_id_seq
@@ -354,17 +320,15 @@ CREATE SEQUENCE puid_puid_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.puid_puid_id_seq OWNER TO canidae;
-
 --
--- Name: puid_puid_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
+-- Name: puid_puid_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
 
 
 --
--- Name: setting_setting_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
+-- Name: setting_setting_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE setting_setting_id_seq
@@ -374,17 +338,15 @@ CREATE SEQUENCE setting_setting_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.setting_setting_id_seq OWNER TO canidae;
-
 --
--- Name: setting_setting_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
+-- Name: setting_setting_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
 
 
 --
--- Name: track_track_id_seq; Type: SEQUENCE; Schema: public; Owner: canidae
+-- Name: track_track_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE track_track_id_seq
@@ -394,66 +356,64 @@ CREATE SEQUENCE track_track_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.track_track_id_seq OWNER TO canidae;
-
 --
--- Name: track_track_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: canidae
+-- Name: track_track_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE track_track_id_seq OWNED BY track.track_id;
 
 
 --
--- Name: album_id; Type: DEFAULT; Schema: public; Owner: canidae
+-- Name: album_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE album ALTER COLUMN album_id SET DEFAULT nextval('album_album_id_seq'::regclass);
 
 
 --
--- Name: artist_id; Type: DEFAULT; Schema: public; Owner: canidae
+-- Name: artist_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE artist ALTER COLUMN artist_id SET DEFAULT nextval('artist_artist_id_seq'::regclass);
 
 
 --
--- Name: file_id; Type: DEFAULT; Schema: public; Owner: canidae
+-- Name: file_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE file ALTER COLUMN file_id SET DEFAULT nextval('file_file_id_seq'::regclass);
 
 
 --
--- Name: metatrack_id; Type: DEFAULT; Schema: public; Owner: canidae
+-- Name: metatrack_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE metatrack ALTER COLUMN metatrack_id SET DEFAULT nextval('metatrack_metatrack_id_seq'::regclass);
 
 
 --
--- Name: puid_id; Type: DEFAULT; Schema: public; Owner: canidae
+-- Name: puid_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE puid ALTER COLUMN puid_id SET DEFAULT nextval('puid_puid_id_seq'::regclass);
 
 
 --
--- Name: setting_id; Type: DEFAULT; Schema: public; Owner: canidae
+-- Name: setting_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE setting ALTER COLUMN setting_id SET DEFAULT nextval('setting_setting_id_seq'::regclass);
 
 
 --
--- Name: track_id; Type: DEFAULT; Schema: public; Owner: canidae
+-- Name: track_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE track ALTER COLUMN track_id SET DEFAULT nextval('track_track_id_seq'::regclass);
 
 
 --
--- Name: album_album_mbid_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: album_album_mbid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY album
@@ -461,7 +421,7 @@ ALTER TABLE ONLY album
 
 
 --
--- Name: album_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: album_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY album
@@ -469,7 +429,7 @@ ALTER TABLE ONLY album
 
 
 --
--- Name: artist_artist_mbid_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: artist_artist_mbid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY artist
@@ -477,7 +437,7 @@ ALTER TABLE ONLY artist
 
 
 --
--- Name: artist_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: artist_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY artist
@@ -485,7 +445,7 @@ ALTER TABLE ONLY artist
 
 
 --
--- Name: file_filename_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: file_filename_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY file
@@ -493,7 +453,7 @@ ALTER TABLE ONLY file
 
 
 --
--- Name: file_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: file_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY file
@@ -501,7 +461,7 @@ ALTER TABLE ONLY file
 
 
 --
--- Name: match_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: match_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY match
@@ -509,7 +469,7 @@ ALTER TABLE ONLY match
 
 
 --
--- Name: metatrack_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: metatrack_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY metatrack
@@ -517,7 +477,7 @@ ALTER TABLE ONLY metatrack
 
 
 --
--- Name: metatrack_track_mbid_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: metatrack_track_mbid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY metatrack
@@ -525,7 +485,7 @@ ALTER TABLE ONLY metatrack
 
 
 --
--- Name: puid_metatrack_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: puid_metatrack_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY puid_metatrack
@@ -533,7 +493,7 @@ ALTER TABLE ONLY puid_metatrack
 
 
 --
--- Name: puid_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: puid_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY puid
@@ -541,7 +501,7 @@ ALTER TABLE ONLY puid
 
 
 --
--- Name: puid_puid_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: puid_puid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY puid
@@ -549,7 +509,7 @@ ALTER TABLE ONLY puid
 
 
 --
--- Name: setting_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: setting_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY setting
@@ -557,7 +517,7 @@ ALTER TABLE ONLY setting
 
 
 --
--- Name: track_album_id_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: track_album_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY track
@@ -565,7 +525,7 @@ ALTER TABLE ONLY track
 
 
 --
--- Name: track_pkey; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: track_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY track
@@ -573,7 +533,7 @@ ALTER TABLE ONLY track
 
 
 --
--- Name: track_track_mbid_key; Type: CONSTRAINT; Schema: public; Owner: canidae; Tablespace: 
+-- Name: track_track_mbid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY track
@@ -581,7 +541,7 @@ ALTER TABLE ONLY track
 
 
 --
--- Name: album_artist_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+-- Name: album_artist_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY album
@@ -589,7 +549,7 @@ ALTER TABLE ONLY album
 
 
 --
--- Name: file_puid_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+-- Name: file_puid_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY file
@@ -597,7 +557,7 @@ ALTER TABLE ONLY file
 
 
 --
--- Name: match_file_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+-- Name: match_file_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY match
@@ -605,7 +565,7 @@ ALTER TABLE ONLY match
 
 
 --
--- Name: match_metatrack_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+-- Name: match_metatrack_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY match
@@ -613,7 +573,7 @@ ALTER TABLE ONLY match
 
 
 --
--- Name: puid_metatrack_metatrack_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+-- Name: puid_metatrack_metatrack_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY puid_metatrack
@@ -621,7 +581,7 @@ ALTER TABLE ONLY puid_metatrack
 
 
 --
--- Name: puid_metatrack_puid_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+-- Name: puid_metatrack_puid_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY puid_metatrack
@@ -629,7 +589,7 @@ ALTER TABLE ONLY puid_metatrack
 
 
 --
--- Name: track_album_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+-- Name: track_album_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY track
@@ -637,7 +597,7 @@ ALTER TABLE ONLY track
 
 
 --
--- Name: track_artist_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: canidae
+-- Name: track_artist_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY track
@@ -645,7 +605,7 @@ ALTER TABLE ONLY track
 
 
 --
--- Name: public; Type: ACL; Schema: -; Owner: postgres
+-- Name: public; Type: ACL; Schema: -; Owner: -
 --
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
@@ -655,7 +615,7 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
--- Name: album; Type: ACL; Schema: public; Owner: canidae
+-- Name: album; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE album FROM PUBLIC;
@@ -665,7 +625,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE album TO locutus;
 
 
 --
--- Name: artist; Type: ACL; Schema: public; Owner: canidae
+-- Name: artist; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE artist FROM PUBLIC;
@@ -675,7 +635,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE artist TO locutus;
 
 
 --
--- Name: file; Type: ACL; Schema: public; Owner: canidae
+-- Name: file; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE file FROM PUBLIC;
@@ -685,7 +645,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE file TO locutus;
 
 
 --
--- Name: match; Type: ACL; Schema: public; Owner: canidae
+-- Name: match; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE match FROM PUBLIC;
@@ -695,7 +655,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE match TO locutus;
 
 
 --
--- Name: metatrack; Type: ACL; Schema: public; Owner: canidae
+-- Name: metatrack; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE metatrack FROM PUBLIC;
@@ -705,7 +665,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE metatrack TO locutus;
 
 
 --
--- Name: puid; Type: ACL; Schema: public; Owner: canidae
+-- Name: puid; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE puid FROM PUBLIC;
@@ -715,7 +675,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE puid TO locutus;
 
 
 --
--- Name: puid_metatrack; Type: ACL; Schema: public; Owner: canidae
+-- Name: puid_metatrack; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE puid_metatrack FROM PUBLIC;
@@ -725,7 +685,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE puid_metatrack TO locutus;
 
 
 --
--- Name: setting; Type: ACL; Schema: public; Owner: canidae
+-- Name: setting; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE setting FROM PUBLIC;
@@ -735,7 +695,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE setting TO locutus;
 
 
 --
--- Name: track; Type: ACL; Schema: public; Owner: canidae
+-- Name: track; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE track FROM PUBLIC;
@@ -745,7 +705,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE track TO locutus;
 
 
 --
--- Name: v_daemon_load_album; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_daemon_load_album; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE v_daemon_load_album FROM PUBLIC;
@@ -755,7 +715,7 @@ GRANT SELECT ON TABLE v_daemon_load_album TO locutus;
 
 
 --
--- Name: v_daemon_load_metafile; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_daemon_load_metafile; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE v_daemon_load_metafile FROM PUBLIC;
@@ -765,7 +725,7 @@ GRANT SELECT ON TABLE v_daemon_load_metafile TO locutus;
 
 
 --
--- Name: v_web_info_album; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_web_info_album; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE v_web_info_album FROM PUBLIC;
@@ -775,7 +735,7 @@ GRANT SELECT ON TABLE v_web_info_album TO locutus;
 
 
 --
--- Name: v_web_info_artist; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_web_info_artist; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE v_web_info_artist FROM PUBLIC;
@@ -785,7 +745,17 @@ GRANT SELECT ON TABLE v_web_info_artist TO locutus;
 
 
 --
--- Name: v_web_list_albums; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_web_info_track; Type: ACL; Schema: public; Owner: -
+--
+
+REVOKE ALL ON TABLE v_web_info_track FROM PUBLIC;
+REVOKE ALL ON TABLE v_web_info_track FROM canidae;
+GRANT ALL ON TABLE v_web_info_track TO canidae;
+GRANT SELECT ON TABLE v_web_info_track TO locutus;
+
+
+--
+-- Name: v_web_list_albums; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE v_web_list_albums FROM PUBLIC;
@@ -795,7 +765,7 @@ GRANT SELECT ON TABLE v_web_list_albums TO locutus;
 
 
 --
--- Name: v_web_list_artists; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_web_list_artists; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE v_web_list_artists FROM PUBLIC;
@@ -805,7 +775,7 @@ GRANT SELECT ON TABLE v_web_list_artists TO locutus;
 
 
 --
--- Name: v_web_list_files; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_web_list_files; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE v_web_list_files FROM PUBLIC;
@@ -815,7 +785,7 @@ GRANT SELECT ON TABLE v_web_list_files TO locutus;
 
 
 --
--- Name: v_web_list_tracks; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_web_list_tracks; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON TABLE v_web_list_tracks FROM PUBLIC;
@@ -825,7 +795,7 @@ GRANT SELECT ON TABLE v_web_list_tracks TO locutus;
 
 
 --
--- Name: album_album_id_seq; Type: ACL; Schema: public; Owner: canidae
+-- Name: album_album_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON SEQUENCE album_album_id_seq FROM PUBLIC;
@@ -835,7 +805,7 @@ GRANT SELECT,UPDATE ON SEQUENCE album_album_id_seq TO locutus;
 
 
 --
--- Name: artist_artist_id_seq; Type: ACL; Schema: public; Owner: canidae
+-- Name: artist_artist_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON SEQUENCE artist_artist_id_seq FROM PUBLIC;
@@ -845,7 +815,7 @@ GRANT SELECT,UPDATE ON SEQUENCE artist_artist_id_seq TO locutus;
 
 
 --
--- Name: file_file_id_seq; Type: ACL; Schema: public; Owner: canidae
+-- Name: file_file_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON SEQUENCE file_file_id_seq FROM PUBLIC;
@@ -855,7 +825,7 @@ GRANT SELECT,UPDATE ON SEQUENCE file_file_id_seq TO locutus;
 
 
 --
--- Name: metatrack_metatrack_id_seq; Type: ACL; Schema: public; Owner: canidae
+-- Name: metatrack_metatrack_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON SEQUENCE metatrack_metatrack_id_seq FROM PUBLIC;
@@ -865,7 +835,7 @@ GRANT SELECT,UPDATE ON SEQUENCE metatrack_metatrack_id_seq TO locutus;
 
 
 --
--- Name: puid_puid_id_seq; Type: ACL; Schema: public; Owner: canidae
+-- Name: puid_puid_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON SEQUENCE puid_puid_id_seq FROM PUBLIC;
@@ -875,7 +845,7 @@ GRANT SELECT,UPDATE ON SEQUENCE puid_puid_id_seq TO locutus;
 
 
 --
--- Name: setting_setting_id_seq; Type: ACL; Schema: public; Owner: canidae
+-- Name: setting_setting_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON SEQUENCE setting_setting_id_seq FROM PUBLIC;
@@ -885,7 +855,7 @@ GRANT SELECT,UPDATE ON SEQUENCE setting_setting_id_seq TO locutus;
 
 
 --
--- Name: track_track_id_seq; Type: ACL; Schema: public; Owner: canidae
+-- Name: track_track_id_seq; Type: ACL; Schema: public; Owner: -
 --
 
 REVOKE ALL ON SEQUENCE track_track_id_seq FROM PUBLIC;
