@@ -38,7 +38,7 @@ bool PostgreSQL::load(Album *album) {
 		return false;
 	}
 	ostringstream query;
-	query << "SELECT * FROM v_album_lookup WHERE album_mbid = '" << escapeString(album->mbid) << "' AND last_updated + INTERVAL '" << album_cache_lifetime << " months' > now()";
+	query << "SELECT * FROM v_daemon_load_album WHERE album_mbid = '" << escapeString(album->mbid) << "' AND last_updated + INTERVAL '" << album_cache_lifetime << " months' > now()";
 	if (!doQuery(query.str()) || getRows() <= 0) {
 		/* album not in cache */
 		string msg = "Unable to load album from cache. MusicBrainz ID not found or cache is too old: ";
@@ -91,7 +91,7 @@ bool PostgreSQL::load(Metafile *metafile) {
 	}
 	string e_filename = escapeString(metafile->filename);
 	ostringstream query;
-	query << "SELECT * FROM v_file_lookup WHERE filename = '" << e_filename << "'";
+	query << "SELECT * FROM v_daemon_load_metafile WHERE filename = '" << e_filename << "'";
 	if (!doQuery(query.str()) || getRows() <= 0) {
 		string msg = "Didn't find file in database: ";
 		msg.append(metafile->filename);

@@ -183,44 +183,24 @@ CREATE TABLE track (
 ALTER TABLE public.track OWNER TO canidae;
 
 --
--- Name: v_album_artist; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_daemon_load_album; Type: VIEW; Schema: public; Owner: canidae
 --
 
-CREATE VIEW v_album_artist AS
+CREATE VIEW v_daemon_load_album AS
     SELECT al.album_id, al.mbid AS album_mbid, al.type AS album_type, al.title AS album_title, al.released AS album_released, al.custom_artist_sortname AS album_custom_artist_sortname, al.last_updated AS album_last_updated, ar.artist_id, ar.mbid AS artist_mbid, ar.name AS artist_name, ar.sortname AS artist_sortname FROM (album al JOIN artist ar ON ((al.artist_id = ar.artist_id)));
 
 
-ALTER TABLE public.v_album_artist OWNER TO canidae;
+ALTER TABLE public.v_daemon_load_album OWNER TO canidae;
 
 --
--- Name: v_album_lookup; Type: VIEW; Schema: public; Owner: canidae
+-- Name: v_daemon_load_metafile; Type: VIEW; Schema: public; Owner: canidae
 --
 
-CREATE VIEW v_album_lookup AS
-    SELECT aa.mbid AS albumartist_mbid, aa.name AS albumartist_name, COALESCE(al.custom_artist_sortname, aa.sortname) AS albumartist_sortname, al.mbid AS album_mbid, al.type AS album_type, al.title AS album_title, al.released AS album_released, tr.mbid AS track_mbid, tr.title AS track_title, tr.duration AS track_duration, tr.tracknumber AS track_tracknumber, ar.mbid AS artist_mbid, ar.name AS artist_name, ar.sortname AS artist_sortname, al.last_updated FROM (((artist aa JOIN album al ON ((aa.artist_id = al.artist_id))) JOIN track tr ON ((al.album_id = tr.album_id))) LEFT JOIN artist ar ON ((tr.artist_id = ar.artist_id)));
-
-
-ALTER TABLE public.v_album_lookup OWNER TO canidae;
-
---
--- Name: v_file_lookup; Type: VIEW; Schema: public; Owner: canidae
---
-
-CREATE VIEW v_file_lookup AS
+CREATE VIEW v_daemon_load_metafile AS
     SELECT f.filename, f.file_id, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released AS year FROM (file f LEFT JOIN puid p ON ((f.puid_id = p.puid_id)));
 
 
-ALTER TABLE public.v_file_lookup OWNER TO canidae;
-
---
--- Name: v_match_metatrack; Type: VIEW; Schema: public; Owner: canidae
---
-
-CREATE VIEW v_match_metatrack AS
-    SELECT m.file_id, m.mbid_match, m.puid_match, m.meta_score, mt.metatrack_id, mt.artist_mbid, mt.artist_name, mt.album_mbid, mt.album_title, mt.track_mbid, mt.track_title, mt.tracknumber, mt.duration, mt.last_updated FROM (match m JOIN metatrack mt ON ((m.metatrack_id = mt.metatrack_id)));
-
-
-ALTER TABLE public.v_match_metatrack OWNER TO canidae;
+ALTER TABLE public.v_daemon_load_metafile OWNER TO canidae;
 
 --
 -- Name: v_web_album_info; Type: VIEW; Schema: public; Owner: canidae
@@ -735,43 +715,23 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE track TO locutus;
 
 
 --
--- Name: v_album_artist; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_daemon_load_album; Type: ACL; Schema: public; Owner: canidae
 --
 
-REVOKE ALL ON TABLE v_album_artist FROM PUBLIC;
-REVOKE ALL ON TABLE v_album_artist FROM canidae;
-GRANT ALL ON TABLE v_album_artist TO canidae;
-GRANT SELECT ON TABLE v_album_artist TO locutus;
-
-
---
--- Name: v_album_lookup; Type: ACL; Schema: public; Owner: canidae
---
-
-REVOKE ALL ON TABLE v_album_lookup FROM PUBLIC;
-REVOKE ALL ON TABLE v_album_lookup FROM canidae;
-GRANT ALL ON TABLE v_album_lookup TO canidae;
-GRANT SELECT ON TABLE v_album_lookup TO locutus;
+REVOKE ALL ON TABLE v_daemon_load_album FROM PUBLIC;
+REVOKE ALL ON TABLE v_daemon_load_album FROM canidae;
+GRANT ALL ON TABLE v_daemon_load_album TO canidae;
+GRANT SELECT ON TABLE v_daemon_load_album TO locutus;
 
 
 --
--- Name: v_file_lookup; Type: ACL; Schema: public; Owner: canidae
+-- Name: v_daemon_load_metafile; Type: ACL; Schema: public; Owner: canidae
 --
 
-REVOKE ALL ON TABLE v_file_lookup FROM PUBLIC;
-REVOKE ALL ON TABLE v_file_lookup FROM canidae;
-GRANT ALL ON TABLE v_file_lookup TO canidae;
-GRANT SELECT ON TABLE v_file_lookup TO locutus;
-
-
---
--- Name: v_match_metatrack; Type: ACL; Schema: public; Owner: canidae
---
-
-REVOKE ALL ON TABLE v_match_metatrack FROM PUBLIC;
-REVOKE ALL ON TABLE v_match_metatrack FROM canidae;
-GRANT ALL ON TABLE v_match_metatrack TO canidae;
-GRANT SELECT ON TABLE v_match_metatrack TO locutus;
+REVOKE ALL ON TABLE v_daemon_load_metafile FROM PUBLIC;
+REVOKE ALL ON TABLE v_daemon_load_metafile FROM canidae;
+GRANT ALL ON TABLE v_daemon_load_metafile TO canidae;
+GRANT SELECT ON TABLE v_daemon_load_metafile TO locutus;
 
 
 --
