@@ -28,18 +28,18 @@ class PostgreSQL : public Database {
 		explicit PostgreSQL(const std::string connection);
 		~PostgreSQL();
 
-		bool load(Album *album);
-		bool load(Metafile *metafile);
-		bool loadSetting(const std::string &key, bool default_value, const std::string &description);
-		double loadSetting(const std::string &key, double default_value, const std::string &description);
-		int loadSetting(const std::string &key, int default_value, const std::string &description);
-		std::string loadSetting(const std::string &key, const std::string &default_value, const std::string &description);
-		bool save(const Album &album);
-		bool save(const Artist &artist);
-		bool save(const Match &match);
-		bool save(const Metafile &metafile, const std::string &old_filename = "");
-		bool save(const Metatrack &metatrack);
-		bool save(const Track &track);
+		bool loadAlbum(Album *album);
+		bool loadMetafile(Metafile *metafile);
+		bool loadSettingBool(const std::string &key, bool default_value, const std::string &description);
+		double loadSettingDouble(const std::string &key, double default_value, const std::string &description);
+		int loadSettingInt(const std::string &key, int default_value, const std::string &description);
+		std::string loadSettingString(const std::string &key, const std::string &default_value, const std::string &description);
+		bool saveAlbum(const Album &album);
+		bool saveArtist(const Artist &artist);
+		bool saveMatch(const Match &match);
+		bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "");
+		bool saveMetatrack(const Metatrack &metatrack);
+		bool saveTrack(const Track &track);
 
 	private:
 		PGconn *pg_connection;

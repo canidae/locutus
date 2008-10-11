@@ -22,7 +22,7 @@ FileNamer::FileNamer(Database *database) : database(database) {
 	format_mapping["%date%"] = TYPE_DATE;
 	format_mapping["%custom_artist%"] = TYPE_CUSTOM_ARTIST;
 
-	file_format = database->loadSetting(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
+	file_format = database->loadSettingString(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
 }
 
 FileNamer::~FileNamer() {

@@ -6,7 +6,7 @@
 #include "Matcher.h"
 #include "Metafile.h"
 #include "PostgreSQL.h"
-#include "PUIDGenerator.h"
+//#include "PUIDGenerator.h"
 #include "WebService.h"
 
 using namespace std;
@@ -14,24 +14,24 @@ using namespace std;
 /* constructors/destructor */
 Locutus::Locutus(Database *database) : database(database) {
 	filenamer = new FileNamer(database);
-	puidgen = new PUIDGenerator();
+	//puidgen = new PUIDGenerator();
 	webservice = new WebService(database);
 	matcher = new Matcher(database, webservice);
 
-	input_dir = database->loadSetting(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
+	input_dir = database->loadSettingString(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
 	if (input_dir.size() <= 0 || input_dir[input_dir.size() - 1] != '/')
 		input_dir.push_back('/');
-	output_dir = database->loadSetting(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
+	output_dir = database->loadSettingString(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
 	if (output_dir.size() <= 0 || output_dir[output_dir.size() - 1] != '/')
 		output_dir.push_back('/');
-	duplicate_dir = database->loadSetting(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
+	duplicate_dir = database->loadSettingString(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
 	if (duplicate_dir.size() <= 0 || duplicate_dir[duplicate_dir.size() - 1] != '/')
 		duplicate_dir.push_back('/');
 }
 
 Locutus::~Locutus() {
 	clearFiles();
-	delete puidgen;
+	//delete puidgen;
 	delete matcher;
 	delete webservice;
 	delete filenamer;
@@ -61,7 +61,7 @@ long Locutus::run() {
 			if (!moveFile(*f, filename)) {
 				/* TODO: unable to move file */
 			}
-			database->save(**f, old_filename); // metadata may have changed even if path haven't
+			database->saveMetafile(**f, old_filename); // metadata may have changed even if path haven't
 		}
 	}
 	/* submit new puids? */
@@ -152,10 +152,10 @@ bool Locutus::parseFile() {
 	Debug::info(filename);
 	file_queue.pop_front();
 	Metafile *mf = new Metafile(filename);
-	if (!database->load(mf)) {
+	if (!database->loadMetafile(mf)) {
 		if (mf->readFromFile()) {
 			/* save file to cache */
-			database->save(*mf);
+			database->saveMetafile(*mf);
 		} else {
 			/* unable to read this file */
 			delete mf;
@@ -210,7 +210,7 @@ int main() {
 	Levenshtein::initialize();
 
 	/* connect to database */
-	Database *database = new PostgreSQL("host=localhost user=locutus password=locutus dbname=locutus");
+	Database *database = new PostgreSQL("host=sql.samfundet.no user=locutus password=locutus dbname=locutus");
 
 	//while (true) {
 		Locutus *locutus = new Locutus(database);

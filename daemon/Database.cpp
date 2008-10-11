@@ -10,50 +10,50 @@ Database::~Database() {
 }
 
 /* methods */
-bool Database::load(Album *album) {
+bool Database::loadAlbum(Album *album) {
 	return false;
 }
 
-bool Database::load(Metafile *metafile) {
+bool Database::loadMetafile(Metafile *metafile) {
 	return false;
 }
 
-bool Database::loadSetting(const string &key, bool default_value, const string &description) {
+bool Database::loadSettingBool(const string &key, bool default_value, const string &description) {
 	return default_value;
 }
 
-double Database::loadSetting(const string &key, double default_value, const string &description) {
+double Database::loadSettingDouble(const string &key, double default_value, const string &description) {
 	return default_value;
 }
 
-int Database::loadSetting(const string &key, int default_value, const string &description) {
+int Database::loadSettingInt(const string &key, int default_value, const string &description) {
 	return default_value;
 }
 
-string Database::loadSetting(const string &key, const string &default_value, const string &description) {
+string Database::loadSettingString(const string &key, const string &default_value, const string &description) {
 	return default_value;
 }
 
-bool Database::save(const Album &album) {
+bool Database::saveAlbum(const Album &album) {
 	return false;
 }
 
-bool Database::save(const Artist &artist) {
+bool Database::saveArtist(const Artist &artist) {
 	return false;
 }
 
-bool Database::save(const Match &match) {
+bool Database::saveMatch(const Match &match) {
 	return false;
 }
 
-bool Database::save(const Metafile &metafile, const string &old_filename) {
+bool Database::saveMetafile(const Metafile &metafile, const string &old_filename) {
 	return false;
 }
 
-bool Database::save(const Metatrack &metatrack) {
+bool Database::saveMetatrack(const Metatrack &metatrack) {
 	return false;
 }
 
-bool Database::save(const Track &track) {
+bool Database::saveTrack(const Track &track) {
 	return false;
 }

@@ -16,9 +16,9 @@ PostgreSQL::PostgreSQL(const string connection) : Database(), pg_result(NULL), g
 		Debug::error("Unable to connect to the database");
 		exit(1);
 	}
-	album_cache_lifetime = loadSetting(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
-	metatrack_cache_lifetime = loadSetting(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
-	puid_cache_lifetime = loadSetting(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
+	album_cache_lifetime = loadSettingInt(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
+	metatrack_cache_lifetime = loadSettingInt(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
+	puid_cache_lifetime = loadSettingInt(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
 }
 
 PostgreSQL::~PostgreSQL() {
@@ -27,7 +27,7 @@ PostgreSQL::~PostgreSQL() {
 }
 
 /* methods */
-bool PostgreSQL::load(Album *album) {
+bool PostgreSQL::loadAlbum(Album *album) {
 	/* fetch album from cache */
 	if (album == NULL)
 		return false;
@@ -82,7 +82,7 @@ bool PostgreSQL::load(Album *album) {
 	return true;
 }
 
-bool PostgreSQL::load(Metafile *metafile) {
+bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	if (metafile == NULL)
 		return false;
 	if (metafile->filename.size() <= 0) {
@@ -118,24 +118,24 @@ bool PostgreSQL::load(Metafile *metafile) {
 	return true;
 }
 
-bool PostgreSQL::loadSetting(const string &key, bool default_value, const string &description) {
+bool PostgreSQL::loadSettingBool(const string &key, bool default_value, const string &description) {
 	string def_val = (default_value ? "true" : "false");
-	return (loadSetting(key, def_val, description) == "true");
+	return (loadSettingString(key, def_val, description) == "true");
 }
 
-double PostgreSQL::loadSetting(const string &key, double default_value, const string &description) {
+double PostgreSQL::loadSettingDouble(const string &key, double default_value, const string &description) {
 	ostringstream def_val;
 	def_val << default_value;
-	return atof(loadSetting(key, def_val.str(), description).c_str());
+	return atof(loadSettingString(key, def_val.str(), description).c_str());
 }
 
-int PostgreSQL::loadSetting(const string &key, int default_value, const string &description) {
+int PostgreSQL::loadSettingInt(const string &key, int default_value, const string &description) {
 	ostringstream def_val;
 	def_val << default_value;
-	return atoi(loadSetting(key, def_val.str(), description).c_str());
+	return atoi(loadSettingString(key, def_val.str(), description).c_str());
 }
 
-string PostgreSQL::loadSetting(const string &key, const string &default_value, const string &description) {
+string PostgreSQL::loadSettingString(const string &key, const string &default_value, const string &description) {
 	string e_key = escapeString(key);
 	string back = default_value;
 	ostringstream query;
@@ -165,7 +165,7 @@ string PostgreSQL::loadSetting(const string &key, const string &default_value, c
 	return back;
 }
 
-bool PostgreSQL::save(const Album &album) {
+bool PostgreSQL::saveAlbum(const Album &album) {
 	if (album.mbid.size() != 36) {
 		string msg = "Unable to save album in cache. Illegal MusicBrainz ID: ";
 		msg.append(album.mbid);
@@ -187,7 +187,7 @@ bool PostgreSQL::save(const Album &album) {
 	}
 	ostringstream query;
 	/* save artist */
-	if (!save(*album.artist))
+	if (!saveArtist(*album.artist))
 		Debug::notice("Failed to save album artist in cache. See errors above");
 	/* save album */
 	query.str("");
@@ -205,7 +205,7 @@ bool PostgreSQL::save(const Album &album) {
 	/* save tracks */
 	bool status = true;
 	for (vector<Track *>::const_iterator track = album.tracks.begin(); track != album.tracks.end(); ++track) {
-		if (!save(**track))
+		if (!saveTrack(**track))
 			status = false;
 	}
 	if (!status)
@@ -213,7 +213,7 @@ bool PostgreSQL::save(const Album &album) {
 	return status;
 }
 
-bool PostgreSQL::save(const Artist &artist) {
+bool PostgreSQL::saveArtist(const Artist &artist) {
 	if (artist.mbid.size() != 36)
 		return false;
 	string e_mbid = escapeString(artist.mbid);
@@ -230,7 +230,7 @@ bool PostgreSQL::save(const Artist &artist) {
 	return true;
 }
 
-bool PostgreSQL::save(const Match &match) {
+bool PostgreSQL::saveMatch(const Match &match) {
 	string e_filename = escapeString(match.metafile->filename);
 	string e_track_mbid = escapeString(match.track->mbid);
 	ostringstream query;
@@ -244,7 +244,7 @@ bool PostgreSQL::save(const Match &match) {
 	return true;
 }
 
-bool PostgreSQL::save(const Metafile &metafile, const string &old_filename) {
+bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filename) {
 	ostringstream query;
 	string e_puid = escapeString(metafile.puid);
 	if (e_puid != "") {
@@ -292,7 +292,7 @@ bool PostgreSQL::save(const Metafile &metafile, const string &old_filename) {
 	return true;
 }
 
-bool PostgreSQL::save(const Metatrack &metatrack) {
+bool PostgreSQL::saveMetatrack(const Metatrack &metatrack) {
 	if (metatrack.track_mbid.size() != 36) {
 		Debug::notice("Won't save metatrack in cache, missing MBIDs");
 		return false;
@@ -314,14 +314,14 @@ bool PostgreSQL::save(const Metatrack &metatrack) {
 	return true;
 }
 
-bool PostgreSQL::save(const Track &track) {
+bool PostgreSQL::saveTrack(const Track &track) {
 	if (track.mbid.size() != 36) {
 		string msg = "Unable to save track in cache. Illegal MusicBrainz ID: ";
 		msg.append(track.mbid);
 		Debug::notice(msg);
 		return false;
 	}
-	save(*track.artist);
+	saveArtist(*track.artist);
 	string e_album_mbid = escapeString(track.album->mbid);
 	string e_artist_mbid = escapeString(track.artist->mbid);
 	string e_mbid = escapeString(track.mbid);

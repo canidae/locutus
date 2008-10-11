@@ -27,7 +27,7 @@ class Database;
 class FileNamer;
 class Matcher;
 class Metafile;
-class PUIDGenerator;
+//class PUIDGenerator;
 class WebService;
 
 class Locutus {
@@ -41,7 +41,7 @@ class Locutus {
 		Database *database;
 		FileNamer *filenamer;
 		Matcher *matcher;
-		PUIDGenerator *puidgen;
+		//PUIDGenerator *puidgen;
 		WebService *webservice;
 		std::list<std::string> dir_queue;
 		std::list<std::string> file_queue;

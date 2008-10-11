@@ -12,20 +12,20 @@ using namespace std;
 
 /* constructors/destructor */
 Matcher::Matcher(Database *database, WebService *webservice) : database(database), webservice(webservice) {
-	album_weight = database->loadSetting(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
-	artist_weight = database->loadSetting(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
-	combine_threshold = database->loadSetting(COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
-	duration_limit = database->loadSetting(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
-	duration_must_match = database->loadSetting(DURATION_MUST_MATCH_KEY, DURATION_MUST_MATCH_VALUE, DURATION_MUST_MATCH_DESCRIPTION);
-	duration_weight = database->loadSetting(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
-	mbid_lookup = database->loadSetting(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION);
-	metadata_min_score = database->loadSetting(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
-	only_save_complete_albums = database->loadSetting(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION);
-	only_save_if_all_match = database->loadSetting(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
-	puid_lookup = database->loadSetting(PUID_LOOKUP_KEY, PUID_LOOKUP_VALUE, PUID_LOOKUP_DESCRIPTION);
-	puid_min_score = database->loadSetting(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
-	title_weight = database->loadSetting(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
-	tracknumber_weight = database->loadSetting(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
+	album_weight = database->loadSettingDouble(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
+	artist_weight = database->loadSettingDouble(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
+	combine_threshold = database->loadSettingDouble(COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
+	duration_limit = database->loadSettingDouble(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
+	duration_must_match = database->loadSettingBool(DURATION_MUST_MATCH_KEY, DURATION_MUST_MATCH_VALUE, DURATION_MUST_MATCH_DESCRIPTION);
+	duration_weight = database->loadSettingDouble(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
+	mbid_lookup = database->loadSettingBool(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION);
+	metadata_min_score = database->loadSettingDouble(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
+	only_save_complete_albums = database->loadSettingBool(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION);
+	only_save_if_all_match = database->loadSettingBool(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
+	puid_lookup = database->loadSettingBool(PUID_LOOKUP_KEY, PUID_LOOKUP_VALUE, PUID_LOOKUP_DESCRIPTION);
+	puid_min_score = database->loadSettingDouble(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
+	title_weight = database->loadSettingDouble(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
+	tracknumber_weight = database->loadSettingDouble(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 }
 
 Matcher::~Matcher() {
@@ -64,7 +64,7 @@ void Matcher::clearAlbumMatch() {
 void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &files) {
 	for (vector<Track *>::iterator t = am->album->tracks.begin(); t != am->album->tracks.end(); ++t) {
 		Metatrack mt = (*t)->getAsMetatrack();
-		database->save(mt);
+		database->saveMetatrack(mt);
 		for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf) {
 			Match *m = compareMetafileWithMetatrack(*mf, &mt, *t);
 			if (m == NULL)
@@ -72,7 +72,7 @@ void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &fi
 			if (m->mbid_match || (m->puid_match && m->meta_score >= puid_min_score) || m->meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
 			am->matches[(*t)->mbid].push_back(m);
-			database->save(*m);
+			database->saveMatch(*m);
 		}
 	}
 }
@@ -156,9 +156,9 @@ bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
 	if (ams.find(mbid) != ams.end())
 		return true; // already loaded
 	Album *album = new Album(mbid);
-	if (!database->load(album)) {
+	if (!database->loadAlbum(album)) {
 		if (webservice->lookupAlbum(album)) {
-			database->save(*album);
+			database->saveAlbum(*album);
 		} else {
 			/* hmm, didn't find the album? */
 			delete album;
