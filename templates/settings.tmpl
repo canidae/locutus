@@ -9,7 +9,7 @@
         <th>Description</th>
         <th>Reset to default</th>
       </tr>
-      [% FOREACH setting IN settings %]
+[% FOREACH setting IN settings %]
       <tr>
         <td>[% setting.key %]</td>
         <td>[% setting.default_value %]</td>
@@ -17,6 +17,6 @@
         <td>[% setting.description %]</td>
         <td>(button that copies default_value to value, or something)</td>
       </tr>
-      [% END %]
+[% END %]
     </table>
 [% INCLUDE footer.tmpl %]

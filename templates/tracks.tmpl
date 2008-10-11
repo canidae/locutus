@@ -9,7 +9,7 @@
         <th>Title</th>
         <th>Duration</th>
       </tr>
-      [% FOREACH track IN tracks %]
+[% FOREACH track IN tracks %]
       <tr>
         <th>[% track.artist_name %]</th>
         <th>[% track.album_name %]</th>
@@ -17,6 +17,6 @@
         <th>[% track.title %]</th>
         <th>[% track.duration %]</th>
       </tr>
-      [% END %]
+[% END %]
     </table>
 [% INCLUDE footer.tmpl %]

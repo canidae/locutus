@@ -1,53 +1,14 @@
 [% INCLUDE header.tmpl
   title = 'Albums'
 %]
-    <table>
-      <tr>
-        <th>[% album.album_title %]</th>
-      </tr>
-      <tr>
-        <th>[% album.album_released %]</th>
-        <th>[% album.album_custom_artist_sortname %]</th>
-        <th>[% album.album_last_updated %]</th>
-      </tr>
-      <tr>
-        <th>[% album.artist_name %]</th>
-        <th>[% album.artist_sortname %]</th>
-      </tr>
-    </table>
-    <table>
-      <tr>
-        <th>Albumartist</th>
-        <th>Album</th>
-        <th>Artist</th>
-        <th>Track</th>
-        <th>Tracknumber</th>
-        <th>Duration</th>
-        <th>Score</th>
-        <th>Filename</th>
-      </tr>
-      [% FOREACH track IN tracks %]
-        [% IF prev_track != track.track_tracknumber %]
-        [% prev_track = track.track_tracknumber %]
-      <tr>
-        <th>[% album.artist_name %]</th>
-        <th>[% album.album_title %]</th>
-        <th>[% track.artist_name %]</th>
-        <th>[% track.track_title %]</th>
-        <th>[% track.track_tracknumber %]</th>
-        <th>[% track.track_duration %]</th>
-      </tr>
-        [% END %]
-      <tr>
-        <td>[% album.file_albumartist_name %]</td>
-        <td>[% track.file_album_title %]</td>
-        <td>[% track.file_artist_name %]</td>
-        <td>[% track.file_track_title %]</td>
-        <td>[% track.file_track_tracknumber %]</td>
-        <td>[% track.file_duration %]</td>
-        <td>[% track.meta_score %]</td>
-        <td>[% track.file_filename %]</td>
-      </tr>
-      [% END %]
-    </table>
+    <p>
+      <input type="text" value="filter artists here" />
+    </p>
+[% IF albums %]
+    <ul>
+  [% FOREACH album IN albums %]
+      <li><a href="album.pl?alid=[% album.album_id %]">[% album.title %] ([% album.tracks %] track[% IF album.tracks != 1 %]s[% END %][% IF album.type %], [% album.type %][% END %][% IF album.released %], released [% album.released %][% END %])</a></li>
+  [% END %]
+    </ul>
+[% END %]
 [% INCLUDE footer.tmpl %]
