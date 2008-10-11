@@ -1,22 +1,14 @@
 [% INCLUDE header.tmpl
   title = 'Tracks'
 %]
-    <table>
-      <tr>
-        <th>Artist/Group</th>
-        <th>Album</th>
-        <th>Tracknumber</th>
-        <th>Title</th>
-        <th>Duration</th>
-      </tr>
-[% FOREACH track IN tracks %]
-      <tr>
-        <th>[% track.artist_name %]</th>
-        <th>[% track.album_name %]</th>
-        <th>[% track.tracknumber %]</th>
-        <th>[% track.title %]</th>
-        <th>[% track.duration %]</th>
-      </tr>
+    <p>
+      <input type="text" value="filter tracks here" />
+    </p>
+[% IF tracks %]
+    <ul>
+  [% FOREACH track IN tracks %]
+      <li><a href="track.pl?trid=[% track.track_id %]">[% track.title %], [% track.artist_name %] - [% track.album_title %]</a></li>
+  [% END %]
+    </ul>
 [% END %]
-    </table>
 [% INCLUDE footer.tmpl %]

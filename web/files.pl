@@ -12,8 +12,7 @@ my %vars = ();
 
 my $dbh = Locutus::db_connect();
 
-$vars{'file'} = $dbh->selectrow_hashref('SELECT * FROM file WHERE file_id = 333');
-$vars{'metatracks'} = $dbh->selectall_arrayref('SELECT * FROM v_match_metatrack WHERE file_id = 333', {Slice => {}});
+$vars{'files'} = $dbh->selectall_arrayref('SELECT * FROM v_web_list_files ORDER BY filename LIMIT 25', {Slice => {}});
 
 #print Dumper(\%vars);
 

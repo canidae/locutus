@@ -7,7 +7,7 @@
 [% IF artists %]
     <ul>
   [% FOREACH artist IN artists %]
-      <li><a href="artist.pl?arid=[% artist.artist_id %]">[% artist.name %] (sortname: [% artist.sortname %]), [% artist.albums %] album[% IF artist.albums != 1 %]s[% END %]</a></li>
+      <li><a href="artist.pl?arid=[% artist.artist_id %]">[% artist.name %], [% artist.albums %] album[% IF artist.albums != 1 %]s[% END %]</a></li>
   [% END %]
     </ul>
 [% END %]

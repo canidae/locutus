@@ -2,12 +2,12 @@
   title = 'Albums'
 %]
     <p>
-      <input type="text" value="filter artists here" />
+      <input type="text" value="filter albums here" />
     </p>
 [% IF albums %]
     <ul>
   [% FOREACH album IN albums %]
-      <li><a href="album.pl?alid=[% album.album_id %]">[% album.title %] ([% album.tracks %] track[% IF album.tracks != 1 %]s[% END %][% IF album.type %], [% album.type %][% END %][% IF album.released %], released [% album.released %][% END %])</a></li>
+      <li><a href="album.pl?alid=[% album.album_id %]">[% album.title %], [% album.artist_name %] ([% album.tracks %] track[% IF album.tracks != 1 %]s[% END %][% IF album.type %], [% album.type %][% END %][% IF album.released %], released [% album.released %][% END %])</a></li>
   [% END %]
     </ul>
 [% END %]
