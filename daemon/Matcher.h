@@ -37,6 +37,9 @@
 #define PUID_MIN_SCORE_KEY "puid_min_score"
 #define PUID_MIN_SCORE_VALUE 0.50
 #define PUID_MIN_SCORE_DESCRIPTION "Minimum value for when a PUID lookup is considered a match. Must be between 0.0 and 1.0"
+#define SAVE_MATCH_THRESHOLD_KEY "save_match_threshold"
+#define SAVE_MATCH_THRESHOLD_VALUE 0.25
+#define SAVE_MATCH_THRESHOLD_DESCRIPTION "Minimum value for a match to be saved"
 #define TITLE_WEIGHT_KEY "title_weight"
 #define TITLE_WEIGHT_VALUE 100.0
 #define TITLE_WEIGHT_DESCRIPTION ""
@@ -83,6 +86,7 @@ class Matcher {
 		double duration_weight;
 		double metadata_min_score;
 		double puid_min_score;
+		double save_match_threshold;
 		double title_weight;
 		double tracknumber_weight;
 		std::map<std::string, AlbumMatch> ams;

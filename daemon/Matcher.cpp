@@ -24,6 +24,7 @@ Matcher::Matcher(Database *database, WebService *webservice) : database(database
 	only_save_if_all_match = database->loadSettingBool(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
 	puid_lookup = database->loadSettingBool(PUID_LOOKUP_KEY, PUID_LOOKUP_VALUE, PUID_LOOKUP_DESCRIPTION);
 	puid_min_score = database->loadSettingDouble(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
+	save_match_threshold = database->loadSettingDouble(SAVE_MATCH_THRESHOLD_KEY, SAVE_MATCH_THRESHOLD_VALUE, SAVE_MATCH_THRESHOLD_DESCRIPTION);
 	title_weight = database->loadSettingDouble(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
 	tracknumber_weight = database->loadSettingDouble(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 }
@@ -72,7 +73,8 @@ void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &fi
 			if (m->mbid_match || (m->puid_match && m->meta_score >= puid_min_score) || m->meta_score >= metadata_min_score)
 				(*mf)->meta_lookup = false; // so good match that we won't lookup this track using metadata
 			am->matches[(*t)->mbid].push_back(m);
-			database->saveMatch(*m);
+			if (m->mbid_match || m->puid_match || m->meta_score > save_match_threshold)
+				database->saveMatch(*m);
 		}
 	}
 }
