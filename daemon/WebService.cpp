@@ -111,7 +111,7 @@ const vector<Metatrack> &WebService::searchPUID(const string &puid) {
 
 /* private methods */
 void WebService::characters(const unsigned char *text, size_t len) {
-	curnode->value = string((char *) text, len);
+	curnode->value.append(string((char *) text, len));
 }
 
 void WebService::clearXMLNode(XMLNode *node) {
