@@ -38,7 +38,7 @@ bool PostgreSQL::loadAlbum(Album *album) {
 		return false;
 	}
 	ostringstream query;
-	query << "SELECT * FROM v_daemon_load_album WHERE album_mbid = '" << escapeString(album->mbid) << "' AND last_updated + INTERVAL '" << album_cache_lifetime << " months' > now()";
+	query << "SELECT * FROM v_daemon_load_album WHERE album_mbid = '" << escapeString(album->mbid) << "' AND album_last_updated + INTERVAL '" << album_cache_lifetime << " months' > now()";
 	if (!doQuery(query.str()) || getRows() <= 0) {
 		/* album not in cache */
 		string msg = "Unable to load album from cache. MusicBrainz ID not found or cache is too old: ";
