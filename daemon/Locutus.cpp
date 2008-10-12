@@ -52,8 +52,10 @@ long Locutus::run() {
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
 			if (!(*f)->metadata_changed)
 				continue;
-			if (!(*f)->save())
+			/*
+			if (!(*f)->saveMetadata())
 				continue;
+			*/
 			/* move file */
 			string filename = output_dir;
 			filename.append(filenamer->getFilename(*f));

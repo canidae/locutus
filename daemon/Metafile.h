@@ -83,7 +83,7 @@ class Metafile {
 		std::string getBaseNameWithoutExtension() const;
 		std::string getGroup() const;
 		bool readFromFile();
-		bool save();
+		bool saveMetadata();
 		bool setMetadata(const Track *track);
 
 	private:

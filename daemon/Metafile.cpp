@@ -104,7 +104,7 @@ bool Metafile::readFromFile() {
 	return true;
 }
 
-bool Metafile::save() {
+bool Metafile::saveMetadata() {
 	string::size_type pos = filename.find_last_of('.');
 	string ext = "";
 	if (pos != string::npos) {
@@ -233,6 +233,7 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 		ID3v2::FrameList frames = map["TXXX"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
 			ID3v2::UserTextIdentificationFrame *txxx = (ID3v2::UserTextIdentificationFrame *) frames[a];
+			cout << txxx->description().to8Bit(true) << endl;
 			if (txxx->description().to8Bit(true) == ID3_TXXX_ALBUMARTISTSORT)
 				albumartistsort = txxx->fieldList()[0].to8Bit(true);
 			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID)
