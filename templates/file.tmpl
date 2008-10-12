@@ -7,11 +7,11 @@
     <h3>Bitrate: [% file.bitrate %]kbps</h3>
     <h3>Channels: [% file.channels %]</h3>
     <h3>Samplerate: [% file.samplerate %]hz</h3>
-  [% IF files %]
-    <h2>Files:</h2>
+  [% IF matches %]
+    <h2>Matching tracks:</h2>
     <ol>
-    [% FOREACH file IN files %]
-      <li><a href="file.pl?fiid=[% file.file_id %]">[% file.filename %]</a>
+    [% FOREACH match IN matches %]
+      <li>[% match.meta_score %] <a href="track.pl?trid=[% match.track_id %]">[% match.metatrack_track_title %]</a>
     [% END %]
     </ol>
   [% END %]
