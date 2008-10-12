@@ -19,6 +19,7 @@ Matcher::Matcher(Database *database, WebService *webservice) : database(database
 	duration_must_match = database->loadSettingBool(DURATION_MUST_MATCH_KEY, DURATION_MUST_MATCH_VALUE, DURATION_MUST_MATCH_DESCRIPTION);
 	duration_weight = database->loadSettingDouble(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
 	mbid_lookup = database->loadSettingBool(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION);
+	max_diff_best_score = database->loadSettingDouble(MAX_DIFF_BEST_SCORE_KEY, MAX_DIFF_BEST_SCORE_VALUE, MAX_DIFF_BEST_SCORE_DESCRIPTION);
 	metadata_min_score = database->loadSettingDouble(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
 	only_save_complete_albums = database->loadSettingBool(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION);
 	only_save_if_all_match = database->loadSettingBool(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
@@ -36,6 +37,7 @@ Matcher::~Matcher() {
 /* methods */
 void Matcher::match(const string &group, const vector<Metafile *> &files) {
 	/* clear data */
+	best_file_match.clear();
 	clearAlbumMatch();
 	/* look up puids first */
 	lookupPUIDs(files);
@@ -149,7 +151,11 @@ Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, Metatrack *meta
 	if (durationdiff < duration_limit)
 		meta_score += (1.0 - durationdiff / duration_limit) * duration_weight;
 	meta_score /= album_weight + artist_weight + title_weight + tracknumber_weight + duration_weight;
-	return new Match(metafile, track, (metafile->puid != "" && metafile->puid == metatrack->puid), (metafile->musicbrainz_trackid != "" && metafile->musicbrainz_trackid == metatrack->track_mbid), meta_score);
+	Match *match = new Match(metafile, track, (metafile->musicbrainz_trackid != "" && metafile->musicbrainz_trackid == metatrack->track_mbid), (metafile->puid != "" && metafile->puid == metatrack->puid), meta_score);
+	map<string, double>::iterator bfm = best_file_match.find(metafile->filename);
+	if (bfm == best_file_match.end() || bfm->second < match->total_score)
+		best_file_match[metafile->filename] = match->total_score;
+	return match;
 }
 
 bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
@@ -257,6 +263,9 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 							continue; // puid compare with too low meta_score
 						else if (!(*m)->mbid_match && !(*m)->puid_match && (*m)->meta_score < metadata_min_score)
 							continue; // metadata compare with too low meta_score
+						map<string, double>::iterator bfm = best_file_match.find((*m)->metafile->filename);
+						if (bfm != best_file_match.end() && bfm->second - (*m)->total_score > max_diff_best_score)
+							continue; // total_score is too far away from this file's best total_score
 						best_match = *m;
 						best_match_score = (*m)->total_score;
 					}
@@ -273,6 +282,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				continue;
 			album_score /= (double) files_matched;
 			album_score *= (double) files_matched / (double) am->second.matches.size();
+			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << files_matched << " | Files: " << am->second.matches.size() << endl;
 			if (album_score > best_album_score) {
 				best_album_score = album_score;
 				best_album_files = album_files;

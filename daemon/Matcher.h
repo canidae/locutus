@@ -19,6 +19,9 @@
 #define DURATION_WEIGHT_KEY "duration_weight"
 #define DURATION_WEIGHT_VALUE 100.0
 #define DURATION_WEIGHT_DESCRIPTION ""
+#define MAX_DIFF_BEST_SCORE_KEY "max_diff_best_score"
+#define MAX_DIFF_BEST_SCORE_VALUE 0.05
+#define MAX_DIFF_BEST_SCORE_DESCRIPTION "Locutus tries to group files to the same album, however that means it may match a file to a track that's not the best match. Consider this: File A match track 1 with score 0.99 on an album. File B match track 2 with score 0.80 on the same album, but it also match track 2 on another album with score 0.98 where file A does not match any tracks. In this case file B would match track 2 on first album if the value of this setting is greater than or equal to 0.18 (0.98 - 0.80, best score for file B minus score achieved on first album for file B), and if the value of the setting is less than 0.18 the files would be saved on each their album. If you don't understand what this setting does, don't mess with it :)"
 #define MBID_LOOKUP_KEY "mbid_lookup"
 #define MBID_LOOKUP_VALUE true
 #define MBID_LOOKUP_DESCRIPTION "Look up tracks using MBID if it's present"
@@ -84,12 +87,14 @@ class Matcher {
 		double combine_threshold;
 		double duration_limit;
 		double duration_weight;
+		double max_diff_best_score;
 		double metadata_min_score;
 		double puid_min_score;
 		double save_match_threshold;
 		double title_weight;
 		double tracknumber_weight;
 		std::map<std::string, AlbumMatch> ams;
+		std::map<std::string, double> best_file_match;
 
 		void clearAlbumMatch();
 		void compareFilesWithAlbum(AlbumMatch *am, const std::vector<Metafile *> &files);

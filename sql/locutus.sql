@@ -232,7 +232,7 @@ CREATE VIEW v_web_list_albums AS
 --
 
 CREATE VIEW v_web_list_artists AS
-    SELECT ar.artist_id, ar.mbid, ar.name, ar.sortname, COALESCE((SELECT count(*) AS count FROM album al WHERE (al.artist_id = ar.artist_id)), (0)::bigint) AS albums FROM artist ar;
+    SELECT ar.artist_id, ar.mbid, ar.name, ar.sortname, count(*) AS albums FROM (artist ar JOIN album al ON ((ar.artist_id = al.artist_id))) GROUP BY ar.artist_id, ar.mbid, ar.name, ar.sortname;
 
 
 --
