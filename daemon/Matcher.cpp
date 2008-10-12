@@ -278,11 +278,11 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				album_score += best_match_score;
 				album_files.push_back(best_match);
 			}
-			if (files_matched == 0 || (only_save_complete_albums && files_matched != (int) am->second.matches.size()))
+			if (files_matched == 0 || (only_save_complete_albums && files_matched != (int) am->second.album->tracks.size()))
 				continue;
 			album_score /= (double) files_matched;
-			album_score *= (double) files_matched / (double) am->second.matches.size();
-			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << files_matched << " | Files: " << am->second.matches.size() << endl;
+			album_score *= (double) files_matched / (double) am->second.album->tracks.size();
+			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << files_matched << " | Files: " << am->second.album->tracks.size() << endl;
 			if (album_score > best_album_score) {
 				best_album_score = album_score;
 				best_album_files = album_files;
