@@ -29,7 +29,7 @@ string Metafile::getBaseNameWithoutExtension() const {
 }
 
 string Metafile::getGroup() const {
-	/* returns either artist-album, last directory name or ""
+	/* returns either artist-album, album, last directory name or ""
 	 * used for grouping tracks that possibly are from the same album */
 	if (album.size() > 0) {
 		if (artist.size() > 0) {
