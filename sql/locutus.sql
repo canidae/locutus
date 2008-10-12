@@ -8,6 +8,13 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET escape_string_warning = off;
 
+--
+-- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: -
+--
+
+CREATE PROCEDURAL LANGUAGE plpgsql;
+
+
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
@@ -234,6 +241,15 @@ CREATE VIEW v_web_list_files AS
 
 CREATE VIEW v_web_list_tracks AS
     SELECT tr.track_id, tr.album_id, tr.artist_id, tr.mbid, tr.title, tr.duration, tr.tracknumber, ar.name AS artist_name, al.title AS album_title FROM ((track tr LEFT JOIN artist ar ON ((tr.artist_id = ar.artist_id))) LEFT JOIN album al ON ((tr.album_id = al.album_id)));
+
+
+--
+-- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
+    AS '$libdir/plpgsql.so', 'plpgsql_call_handler'
+    LANGUAGE c;
 
 
 --
@@ -602,266 +618,6 @@ ALTER TABLE ONLY track
 
 ALTER TABLE ONLY track
     ADD CONSTRAINT track_artist_id_fkey FOREIGN KEY (artist_id) REFERENCES artist(artist_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: public; Type: ACL; Schema: -; Owner: -
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
---
--- Name: album; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE album FROM PUBLIC;
-REVOKE ALL ON TABLE album FROM canidae;
-GRANT ALL ON TABLE album TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE album TO locutus;
-
-
---
--- Name: artist; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE artist FROM PUBLIC;
-REVOKE ALL ON TABLE artist FROM canidae;
-GRANT ALL ON TABLE artist TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE artist TO locutus;
-
-
---
--- Name: file; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE file FROM PUBLIC;
-REVOKE ALL ON TABLE file FROM canidae;
-GRANT ALL ON TABLE file TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE file TO locutus;
-
-
---
--- Name: match; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE match FROM PUBLIC;
-REVOKE ALL ON TABLE match FROM canidae;
-GRANT ALL ON TABLE match TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE match TO locutus;
-
-
---
--- Name: metatrack; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE metatrack FROM PUBLIC;
-REVOKE ALL ON TABLE metatrack FROM canidae;
-GRANT ALL ON TABLE metatrack TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE metatrack TO locutus;
-
-
---
--- Name: puid; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE puid FROM PUBLIC;
-REVOKE ALL ON TABLE puid FROM canidae;
-GRANT ALL ON TABLE puid TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE puid TO locutus;
-
-
---
--- Name: puid_metatrack; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE puid_metatrack FROM PUBLIC;
-REVOKE ALL ON TABLE puid_metatrack FROM canidae;
-GRANT ALL ON TABLE puid_metatrack TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE puid_metatrack TO locutus;
-
-
---
--- Name: setting; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE setting FROM PUBLIC;
-REVOKE ALL ON TABLE setting FROM canidae;
-GRANT ALL ON TABLE setting TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE setting TO locutus;
-
-
---
--- Name: track; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE track FROM PUBLIC;
-REVOKE ALL ON TABLE track FROM canidae;
-GRANT ALL ON TABLE track TO canidae;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE track TO locutus;
-
-
---
--- Name: v_daemon_load_album; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_daemon_load_album FROM PUBLIC;
-REVOKE ALL ON TABLE v_daemon_load_album FROM canidae;
-GRANT ALL ON TABLE v_daemon_load_album TO canidae;
-GRANT SELECT ON TABLE v_daemon_load_album TO locutus;
-
-
---
--- Name: v_daemon_load_metafile; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_daemon_load_metafile FROM PUBLIC;
-REVOKE ALL ON TABLE v_daemon_load_metafile FROM canidae;
-GRANT ALL ON TABLE v_daemon_load_metafile TO canidae;
-GRANT SELECT ON TABLE v_daemon_load_metafile TO locutus;
-
-
---
--- Name: v_web_info_album; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_web_info_album FROM PUBLIC;
-REVOKE ALL ON TABLE v_web_info_album FROM canidae;
-GRANT ALL ON TABLE v_web_info_album TO canidae;
-GRANT SELECT ON TABLE v_web_info_album TO locutus;
-
-
---
--- Name: v_web_info_artist; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_web_info_artist FROM PUBLIC;
-REVOKE ALL ON TABLE v_web_info_artist FROM canidae;
-GRANT ALL ON TABLE v_web_info_artist TO canidae;
-GRANT SELECT ON TABLE v_web_info_artist TO locutus;
-
-
---
--- Name: v_web_info_track; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_web_info_track FROM PUBLIC;
-REVOKE ALL ON TABLE v_web_info_track FROM canidae;
-GRANT ALL ON TABLE v_web_info_track TO canidae;
-GRANT SELECT ON TABLE v_web_info_track TO locutus;
-
-
---
--- Name: v_web_list_albums; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_web_list_albums FROM PUBLIC;
-REVOKE ALL ON TABLE v_web_list_albums FROM canidae;
-GRANT ALL ON TABLE v_web_list_albums TO canidae;
-GRANT SELECT ON TABLE v_web_list_albums TO locutus;
-
-
---
--- Name: v_web_list_artists; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_web_list_artists FROM PUBLIC;
-REVOKE ALL ON TABLE v_web_list_artists FROM canidae;
-GRANT ALL ON TABLE v_web_list_artists TO canidae;
-GRANT SELECT ON TABLE v_web_list_artists TO locutus;
-
-
---
--- Name: v_web_list_files; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_web_list_files FROM PUBLIC;
-REVOKE ALL ON TABLE v_web_list_files FROM canidae;
-GRANT ALL ON TABLE v_web_list_files TO canidae;
-GRANT SELECT ON TABLE v_web_list_files TO locutus;
-
-
---
--- Name: v_web_list_tracks; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON TABLE v_web_list_tracks FROM PUBLIC;
-REVOKE ALL ON TABLE v_web_list_tracks FROM canidae;
-GRANT ALL ON TABLE v_web_list_tracks TO canidae;
-GRANT SELECT ON TABLE v_web_list_tracks TO locutus;
-
-
---
--- Name: album_album_id_seq; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON SEQUENCE album_album_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE album_album_id_seq FROM canidae;
-GRANT ALL ON SEQUENCE album_album_id_seq TO canidae;
-GRANT SELECT,UPDATE ON SEQUENCE album_album_id_seq TO locutus;
-
-
---
--- Name: artist_artist_id_seq; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON SEQUENCE artist_artist_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE artist_artist_id_seq FROM canidae;
-GRANT ALL ON SEQUENCE artist_artist_id_seq TO canidae;
-GRANT SELECT,UPDATE ON SEQUENCE artist_artist_id_seq TO locutus;
-
-
---
--- Name: file_file_id_seq; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON SEQUENCE file_file_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE file_file_id_seq FROM canidae;
-GRANT ALL ON SEQUENCE file_file_id_seq TO canidae;
-GRANT SELECT,UPDATE ON SEQUENCE file_file_id_seq TO locutus;
-
-
---
--- Name: metatrack_metatrack_id_seq; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON SEQUENCE metatrack_metatrack_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE metatrack_metatrack_id_seq FROM canidae;
-GRANT ALL ON SEQUENCE metatrack_metatrack_id_seq TO canidae;
-GRANT SELECT,UPDATE ON SEQUENCE metatrack_metatrack_id_seq TO locutus;
-
-
---
--- Name: puid_puid_id_seq; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON SEQUENCE puid_puid_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE puid_puid_id_seq FROM canidae;
-GRANT ALL ON SEQUENCE puid_puid_id_seq TO canidae;
-GRANT SELECT,UPDATE ON SEQUENCE puid_puid_id_seq TO locutus;
-
-
---
--- Name: setting_setting_id_seq; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON SEQUENCE setting_setting_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE setting_setting_id_seq FROM canidae;
-GRANT ALL ON SEQUENCE setting_setting_id_seq TO canidae;
-GRANT SELECT,UPDATE ON SEQUENCE setting_setting_id_seq TO locutus;
-
-
---
--- Name: track_track_id_seq; Type: ACL; Schema: public; Owner: -
---
-
-REVOKE ALL ON SEQUENCE track_track_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE track_track_id_seq FROM canidae;
-GRANT ALL ON SEQUENCE track_track_id_seq TO canidae;
-GRANT SELECT,UPDATE ON SEQUENCE track_track_id_seq TO locutus;
 
 
 --
