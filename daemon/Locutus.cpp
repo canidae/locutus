@@ -61,6 +61,7 @@ long Locutus::run() {
 			filename.append(filenamer->getFilename(*f));
 			string old_filename = (*f)->filename;
 			cout << "Would save: " << old_filename << endl;
+			cout << "  Matching: " << (*f)->artist << " - " << (*f)->album << " - " << (*f)->tracknumber << " - " << (*f)->title << endl;
 			//if (!moveFile(*f, filename)) {
 				/* TODO: unable to move file */
 			//}

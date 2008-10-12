@@ -231,11 +231,11 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	/* find best album */
 	for (map<string, AlbumMatch>::iterator amtmp = ams.begin(); amtmp != ams.end(); ++amtmp) {
 		best_album_files.clear();
-		used_files.clear();
 		double best_album_score = -1.0;
 		for (map<string, AlbumMatch>::iterator am = ams.begin(); am != ams.end(); ++am) {
 			if (used_albums.find(am->first) != used_albums.end())
 				continue;
+			used_files.clear();
 			used_tracks.clear();
 			int files_matched = 0;
 			double album_score = 0.0;
@@ -269,8 +269,9 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				album_score += best_match_score;
 				album_files.push_back(best_match);
 			}
-			if (only_save_complete_albums && files_matched != (int) am->second.matches.size())
+			if (files_matched == 0 || (only_save_complete_albums && files_matched != (int) am->second.matches.size()))
 				continue;
+			album_score /= (double) files_matched;
 			album_score *= (double) files_matched / (double) am->second.matches.size();
 			if (album_score > best_album_score) {
 				best_album_score = album_score;
