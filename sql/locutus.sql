@@ -105,8 +105,8 @@ CREATE TABLE metatrack (
     metatrack_id integer NOT NULL,
     track_mbid character(36) NOT NULL,
     track_title character varying NOT NULL,
-    duration integer DEFAULT 0 NOT NULL,
-    tracknumber integer NOT NULL,
+    track_duration integer DEFAULT 0 NOT NULL,
+    track_tracknumber integer NOT NULL,
     artist_mbid character(36) NOT NULL,
     artist_name character varying NOT NULL,
     album_mbid character(36) NOT NULL,
@@ -233,6 +233,14 @@ CREATE VIEW v_web_list_artists AS
 
 CREATE VIEW v_web_list_files AS
     SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file;
+
+
+--
+-- Name: v_web_list_matches; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_list_matches AS
+    SELECT me.metatrack_id AS metatrack_metatrack_id, me.track_mbid AS metatrack_track_mbid, me.track_title AS metatrack_track_title, me.track_duration AS metatrack_track_duration, me.track_tracknumber AS metatrack_track_tracknumber, me.artist_mbid AS metatrack_artist_mbid, me.artist_name AS metatrack_artist_name, me.album_mbid AS metatrack_album_mbid, me.album_title AS metatrack_album_title, me.last_updated AS metatrack_last_updated, fi.file_id AS file_file_id, fi.filename AS file_filename, fi.last_updated AS file_last_updated, fi.duration AS file_duration, fi.channels AS file_channels, fi.bitrate AS file_bitrate, fi.samplerate AS file_samplerate, fi.puid_id AS file_puid_id, fi.album AS file_album, fi.albumartist AS file_albumartist, fi.albumartistsort AS file_albumartistsort, fi.artist AS file_artist, fi.artistsort AS file_artistsort, fi.musicbrainz_albumartistid AS file_musicbrainz_albumartistid, fi.musicbrainz_albumid AS file_musicbrainz_albumid, fi.musicbrainz_artistid AS file_musicbrainz_artistid, fi.musicbrainz_trackid AS file_musicbrainz_trackid, fi.title AS file_title, fi.tracknumber AS file_tracknumber, fi.released AS file_released, ma.mbid_match, ma.puid_match, ma.meta_score FROM ((metatrack me JOIN match ma ON ((me.metatrack_id = ma.metatrack_id))) JOIN file fi ON ((ma.file_id = fi.file_id)));
 
 
 --

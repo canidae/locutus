@@ -58,10 +58,11 @@ long Locutus::run() {
 			string filename = output_dir;
 			filename.append(filenamer->getFilename(*f));
 			string old_filename = (*f)->filename;
-			if (!moveFile(*f, filename)) {
+			cout << "Would save: " << old_filename << endl;
+			//if (!moveFile(*f, filename)) {
 				/* TODO: unable to move file */
-			}
-			database->saveMetafile(**f, old_filename); // metadata may have changed even if path haven't
+			//}
+			//database->saveMetafile(**f, old_filename); // metadata may have changed even if path haven't
 		}
 	}
 	/* submit new puids? */

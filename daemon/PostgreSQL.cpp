@@ -304,11 +304,11 @@ bool PostgreSQL::saveMetatrack(const Metatrack &metatrack) {
 	string e_album_mbid = escapeString(metatrack.album_mbid);
 	string e_album_title = escapeString(metatrack.album_title);
 	ostringstream query;
-	query << "INSERT INTO metatrack(track_mbid, track_title, duration, tracknumber, artist_mbid, artist_name, album_mbid, album_title) SELECT '" << e_track_mbid << "', '" << e_track_title << "', " << metatrack.duration << ", " << metatrack.tracknumber << ", '" << e_artist_mbid << "', '" << e_artist_name << "', '" << e_album_mbid << "', '" << e_album_title << "' WHERE NOT EXISTS (SELECT true FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
+	query << "INSERT INTO metatrack(track_mbid, track_title, track_duration, track_tracknumber, artist_mbid, artist_name, album_mbid, album_title) SELECT '" << e_track_mbid << "', '" << e_track_title << "', " << metatrack.duration << ", " << metatrack.tracknumber << ", '" << e_artist_mbid << "', '" << e_artist_name << "', '" << e_album_mbid << "', '" << e_album_title << "' WHERE NOT EXISTS (SELECT true FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
 	if (!doQuery(query.str()))
 		Debug::notice("Unable to save metatrack, query failed. See error above");
 	query.str("");
-	query << "UPDATE metatrack SET track_title = '" << e_track_title << "', duration = " << metatrack.duration << ", tracknumber = " << metatrack.tracknumber << ", artist_mbid = '" << e_artist_mbid << "', artist_name = '" << e_artist_name << "', album_mbid = '" << e_album_mbid << "', album_title = '" << e_album_title << "' WHERE track_mbid = '" << e_track_mbid << "'";
+	query << "UPDATE metatrack SET track_title = '" << e_track_title << "', track_duration = " << metatrack.duration << ", track_tracknumber = " << metatrack.tracknumber << ", artist_mbid = '" << e_artist_mbid << "', artist_name = '" << e_artist_name << "', album_mbid = '" << e_album_mbid << "', album_title = '" << e_album_title << "' WHERE track_mbid = '" << e_track_mbid << "'";
 	if (!doQuery(query.str()))
 		Debug::notice("Unable to save metatrack, query failed. See error above");
 	return true;

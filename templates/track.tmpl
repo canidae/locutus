@@ -8,11 +8,11 @@
     <h3>Tracknumber: [% track.tracknumber %]</h3>
     <h3>Duration: [% track.duration %]ms</h3>
     <h3>MusicBrainz Track ID: <a href="http://musicbrainz.org/track/[% track.mbid %].html">[% track.mbid %]</a></h3>
-  [% IF files %]
-    <h2>Files:</h2>
+  [% IF matches %]
+    <h2>Matching files:</h2>
     <ol>
-    [% FOREACH file IN files %]
-      <li><a href="file.pl?fiid=[% file.file_id %]">[% file.filename %]</a>
+    [% FOREACH match IN matches %]
+      <li>[% match.meta_score %] <a href="file.pl?fiid=[% match.file_file_id %]">[% match.file_filename %]</a></li>
     [% END %]
     </ol>
   [% END %]
