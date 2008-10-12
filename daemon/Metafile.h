@@ -93,5 +93,6 @@ class Metafile {
 		void saveAPETag(TagLib::APE::Tag *tag);
 		void saveID3v2Tag(TagLib::ID3v2::Tag *tag);
 		void saveXiphComment(TagLib::Ogg::XiphComment *tag);
+		void trim(std::string *text);
 };
 #endif
