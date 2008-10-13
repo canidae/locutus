@@ -98,7 +98,7 @@ class Matcher {
 
 		void clearAlbumMatch();
 		void compareFilesWithAlbum(AlbumMatch *am, const std::vector<Metafile *> &files);
-		Match *compareMetafileWithMetatrack(Metafile *metafile, Metatrack *metatrack, Track *track = NULL);
+		Match *compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack);
 		bool loadAlbum(const std::string &mbid, const std::vector<Metafile *> files);
 		void lookupMBIDs(const std::vector<Metafile *> &files);
 		void lookupPUIDs(const std::vector<Metafile *> &files);
