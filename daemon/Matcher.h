@@ -9,7 +9,7 @@
 #define ARTIST_WEIGHT_DESCRIPTION ""
 #define COMBINE_THRESHOLD_KEY "combine_threshold"
 #define COMBINE_THRESHOLD_VALUE 0.80
-#define COMBINE_THRESHOLD_DESCRIPTION "Locutus fetch metadata both from tags in files and using the filename and path. Since filenames sometimes got the same information as the tags it's necessary to avoid using the same information twice as that may affect search results. Filenames may differ slightly from metadata and thus fuzzy matching is needed. This value must be between 0.0 and 1.0, at 1.0 the information in the filenames must be identical to the information found in the tags. If you set this value to 0.0 then you're nothing but downright dumb, so don't do that."
+#define COMBINE_THRESHOLD_DESCRIPTION "Locutus fetch metadata both from tags in files and using the filename and path. Since filenames sometimes got the same information as the tags it's necessary to avoid using the same information twice as that may affect search results. Filenames may differ slightly from metadata and thus fuzzy matching is needed. This value must be between 0.0 and 1.0. At 1.0 the information in the filenames must be identical to the information found in the tags, and at 0.0 you essentially disable using information found in filenames for searching."
 #define DURATION_LIMIT_KEY "duration_limit"
 #define DURATION_LIMIT_VALUE 15000.0
 #define DURATION_LIMIT_DESCRIPTION "If abs(file_duration - track_duration) is less than this value, higher match score is achieved. Decreasing this value will decrease files matched and mismatches, increasing it will increase files matched and mismatched."
