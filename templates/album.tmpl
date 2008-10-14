@@ -16,7 +16,7 @@
       [% IF track.files %]
         <ol>
         [% FOREACH file IN track.files %]
-          <li>[% file.filename %]</li>
+          <li>[% file.meta_score %] <a href="file.pl?fiid=[% file.file_file_id %]">[% file.file_filename %]</a></li>
         [% END %]
         </ol>
       [% END %]
