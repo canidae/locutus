@@ -1,21 +1,22 @@
 [% INCLUDE header.tmpl
   title = 'Settings'
 %]
+    <h1>Settings</h1>
     <table>
-      <tr>
-        <th>Key</th>
-        <th>Default value</th>
-        <th>Value</th>
-        <th>Description</th>
-        <th>Reset to default</th>
-      </tr>
 [% FOREACH setting IN settings %]
       <tr>
-        <td>[% setting.key %]</td>
+        <th colspan="2">[% setting.key %]</th>
+      </tr>
+      <tr>
+        <th>Default</th>
         <td>[% setting.default_value %]</td>
-        <td>[% setting.value %]</td>
-        <td>[% setting.description %]</td>
-        <td>(button that copies default_value to value, or something)</td>
+      </tr>
+      <tr>
+        <th>Value</th>
+        <td><input type="text" value="[% setting.value %]" /></td>
+      </tr>
+      <tr>
+        <td colspan="2">[% setting.description %]</td>
       </tr>
 [% END %]
     </table>
