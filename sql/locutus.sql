@@ -260,6 +260,14 @@ CREATE VIEW v_web_list_tracks AS
 
 
 --
+-- Name: v_web_list_unmatched_files; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_list_unmatched_files AS
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file WHERE ((file.musicbrainz_trackid = ''::bpchar) OR (NOT (file.musicbrainz_trackid IN (SELECT track.mbid FROM track))));
+
+
+--
 -- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: public; Owner: -
 --
 
