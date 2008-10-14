@@ -9,13 +9,13 @@
 #define ARTIST_WEIGHT_DESCRIPTION ""
 #define COMBINE_THRESHOLD_KEY "combine_threshold"
 #define COMBINE_THRESHOLD_VALUE 0.80
-#define COMBINE_THRESHOLD_DESCRIPTION ""
+#define COMBINE_THRESHOLD_DESCRIPTION "Locutus fetch metadata both from tags in files and using the filename and path. Since filenames sometimes got the same information as the tags it's necessary to avoid using the same information twice as that may affect search results. Filenames may differ slightly from metadata and thus fuzzy matching is needed. This value must be between 0.0 and 1.0, at 1.0 the information in the filenames must be identical to the information found in the tags. If you set this value to 0.0 then you're nothing but downright dumb, so don't do that."
 #define DURATION_LIMIT_KEY "duration_limit"
 #define DURATION_LIMIT_VALUE 15000.0
-#define DURATION_LIMIT_DESCRIPTION ""
+#define DURATION_LIMIT_DESCRIPTION "If abs(file_duration - track_duration) is less than this value, higher match score is achieved. Decreasing this value will decrease files matched and mismatches, increasing it will increase files matched and mismatched."
 #define DURATION_MUST_MATCH_KEY "duration_must_match"
 #define DURATION_MUST_MATCH_VALUE true
-#define DURATION_MUST_MATCH_DESCRIPTION "Demand that the difference between duration of file and track we're matching against is less or equal to duration_limit"
+#define DURATION_MUST_MATCH_DESCRIPTION "When this value is set to true then track duration must be within duration_limit milliseconds or it'll be considered a different track regardless of how well metadata match. Since many tracks in MusicBrainz got unknown length it may be an idea to set this to false to increase amount of files matched, but that may increase mismatches too."
 #define DURATION_WEIGHT_KEY "duration_weight"
 #define DURATION_WEIGHT_VALUE 100.0
 #define DURATION_WEIGHT_DESCRIPTION ""
@@ -24,25 +24,22 @@
 #define MAX_DIFF_BEST_SCORE_DESCRIPTION "Locutus tries to group files to the same album, however that means it may match a file to a track that's not the best match. Consider this: File A match track 1 with score 0.99 on an album. File B match track 2 with score 0.80 on the same album, but it also match track 2 on another album with score 0.98 where file A does not match any tracks. In this case file B would match track 2 on first album if the value of this setting is greater than or equal to 0.18 (0.98 - 0.80, best score for file B minus score achieved on first album for file B), and if the value of the setting is less than 0.18 the files would be saved on each their album. If you don't understand what this setting does, don't mess with it :)"
 #define MBID_LOOKUP_KEY "mbid_lookup"
 #define MBID_LOOKUP_VALUE true
-#define MBID_LOOKUP_DESCRIPTION "Look up tracks using MBID if it's present"
+#define MBID_LOOKUP_DESCRIPTION "If a file got MusicBrainz ID's then look up the track using that. This is generally a very good idea, this setting should only be turned off for testing purposes. If a MusicBrainz ID does not exist, Locutus will look up the track using metadata regardless of the value of this setting."
 #define METADATA_MIN_SCORE_KEY "metadata_min_score"
 #define METADATA_MIN_SCORE_VALUE 0.75
-#define METADATA_MIN_SCORE_DESCRIPTION "Minimum value for when a metadata lookup is considered a match. Must be between 0.0 and 1.0"
+#define METADATA_MIN_SCORE_DESCRIPTION "When matching a file with a track using metadata only, the match score must exceed this value for the file to be saved. Value must be between 0.0 and 1.0. Increasing this value will decrease files matched and mismatches, decreasing it will logically do the opposite."
 #define ONLY_SAVE_COMPLETE_ALBUMS_KEY "only_save_complete_albums"
 #define ONLY_SAVE_COMPLETE_ALBUMS_VALUE true
-#define ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION "Only save albums where we found a file for every track"
+#define ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION "When this setting is set to true, Locutus will only save albums where we got a file matching every single track on the album. If your music archive only contains complete albums, it is a very good idea to leave this setting at true."
 #define ONLY_SAVE_IF_ALL_MATCH_KEY "only_save_if_all_match"
 #define ONLY_SAVE_IF_ALL_MATCH_VALUE true
-#define ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION "Only save files if every file in a group match a track"
+#define ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION "Locutus gather files in groups in this order: 'artist-album' if both tags are present, 'album' if tag is present or 'last_directory_name' if album tag is not present. If this setting is set to true Locutus will not save the files in such a group unless all files match something. This is generally a good idea for those who don't have a fragmented music archive."
 #define PUID_LOOKUP_KEY "puid_lookup"
 #define PUID_LOOKUP_VALUE true
-#define PUID_LOOKUP_DESCRIPTION "Look up tracks using PUID which will be generated if necessary"
+#define PUID_LOOKUP_DESCRIPTION "If a file got a PUID then look up the track using that. This is generally a very good idea, this setting should only be turned off for testing purposes. If a PUID does not exist, Locutus will look up the track using metadata regardless of the value of this setting."
 #define PUID_MIN_SCORE_KEY "puid_min_score"
-#define PUID_MIN_SCORE_VALUE 0.50
-#define PUID_MIN_SCORE_DESCRIPTION "Minimum value for when a PUID lookup is considered a match. Must be between 0.0 and 1.0"
-#define SAVE_MATCH_THRESHOLD_KEY "save_match_threshold"
-#define SAVE_MATCH_THRESHOLD_VALUE 0.25
-#define SAVE_MATCH_THRESHOLD_DESCRIPTION "Minimum value for a match to be saved"
+#define PUID_MIN_SCORE_VALUE 0.60
+#define PUID_MIN_SCORE_DESCRIPTION "When matching a file with a track using PUID and metadata, the match score must exceed this value for the file to be saved. Value must be between 0.0 and 1.0. Increasing this value will decrease files matched and mismatches, decreasing it will logically do the opposite."
 #define TITLE_WEIGHT_KEY "title_weight"
 #define TITLE_WEIGHT_VALUE 100.0
 #define TITLE_WEIGHT_DESCRIPTION ""
@@ -89,8 +86,8 @@ class Matcher {
 		double duration_weight;
 		double max_diff_best_score;
 		double metadata_min_score;
+		double mismatch_threshold;
 		double puid_min_score;
-		double save_match_threshold;
 		double title_weight;
 		double tracknumber_weight;
 		std::map<std::string, AlbumMatch> ams;
