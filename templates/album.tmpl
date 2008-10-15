@@ -8,15 +8,18 @@
     <h3>Released: [% album.released %]</h3>
     <h3>MusicBrainz Album ID: <a href="http://musicbrainz.org/release/[% album.mbid %].html">[% album.mbid %]</a></h3>
     <h3>Custom artist: <input type="text" value="[% album.custom_artist_name %]" /></h3>
-  [% IF tracks %]
+    [% IF tracks.size > 0 %]
     <h2>Tracks:</h2>
     <ol>
     [% FOREACH track IN tracks %]
-      <li><a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a>
+      <li><a href="track.pl?trid=[% track.track_id %]">[% track.artist_name %] - [% track.album_title %] - [% track.tracknumber %] - [% track.title %] ([% track.duration %] ms)</a>
       [% IF track.files.size > 0 %]
         <ol>
         [% FOREACH file IN track.files %]
-          <li>[% file.meta_score %] <a href="file.pl?fiid=[% file.file_file_id %]">[% file.file_filename %]</a></li>
+          <li>
+            [% file.meta_score %] <a href="file.pl?fiid=[% file.file_file_id %]">[% file.file_filename %]</a><br />
+            [% file.file_artist %] - [% file.file_album %] - [% file.file_tracknumber %] - [% file.file_title %] ([% file.file_duration %] ms)
+          </li>
         [% END %]
         </ol>
       [% END %]
