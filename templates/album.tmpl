@@ -13,7 +13,7 @@
     <ol>
     [% FOREACH track IN tracks %]
       <li><a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a>
-      [% IF track.files %]
+      [% IF track.files.size > 0 %]
         <ol>
         [% FOREACH file IN track.files %]
           <li>[% file.meta_score %] <a href="file.pl?fiid=[% file.file_file_id %]">[% file.file_filename %]</a></li>
