@@ -17,7 +17,7 @@
         <ol>
         [% FOREACH file IN track.files %]
           <li>
-            [% file.meta_score %] <a href="file.pl?fiid=[% file.file_file_id %]">[% file.file_filename %]</a><br />
+            <span style="color:#[% file.color %];">[% file.meta_score %]</span> <a href="file.pl?fiid=[% file.file_file_id %]">[% file.file_filename %]</a><br />
             [% file.file_artist %] - [% file.file_album %] - [% file.file_tracknumber %] - [% file.file_title %] ([% file.file_duration %] ms)
           </li>
         [% END %]
