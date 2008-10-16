@@ -9,11 +9,30 @@
     <h3>Samplerate: [% file.samplerate %]hz</h3>
   [% IF matches %]
     <h2>Matching tracks:</h2>
-    <ol>
+    <table>
+      <tr>
+        <th>Score</th>
+        <th><input type="radio" name="use_track[[% file.file_id %]]" value="-1" checked="checked" /></th>
+        <th>[% file.tracknumber %]</th>
+        <th>[% file.artist %]</th>
+        <th>[% file.albumartist %]</th>
+        <th>[% file.album %]</th>
+        <th>[% file.title %]</th>
+        <th>[% file.duration %]</th>
+      </tr>
     [% FOREACH match IN matches %]
-      <li>[% match.meta_score %] [% IF match.track_id %]<a href="track.pl?trid=[% match.track_id %]">[% match.metatrack_track_title %]</a>[% ELSE %][% match.metatrack_track_title %] (album not loaded)[% END %]</li>
+      <tr>
+        <td style="background: #[% match.color %];">[% match.meta_score %]</td>
+        <td>[% IF match.track_id %]<input type="radio" name="use_track[[% file.file_id %]]" value="[% match.track_id %]" />[% ELSE %]N/A[% END %]</td>
+        <td>[% match.metatrack_track_tracknumber %]</td>
+        <td>[% match.metatrack_artist_name %]</td>
+        <td>fixme?</td>
+        <td>[% match.metatrack_album_title %]</td>
+        <td>[% IF match.track_id %]<a href="track.pl?trid=[% match.track_id %]">[% match.metatrack_track_title %]</a>[% ELSE %][% match.metatrack_track_title %][% END %]</td>
+        <td>[% match.metatrack_track_duration %]</td>
+      </tr>
     [% END %]
-    </ol>
+    </table>
   [% END %]
 [% END %]
 [% INCLUDE footer.tmpl %]
