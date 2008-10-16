@@ -21,4 +21,14 @@ sub process_template {
 	$template->process($page . ".tmpl", $vars) || die "Template process failed: ", $template->error(), "\n";
 }
 
+sub score_to_color {
+	my $score = shift;
+	if ($score > 0.75) {
+		return sprintf("%02x%02x00", (1.0 - ($score - 0.75) * 4) * 255, 255);
+	} elsif ($score > 0.25) {
+		return sprintf("%02x%02x00", 255, (($score - 0.25) * 2) * 255);
+	}
+	return '#ff0000';
+}
+
 1;
