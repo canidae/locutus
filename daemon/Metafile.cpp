@@ -71,22 +71,30 @@ const list<string> &Metafile::getValues(double combine_threshold) {
 		values.push_back(title);
 	if (tracknumber != "")
 		values.push_back(tracknumber);
-	/* add group */
-	string group = getGroup();
-	if (group != "" && group != album)
-		values.push_back(group);
+	/* add last directory name (if any) */
+	string token;
+	string::size_type pos = filename.find_last_of('/');
+	if (pos != string::npos && pos > 0) {
+		string::size_type pos2 = filename.find_last_of('/', pos - 1);
+		if (pos2 != string::npos) {
+			++pos2;
+			token = filename.substr(pos2, pos - pos2);
+			Locutus::trim(&token);
+			if (token.size() > 0)
+				values.push_back(token);
+		}
+	}
 	/* tokenize basename and add that too */
 	string basename = getBaseNameWithoutExtension();
 	/* replace "_" with " " */
-	string::size_type start = 0;
-	while ((start = basename.find('_', start)) != string::npos)
-		basename.replace(start, 1, " ");
+	pos = 0;
+	while ((pos = basename.find('_', pos)) != string::npos)
+		basename.replace(pos, 1, " ");
 	/* split on "-" & "." */
-	start = 0;
-	string token;
-	while (basename.size() > 0 && (start = basename.find_first_of("-.", 0)) != string::npos) {
-		if (start > 0) {
-			token = basename.substr(0, start);
+	pos = 0;
+	while (basename.size() > 0 && (pos = basename.find_first_of("-.", 0)) != string::npos) {
+		if (pos > 0) {
+			token = basename.substr(0, pos);
 			Locutus::trim(&token);
 			if (token.size() > 0) {
 				bool match = false;
@@ -100,7 +108,7 @@ const list<string> &Metafile::getValues(double combine_threshold) {
 					values.push_back(token);
 			}
 		}
-		basename.erase(0, start + 1);
+		basename.erase(0, pos + 1);
 	}
 	Locutus::trim(&basename);
 	if (basename.size() > 0) {
