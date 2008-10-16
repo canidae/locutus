@@ -116,7 +116,8 @@ Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack
 		if (start > 0) {
 			token = basename.substr(0, start);
 			Locutus::trim(&token);
-			values.push_back(token);
+			if (token.size() > 0)
+				values.push_back(token);
 		}
 		basename.erase(0, start + 1);
 	}
