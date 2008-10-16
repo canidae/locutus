@@ -98,11 +98,29 @@ Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack
 		values.push_back(metafile->title);
 	if (metafile->tracknumber != "")
 		values.push_back(metafile->tracknumber);
+	/* add group */
 	string group = metafile->getGroup();
 	if (group != "" && group != metafile->album)
 		values.push_back(group);
+	/* tokenize basename and add that too */
 	string basename = metafile->getBaseNameWithoutExtension();
-	/* TODO: basename */
+	/* replace "_" with " " */
+	string::size_type start = 0;
+	while ((start = basename.find('_', start)) != string::npos)
+		basename.replace(start, 1, " ");
+	/* split on "-" & "." */
+	start = 0;
+	string token;
+	while (basename.size() > 0 && (start = basename.find_first_of("-.", 0)) != string::npos) {
+		if (start > 0) {
+			token = basename.substr(0, start);
+			values.push_back(token);
+		}
+		basename.erase(0, start + 1);
+	}
+	if (basename.size() > 0)
+		values.push_back(basename);
+
 	if (values.size() <= 0)
 		return NULL;
 	/* find highest score */

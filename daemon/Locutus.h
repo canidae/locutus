@@ -35,6 +35,8 @@ class Locutus {
 		explicit Locutus(Database *database);
 		~Locutus();
 
+		static void trim(std::string *text);
+
 		long run();
 
 	private:

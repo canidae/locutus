@@ -37,6 +37,20 @@ Locutus::~Locutus() {
 	delete filenamer;
 }
 
+/* static methods */
+void Locutus::trim(string *text) {
+	if (text == NULL)
+		return;
+	string::size_type pos = text->find_last_not_of(" \t\n");
+	if (pos != string::npos)
+		text->erase(pos + 1);
+	pos = text->find_first_not_of(" \t\n");
+	if (pos != string::npos)
+		text->erase(0, pos);
+	if (text->size() > 0 && text->at(0) == ' ')
+		text->erase();
+}
+
 /* methods */
 long Locutus::run() {
 	/* parse sorted directory */

@@ -1,5 +1,6 @@
 #include "Album.h"
 #include "Debug.h"
+#include "Locutus.h"
 #include "Metafile.h"
 #include "Track.h"
 
@@ -109,20 +110,20 @@ bool Metafile::readFromFile() {
 		}
 	}
 	/* trim strings */
-	trim(&album);
-	trim(&albumartist);
-	trim(&albumartistsort);
-	trim(&artist);
-	trim(&artistsort);
-	trim(&filename);
-	trim(&musicbrainz_albumartistid);
-	trim(&musicbrainz_albumid);
-	trim(&musicbrainz_artistid);
-	trim(&musicbrainz_trackid);
-	trim(&puid);
-	trim(&released);
-	trim(&title);
-	trim(&tracknumber);
+	Locutus::trim(&album);
+	Locutus::trim(&albumartist);
+	Locutus::trim(&albumartistsort);
+	Locutus::trim(&artist);
+	Locutus::trim(&artistsort);
+	Locutus::trim(&filename);
+	Locutus::trim(&musicbrainz_albumartistid);
+	Locutus::trim(&musicbrainz_albumid);
+	Locutus::trim(&musicbrainz_artistid);
+	Locutus::trim(&musicbrainz_trackid);
+	Locutus::trim(&puid);
+	Locutus::trim(&released);
+	Locutus::trim(&title);
+	Locutus::trim(&tracknumber);
 	return true;
 }
 
@@ -449,17 +450,4 @@ void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
 	tag->addField(TRACKNUMBER, tracknumber, true);
 	tag->addField(DATE, released, true);
 	//tag->addField(MUSICIP_PUID, track->puid, true);
-}
-
-void Metafile::trim(string *text) {
-	if (text == NULL)
-		return;
-	string::size_type pos = text->find_last_not_of(" \t\n");
-	if (pos != string::npos)
-		text->erase(pos + 1);
-	pos = text->find_first_not_of(" \t\n");
-	if (pos != string::npos)
-		text->erase(0, pos);
-	if (text->size() > 0 && text->at(0) == ' ')
-		text->erase();
 }
