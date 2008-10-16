@@ -81,6 +81,7 @@ class Metafile {
 		Metafile(const std::string &filename);
 		~Metafile();
 
+		void clearValues();
 		std::string getBaseNameWithoutExtension() const;
 		std::string getGroup() const;
 		const std::list<std::string> &getValues();

@@ -15,6 +15,10 @@ Metafile::~Metafile() {
 }
 
 /* methods */
+void Metafile::clearValues() {
+	values.clear();
+}
+
 string Metafile::getBaseNameWithoutExtension() const {
 	/* return basename without extension, duh */
 	string::size_type pos = filename.find_last_of('/');

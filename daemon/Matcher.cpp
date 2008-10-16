@@ -52,6 +52,9 @@ void Matcher::match(const string &group, const vector<Metafile *> &files) {
 	searchMetadata(group, files);
 	/* and then match the files to albums */
 	matchFilesToAlbums(files);
+	/* and clear the "values" list in the metafiles */
+	for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf)
+		(*mf)->clearValues();
 }
 
 /* private methods */
