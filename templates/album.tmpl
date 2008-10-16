@@ -10,22 +10,37 @@
     <h3>Custom artist: <input type="text" value="[% album.custom_artist_name %]" /></h3>
     [% IF tracks.size > 0 %]
     <h2>Tracks:</h2>
-    <ol>
+    <table>
     [% FOREACH track IN tracks %]
-      <li><a href="track.pl?trid=[% track.track_id %]">[% track.artist_name %] - [% track.album_title %] - [% track.tracknumber %] - [% track.title %] ([% track.duration %] ms)</a>
+      <tr>
+        <th>Score</th>
+        <th><input type="radio" name="use_file[[% track.track_id %]]" value="-1" checked="checked" /></th>
+        <th>[% track.tracknumber %]</th>
+        <th>[% track.artist_name %]</th>
+        <th>[% album.artist_name %]</th>
+        <th>[% album.title %]</th>
+        <th><a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a></th>
+        <th>[% track.duration %]</th>
+      </tr>
       [% IF track.files.size > 0 %]
-        <ol>
         [% FOREACH file IN track.files %]
-          <li>
-            <span style="color:#[% file.color %];">[% file.meta_score %]</span> <a href="file.pl?fiid=[% file.file_file_id %]">[% file.file_filename %]</a><br />
-            [% file.file_artist %] - [% file.file_album %] - [% file.file_tracknumber %] - [% file.file_title %] ([% file.file_duration %] ms)
-          </li>
+      <tr>
+        <td rowspan="2" style="background: #[% file.color %];">[% file.meta_score %]</td>
+        <td rowspan="2"><input type="radio" name="use_file[[% track.track_id %]]" value="[% file.file_file_id %]" /></td>
+        <td>[% file.file_tracknumber %]</td>
+        <td>[% file.file_artist %]</td>
+        <td>[% file.file_albumartist %]</td>
+        <td>[% file.file_album %]</td>
+        <td>[% file.file_title %]</td>
+        <td>[% file.file_duration %]</td>
+      </tr>
+      <tr>
+        <td colspan="6"><a href="file.pl?fiid=[% file.file_file_id %]">[% file.file_filename %]</a></td>
+      </tr>
         [% END %]
-        </ol>
       [% END %]
-      </li>
     [% END %]
-    </ol>
+    </table>
   [% END %]
 [% END %]
 [% INCLUDE footer.tmpl %]
