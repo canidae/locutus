@@ -8,7 +8,7 @@ using namespace std;
 using namespace TagLib;
 
 /* constructors/destructor */
-Metafile::Metafile(const string &filename) : meta_lookup(false), metadata_changed(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber("") {
+Metafile::Metafile(const string &filename) : meta_lookup(false), metadata_changed(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber(""), values() {
 }
 
 Metafile::~Metafile() {
@@ -50,6 +50,48 @@ string Metafile::getGroup() const {
 		}
 	}
 	return "";
+}
+
+const list<string> &Metafile::getValues() {
+	/* gather all values in a list, suitable for matching with a track */
+	if (values.size() > 0)
+		return values;
+	if (album != "")
+		values.push_back(album);
+	if (albumartist != "")
+		values.push_back(albumartist);
+	if (artist != "")
+		values.push_back(artist);
+	if (title != "")
+		values.push_back(title);
+	if (tracknumber != "")
+		values.push_back(tracknumber);
+	/* add group */
+	string group = getGroup();
+	if (group != "" && group != album)
+		values.push_back(group);
+	/* tokenize basename and add that too */
+	string basename = getBaseNameWithoutExtension();
+	/* replace "_" with " " */
+	string::size_type start = 0;
+	while ((start = basename.find('_', start)) != string::npos)
+		basename.replace(start, 1, " ");
+	/* split on "-" & "." */
+	start = 0;
+	string token;
+	while (basename.size() > 0 && (start = basename.find_first_of("-.", 0)) != string::npos) {
+		if (start > 0) {
+			token = basename.substr(0, start);
+			Locutus::trim(&token);
+			if (token.size() > 0)
+				values.push_back(token);
+		}
+		basename.erase(0, start + 1);
+	}
+	Locutus::trim(&basename);
+	if (basename.size() > 0)
+		values.push_back(basename);
+	return values;
 }
 
 bool Metafile::readFromFile() {

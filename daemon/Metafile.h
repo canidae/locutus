@@ -41,6 +41,7 @@
 #include <flacfile.h>
 #include <id3v1tag.h>
 #include <id3v2tag.h>
+#include <list>
 #include <mpcfile.h>
 #include <mpegfile.h>
 #include <oggflacfile.h>
@@ -82,11 +83,14 @@ class Metafile {
 
 		std::string getBaseNameWithoutExtension() const;
 		std::string getGroup() const;
+		const std::list<std::string> &getValues();
 		bool readFromFile();
 		bool saveMetadata();
 		bool setMetadata(const Track *track);
 
 	private:
+		std::list<std::string> values;
+
 		void readAudioProperties(const TagLib::AudioProperties *ap);
 		void readCrapTags(const TagLib::APE::Tag *ape, const TagLib::ID3v2::Tag *id3v2, const TagLib::ID3v1::Tag *id3v1);
 		void readXiphComment(const TagLib::Ogg::XiphComment *tag);
