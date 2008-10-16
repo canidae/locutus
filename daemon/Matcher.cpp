@@ -2,7 +2,6 @@
 #include "Database.h"
 #include "Debug.h"
 #include "Levenshtein.h"
-#include "Locutus.h"
 #include "Match.h"
 #include "Matcher.h"
 #include "Metafile.h"
@@ -88,43 +87,7 @@ void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &fi
 Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack) {
 	if (duration_must_match && abs(metafile->duration - metatrack.duration) > duration_limit)
 		return NULL;
-	list<string> values;
-	if (metafile->album != "")
-		values.push_back(metafile->album);
-	if (metafile->albumartist != "")
-		values.push_back(metafile->albumartist);
-	if (metafile->artist != "")
-		values.push_back(metafile->artist);
-	if (metafile->title != "")
-		values.push_back(metafile->title);
-	if (metafile->tracknumber != "")
-		values.push_back(metafile->tracknumber);
-	/* add group */
-	string group = metafile->getGroup();
-	if (group != "" && group != metafile->album)
-		values.push_back(group);
-	/* tokenize basename and add that too */
-	string basename = metafile->getBaseNameWithoutExtension();
-	/* replace "_" with " " */
-	string::size_type start = 0;
-	while ((start = basename.find('_', start)) != string::npos)
-		basename.replace(start, 1, " ");
-	/* split on "-" & "." */
-	start = 0;
-	string token;
-	while (basename.size() > 0 && (start = basename.find_first_of("-.", 0)) != string::npos) {
-		if (start > 0) {
-			token = basename.substr(0, start);
-			Locutus::trim(&token);
-			if (token.size() > 0)
-				values.push_back(token);
-		}
-		basename.erase(0, start + 1);
-	}
-	Locutus::trim(&basename);
-	if (basename.size() > 0)
-		values.push_back(basename);
-
+	list<string> values = metafile->getValues();
 	if (values.size() <= 0)
 		return NULL;
 	/* find highest score */
