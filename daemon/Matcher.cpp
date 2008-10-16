@@ -90,7 +90,7 @@ void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &fi
 Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack) {
 	if (duration_must_match && abs(metafile->duration - metatrack.duration) > duration_limit)
 		return NULL;
-	list<string> values = metafile->getValues();
+	list<string> values = metafile->getValues(combine_threshold);
 	if (values.size() <= 0)
 		return NULL;
 	/* find highest score */

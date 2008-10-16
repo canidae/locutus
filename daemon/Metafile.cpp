@@ -1,5 +1,6 @@
 #include "Album.h"
 #include "Debug.h"
+#include "Levenshtein.h"
 #include "Locutus.h"
 #include "Metafile.h"
 #include "Track.h"
@@ -56,7 +57,7 @@ string Metafile::getGroup() const {
 	return "";
 }
 
-const list<string> &Metafile::getValues() {
+const list<string> &Metafile::getValues(double combine_threshold) {
 	/* gather all values in a list, suitable for matching with a track */
 	if (values.size() > 0)
 		return values;
@@ -87,14 +88,32 @@ const list<string> &Metafile::getValues() {
 		if (start > 0) {
 			token = basename.substr(0, start);
 			Locutus::trim(&token);
-			if (token.size() > 0)
-				values.push_back(token);
+			if (token.size() > 0) {
+				bool match = false;
+				for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
+					if (Levenshtein::similarity(*v, token) >= combine_threshold) {
+						match = true;
+						break;
+					}
+				}
+				if (!match)
+					values.push_back(token);
+			}
 		}
 		basename.erase(0, start + 1);
 	}
 	Locutus::trim(&basename);
-	if (basename.size() > 0)
-		values.push_back(basename);
+	if (basename.size() > 0) {
+		bool match = false;
+		for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
+			if (Levenshtein::similarity(*v, basename) >= combine_threshold) {
+				match = true;
+				break;
+			}
+		}
+		if (!match)
+			values.push_back(basename);
+	}
 	return values;
 }
 

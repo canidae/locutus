@@ -84,7 +84,7 @@ class Metafile {
 		void clearValues();
 		std::string getBaseNameWithoutExtension() const;
 		std::string getGroup() const;
-		const std::list<std::string> &getValues();
+		const std::list<std::string> &getValues(double combine_threshold);
 		bool readFromFile();
 		bool saveMetadata();
 		bool setMetadata(const Track *track);
