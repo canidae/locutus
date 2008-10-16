@@ -121,6 +121,7 @@ Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack
 		}
 		basename.erase(0, start + 1);
 	}
+	Locutus::trim(&basename);
 	if (basename.size() > 0)
 		values.push_back(basename);
 
