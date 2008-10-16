@@ -2,6 +2,7 @@
 #include "Database.h"
 #include "Debug.h"
 #include "Levenshtein.h"
+#include "Locutus.h"
 #include "Match.h"
 #include "Matcher.h"
 #include "Metafile.h"
@@ -114,6 +115,7 @@ Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack
 	while (basename.size() > 0 && (start = basename.find_first_of("-.", 0)) != string::npos) {
 		if (start > 0) {
 			token = basename.substr(0, start);
+			Locutus::trim(&token);
 			values.push_back(token);
 		}
 		basename.erase(0, start + 1);
