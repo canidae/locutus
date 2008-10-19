@@ -7,6 +7,37 @@
     <h3>Bitrate: [% file.bitrate %]kbps</h3>
     <h3>Channels: [% file.channels %]</h3>
     <h3>Samplerate: [% file.samplerate %]hz</h3>
+    <h2>Metadata:</h2>
+    <table>
+      <tr>
+        <th>Artist</th>
+        <td><input type="text" value="[% file.artist %]" /></td>
+      </tr>
+      <tr>
+        <th>Album</th>
+        <td><input type="text" value="[% file.album %]" /></td>
+      </tr>
+      <tr>
+        <th>Albumartist</th>
+        <td><input type="text" value="[% file.albumartist %]" /></td>
+      </tr>
+      <tr>
+        <th>Title</th>
+        <td><input type="text" value="[% file.title %]" /></td>
+      </tr>
+      <tr>
+        <th>Tracknumber</th>
+        <td><input type="text" value="[% file.tracknumber %]" /></td>
+      </tr>
+      <tr>
+        <th>Musicbrainz album ID</th>
+        <td><input type="text" value="[% file.musicbrainz_albumid %]" /></td>
+      </tr>
+      <tr>
+        <th>Musicbrainz track ID</th>
+        <td><input type="text" value="[% file.musicbrainz_trackid %]" /></td>
+      </tr>
+    </table>
   [% IF matches %]
     <h2>Matching tracks:</h2>
     <table>
