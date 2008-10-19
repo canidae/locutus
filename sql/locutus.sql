@@ -67,13 +67,17 @@ CREATE TABLE file (
     albumartistsort character varying NOT NULL,
     artist character varying NOT NULL,
     artistsort character varying NOT NULL,
-    musicbrainz_albumartistid character(36) NOT NULL,
-    musicbrainz_albumid character(36) NOT NULL,
-    musicbrainz_artistid character(36) NOT NULL,
-    musicbrainz_trackid character(36) NOT NULL,
+    musicbrainz_albumartistid character varying(36) NOT NULL,
+    musicbrainz_albumid character varying(36) NOT NULL,
+    musicbrainz_artistid character varying(36) NOT NULL,
+    musicbrainz_trackid character varying(36) NOT NULL,
     title character varying NOT NULL,
     tracknumber character varying NOT NULL,
-    released character varying NOT NULL
+    released character varying NOT NULL,
+    CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length((musicbrainz_albumartistid)::text) = 0) OR (length((musicbrainz_albumartistid)::text) = 36))),
+    CONSTRAINT file_musicbrainz_albumid_check CHECK (((length((musicbrainz_albumid)::text) = 0) OR (length((musicbrainz_albumid)::text) = 36))),
+    CONSTRAINT file_musicbrainz_artistid_check CHECK (((length((musicbrainz_artistid)::text) = 0) OR (length((musicbrainz_artistid)::text) = 36))),
+    CONSTRAINT file_musicbrainz_trackid_check CHECK (((length((musicbrainz_trackid)::text) = 0) OR (length((musicbrainz_trackid)::text) = 36)))
 );
 
 
@@ -253,7 +257,7 @@ CREATE VIEW v_web_list_tracks AS
 --
 
 CREATE VIEW v_web_list_unmatched_files AS
-    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file WHERE ((file.musicbrainz_trackid = ''::bpchar) OR (NOT (file.musicbrainz_trackid IN (SELECT track.mbid FROM track))));
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file WHERE (((file.musicbrainz_trackid)::bpchar = ''::bpchar) OR (NOT ((file.musicbrainz_trackid)::bpchar IN (SELECT track.mbid FROM track))));
 
 
 --
