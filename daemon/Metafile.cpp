@@ -275,8 +275,6 @@ bool Metafile::setMetadata(const Track *track) {
 	musicbrainz_trackid = track->mbid;
 	title = track->title;
 	ostringstream tracknum;
-	if (track->tracknumber >= 0 && track->tracknumber <= 9)
-		tracknum << '0';
 	tracknum << track->tracknumber;
 	tracknumber = tracknum.str();
 	released = track->album->released;

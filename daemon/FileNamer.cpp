@@ -101,7 +101,10 @@ const string &FileNamer::getFilename(Metafile *file) {
 					break;
 
 				case TYPE_TRACKNUMBER:
-					tmp = file->tracknumber;
+					tmp = "";
+					if (atoi(file->tracknumber.c_str()) <= 9)
+						tmp.push_back('0');
+					tmp.append(file->tracknumber);
 					break;
 
 				case TYPE_DATE:
