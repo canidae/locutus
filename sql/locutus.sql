@@ -33,8 +33,7 @@ CREATE TABLE album (
     title character varying NOT NULL,
     released date,
     custom_artist_sortname character varying,
-    last_updated timestamp without time zone DEFAULT now() NOT NULL,
-    CONSTRAINT album_mbid_check CHECK ((length(mbid) = 36))
+    last_updated timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -46,8 +45,7 @@ CREATE TABLE artist (
     artist_id integer NOT NULL,
     mbid character(36) NOT NULL,
     name character varying NOT NULL,
-    sortname character varying NOT NULL,
-    CONSTRAINT artist_mbid_check CHECK ((length(mbid) = 36))
+    sortname character varying NOT NULL
 );
 
 
@@ -75,11 +73,7 @@ CREATE TABLE file (
     musicbrainz_trackid character(36) NOT NULL,
     title character varying NOT NULL,
     tracknumber character varying NOT NULL,
-    released character varying NOT NULL,
-    CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length(musicbrainz_albumartistid) = 0) OR (length(musicbrainz_albumartistid) = 36))),
-    CONSTRAINT file_musicbrainz_albumid_check CHECK (((length(musicbrainz_albumid) = 0) OR (length(musicbrainz_albumid) = 36))),
-    CONSTRAINT file_musicbrainz_artistid_check CHECK (((length(musicbrainz_artistid) = 0) OR (length(musicbrainz_artistid) = 36))),
-    CONSTRAINT file_musicbrainz_trackid_check CHECK (((length(musicbrainz_trackid) = 0) OR (length(musicbrainz_trackid) = 36)))
+    released character varying NOT NULL
 );
 
 
@@ -111,10 +105,7 @@ CREATE TABLE metatrack (
     artist_name character varying NOT NULL,
     album_mbid character(36) NOT NULL,
     album_title character varying NOT NULL,
-    last_updated timestamp without time zone DEFAULT now() NOT NULL,
-    CONSTRAINT metatrack_album_mbid_check CHECK ((length(album_mbid) = 36)),
-    CONSTRAINT metatrack_artist_mbid_check CHECK ((length(artist_mbid) = 36)),
-    CONSTRAINT metatrack_track_mbid_check CHECK ((length(track_mbid) = 36))
+    last_updated timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -124,8 +115,7 @@ CREATE TABLE metatrack (
 
 CREATE TABLE puid (
     puid_id integer NOT NULL,
-    puid character(36) NOT NULL,
-    CONSTRAINT puid_puid_check CHECK ((length(puid) = 36))
+    puid character(36) NOT NULL
 );
 
 
@@ -166,7 +156,6 @@ CREATE TABLE track (
     duration integer DEFAULT 0 NOT NULL,
     tracknumber integer NOT NULL,
     CONSTRAINT track_duration_check CHECK ((duration >= 0)),
-    CONSTRAINT track_mbid_check CHECK ((length(mbid) = 36)),
     CONSTRAINT track_tracknumber_check CHECK ((tracknumber > 0))
 );
 
