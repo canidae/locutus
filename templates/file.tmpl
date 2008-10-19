@@ -8,8 +8,7 @@
     <h3>Channels: [% file.channels %]</h3>
     <h3>Samplerate: [% file.samplerate %]hz</h3>
     <h2>Metadata:</h2>
-    <form action="file.pl">
-      <div><input type="hidden" name="fiid" value ="[% file.file_id %]" /></div>
+    <form action="file.pl?fiid=[% file.file_id %]" method="post">
       <table>
         <tr>
           <th>Artist</th>
