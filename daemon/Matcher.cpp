@@ -6,12 +6,12 @@
 #include "Matcher.h"
 #include "Metafile.h"
 #include "Metatrack.h"
-#include "WebService.h"
+#include "MusicBrainz.h"
 
 using namespace std;
 
 /* constructors/destructor */
-Matcher::Matcher(Database *database, WebService *webservice) : database(database), webservice(webservice) {
+Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(database), musicbrainz(musicbrainz) {
 	album_weight = database->loadSettingDouble(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
 	artist_weight = database->loadSettingDouble(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
 	combine_threshold = database->loadSettingDouble(COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
@@ -156,7 +156,7 @@ bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
 		return true; // already loaded
 	Album *album = new Album(mbid);
 	if (!database->loadAlbum(album)) {
-		if (webservice->lookupAlbum(album)) {
+		if (musicbrainz->lookupAlbum(album)) {
 			database->saveAlbum(*album);
 		} else {
 			/* hmm, didn't find the album? */
@@ -188,7 +188,7 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 		Metafile *mf = *file;
 		if (!puid_lookup || mf->puid.size() != 36)
 			continue;
-		vector<Metatrack> tracks = webservice->searchPUID(mf->puid);
+		vector<Metatrack> tracks = musicbrainz->searchPUID(mf->puid);
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			/* puid search won't return puid, so let's set it manually */
 			mt->puid = mf->puid;
@@ -313,7 +313,7 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 		Metafile *mf = *file;
 		if (!mf->meta_lookup)
 			continue;
-		vector<Metatrack> tracks = webservice->searchMetadata(group, *mf);
+		vector<Metatrack> tracks = musicbrainz->searchMetadata(group, *mf);
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			Match *m = compareMetafileWithMetatrack(mf, *mt);
 			if (m == NULL)

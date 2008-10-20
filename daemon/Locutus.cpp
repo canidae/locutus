@@ -7,7 +7,7 @@
 #include "Metafile.h"
 #include "PostgreSQL.h"
 //#include "PUIDGenerator.h"
-#include "WebService.h"
+#include "MusicBrainz.h"
 
 using namespace std;
 
@@ -15,8 +15,8 @@ using namespace std;
 Locutus::Locutus(Database *database) : database(database) {
 	filenamer = new FileNamer(database);
 	//puidgen = new PUIDGenerator();
-	webservice = new WebService(database);
-	matcher = new Matcher(database, webservice);
+	musicbrainz = new MusicBrainz(database);
+	matcher = new Matcher(database, musicbrainz);
 
 	input_dir = database->loadSettingString(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
 	if (input_dir.size() <= 0 || input_dir[input_dir.size() - 1] != '/')
@@ -33,7 +33,7 @@ Locutus::~Locutus() {
 	clearFiles();
 	//delete puidgen;
 	delete matcher;
-	delete webservice;
+	delete musicbrainz;
 	delete filenamer;
 }
 

@@ -57,7 +57,7 @@ class Database;
 class Match;
 class Metafile;
 class Metatrack;
-class WebService;
+class MusicBrainz;
 
 struct AlbumMatch {
 	Album *album;
@@ -66,14 +66,14 @@ struct AlbumMatch {
 
 class Matcher {
 	public:
-		Matcher(Database *database, WebService *webservice);
+		Matcher(Database *database, MusicBrainz *musicbrainz);
 		~Matcher();
 
 		void match(const std::string &group, const std::vector<Metafile *> &files);
 
 	private:
 		Database *database;
-		WebService *webservice;
+		MusicBrainz *musicbrainz;
 		bool duration_must_match;
 		bool mbid_lookup;
 		bool only_save_complete_albums;

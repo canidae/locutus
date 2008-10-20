@@ -27,8 +27,8 @@ class Database;
 class FileNamer;
 class Matcher;
 class Metafile;
+class MusicBrainz;
 //class PUIDGenerator;
-class WebService;
 
 class Locutus {
 	public:
@@ -44,7 +44,7 @@ class Locutus {
 		FileNamer *filenamer;
 		Matcher *matcher;
 		//PUIDGenerator *puidgen;
-		WebService *webservice;
+		MusicBrainz *musicbrainz;
 		std::list<std::string> dir_queue;
 		std::list<std::string> file_queue;
 		std::map<std::string, std::vector<Metafile *> > grouped_files;
