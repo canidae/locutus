@@ -116,11 +116,66 @@ string MusicBrainz::escapeString(const string &text) {
 	/* escape these characters:
 	 * + - && || ! ( ) { } [ ] ^ " ~ * ? : \ */
 	/* also change "_" to " " */
+	/* remember these suckers too:
+	 * "$": %24
+         * "&": %26
+         * "+": %2b
+         * ",": %2c
+         * "/": %2f
+         * ":": %3a
+         * ";": %3b
+         * "=": %3d
+         * "?": %3f
+         * "@": %40 */
+
 	ostringstream str;
 	for (string::size_type a = 0; a < text.size(); ++a) {
 		char c = text[a];
 		switch (c) {
+			case '$':
+				str << "%24";
+				break;
+
+			case '&':
+				if (a + 1 < text.size() && text[a + 1] == c)
+					str << "\\%26";
+				else
+					str << "%26";
+				break;
+
 			case '+':
+				str << "\\%2b";
+				break;
+
+			case ',':
+				str << "%2c";
+				break;
+
+			case '/':
+				str << "%2f";
+				break;
+
+			case ':':
+				str << "\\%3a";
+				break;
+
+			case ';':
+				str << "%3b";
+				break;
+
+			case '=':
+				str << "%3d";
+				break;
+
+			case '?':
+				str << "\\%3f";
+				break;
+
+			case '@':
+				str << "%40";
+				break;
+
+
 			case '-':
 			case '!':
 			case '(':
@@ -133,26 +188,24 @@ string MusicBrainz::escapeString(const string &text) {
 			case '"':
 			case '~':
 			case '*':
-			case '?':
-			case ':':
 			case '\\':
-				str << '\\';
+				str << '\\' << c;
 				break;
 
-			case '&':
 			case '|':
 				if (a + 1 < text.size() && text[a + 1] == c)
 					str << '\\';
+				str << c;
 				break;
 
 			case '_':
-				c = ' ';
+				str << ' ';
 				break;                                                                                                                 
 
 			default:
+				str << c;
 				break;
 		}
-		str << c;
 	}
 	return str.str();
 }
