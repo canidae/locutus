@@ -23,6 +23,7 @@ extern "C" {
 #include <string>
 #include <vector>
 
+class Audioscrobbler;
 class Database;
 class FileNamer;
 class Matcher;
@@ -40,6 +41,7 @@ class Locutus {
 		long run();
 
 	private:
+		Audioscrobbler *audioscrobbler;
 		Database *database;
 		FileNamer *filenamer;
 		Matcher *matcher;

@@ -2,7 +2,7 @@
 #include "Audioscrobbler.h"
 #include "Database.h"
 #include "Debug.h"
-#include "Track.h"
+#include "Metafile.h"
 
 using namespace ost;
 using namespace std;
@@ -20,14 +20,14 @@ Audioscrobbler::~Audioscrobbler() {
 }
 
 /* methods */
-const vector<string> &Audioscrobbler::getTags(Track *track) {
+const vector<string> &Audioscrobbler::getTags(Metafile *metafile) {
 	tags.clear();
-	if (track == NULL || track->artist == NULL || track->artist->name == "")
+	if (metafile == NULL)
 		return tags;
-	string artist = escapeString(track->artist->name);
+	string artist = escapeString(metafile->artist);
 	if (artist == "")
 		return tags;
-	string title = escapeString(track->title);
+	string title = escapeString(metafile->title);
 	string url;
 	if (title != "") {
 		url = track_tag_url;

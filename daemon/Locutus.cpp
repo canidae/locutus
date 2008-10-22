@@ -1,3 +1,4 @@
+#include "Audioscrobbler.h"
 #include "Database.h"
 #include "Debug.h"
 #include "FileNamer.h"
@@ -13,6 +14,7 @@ using namespace std;
 
 /* constructors/destructor */
 Locutus::Locutus(Database *database) : database(database) {
+	audioscrobbler = new Audioscrobbler(database);
 	filenamer = new FileNamer(database);
 	//puidgen = new PUIDGenerator();
 	musicbrainz = new MusicBrainz(database);
@@ -31,6 +33,7 @@ Locutus::Locutus(Database *database) : database(database) {
 
 Locutus::~Locutus() {
 	clearFiles();
+	delete audioscrobbler;
 	//delete puidgen;
 	delete matcher;
 	delete musicbrainz;
@@ -74,7 +77,12 @@ long Locutus::run() {
 			string filename = output_dir;
 			filename.append(filenamer->getFilename(*f));
 			string old_filename = (*f)->filename;
+			vector<string> tags = audioscrobbler->getTags(*f);
 			cout << "Would save: " << old_filename << endl;
+			cout << "      Tags: ";
+			for (vector<string>::iterator t = tags.begin(); t != tags.end(); ++t)
+				cout << *t << ", ";
+			cout << endl;
 			cout << "  Matching: " << (*f)->artist << " - " << (*f)->album << " - " << (*f)->tracknumber << " - " << (*f)->title << endl;
 			//if (!moveFile(*f, filename)) {
 				/* TODO: unable to move file */

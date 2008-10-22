@@ -18,14 +18,14 @@
 #include "WebService.h"
 
 class Database;
-class Track;
+class Metafile;
 
 class Audioscrobbler : public WebService {
 	public:
 		explicit Audioscrobbler(Database *database);
 		~Audioscrobbler();
 
-		const std::vector<std::string> &getTags(Track *track);
+		const std::vector<std::string> &getTags(Metafile *metafile);
 
 	private:
 		Database *database;
