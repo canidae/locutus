@@ -74,6 +74,7 @@ CREATE TABLE file (
     title character varying NOT NULL,
     tracknumber character varying NOT NULL,
     released character varying NOT NULL,
+    genre character varying NOT NULL,
     CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length((musicbrainz_albumartistid)::text) = 0) OR (length((musicbrainz_albumartistid)::text) = 36))),
     CONSTRAINT file_musicbrainz_albumid_check CHECK (((length((musicbrainz_albumid)::text) = 0) OR (length((musicbrainz_albumid)::text) = 36))),
     CONSTRAINT file_musicbrainz_artistid_check CHECK (((length((musicbrainz_artistid)::text) = 0) OR (length((musicbrainz_artistid)::text) = 36))),
@@ -177,7 +178,7 @@ CREATE VIEW v_daemon_load_album AS
 --
 
 CREATE VIEW v_daemon_load_metafile AS
-    SELECT f.filename, f.file_id, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released AS year FROM (file f LEFT JOIN puid p ON ((f.puid_id = p.puid_id)));
+    SELECT f.filename, f.file_id, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre FROM (file f LEFT JOIN puid p ON ((f.puid_id = p.puid_id)));
 
 
 --

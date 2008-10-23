@@ -115,6 +115,7 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->title = getString(0, 16);
 	metafile->tracknumber = getString(0, 17);
 	metafile->released = getString(0, 18);
+	metafile->genre = getString(0, 19);
 	return true;
 }
 

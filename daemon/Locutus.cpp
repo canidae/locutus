@@ -71,7 +71,7 @@ long Locutus::run() {
 			if (!(*f)->metadata_changed)
 				continue;
 			cout << "Would save: " << (*f)->filename << endl;
-			/* tags */
+			/* genre */
 			if (force_genre_lookup || (*f)->genre == "") {
 				vector<string> tags = audioscrobbler->getTags(*f);
 				if (tags.size() > 0)
