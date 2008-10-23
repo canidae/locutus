@@ -77,12 +77,12 @@ long Locutus::run() {
 			string filename = output_dir;
 			filename.append(filenamer->getFilename(*f));
 			string old_filename = (*f)->filename;
-			vector<string> tags = audioscrobbler->getTags(*f);
+			//vector<string> tags = audioscrobbler->getTags(*f);
 			cout << "Would save: " << old_filename << endl;
-			cout << "      Tags: ";
-			for (vector<string>::iterator t = tags.begin(); t != tags.end(); ++t)
-				cout << *t << ", ";
-			cout << endl;
+			//cout << "      Tags: ";
+			//for (vector<string>::iterator t = tags.begin(); t != tags.end(); ++t)
+			//	cout << *t << ", ";
+			//cout << endl;
 			cout << "  Matching: " << (*f)->artist << " - " << (*f)->album << " - " << (*f)->tracknumber << " - " << (*f)->title << endl;
 			//if (!moveFile(*f, filename)) {
 				/* TODO: unable to move file */

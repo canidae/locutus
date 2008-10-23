@@ -273,7 +273,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 			}
 			if (files_matched == 0 || (only_save_complete_albums && files_matched != (int) am->second.album->tracks.size()))
 				continue;
-			album_score /= (double) files_matched;
+			//album_score /= (double) files_matched;
 			album_score *= (double) files_matched / (double) am->second.album->tracks.size();
 			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << files_matched << " | Files: " << am->second.album->tracks.size() << endl;
 			if (album_score > best_album_score) {
@@ -298,13 +298,14 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 			Debug::warning(tmp.str());
 			continue;
 		}
-		if ((int) am->second.album->tracks.size() <= sf->second->metatrack.tracknumber || sf->second->metatrack.tracknumber < 0) {
+		int tnum = sf->second->metatrack.tracknumber - 1;
+		if ((int) am->second.album->tracks.size() <= tnum || tnum < 0) {
 			ostringstream tmp;
-			tmp << "File " << sf->first << " referenced to track " << sf->second->metatrack.tracknumber << " on album " << sf->second->metatrack.album_mbid << ", however that track does not exist";
+			tmp << "File " << sf->first << " referenced to track " << tnum << " on album " << sf->second->metatrack.album_mbid << ", however that track does not exist";
 			Debug::warning(tmp.str());
 			continue;
 		}
-		sf->second->metafile->setMetadata(am->second.album->tracks[sf->second->metatrack.tracknumber]);
+		sf->second->metafile->setMetadata(am->second.album->tracks[tnum]);
 	}
 }
 
