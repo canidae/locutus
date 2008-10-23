@@ -12,6 +12,7 @@ Audioscrobbler::Audioscrobbler(Database *database) : database(database) {
 	artist_tag_url = database->loadSettingString(AUDIOSCROBBLER_ARTIST_TAG_URL_KEY, AUDIOSCROBBLER_ARTIST_TAG_URL_VALUE, AUDIOSCROBBLER_ARTIST_TAG_URL_DESCRIPTION);
 	track_tag_url = database->loadSettingString(AUDIOSCROBBLER_TRACK_TAG_URL_KEY, AUDIOSCROBBLER_TRACK_TAG_URL_VALUE, AUDIOSCROBBLER_TRACK_TAG_URL_DESCRIPTION);
 	query_interval = database->loadSettingDouble(AUDIOSCROBBLER_QUERY_INTERVAL_KEY, AUDIOSCROBBLER_QUERY_INTERVAL_VALUE, AUDIOSCROBBLER_QUERY_INTERVAL_DESCRIPTION);
+	query_interval *= 1000000.0;
 	last_fetch.tv_sec = 0;
 	last_fetch.tv_usec = 0;
 }
@@ -118,8 +119,8 @@ XMLNode *Audioscrobbler::lookup(const std::string &url) {
 	if (gettimeofday(&tv, NULL) == 0) {
 		long msec_since_last = (last_fetch.tv_sec - tv.tv_sec) * 1000000;
 		msec_since_last += last_fetch.tv_usec - tv.tv_usec;
-		msec_since_last += query_interval * 1000000.0;
-		if (msec_since_last > 0) {
+		msec_since_last += query_interval;
+		if (msec_since_last > 0 && msec_since_last < query_interval) {
 			ostringstream tmp;
 			tmp << "Sleeping " << msec_since_last << "µs to avoid hammering Audioscrobbler";
 			Debug::info(tmp.str());

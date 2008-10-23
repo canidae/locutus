@@ -70,13 +70,14 @@ long Locutus::run() {
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
 			if (!(*f)->metadata_changed)
 				continue;
-			/* tags
-			vector<string> tags = audioscrobbler->getTags(*f);
-			cout << "      Tags: ";
-			for (vector<string>::iterator t = tags.begin(); t != tags.end(); ++t)
-				cout << *t << ", ";
-			cout << endl;
-			*/
+			cout << "Would save: " << (*f)->filename << endl;
+			/* tags */
+			if (force_genre_lookup || (*f)->genre == "") {
+				vector<string> tags = audioscrobbler->getTags(*f);
+				if (tags.size() > 0)
+					(*f)->genre = tags[0];
+				cout << "       Tag: " << (*f)->genre << endl;
+			}
 			/*
 			if (!(*f)->saveMetadata())
 				continue;
@@ -85,7 +86,6 @@ long Locutus::run() {
 			string filename = output_dir;
 			filename.append(filenamer->getFilename(*f));
 			string old_filename = (*f)->filename;
-			cout << "Would save: " << old_filename << endl;
 			cout << "  Matching: " << (*f)->artist << " - " << (*f)->album << " - " << (*f)->tracknumber << " - " << (*f)->title << endl;
 			//if (!moveFile(*f, filename)) {
 				/* TODO: unable to move file */

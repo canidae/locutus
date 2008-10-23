@@ -12,6 +12,7 @@ MusicBrainz::MusicBrainz(Database *database) : database(database) {
 	metadata_search_url = database->loadSettingString(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = database->loadSettingString(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 	query_interval = database->loadSettingDouble(MUSICBRAINZ_QUERY_INTERVAL_KEY, MUSICBRAINZ_QUERY_INTERVAL_VALUE, MUSICBRAINZ_QUERY_INTERVAL_DESCRIPTION);
+	query_interval *= 1000000.0;
 	last_fetch.tv_sec = 0;
 	last_fetch.tv_usec = 0;
 }
@@ -246,8 +247,8 @@ XMLNode *MusicBrainz::lookup(const std::string &url) {
 	if (gettimeofday(&tv, NULL) == 0) {
 		long msec_since_last = (last_fetch.tv_sec - tv.tv_sec) * 1000000;
 		msec_since_last += last_fetch.tv_usec - tv.tv_usec;
-		msec_since_last += query_interval * 1000000.0;
-		if (msec_since_last > 0) {
+		msec_since_last += query_interval;
+		if (msec_since_last > 0 && msec_since_last < query_interval) {
 			ostringstream tmp;
 			tmp << "Sleeping " << msec_since_last << "µs to avoid hammering MusicBrainz";
 			Debug::info(tmp.str());
