@@ -20,6 +20,7 @@ Locutus::Locutus(Database *database) : database(database) {
 	musicbrainz = new MusicBrainz(database);
 	matcher = new Matcher(database, musicbrainz);
 
+	force_genre_lookup = database->loadSettingBool(FORCE_GENRE_LOOKUP_KEY, FORCE_GENRE_LOOKUP_VALUE, FORCE_GENRE_LOOKUP_DESCRIPTION);
 	input_dir = database->loadSettingString(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
 	if (input_dir.size() <= 0 || input_dir[input_dir.size() - 1] != '/')
 		input_dir.push_back('/');
@@ -69,6 +70,13 @@ long Locutus::run() {
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
 			if (!(*f)->metadata_changed)
 				continue;
+			/* tags
+			vector<string> tags = audioscrobbler->getTags(*f);
+			cout << "      Tags: ";
+			for (vector<string>::iterator t = tags.begin(); t != tags.end(); ++t)
+				cout << *t << ", ";
+			cout << endl;
+			*/
 			/*
 			if (!(*f)->saveMetadata())
 				continue;
@@ -77,12 +85,7 @@ long Locutus::run() {
 			string filename = output_dir;
 			filename.append(filenamer->getFilename(*f));
 			string old_filename = (*f)->filename;
-			//vector<string> tags = audioscrobbler->getTags(*f);
 			cout << "Would save: " << old_filename << endl;
-			//cout << "      Tags: ";
-			//for (vector<string>::iterator t = tags.begin(); t != tags.end(); ++t)
-			//	cout << *t << ", ";
-			//cout << endl;
 			cout << "  Matching: " << (*f)->artist << " - " << (*f)->album << " - " << (*f)->tracknumber << " - " << (*f)->title << endl;
 			//if (!moveFile(*f, filename)) {
 				/* TODO: unable to move file */

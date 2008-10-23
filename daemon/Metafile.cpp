@@ -9,7 +9,7 @@ using namespace std;
 using namespace TagLib;
 
 /* constructors/destructor */
-Metafile::Metafile(const string &filename) : meta_lookup(false), metadata_changed(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber(""), values() {
+Metafile::Metafile(const string &filename) : meta_lookup(false), metadata_changed(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber(""), values() {
 }
 
 Metafile::~Metafile() {
@@ -371,6 +371,9 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 		frames = map["TDRC"];
 		if (!frames.isEmpty())
 			released = frames.front()->toString().to8Bit(true);
+		frames = map["TCON"];
+		if (!frames.isEmpty())
+			genre = frames.front()->toString().to8Bit(true);
 	}
 	/* overwrite with ape */
 	if (ape != NULL) {
@@ -399,6 +402,8 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 			tracknumber = map[APETRACKNUMBER].toString().to8Bit(true);
 		if (!map[APEDATE].isEmpty())
 			released = map[APEDATE].toString().to8Bit(true);
+		if (!map[APEGENRE].isEmpty())
+			genre = map[APEGENRE].toString().to8Bit(true);
 		if (!map[APEMUSICIP_PUID].isEmpty())
 			puid = map[APEMUSICIP_PUID].toString().to8Bit(true);
 	}
@@ -430,6 +435,8 @@ void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 		tracknumber = map[TRACKNUMBER].front().to8Bit(true);
 	if (!map[DATE].isEmpty())
 		released = map[DATE].front().to8Bit(true);
+	if (!map[GENRE].isEmpty())
+		genre = map[GENRE].front().to8Bit(true);
 	if (!map[MUSICIP_PUID].isEmpty())
 		puid = map[MUSICIP_PUID].front().to8Bit(true);
 }
@@ -447,6 +454,7 @@ void Metafile::saveAPETag(APE::Tag *tag) {
 	tag->addValue(APETITLE, title, true);
 	tag->addValue(APETRACKNUMBER, tracknumber, true);
 	tag->addValue(APEDATE, released, true);
+	tag->addValue(APEGENRE, genre, true);
 	//tag->addValue(APEMUSICIP_PUID, puid, true);
 }
 
@@ -499,6 +507,10 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	ID3v2::TextIdentificationFrame *tdrc = new ID3v2::TextIdentificationFrame(ByteVector("TDRC"), TagLib::String::UTF8);
 	tdrc->setText(released);
 	tag->addFrame(tdrc);
+	/* genre */
+	ID3v2::TextIdentificationFrame *tcon = new ID3v2::TextIdentificationFrame(ByteVector("TCON"), TagLib::String::UTF8);
+	tdrc->setText(genre);
+	tag->addFrame(tcon);
 	/* puid */
 	/*
 	ID3v2::UserTextIdentificationFrame *txxxpuid = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
@@ -520,5 +532,6 @@ void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
 	tag->addField(TITLE, title, true);
 	tag->addField(TRACKNUMBER, tracknumber, true);
 	tag->addField(DATE, released, true);
+	tag->addField(GENRE, genre, true);
 	//tag->addField(MUSICIP_PUID, track->puid, true);
 }

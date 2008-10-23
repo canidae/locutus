@@ -266,14 +266,15 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	string e_title = escapeString(metafile.title);
 	string e_tracknumber = escapeString(metafile.tracknumber);
 	string e_released = escapeString(metafile.released);
+	string e_genre = escapeString(metafile.genre);
 	if (old_filename == "") {
 		query.str("");
-		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released) SELECT '" << e_filename << "', " << metafile.duration << ", " << metafile.channels << ", " << metafile.bitrate << ", " << metafile.samplerate << ", ";
+		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre) SELECT '" << e_filename << "', " << metafile.duration << ", " << metafile.channels << ", " << metafile.bitrate << ", " << metafile.samplerate << ", ";
 		if (e_puid != "")
 			query << "(SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
 		else
 			query << "NULL, ";
-		query << "'" << e_album << "', '" << e_albumartist << "', '" << e_albumartistsort << "', '" << e_artist << "', '" << e_artistsort << "', '" << e_musicbrainz_albumartistid << "', '" << e_musicbrainz_albumid << "', '" << e_musicbrainz_artistid << "', '" << e_musicbrainz_trackid << "', '" << e_title << "', '" << e_tracknumber << "', '" << e_released << "' WHERE NOT EXISTS (SELECT true FROM file WHERE filename = '" << e_filename << "')";
+		query << "'" << e_album << "', '" << e_albumartist << "', '" << e_albumartistsort << "', '" << e_artist << "', '" << e_artistsort << "', '" << e_musicbrainz_albumartistid << "', '" << e_musicbrainz_albumid << "', '" << e_musicbrainz_artistid << "', '" << e_musicbrainz_trackid << "', '" << e_title << "', '" << e_tracknumber << "', '" << e_released << "' , '" << e_genre << "' WHERE NOT EXISTS (SELECT true FROM file WHERE filename = '" << e_filename << "')";
 		if (!doQuery(query.str())) {
 			Debug::notice("Unable to store file in database. See error above");
 			return false;
@@ -283,7 +284,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		query << "UPDATE file SET filename = '" << e_filename << "', duration = " << metafile.duration << ", channels = " << metafile.channels << ", bitrate = " << metafile.bitrate << ", samplerate = " << metafile.samplerate << ", ";
 		if (e_puid != "")
 			query << "puid = (SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
-		query << "album = '" << e_album << "', albumartist = '" << e_albumartist << "', albumartistsort = '" << e_albumartistsort << "', artist = '" << e_artist << "', artistsort = '" << e_artistsort << "', musicbrainz_albumartistid = '" << e_musicbrainz_albumartistid << "', musicbrainz_albumid = '" << e_musicbrainz_albumid << "', musicbrainz_artistid = '" << e_musicbrainz_artistid << "', musicbrainz_trackid = '" << e_musicbrainz_trackid << "', title = '" << e_title << "', tracknumber = '" << e_tracknumber << "', released = '" << e_released << "' WHERE filename = '" << e_old_filename << "'";
+		query << "album = '" << e_album << "', albumartist = '" << e_albumartist << "', albumartistsort = '" << e_albumartistsort << "', artist = '" << e_artist << "', artistsort = '" << e_artistsort << "', musicbrainz_albumartistid = '" << e_musicbrainz_albumartistid << "', musicbrainz_albumid = '" << e_musicbrainz_albumid << "', musicbrainz_artistid = '" << e_musicbrainz_artistid << "', musicbrainz_trackid = '" << e_musicbrainz_trackid << "', title = '" << e_title << "', tracknumber = '" << e_tracknumber << "', released = '" << e_released << "', genre = '" << e_genre << "' WHERE filename = '" << e_old_filename << "'";
 		if (!doQuery(query.str())) {
 			Debug::notice("Unable to store file in database. See error above");
 			return false;

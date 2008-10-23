@@ -14,6 +14,7 @@
 #define TITLE "TITLE"
 #define TRACKNUMBER "TRACKNUMBER"
 #define DATE "DATE"
+#define GENRE "GENRE"
 /* id3 crap */
 #define ID3_TXXX_ALBUMARTISTSORT "ALBUMARTISTSORT"
 #define ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID "MusicBrainz Album Artist Id"
@@ -35,6 +36,7 @@
 #define APETITLE "Title"
 #define APETRACKNUMBER "Track"
 #define APEDATE "Year"
+#define APEGENRE "Genre"
 
 #include <apetag.h>
 #include <fileref.h>
@@ -69,6 +71,7 @@ class Metafile {
 		std::string artist;
 		std::string artistsort;
 		std::string filename;
+		std::string genre;
 		std::string musicbrainz_albumartistid;
 		std::string musicbrainz_albumid;
 		std::string musicbrainz_artistid;
