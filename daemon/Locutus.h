@@ -11,7 +11,7 @@
 #define MUSIC_DUPLICATE_VALUE "/media/music/duplicates/"
 #define MUSIC_DUPLICATE_DESCRIPTION "Directory for duplicate files"
 #define FORCE_GENRE_LOOKUP_KEY "force_genre_lookup"
-#define FORCE_GENRE_LOOKUP_VALUE false
+#define FORCE_GENRE_LOOKUP_VALUE true
 #define FORCE_GENRE_LOOKUP_DESCRIPTION "Always fetch genre (or tag) from Audioscrobbler when saving a file, even if genre tag already exist for the file."
 
 extern "C" {
