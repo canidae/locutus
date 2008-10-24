@@ -18,7 +18,7 @@ bool Database::loadMetafile(Metafile *metafile) {
 	return false;
 }
 
-vector<Metafile> Database::loadMetafiles(const string &filename_patter) {
+vector<Metafile> Database::loadMetafiles(const string &filename_pattern) {
 	vector<Metafile> files;
 	files.clear();
 	return files;
@@ -38,6 +38,10 @@ int Database::loadSettingInt(const string &key, int default_value, const string 
 
 string Database::loadSettingString(const string &key, const string &default_value, const string &description) {
 	return default_value;
+}
+
+bool Database::removeMetafiles(const vector<Metafile> &files) {
+	return false;
 }
 
 bool Database::saveAlbum(const Album &album) {

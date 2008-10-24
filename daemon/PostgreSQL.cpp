@@ -198,6 +198,21 @@ string PostgreSQL::loadSettingString(const string &key, const string &default_va
 	return back;
 }
 
+bool PostgreSQL::removeMetafiles(const vector<Metafile> &files) {
+	ostringstream query;
+	query.str("");
+	for (vector<Metafile>::const_iterator f = files.begin(); f != files.end(); ++f) {
+		if (query.str() == "")
+			query << "DELETE FROM file WHERE filename IN ('" << escapeString(f->filename) << "'";
+		else
+			query << "', '" << escapeString(f->filename) << "'";
+	}
+	if (query.str() == "")
+		return true;
+	query << "')";
+	return doQuery(query.str());
+}
+
 bool PostgreSQL::saveAlbum(const Album &album) {
 	if (album.mbid.size() != 36) {
 		string msg = "Unable to save album in cache. Illegal MusicBrainz ID: ";
