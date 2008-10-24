@@ -16,9 +16,10 @@
 #define TYPE_TRACKNUMBER 11
 #define TYPE_DATE 12
 #define TYPE_CUSTOM_ARTIST 13 // custom_artist_sortname, albumartistsort (unless va), artistsort
+#define TYPE_GENRE 14 // custom_artist_sortname, albumartistsort (unless va), artistsort
 #define FILENAME_FORMAT_KEY "filename_format"
 #define FILENAME_FORMAT_VALUE "%albumartist%/%album%/%tracknumber% - %artist% - %title%"
-#define FILENAME_FORMAT_DESCRIPTION "Output filename format. Available keys: %album%, %albumartist%, %albumartistsort%, %artist%, %artistsort%, %musicbrainz_albumartistid%, %musicbrainz_albumid%, %musicbrainz_artistid%, %musicbrainz_trackid%, %musicip_puid%, %title%, %tracknumber%, %date%, %custom_artist%."
+#define FILENAME_FORMAT_DESCRIPTION "Output filename format. Available keys: %album%, %albumartist%, %albumartistsort%, %artist%, %artistsort%, %musicbrainz_albumartistid%, %musicbrainz_albumid%, %musicbrainz_artistid%, %musicbrainz_trackid%, %musicip_puid%, %title%, %tracknumber%, %date%, %custom_artist%, %genre%."
 
 #include <map>
 #include <string>

@@ -21,6 +21,7 @@ FileNamer::FileNamer(Database *database) : database(database) {
 	format_mapping["%tracknumber%"] = TYPE_TRACKNUMBER;
 	format_mapping["%date%"] = TYPE_DATE;
 	format_mapping["%custom_artist%"] = TYPE_CUSTOM_ARTIST;
+	format_mapping["%genre%"] = TYPE_GENRE;
 
 	file_format = database->loadSettingString(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
 }
@@ -126,6 +127,9 @@ const string &FileNamer::getFilename(Metafile *file) {
 					}
 					*/
 					break;
+
+				case TYPE_GENRE:
+					tmp = file->genre;
 
 				default:
 					/* didn't match anything, probably static entry */
