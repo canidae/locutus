@@ -72,35 +72,7 @@ long Locutus::run() {
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
 			if (!(*f)->metadata_changed)
 				continue;
-			cout << "Would save: " << (*f)->filename << endl;
-			/* genre */
-			if (force_genre_lookup || (*f)->genre == "") {
-				vector<string> tags = audioscrobbler->getTags(*f);
-				if (tags.size() > 0)
-					(*f)->genre = tags[0];
-				cout << "       Tag: " << (*f)->genre << endl;
-			}
-			/* move file */
-			string filename = output_dir;
-			filename.append(filenamer->getFilename(*f));
-			string::size_type last_dot = filename.find_last_of('.');
-			if (last_dot != string::npos) {
-				string filename_without_extension = filename.substr(0, last_dot);
-				vector<Metafile> files = database->loadMetafiles(filename_without_extension);
-				if (files.size() > 0) {
-					/* this file already exist, which should we keep? */
-				}
-			}
-			string old_filename = (*f)->filename;
-			cout << "  Matching: " << (*f)->artist << " - " << (*f)->album << " - " << (*f)->tracknumber << " - " << (*f)->title << endl;
-			/*
-			if (!(*f)->saveMetadata())
-				continue;
-			*/
-			//if (!moveFile(*f, filename)) {
-				/* TODO: unable to move file */
-			//}
-			//database->saveMetafile(**f, old_filename); // metadata may have changed even if path haven't
+			saveFile(*f);
 		}
 	}
 	/* submit new puids? */
@@ -216,6 +188,43 @@ void Locutus::removeGoneFiles() {
 		files.erase(f++);
 	}
 	database->removeMetafiles(files);
+}
+
+void Locutus::saveFile(Metafile *file) {
+	cout << "Would save: " << file->filename << endl;
+	/* genre */
+	if (force_genre_lookup || file->genre == "") {
+		vector<string> tags = audioscrobbler->getTags(file);
+		if (tags.size() > 0)
+			file->genre = tags[0];
+		cout << "       Tag: " << file->genre << endl;
+	}
+	/* move file */
+	string filename = output_dir;
+	filename.append(filenamer->getFilename(file));
+	string::size_type last_dot = filename.find_last_of('.');
+	if (last_dot != string::npos) {
+		string filename_without_extension = filename.substr(0, last_dot);
+		vector<Metafile> files = database->loadMetafiles(filename_without_extension);
+		if (files.size() > 0) {
+			/* this file already exist, which should we keep?
+			 * issue here:
+			 * if we decide to move the file already existing, then we need to
+			 * check if the file exists in "grouped_files" and update path there.
+			 * otherwise the path will be wrong and all kinds of weird stuff will
+			 * happen */
+		}
+	}
+	string old_filename = file->filename;
+	cout << "  Matching: " << file->artist << " - " << file->album << " - " << file->tracknumber << " - " << file->title << endl;
+	/*
+	   if (!file->saveMetadata())
+	   continue;
+	   if (!moveFile(*f, filename)) {
+	// TODO: unable to move file
+	}
+	database->saveMetafile(**f, old_filename); // metadata may have changed even if path haven't
+	*/
 }
 
 void Locutus::scanFiles(const string &directory) {
