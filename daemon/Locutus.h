@@ -7,9 +7,6 @@
 #define MUSIC_INPUT_KEY "input_directory"
 #define MUSIC_INPUT_VALUE "/media/music/unsorted/"
 #define MUSIC_INPUT_DESCRIPTION "Input directory"
-#define MUSIC_DUPLICATE_KEY "duplicate_directory"
-#define MUSIC_DUPLICATE_VALUE "/media/music/duplicates/"
-#define MUSIC_DUPLICATE_DESCRIPTION "Directory for duplicate files"
 #define FORCE_GENRE_LOOKUP_KEY "force_genre_lookup"
 #define FORCE_GENRE_LOOKUP_VALUE true
 #define FORCE_GENRE_LOOKUP_DESCRIPTION "Always fetch genre (or tag) from Audioscrobbler when saving a file, even if genre tag already exist for the file."
@@ -54,7 +51,6 @@ class Locutus {
 		std::list<std::string> dir_queue;
 		std::list<std::string> file_queue;
 		std::map<std::string, std::vector<Metafile *> > grouped_files;
-		std::string duplicate_dir;
 		std::string input_dir;
 		std::string output_dir;
 

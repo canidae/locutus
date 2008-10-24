@@ -27,9 +27,6 @@ Locutus::Locutus(Database *database) : database(database) {
 	output_dir = database->loadSettingString(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
 	if (output_dir.size() <= 0 || output_dir[output_dir.size() - 1] != '/')
 		output_dir.push_back('/');
-	duplicate_dir = database->loadSettingString(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
-	if (duplicate_dir.size() <= 0 || duplicate_dir[duplicate_dir.size() - 1] != '/')
-		duplicate_dir.push_back('/');
 }
 
 Locutus::~Locutus() {
@@ -218,10 +215,10 @@ void Locutus::saveFile(Metafile *file) {
 	string old_filename = file->filename;
 	cout << "  Matching: " << file->artist << " - " << file->album << " - " << file->tracknumber << " - " << file->title << endl;
 	/*
-	   if (!file->saveMetadata())
-	   continue;
-	   if (!moveFile(*f, filename)) {
-	// TODO: unable to move file
+	if (!file->saveMetadata())
+		continue;
+	if (!moveFile(*f, filename)) {
+		// TODO: unable to move file
 	}
 	database->saveMetafile(**f, old_filename); // metadata may have changed even if path haven't
 	*/
