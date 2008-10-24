@@ -57,6 +57,8 @@ void Locutus::trim(string *text) {
 
 /* methods */
 long Locutus::run() {
+	/* remove file entries where file doesn't exist */
+	removeGoneFiles();
 	/* parse sorted directory */
 	Debug::info("Scanning output directory");
 	scanFiles(output_dir);
@@ -95,8 +97,6 @@ long Locutus::run() {
 	}
 	/* submit new puids? */
 	// TODO
-	/* remove file entries where file doesn't exist */
-	removeGoneFiles();
 	/* return */
 	return 10000;
 }
@@ -197,27 +197,17 @@ bool Locutus::parseFile() {
 }
 
 void Locutus::removeGoneFiles() {
-	/* FIXME: this broke when we made the database layer
-	if (!database->query("SELECT file_id, filename FROM file"))
-		return;
+	vector<Metafile> files = database->loadMetafiles("");
 	struct stat file_info;
-	ostringstream remove;
-	remove.str("");
-	for (int r = 0; r < database->getRows(); ++r) {
-		if (stat(database->getString(r, 1).c_str(), &file_info) == 0)
+	for (vector<Metafile>::iterator f = files.begin(); f != files.end(); ) {
+		if (stat(f->filename.c_str(), &file_info) == 0) {
+			++f;
 			continue;
-		// unable to get info about this file, remove it from database
-		if (remove.str() == "")
-			remove << "DELETE FROM file WHERE file_id IN (" << database->getInt(r, 0);
-		else
-			remove << ", " << database->getInt(r, 0);
+		}
+		// unable to get info about this file, remove it from files
+		files.erase(f++);
 	}
-	if (remove.str() == "")
-		return;
-	// there are entries in the file table that should go
-	remove << ")";
-	database->query(remove.str());
-	*/
+	database->removeMetafiles(files);
 }
 
 void Locutus::scanFiles(const string &directory) {
