@@ -14,12 +14,13 @@ extern "C" {
 #include <libpq-fe.h>
 }
 #include <string>
+#include <vector>
 #include "Database.h"
+#include "Metafile.h"
 
 class Album;
 class Artist;
 class Match;
-class Metafile;
 class Metatrack;
 class Track;
 
@@ -30,6 +31,7 @@ class PostgreSQL : public Database {
 
 		bool loadAlbum(Album *album);
 		bool loadMetafile(Metafile *metafile);
+		std::vector<Metafile> loadMetafiles(const std::string &filename_pattern);
 		bool loadSettingBool(const std::string &key, bool default_value, const std::string &description);
 		double loadSettingDouble(const std::string &key, double default_value, const std::string &description);
 		int loadSettingInt(const std::string &key, int default_value, const std::string &description);

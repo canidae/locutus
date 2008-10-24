@@ -2,7 +2,6 @@
 #include "Artist.h"
 #include "Debug.h"
 #include "Match.h"
-#include "Metafile.h"
 #include "Metatrack.h"
 #include "PostgreSQL.h"
 #include "Track.h"
@@ -117,6 +116,39 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->released = getString(0, 18);
 	metafile->genre = getString(0, 19);
 	return true;
+}
+
+vector<Metafile> PostgreSQL::loadMetafiles(const string &filename_pattern) {
+	string e_filename_pattern = escapeString(filename_pattern);
+	vector<Metafile> files;
+	files.clear();
+	ostringstream query;
+	query << "SELECT * FROM v_daemon_load_metafile WHERE filename LIKE '%" << e_filename_pattern << "%'";
+	if (!doQuery(query.str()) || getRows() <= 0)
+		return files;
+	for (int r = 0; r < getRows(); ++r) {
+		Metafile metafile(getString(r, 0));
+		metafile.duration = getInt(r, 2);
+		metafile.channels = getInt(r, 3);
+		metafile.bitrate = getInt(r, 4);
+		metafile.samplerate = getInt(r, 5);
+		metafile.puid = getString(r, 6);
+		metafile.album = getString(r, 7);
+		metafile.albumartist = getString(r, 8);
+		metafile.albumartistsort = getString(r, 9);
+		metafile.artist = getString(r, 10);
+		metafile.artistsort = getString(r, 11);
+		metafile.musicbrainz_albumartistid = getString(r, 12);
+		metafile.musicbrainz_albumid = getString(r, 13);
+		metafile.musicbrainz_artistid = getString(r, 14);
+		metafile.musicbrainz_trackid = getString(r, 15);
+		metafile.title = getString(r, 16);
+		metafile.tracknumber = getString(r, 17);
+		metafile.released = getString(r, 18);
+		metafile.genre = getString(r, 19);
+		files.push_back(metafile);
+	}
+	return files;
 }
 
 bool PostgreSQL::loadSettingBool(const string &key, bool default_value, const string &description) {

@@ -18,6 +18,12 @@ bool Database::loadMetafile(Metafile *metafile) {
 	return false;
 }
 
+vector<Metafile> Database::loadMetafiles(const string &filename_patter) {
+	vector<Metafile> files;
+	files.clear();
+	return files;
+}
+
 bool Database::loadSettingBool(const string &key, bool default_value, const string &description) {
 	return default_value;
 }
