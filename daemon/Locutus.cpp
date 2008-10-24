@@ -80,15 +80,23 @@ long Locutus::run() {
 					(*f)->genre = tags[0];
 				cout << "       Tag: " << (*f)->genre << endl;
 			}
+			/* move file */
+			string filename = output_dir;
+			filename.append(filenamer->getFilename(*f));
+			string::size_type last_dot = filename.find_last_of('.');
+			if (last_dot != string::npos) {
+				string filename_without_extension = filename.substr(0, last_dot);
+				vector<Metafile> files = database->loadMetafiles(filename_without_extension);
+				if (files.size() > 0) {
+					/* this file already exist, which should we keep? */
+				}
+			}
+			string old_filename = (*f)->filename;
+			cout << "  Matching: " << (*f)->artist << " - " << (*f)->album << " - " << (*f)->tracknumber << " - " << (*f)->title << endl;
 			/*
 			if (!(*f)->saveMetadata())
 				continue;
 			*/
-			/* move file */
-			string filename = output_dir;
-			filename.append(filenamer->getFilename(*f));
-			string old_filename = (*f)->filename;
-			cout << "  Matching: " << (*f)->artist << " - " << (*f)->album << " - " << (*f)->tracknumber << " - " << (*f)->title << endl;
 			//if (!moveFile(*f, filename)) {
 				/* TODO: unable to move file */
 			//}

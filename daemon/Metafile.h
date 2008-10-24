@@ -61,6 +61,7 @@ class Metafile {
 	public:
 		bool meta_lookup;
 		bool metadata_changed;
+		bool pinned;
 		int bitrate;
 		int channels;
 		int duration;
