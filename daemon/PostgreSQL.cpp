@@ -124,7 +124,7 @@ vector<Metafile> PostgreSQL::loadMetafiles(const string &filename_pattern) {
 	vector<Metafile> files;
 	files.clear();
 	ostringstream query;
-	query << "SELECT * FROM v_daemon_load_metafile WHERE filename LIKE '%" << e_filename_pattern << "%'";
+	query << "SELECT * FROM v_daemon_load_metafile WHERE filename LIKE '" << e_filename_pattern << "%'";
 	if (!doQuery(query.str()) || getRows() <= 0)
 		return files;
 	for (int r = 0; r < getRows(); ++r) {
