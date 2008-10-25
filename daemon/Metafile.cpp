@@ -460,6 +460,7 @@ void Metafile::saveAPETag(APE::Tag *tag) {
 
 void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	/* first clear the frames we're gonna use */
+	tag->removeFrames(ByteVector("TCON"));
 	tag->removeFrames(ByteVector("TDRC"));
 	tag->removeFrames(ByteVector("TPE2"));
 	tag->removeFrames(ByteVector("TSOP"));
