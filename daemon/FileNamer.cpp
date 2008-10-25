@@ -24,6 +24,10 @@ FileNamer::FileNamer(Database *database) : database(database) {
 	format_mapping["%genre%"] = TYPE_GENRE;
 
 	file_format = database->loadSettingString(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
+	illegal_characters = database->loadSettingString(FILENAME_ILLEGAL_CHARACTERS_KEY, FILENAME_ILLEGAL_CHARACTERS_VALUE, FILENAME_ILLEGAL_CHARACTERS_DESCRIPTION);
+	string::size_type pos = illegal_characters.find('_', 0);
+	if (pos != string::npos)
+		illegal_characters.erase(pos, 1); // some idiot added "_" to illegal_characters
 }
 
 FileNamer::~FileNamer() {
@@ -136,11 +140,18 @@ const string &FileNamer::getFilename(Metafile *file) {
 					tmp = replace->first;
 					break;
 			}
+			convertIllegalCharacters(&tmp);
 			filename.erase(start, replace->first.size());
 			filename.insert(start, tmp);
 			start += tmp.size();
 		}
 	}
-	/* TODO: certain characters are illegal, we're not handling this yet, are we? */
 	return filename;
+}
+
+/* private methods */
+void FileNamer::convertIllegalCharacters(string *text) {
+	string::size_type pos = 0;
+	while ((pos = text->find_first_of(illegal_characters), pos) != string::npos)
+		text->replace(pos, 1, "_");
 }

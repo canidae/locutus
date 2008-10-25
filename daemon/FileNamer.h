@@ -20,6 +20,9 @@
 #define FILENAME_FORMAT_KEY "filename_format"
 #define FILENAME_FORMAT_VALUE "%albumartist%/%album%/%tracknumber% - %artist% - %title%"
 #define FILENAME_FORMAT_DESCRIPTION "Output filename format. Available keys: %album%, %albumartist%, %albumartistsort%, %artist%, %artistsort%, %musicbrainz_albumartistid%, %musicbrainz_albumid%, %musicbrainz_artistid%, %musicbrainz_trackid%, %musicip_puid%, %title%, %tracknumber%, %date%, %custom_artist%, %genre%."
+#define FILENAME_ILLEGAL_CHARACTERS_KEY "filename_illegal_characters"
+#define FILENAME_ILLEGAL_CHARACTERS_VALUE "/"
+#define FILENAME_ILLEGAL_CHARACTERS_DESCRIPTION "Characters in metadata that will be converted to '_' in filename."
 
 #include <map>
 #include <string>
@@ -39,5 +42,8 @@ class FileNamer {
 		std::map<std::string, int> format_mapping;
 		std::string filename;
 		std::string file_format;
+		std::string illegal_characters;
+
+		void convertIllegalCharacters(std::string *text);
 };
 #endif
