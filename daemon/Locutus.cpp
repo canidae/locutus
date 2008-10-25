@@ -106,8 +106,7 @@ bool Locutus::moveFile(Metafile *file, const string &filename) {
 		Debug::warning(dirname);
 		return false;
 	}
-	/* TODO: currently it overwrites files, not good */
-	if (rename(file->filename.c_str(), filename.c_str()) == 0) {
+	if (stat(filename.c_str(), &data) != 0 && rename(file->filename.c_str(), filename.c_str()) == 0) {
 		/* was able to move file, let's also try changing the permissions to 0664 */
 		mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
 		chmod(filename.c_str(), mode);
@@ -115,9 +114,6 @@ bool Locutus::moveFile(Metafile *file, const string &filename) {
 		return true;
 	}
 	/* unable to move file for some reason */
-	dirname = "Unable to move file: ";
-	dirname.append(filename);
-	Debug::warning(dirname);
 	return false;
 }
 
@@ -196,31 +192,110 @@ void Locutus::saveFile(Metafile *file) {
 			file->genre = tags[0];
 		cout << "       Tag: " << file->genre << endl;
 	}
-	/* move file */
+	/* create new filename */
+	string old_filename = file->filename;
 	string filename = output_dir;
 	filename.append(filenamer->getFilename(file));
-	string::size_type last_dot = filename.find_last_of('.');
-	if (last_dot != string::npos) {
-		string filename_without_extension = filename.substr(0, last_dot);
-		vector<Metafile> files = database->loadMetafiles(filename_without_extension);
-		if (files.size() > 0) {
-			/* this file already exist, which should we keep?
-			 * issue here:
-			 * if we decide to move the file already existing, then we need to
-			 * check if the file exists in "grouped_files" and update path there.
-			 * otherwise the path will be wrong and all kinds of weird stuff will
-			 * happen */
+	/* check if file (possibly with different extension) already exist */
+	string filename_without_extension = filename.substr(0, filename.find_last_of('.'));
+	vector<Metafile> files = database->loadMetafiles(filename_without_extension);
+	unsigned long file_quality = file->bitrate * file->channels * file->samplerate;
+	for (vector<Metafile>::iterator f = files.begin(); f != files.end(); ++f) {
+		/* it is possible that loadMetafiles() return other tracks which happen
+		 * to match current filename (we're searching for 'blabla%' which would
+		 * match 'blablabla'), so we need to check that musicbrainz_trackid match */
+		if (file->musicbrainz_trackid != f->musicbrainz_trackid)
+			continue;
+		unsigned long cur_quality = f->bitrate * f->channels * f->samplerate;
+		if (f->pinned || file_quality <= cur_quality || !file->pinned) {
+			/* an existing file is better.
+			 * don't move the new file, but update the metadata */
+			filename = old_filename;
+			break;
 		}
+		/* new file is better */
+		/* find a name for the existing file in the input directory */
+		string tmp_filename = input_dir;
+		tmp_filename.append("duplicates/");
+		string tmp_gen_filename = filenamer->getFilename(&*f);
+		string::size_type pos = tmp_gen_filename.find_last_of('.');
+		string tmp_extension = (pos == string::npos) ? "" : tmp_gen_filename.substr(pos);
+		tmp_filename.append(tmp_gen_filename.substr(0, pos));
+
+		ostringstream tmp;
+		tmp << tmp_filename << tmp_extension;
+		bool cant_move = false;
+		struct stat data;
+		if (stat(tmp.str().c_str(), &data) == 0) {
+			/* file already exist, add " (<copy>)" before extension
+			 * until we find an available filename or <copy> reach 100 */
+			cant_move = true;
+			for (int copy = 1; copy < 100; ++copy) {
+				tmp.str("");
+				tmp << tmp_filename << " (" << copy << ")" << tmp_extension;
+				if (stat(tmp.str().c_str(), &data) == 0)
+					continue;
+				/* found available filename */
+				cant_move = false;
+				break;
+			}
+		}
+		if (cant_move) {
+			/* couldn't find a new filename for the existing file.
+			 * we'll set filename to old_filename so we won't move
+			 * the new file, despite it begin better */
+			filename = old_filename;
+			ostringstream tmp2;
+			tmp2 << "Unable to find a new filename for duplicate file " << f->filename;
+			Debug::notice(tmp2.str());
+			break;
+		}
+		/* move the existing file */
+		if (!moveFile(&*f, tmp.str())) {
+			/* hmm, couldn't move the existing file.
+			 * then we can't move new file either */
+			filename = old_filename;
+			ostringstream tmp2;
+			tmp2 << "Unable to move duplicate file " << f->filename << " to " << tmp.str();
+			Debug::notice(tmp2.str());
+			break;
+		}
+		/* find and update the file in grouped_files */
+		bool stop = false;
+		for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end() && !stop; ++gf) {
+			for (vector<Metafile *>::iterator f2 = gf->second.begin(); f2 != gf->second.end(); ++f2) {
+				if ((*f2)->filename != f->filename)
+					continue;
+				(*f2)->filename = tmp.str();
+				stop = true;
+				break;
+			}
+		}
+		/* update database for the existing file */
+		string tmp_old_filename = f->filename;
+		f->filename = tmp.str();
+		database->saveMetafile(*f, tmp_old_filename);
 	}
-	string old_filename = file->filename;
 	cout << "  Matching: " << file->artist << " - " << file->album << " - " << file->tracknumber << " - " << file->title << endl;
+	/* save metadata */
 	/*
 	if (!file->saveMetadata())
 		continue;
-	if (!moveFile(*f, filename)) {
-		// TODO: unable to move file
+	*/
+	/* move file */
+	/*
+	if (filename != old_filename) {
+		if (!moveFile(file, filename)) {
+			file->filename = old_filename;
+			ostringstream tmp;
+			tmp << "Unable to move file " << old_filename << " to " << filename;
+			Debug::warning(tmp.str());
+		}
 	}
-	database->saveMetafile(**f, old_filename); // metadata may have changed even if path haven't
+	*/
+	/* update database */
+	/*
+	database->saveMetafile(*file, old_filename); // metadata may have changed even if path haven't
 	*/
 }
 

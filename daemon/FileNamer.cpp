@@ -141,5 +141,6 @@ const string &FileNamer::getFilename(Metafile *file) {
 			start += tmp.size();
 		}
 	}
+	/* TODO: certain characters are illegal, we're not handling this yet, are we? */
 	return filename;
 }
