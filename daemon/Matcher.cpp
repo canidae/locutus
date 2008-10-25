@@ -248,7 +248,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 					for (vector<Match *>::iterator m = t->second.begin(); m != t->second.end(); ++m) {
 						if (used_files.find((*m)->metafile->filename) != used_files.end() || save_files.find((*m)->metafile->filename) != save_files.end())
 							continue; // file already used
-						else if ((*m)->total_score < best_match_score)
+						else if ((*m)->total_score <= best_match_score)
 							continue; // already found a better match
 						else if (!(*m)->mbid_match && (*m)->puid_match && (*m)->meta_score < puid_min_score)
 							continue; // puid compare with too low meta_score
