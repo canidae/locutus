@@ -179,7 +179,7 @@ void Locutus::removeGoneFiles() {
 			continue;
 		}
 		// unable to get info about this file, remove it from files
-		files.erase(f++);
+		f = files.erase(f);
 	}
 	database->removeMetafiles(files);
 }

@@ -275,7 +275,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				continue;
 			//album_score /= (double) files_matched;
 			album_score *= (double) files_matched / (double) am->second.album->tracks.size();
-			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << files_matched << " | Files: " << am->second.album->tracks.size() << endl;
+			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << files_matched << " | Files: " << am->second.album->tracks.size() << " | Group: " << files.size() << endl;
 			if (album_score > best_album_score) {
 				best_album_score = album_score;
 				best_album_files = album_files;
@@ -301,7 +301,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		 * equal to files.size() we can save the files afterall */
 		bool unmatched_are_duplicates = true;
 		for (map<string, double>::iterator bfm = best_file_match.begin(); bfm != best_file_match.end(); ++bfm) {
-			if (bfm->second < metadata_min_score || save_files.find(bfm->first) == save_files.end()) {
+			if (bfm->second < metadata_min_score && save_files.find(bfm->first) == save_files.end()) {
 				/* FIXME?
 				 * bfm->second is total_score, not just metadata_score.
 				 * meaning that mbid match & puid match will return
