@@ -207,11 +207,11 @@ bool PostgreSQL::removeMetafiles(const vector<Metafile> &files) {
 		if (query.str() == "")
 			query << "DELETE FROM file WHERE filename IN ('" << escapeString(f->filename) << "'";
 		else
-			query << "', '" << escapeString(f->filename) << "'";
+			query << ", '" << escapeString(f->filename) << "'";
 	}
 	if (query.str() == "")
 		return true;
-	query << "')";
+	query << ")";
 	return doQuery(query.str());
 }
 
