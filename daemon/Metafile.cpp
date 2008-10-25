@@ -510,7 +510,7 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	tag->addFrame(tdrc);
 	/* genre */
 	ID3v2::TextIdentificationFrame *tcon = new ID3v2::TextIdentificationFrame(ByteVector("TCON"), TagLib::String::UTF8);
-	tdrc->setText(genre);
+	tcon->setText(genre);
 	tag->addFrame(tcon);
 	/* puid */
 	/*
