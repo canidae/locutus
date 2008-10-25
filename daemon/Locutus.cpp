@@ -173,7 +173,8 @@ void Locutus::removeGoneFiles() {
 	vector<Metafile> files = database->loadMetafiles("");
 	struct stat file_info;
 	for (vector<Metafile>::iterator f = files.begin(); f != files.end(); ) {
-		if (stat(f->filename.c_str(), &file_info) == 0) {
+		if (stat(f->filename.c_str(), &file_info) != 0) {
+			/* file is present, don't remove it from files */
 			++f;
 			continue;
 		}
