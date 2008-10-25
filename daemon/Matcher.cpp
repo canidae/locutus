@@ -236,16 +236,14 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				continue;
 			used_files.clear();
 			used_tracks.clear();
-			int files_matched = 0;
+			int tracks_matched = 0;
 			double album_score = 0.0;
 			album_files.clear();
 			/* find best track */
-			for (map<string, vector<Match *> >::iterator ttmp = am->second.matches.begin(); ttmp != am->second.matches.end(); ++ttmp) {
+			while (true) {
 				Match *best_match = NULL;
 				double best_match_score = -1.0;
 				for (map<string, vector<Match *> >::iterator t = am->second.matches.begin(); t != am->second.matches.end(); ++t) {
-					if (used_tracks.find(t->first) != used_tracks.end())
-						continue;
 					/* find best file */
 					for (vector<Match *>::iterator m = t->second.begin(); m != t->second.end(); ++m) {
 						if (used_files.find((*m)->metafile->filename) != used_files.end() || save_files.find((*m)->metafile->filename) != save_files.end())
@@ -264,18 +262,20 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 					}
 				}
 				if (best_match == NULL)
-					continue;
+					break;
 				used_files[best_match->metafile->filename] = true;
-				used_tracks[best_match->metatrack.track_mbid] = true;
-				++files_matched;
-				album_score += best_match_score;
+				if (used_tracks.find(best_match->metatrack.track_mbid) == used_tracks.end()) {
+					used_tracks[best_match->metatrack.track_mbid] = true;
+					++tracks_matched;
+					album_score += best_match_score;
+				}
 				album_files.push_back(best_match);
 			}
-			if (files_matched == 0 || (only_save_complete_albums && files_matched != (int) am->second.album->tracks.size()))
+			if (tracks_matched == 0 || (only_save_complete_albums && tracks_matched != (int) am->second.album->tracks.size()))
 				continue;
-			//album_score /= (double) files_matched;
-			album_score *= (double) files_matched / (double) am->second.album->tracks.size();
-			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << files_matched << " | Files: " << am->second.album->tracks.size() << " | Group: " << files.size() << endl;
+			//album_score /= (double) tracks_matched;
+			album_score *= (double) tracks_matched / (double) am->second.album->tracks.size();
+			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << tracks_matched << " | Files: " << am->second.album->tracks.size() << " | Group: " << files.size() << endl;
 			if (album_score > best_album_score) {
 				best_album_score = album_score;
 				best_album_files = album_files;
