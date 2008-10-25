@@ -286,8 +286,35 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		for (vector<Match *>::iterator match = best_album_files.begin(); match != best_album_files.end(); ++match)
 			save_files[(*match)->metafile->filename] = *match;
 	}
-	if (save_files.size() <= 0 || (only_save_if_all_match && (int) save_files.size() != (int) files.size()))
+	if (save_files.size() <= 0)
 		return;
+	if (only_save_if_all_match && (int) save_files.size() != (int) files.size()) {
+		/* it is likely that we'll get groups with duplicates, and when
+		 * "only_save_if_all_match" is set, files won't be moved, because
+		 * some files won't be used.
+		 * we'll have to handle this somehow, or it'll significantly limit
+		 * the amount of files moved.
+		 * how should we do this?
+		 * any best_file_match with score greater than metadata_min_score
+		 * that isn't in save_files should've been saved, meaning it's a
+		 * duplicate. if the amount of such files + save_files.size() is
+		 * equal to files.size() we can save the files afterall */
+		bool unmatched_are_duplicates = true;
+		for (map<string, double>::iterator bfm = best_file_match.begin(); bfm != best_file_match.end(); ++bfm) {
+			if (bfm->second < metadata_min_score || save_files.find(bfm->first) == save_files.end()) {
+				/* FIXME?
+				 * bfm->second is total_score, not just metadata_score.
+				 * meaning that mbid match & puid match will return
+				 * higher values.
+				 * this may mean that mbid matches and puid matches are
+				 * wrongfully recognized as a duplicate */
+				unmatched_are_duplicates = false;
+				break; // not a duplicate, no point checking the rest
+			}
+		}
+		if (!unmatched_are_duplicates)
+			return;
+	}
 	/* set new metadata */
 	for (map<string, Match *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf) {
 		/* we don't have enough information in a metatrack, we'll have to find the track */
