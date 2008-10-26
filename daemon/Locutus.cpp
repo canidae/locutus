@@ -260,6 +260,7 @@ void Locutus::saveFile(Metafile *file) {
 			break;
 		}
 		/* move the existing file */
+		string tmp_old_filename = f->filename;
 		if (!moveFile(&*f, new_filename)) {
 			/* hmm, couldn't move the existing file.
 			 * then we can't move new file either */
@@ -269,6 +270,8 @@ void Locutus::saveFile(Metafile *file) {
 			Debug::notice(tmp.str());
 			break;
 		}
+		/* update database for the existing file */
+		database->saveMetafile(*f, tmp_old_filename);
 		/* find and update the file in grouped_files */
 		bool stop = false;
 		for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end() && !stop; ++gf) {
@@ -280,10 +283,6 @@ void Locutus::saveFile(Metafile *file) {
 				break;
 			}
 		}
-		/* update database for the existing file */
-		string tmp_old_filename = f->filename;
-		f->filename = new_filename;
-		database->saveMetafile(*f, tmp_old_filename);
 	}
 	cout << " Old: " << file->filename << endl;
 	cout << " New: " << filename << endl;
