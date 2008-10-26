@@ -197,6 +197,27 @@ bool Metafile::readFromFile() {
 	Locutus::trim(&released);
 	Locutus::trim(&title);
 	Locutus::trim(&tracknumber);
+	/* musicbrainz ids and puid should be 36 or 0 characters wide */
+	if (musicbrainz_albumartistid.size() > 36)
+		musicbrainz_albumartistid.resize(36);
+	else if (musicbrainz_albumartistid.size() != 36)
+		musicbrainz_albumartistid = "";
+	if (musicbrainz_albumid.size() > 36)
+		musicbrainz_albumartistid.resize(36);
+	else if (musicbrainz_albumid.size() != 36)
+		musicbrainz_albumartistid = "";
+	if (musicbrainz_artistid.size() > 36)
+		musicbrainz_albumartistid.resize(36);
+	else if (musicbrainz_artistid.size() != 36)
+		musicbrainz_albumartistid = "";
+	if (musicbrainz_trackid.size() > 36)
+		musicbrainz_albumartistid.resize(36);
+	else if (musicbrainz_trackid.size() != 36)
+		musicbrainz_albumartistid = "";
+	if (puid.size() > 36)
+		musicbrainz_albumartistid.resize(36);
+	else if (puid.size() != 36)
+		musicbrainz_albumartistid = "";
 	return true;
 }
 
