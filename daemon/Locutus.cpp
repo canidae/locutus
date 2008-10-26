@@ -87,6 +87,37 @@ void Locutus::clearFiles() {
 	grouped_files.clear();
 }
 
+string Locutus::findDuplicateFilename(Metafile *file) {
+	/* find a name for a duplicate */
+	string tmp_filename = input_dir;
+	tmp_filename.append("duplicates/");
+	string tmp_gen_filename = filenamer->getFilename(file);
+	string::size_type pos = tmp_gen_filename.find_last_of('.');
+	string tmp_extension = (pos == string::npos) ? "" : tmp_gen_filename.substr(pos);
+	tmp_filename.append(tmp_gen_filename.substr(0, pos));
+
+	ostringstream tmp;
+	tmp << tmp_filename << tmp_extension;
+	if (tmp.str() == file->filename)
+		return file->filename; // it's the same file!
+	struct stat data;
+	if (stat(tmp.str().c_str(), &data) != 0) {
+		/* can seemingly move file here */
+		return tmp.str();
+	}
+	/* file already exist, add " (<copy>)" before extension
+	 * until we find an available filename or <copy> reach 100 */
+	for (int copy = 1; copy < 100; ++copy) {
+		tmp.str("");
+		tmp << tmp_filename << " (" << copy << ")" << tmp_extension;
+		if (stat(tmp.str().c_str(), &data) == 0)
+			continue;
+		/* found available filename */
+		return tmp.str();
+	}
+	return file->filename;
+}
+
 bool Locutus::moveFile(Metafile *file, const string &filename) {
 	string::size_type start = 0;
 	string dirname;
@@ -185,16 +216,15 @@ void Locutus::removeGoneFiles() {
 }
 
 void Locutus::saveFile(Metafile *file) {
-	cout << "Would save: " << file->filename << endl;
 	/* genre */
 	if (force_genre_lookup || file->genre == "") {
 		vector<string> tags = audioscrobbler->getTags(file);
 		if (tags.size() > 0)
 			file->genre = tags[0];
-		cout << "       Tag: " << file->genre << endl;
+		else
+			file->genre = ""; // clear genre if we didn't find a tag
 	}
 	/* create new filename */
-	string old_filename = file->filename;
 	string filename = output_dir;
 	filename.append(filenamer->getFilename(file));
 	/* check if file (possibly with different extension) already exist */
@@ -205,60 +235,38 @@ void Locutus::saveFile(Metafile *file) {
 		/* it is possible that loadMetafiles() return other tracks which happen
 		 * to match current filename (we're searching for 'blabla%' which would
 		 * match 'blablabla'), so we need to check that musicbrainz_trackid match */
+		if (file->filename == f->filename)
+			continue; // it's the exact same file
 		if (file->musicbrainz_trackid != f->musicbrainz_trackid)
-			continue;
-		unsigned long cur_quality = f->bitrate * f->channels * f->samplerate;
-		if (f->pinned || file_quality <= cur_quality || !file->pinned) {
-			/* an existing file is better.
-			 * don't move the new file, but update the metadata */
-			filename = old_filename;
+			continue; // FIXME: what if we got 2 "identical" albums? different track-id, same filename
+		unsigned long old_quality = f->bitrate * f->channels * f->samplerate;
+		if ((old_quality >= file_quality && !file->pinned) || f->pinned) {
+			/* an existing file is better and new file isn't pinned, or old file is pinned.
+			 * move the new file to duplicates and update its metadata */
+			filename = findDuplicateFilename(file);
 			break;
 		}
 		/* new file is better */
-		/* find a name for the existing file in the input directory */
-		string tmp_filename = input_dir;
-		tmp_filename.append("duplicates/");
-		string tmp_gen_filename = filenamer->getFilename(&*f);
-		string::size_type pos = tmp_gen_filename.find_last_of('.');
-		string tmp_extension = (pos == string::npos) ? "" : tmp_gen_filename.substr(pos);
-		tmp_filename.append(tmp_gen_filename.substr(0, pos));
-
-		ostringstream tmp;
-		tmp << tmp_filename << tmp_extension;
-		bool cant_move = false;
-		struct stat data;
-		if (stat(tmp.str().c_str(), &data) == 0) {
-			/* file already exist, add " (<copy>)" before extension
-			 * until we find an available filename or <copy> reach 100 */
-			cant_move = true;
-			for (int copy = 1; copy < 100; ++copy) {
-				tmp.str("");
-				tmp << tmp_filename << " (" << copy << ")" << tmp_extension;
-				if (stat(tmp.str().c_str(), &data) == 0)
-					continue;
-				/* found available filename */
-				cant_move = false;
-				break;
-			}
-		}
-		if (cant_move) {
+		/* find a new name for the existing file */
+		string new_filename = findDuplicateFilename(&*f);
+		if (new_filename == f->filename) {
 			/* couldn't find a new filename for the existing file.
-			 * we'll set filename to old_filename so we won't move
+			 * we'll set filename to file->filename so we won't move
 			 * the new file, despite it begin better */
-			filename = old_filename;
-			ostringstream tmp2;
-			tmp2 << "Unable to find a new filename for duplicate file " << f->filename;
-			Debug::notice(tmp2.str());
+			filename = file->filename;
+			ostringstream tmp;
+			tmp << "Unable to find a new filename for duplicate file " << f->filename;
+			Debug::notice(tmp.str());
 			break;
 		}
 		/* move the existing file */
-		if (!moveFile(&*f, tmp.str())) {
+		if (!moveFile(&*f, new_filename)) {
 			/* hmm, couldn't move the existing file.
 			 * then we can't move new file either */
-			filename = old_filename;
-			ostringstream tmp2;
-			tmp2 << "Unable to move duplicate file " << f->filename << " to " << tmp.str();
-			Debug::notice(tmp2.str());
+			filename = file->filename;
+			ostringstream tmp;
+			tmp << "Unable to move duplicate file " << f->filename << " to " << new_filename;
+			Debug::notice(tmp.str());
 			break;
 		}
 		/* find and update the file in grouped_files */
@@ -267,25 +275,29 @@ void Locutus::saveFile(Metafile *file) {
 			for (vector<Metafile *>::iterator f2 = gf->second.begin(); f2 != gf->second.end(); ++f2) {
 				if ((*f2)->filename != f->filename)
 					continue;
-				(*f2)->filename = tmp.str();
+				(*f2)->filename = new_filename;
 				stop = true;
 				break;
 			}
 		}
 		/* update database for the existing file */
 		string tmp_old_filename = f->filename;
-		f->filename = tmp.str();
+		f->filename = new_filename;
 		database->saveMetafile(*f, tmp_old_filename);
 	}
-	cout << "  Matching: " << file->artist << " - " << file->album << " - " << file->tracknumber << " - " << file->title << endl;
+	cout << " Old: " << file->filename << endl;
+	cout << " New: " << filename << endl;
+	cout << "Meta: " << file->albumartistsort << " - " << file->album << " - " << file->tracknumber << " - " << file->artistsort << " - " << file->title << " (" << file->genre << ")" << endl;
 	/* save metadata */
-	/*
-	if (!file->saveMetadata())
-		continue;
-	*/
+	if (!file->saveMetadata()) {
+		ostringstream tmp;
+		tmp << "Unable to save metadata for file " << file->filename;
+		Debug::warning(tmp.str());
+		return;
+	}
 	/* move file */
-	/*
-	if (filename != old_filename) {
+	string old_filename = file->filename;
+	if (filename != file->filename) {
 		if (!moveFile(file, filename)) {
 			file->filename = old_filename;
 			ostringstream tmp;
@@ -293,11 +305,8 @@ void Locutus::saveFile(Metafile *file) {
 			Debug::warning(tmp.str());
 		}
 	}
-	*/
 	/* update database */
-	/*
 	database->saveMetafile(*file, old_filename); // metadata may have changed even if path haven't
-	*/
 }
 
 void Locutus::scanFiles(const string &directory) {

@@ -55,6 +55,7 @@ class Locutus {
 		std::string output_dir;
 
 		void clearFiles();
+		std::string findDuplicateFilename(Metafile *file);
 		bool moveFile(Metafile *file, const std::string &filename);
 		bool parseDirectory();
 		bool parseFile();
