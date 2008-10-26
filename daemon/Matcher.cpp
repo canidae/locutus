@@ -21,6 +21,7 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 	mbid_lookup = database->loadSettingBool(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION);
 	max_diff_best_score = database->loadSettingDouble(MAX_DIFF_BEST_SCORE_KEY, MAX_DIFF_BEST_SCORE_VALUE, MAX_DIFF_BEST_SCORE_DESCRIPTION);
 	metadata_min_score = database->loadSettingDouble(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
+	no_group_duplicates = database->loadSettingBool(NO_GROUP_DUPLICATES_KEY, NO_GROUP_DUPLICATES_VALUE, NO_GROUP_DUPLICATES_DESCRIPTION);
 	only_save_complete_albums = database->loadSettingBool(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION);
 	only_save_if_all_match = database->loadSettingBool(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
 	puid_lookup = database->loadSettingBool(PUID_LOOKUP_KEY, PUID_LOOKUP_VALUE, PUID_LOOKUP_DESCRIPTION);
@@ -244,6 +245,8 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				Match *best_match = NULL;
 				double best_match_score = -1.0;
 				for (map<string, vector<Match *> >::iterator t = am->second.matches.begin(); t != am->second.matches.end(); ++t) {
+					if (no_group_duplicates && used_tracks.find(t->first) != used_tracks.end())
+						continue;
 					/* find best file */
 					for (vector<Match *>::iterator m = t->second.begin(); m != t->second.end(); ++m) {
 						if (used_files.find((*m)->metafile->filename) != used_files.end() || save_files.find((*m)->metafile->filename) != save_files.end())
@@ -273,7 +276,6 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 			}
 			if (tracks_matched == 0 || (only_save_complete_albums && tracks_matched != (int) am->second.album->tracks.size()))
 				continue;
-			//album_score /= (double) tracks_matched;
 			album_score *= (double) tracks_matched / (double) am->second.album->tracks.size();
 			cout << "Album: " << am->second.album->title << " | Score: " << album_score << " | Matched: " << tracks_matched << " | Files: " << am->second.album->tracks.size() << " | Group: " << files.size() << endl;
 			if (album_score > best_album_score) {
@@ -286,35 +288,8 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		for (vector<Match *>::iterator match = best_album_files.begin(); match != best_album_files.end(); ++match)
 			save_files[(*match)->metafile->filename] = *match;
 	}
-	if (save_files.size() <= 0)
+	if (save_files.size() <= 0 || (only_save_if_all_match && (int) save_files.size() != (int) files.size()))
 		return;
-	if (only_save_if_all_match && (int) save_files.size() != (int) files.size()) {
-		/* it is likely that we'll get groups with duplicates, and when
-		 * "only_save_if_all_match" is set, files won't be moved, because
-		 * some files won't be used.
-		 * we'll have to handle this somehow, or it'll significantly limit
-		 * the amount of files moved.
-		 * how should we do this?
-		 * any best_file_match with score greater than metadata_min_score
-		 * that isn't in save_files should've been saved, meaning it's a
-		 * duplicate. if the amount of such files + save_files.size() is
-		 * equal to files.size() we can save the files afterall */
-		bool unmatched_are_duplicates = true;
-		for (map<string, double>::iterator bfm = best_file_match.begin(); bfm != best_file_match.end(); ++bfm) {
-			if (bfm->second < metadata_min_score && save_files.find(bfm->first) == save_files.end()) {
-				/* FIXME?
-				 * bfm->second is total_score, not just metadata_score.
-				 * meaning that mbid match & puid match will return
-				 * higher values.
-				 * this may mean that mbid matches and puid matches are
-				 * wrongfully recognized as a duplicate */
-				unmatched_are_duplicates = false;
-				break; // not a duplicate, no point checking the rest
-			}
-		}
-		if (!unmatched_are_duplicates)
-			return;
-	}
 	/* set new metadata */
 	for (map<string, Match *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf) {
 		/* we don't have enough information in a metatrack, we'll have to find the track */

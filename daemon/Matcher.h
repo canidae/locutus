@@ -28,6 +28,9 @@
 #define METADATA_MIN_SCORE_KEY "metadata_min_score"
 #define METADATA_MIN_SCORE_VALUE 0.75
 #define METADATA_MIN_SCORE_DESCRIPTION "When matching a file with a track using metadata only, the match score must exceed this value for the file to be saved. Value must be between 0.0 and 1.0. Increasing this value will decrease files matched and mismatches, decreasing it will logically do the opposite."
+#define NO_GROUP_DUPLICATES_KEY "no_group_duplicates"
+#define NO_GROUP_DUPLICATES_VALUE true
+#define NO_GROUP_DUPLICATES_DESCRIPTION "If you don't have or have few duplicate files that will end up in the same group then this option should be enabled. With this option enabled, 'only_save_if_all_match' enabled and 'only_save_complete_albums' enabled you can significantly reduce 'metadata_min_score' without getting mismatched files and at the same time increase amount of matched files. Please see the tuning guide for more information."
 #define ONLY_SAVE_COMPLETE_ALBUMS_KEY "only_save_complete_albums"
 #define ONLY_SAVE_COMPLETE_ALBUMS_VALUE true
 #define ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION "When this setting is set to true, Locutus will only save albums where we got a file matching every single track on the album. If your music archive only contains complete albums, it is a very good idea to leave this setting at true."
@@ -76,6 +79,7 @@ class Matcher {
 		MusicBrainz *musicbrainz;
 		bool duration_must_match;
 		bool mbid_lookup;
+		bool no_group_duplicates;
 		bool only_save_complete_albums;
 		bool only_save_if_all_match;
 		bool puid_lookup;
