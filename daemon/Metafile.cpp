@@ -327,16 +327,18 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 		ID3v2::FrameList frames = map["TXXX"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
 			ID3v2::UserTextIdentificationFrame *txxx = (ID3v2::UserTextIdentificationFrame *) frames[a];
+			if (txxx->fieldList().size() < 2)
+				continue;
 			if (txxx->description().to8Bit(true) == ID3_TXXX_ALBUMARTISTSORT)
-				albumartistsort = txxx->fieldList()[0].to8Bit(true);
+				albumartistsort = txxx->fieldList()[1].to8Bit(true);
 			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID)
-				musicbrainz_albumartistid = txxx->fieldList()[0].to8Bit(true);
+				musicbrainz_albumartistid = txxx->fieldList()[1].to8Bit(true);
 			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICBRAINZ_ALBUMID)
-				musicbrainz_albumid = txxx->fieldList()[0].to8Bit(true);
+				musicbrainz_albumid = txxx->fieldList()[1].to8Bit(true);
 			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICBRAINZ_ARTISTID)
-				musicbrainz_artistid = txxx->fieldList()[0].to8Bit(true);
+				musicbrainz_artistid = txxx->fieldList()[1].to8Bit(true);
 			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICIP_PUID)
-				puid = txxx->fieldList()[0].to8Bit(true);
+				puid = txxx->fieldList()[1].to8Bit(true);
 		}
 		frames = map["UFID"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
