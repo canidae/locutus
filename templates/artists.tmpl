@@ -4,7 +4,7 @@
     <p>
       <input type="text" value="filter artists here" />
     </p>
-[% IF artists %]
+[% IF artists.size() > 0 %]
     <ul>
   [% FOREACH artist IN artists %]
       <li><a href="artist.pl?arid=[% artist.artist_id %]">[% artist.name %], [% artist.albums %] album[% IF artist.albums != 1 %]s[% END %]</a></li>

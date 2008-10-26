@@ -8,7 +8,7 @@
     <h3>Tracknumber: [% track.tracknumber %]</h3>
     <h3>Duration: [% track.duration %]ms</h3>
     <h3>MusicBrainz Track ID: <a href="http://musicbrainz.org/track/[% track.mbid %].html">[% track.mbid %]</a></h3>
-  [% IF matches %]
+  [% IF matches.size() > 0 %]
     <h2>Matching files:</h2>
     <table>
       <tr>

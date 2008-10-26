@@ -4,7 +4,7 @@
     <p>
       <input type="text" value="filter albums here" />
     </p>
-[% IF albums %]
+[% IF albums.size() > 0 %]
     <ul>
   [% FOREACH album IN albums %]
       <li><a href="album.pl?alid=[% album.album_id %]">[% album.title %], [% album.artist_name %] ([% album.tracks %] track[% IF album.tracks != 1 %]s[% END %][% IF album.type %], [% album.type %][% END %][% IF album.released %], released [% album.released %][% END %])</a></li>

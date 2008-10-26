@@ -4,7 +4,7 @@
     <p>
       <input type="text" value="filter tracks here" />
     </p>
-[% IF tracks %]
+[% IF tracks.size() > 0 %]
     <ul>
   [% FOREACH track IN tracks %]
       <li><a href="track.pl?trid=[% track.track_id %]">[% track.title %], [% track.artist_name %] - [% track.album_title %]</a></li>

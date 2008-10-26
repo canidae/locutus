@@ -5,7 +5,7 @@
       <input type="text" value="filter files here" />
       <input type="checkbox" name='list_unmatched_only' value="1" />Only list unmatched files
     </p>
-[% IF files %]
+[% IF files.size() > 0 %]
     <ul>
   [% FOREACH file IN files %]
       <li><a href="file.pl?fiid=[% file.file_id %]">[% file.filename %]</a></li>

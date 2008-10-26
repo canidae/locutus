@@ -5,7 +5,7 @@
     <h1>[% artist.name %]</h1>
     <h2>Sortname: [% artist.sortname %]</h2>
     <h3>MusicBrainz Artist ID: <a href="http://musicbrainz.org/artist/[% artist.mbid %].html">[% artist.mbid %]</a></h3>
-  [% IF albums %]
+  [% IF albums.size() > 0 %]
     <h2>Albums:</h2>
     <ul>
     [% FOREACH album IN albums %]

@@ -2,8 +2,9 @@
   title = 'Settings'
 %]
     <h1>Settings</h1>
+[% IF settings.size() > 0 %]
     <table>
-[% FOREACH setting IN settings %]
+  [% FOREACH setting IN settings %]
       <tr>
         <th colspan="2">[% setting.key %]</th>
       </tr>
@@ -18,6 +19,7 @@
       <tr>
         <td colspan="2">[% setting.description %]</td>
       </tr>
-[% END %]
+  [% END %]
     </table>
+[% END %]
 [% INCLUDE footer.tmpl %]
