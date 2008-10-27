@@ -208,7 +208,6 @@ bool Metafile::readFromFile() {
 		musicbrainz_trackid = "";
 	if (puid.size() != 36)
 		puid = "";
-	cout << filename << ": " << musicbrainz_trackid.size() << " - " << musicbrainz_trackid.c_str() << endl;
 	return true;
 }
 
