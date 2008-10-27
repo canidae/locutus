@@ -197,27 +197,18 @@ bool Metafile::readFromFile() {
 	Locutus::trim(&released);
 	Locutus::trim(&title);
 	Locutus::trim(&tracknumber);
-	/* musicbrainz ids and puid should be 36 or 0 characters wide */
-	if (musicbrainz_albumartistid.size() > 36)
-		musicbrainz_albumartistid.resize(36);
-	else if (musicbrainz_albumartistid.size() != 36)
+	/* musicbrainz ids and puid should be 36 characters wide */
+	if (musicbrainz_albumartistid.size() != 36)
 		musicbrainz_albumartistid = "";
-	if (musicbrainz_albumid.size() > 36)
-		musicbrainz_albumartistid.resize(36);
-	else if (musicbrainz_albumid.size() != 36)
-		musicbrainz_albumartistid = "";
-	if (musicbrainz_artistid.size() > 36)
-		musicbrainz_albumartistid.resize(36);
-	else if (musicbrainz_artistid.size() != 36)
-		musicbrainz_albumartistid = "";
-	if (musicbrainz_trackid.size() > 36)
-		musicbrainz_albumartistid.resize(36);
-	else if (musicbrainz_trackid.size() != 36)
-		musicbrainz_albumartistid = "";
-	if (puid.size() > 36)
-		musicbrainz_albumartistid.resize(36);
-	else if (puid.size() != 36)
-		musicbrainz_albumartistid = "";
+	if (musicbrainz_albumid.size() != 36)
+		musicbrainz_albumid = "";
+	if (musicbrainz_artistid.size() != 36)
+		musicbrainz_artistid = "";
+	if (musicbrainz_trackid.size() != 36)
+		musicbrainz_trackid = "";
+	if (puid.size() != 36)
+		puid = "";
+	cout << filename << ": " << musicbrainz_trackid.size() << " - " << musicbrainz_trackid.c_str() << endl;
 	return true;
 }
 
@@ -365,7 +356,7 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
 			ID3v2::UniqueFileIdentifierFrame *ufid = (ID3v2::UniqueFileIdentifierFrame *) frames[a];
 			if (ufid->owner() == ID3_UFID_MUSICBRAINZ_TRACKID)
-				musicbrainz_trackid = ufid->identifier().data();
+				musicbrainz_trackid = string(ufid->identifier().data(), ufid->identifier().size());
 		}
 		frames = map["TPE2"];
 		if (!frames.isEmpty())
