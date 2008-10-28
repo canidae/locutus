@@ -76,6 +76,7 @@ CREATE TABLE file (
     released character varying NOT NULL,
     genre character varying NOT NULL,
     pinned boolean DEFAULT false NOT NULL,
+    groupname character varying DEFAULT ''::character varying NOT NULL,
     CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length((musicbrainz_albumartistid)::text) = 0) OR (length((musicbrainz_albumartistid)::text) = 36))),
     CONSTRAINT file_musicbrainz_albumid_check CHECK (((length((musicbrainz_albumid)::text) = 0) OR (length((musicbrainz_albumid)::text) = 36))),
     CONSTRAINT file_musicbrainz_artistid_check CHECK (((length((musicbrainz_artistid)::text) = 0) OR (length((musicbrainz_artistid)::text) = 36))),
@@ -179,7 +180,7 @@ CREATE VIEW v_daemon_load_album AS
 --
 
 CREATE VIEW v_daemon_load_metafile AS
-    SELECT f.filename, f.file_id, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned FROM (file f LEFT JOIN puid p ON ((f.puid_id = p.puid_id)));
+    SELECT f.filename, f.file_id, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname FROM (file f LEFT JOIN puid p ON ((f.puid_id = p.puid_id)));
 
 
 --
@@ -252,14 +253,6 @@ CREATE VIEW v_web_list_matches AS
 
 CREATE VIEW v_web_list_tracks AS
     SELECT tr.track_id, tr.album_id, tr.artist_id, tr.mbid, tr.title, tr.duration, tr.tracknumber, ar.name AS artist_name, al.title AS album_title FROM ((track tr LEFT JOIN artist ar ON ((tr.artist_id = ar.artist_id))) LEFT JOIN album al ON ((tr.album_id = al.album_id)));
-
-
---
--- Name: v_web_list_unmatched_files; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW v_web_list_unmatched_files AS
-    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file WHERE (((file.musicbrainz_trackid)::bpchar = ''::bpchar) OR (NOT ((file.musicbrainz_trackid)::bpchar IN (SELECT track.mbid FROM track))));
 
 
 --

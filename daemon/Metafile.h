@@ -73,6 +73,7 @@ class Metafile {
 		std::string artistsort;
 		std::string filename;
 		std::string genre;
+		std::string group;
 		std::string musicbrainz_albumartistid;
 		std::string musicbrainz_albumid;
 		std::string musicbrainz_artistid;
@@ -87,7 +88,7 @@ class Metafile {
 
 		void clearValues();
 		std::string getBaseNameWithoutExtension() const;
-		std::string getGroup() const;
+		std::string getGroup();
 		const std::list<std::string> &getValues(double combine_threshold);
 		bool readFromFile();
 		bool saveMetadata();

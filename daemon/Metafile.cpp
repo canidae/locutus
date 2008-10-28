@@ -9,7 +9,7 @@ using namespace std;
 using namespace TagLib;
 
 /* constructors/destructor */
-Metafile::Metafile(const string &filename) : meta_lookup(false), metadata_changed(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber(""), values() {
+Metafile::Metafile(const string &filename) : meta_lookup(false), metadata_changed(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), group(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber(""), values() {
 }
 
 Metafile::~Metafile() {
@@ -34,27 +34,31 @@ string Metafile::getBaseNameWithoutExtension() const {
 	return "";
 }
 
-string Metafile::getGroup() const {
+string Metafile::getGroup() {
 	/* returns either artist-album, album, last directory name or ""
 	 * used for grouping tracks that possibly are from the same album */
+	if (group.size() > 0)
+		return group;
 	if (album.size() > 0) {
 		if (artist.size() > 0) {
-			string group = artist;
+			group = artist;
 			group.push_back('-');
 			group.append(album);
 			return group;
 		}
-		return album;
+		group = album;
+		return group;
 	}
 	string::size_type pos = filename.find_last_of('/');
 	if (pos != string::npos && pos > 0) {
 		string::size_type pos2 = filename.find_last_of('/', pos - 1);
 		if (pos2 != string::npos) {
 			++pos2;
-			return filename.substr(pos2, pos - pos2);
+			group = filename.substr(pos2, pos - pos2);
+			return group;
 		}
 	}
-	return "";
+	return group;
 }
 
 const list<string> &Metafile::getValues(double combine_threshold) {
