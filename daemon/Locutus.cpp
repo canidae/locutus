@@ -67,13 +67,8 @@ long Locutus::run() {
 		matcher->match(gf->first, gf->second);
 		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
-			if (!(*f)->metadata_changed) {
-				/* we're not going to save this file, but we may have some
-				 * useful information on why we didn't save it so we'll
-				 * update the database with this information */
-				database->saveMetafile(**f);
+			if (!(*f)->metadata_changed)
 				continue;
-			}
 			saveFile(*f);
 		}
 	}
@@ -201,7 +196,7 @@ bool Locutus::parseFile() {
 		}
 	}
 	mf->meta_lookup = true;
-	grouped_files[mf->getGroup()].push_back(mf);
+	grouped_files[mf->group].push_back(mf);
 	return true;
 }
 

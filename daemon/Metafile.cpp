@@ -34,33 +34,6 @@ string Metafile::getBaseNameWithoutExtension() const {
 	return "";
 }
 
-string Metafile::getGroup() {
-	/* returns either artist-album, album, last directory name or ""
-	 * used for grouping tracks that possibly are from the same album */
-	if (group.size() > 0)
-		return group;
-	if (album.size() > 0) {
-		if (artist.size() > 0) {
-			group = artist;
-			group.push_back('-');
-			group.append(album);
-			return group;
-		}
-		group = album;
-		return group;
-	}
-	string::size_type pos = filename.find_last_of('/');
-	if (pos != string::npos && pos > 0) {
-		string::size_type pos2 = filename.find_last_of('/', pos - 1);
-		if (pos2 != string::npos) {
-			++pos2;
-			group = filename.substr(pos2, pos - pos2);
-			return group;
-		}
-	}
-	return group;
-}
-
 const list<string> &Metafile::getValues(double combine_threshold) {
 	/* gather all values in a list, suitable for matching with a track */
 	if (values.size() > 0)
@@ -212,6 +185,25 @@ bool Metafile::readFromFile() {
 		musicbrainz_trackid = "";
 	if (puid.size() != 36)
 		puid = "";
+	/* set group */
+	if (album.size() > 0) {
+		if (artist.size() > 0) {
+			group = artist;
+			group.push_back('-');
+			group.append(album);
+		} else {
+			group = album;
+		}
+	} else {
+		string::size_type pos = filename.find_last_of('/');
+		if (pos != string::npos && pos > 0) {
+			string::size_type pos2 = filename.find_last_of('/', pos - 1);
+			if (pos2 != string::npos) {
+				++pos2;
+				group = filename.substr(pos2, pos - pos2);
+			}
+		}
+	}
 	return true;
 }
 
