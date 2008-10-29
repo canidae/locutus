@@ -9,7 +9,7 @@ using namespace std;
 using namespace TagLib;
 
 /* constructors/destructor */
-Metafile::Metafile(const string &filename) : meta_lookup(false), metadata_changed(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), group(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber(""), values() {
+Metafile::Metafile(const string &filename) : meta_lookup(false), metadata_changed(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber(""), values() {
 }
 
 Metafile::~Metafile() {
@@ -30,6 +30,29 @@ string Metafile::getBaseNameWithoutExtension() const {
 			return filename.substr(pos, pos2 - pos);
 		else
 			return filename.substr(pos);
+	}
+	return "";
+}
+
+string Metafile::getGroup() const {
+	/* gets group. it's either artist-album, album, last directory name or ""
+	 * used for grouping tracks that possibly are from the same album(s) */
+	if (album.size() > 0) {
+		if (artist.size() > 0) {
+			string group = artist;
+			group.push_back('-');
+			group.append(album);
+			return group;
+		}
+		return album;
+	}
+	string::size_type pos = filename.find_last_of('/');
+	if (pos != string::npos && pos > 0) {
+		string::size_type pos2 = filename.find_last_of('/', pos - 1);
+		if (pos2 != string::npos) {
+			++pos2;
+			return filename.substr(pos2, pos - pos2);
+		}
 	}
 	return "";
 }
@@ -185,8 +208,6 @@ bool Metafile::readFromFile() {
 		musicbrainz_trackid = "";
 	if (puid.size() != 36)
 		puid = "";
-	/* set group */
-	setGroup();
 	return true;
 }
 
@@ -270,8 +291,6 @@ bool Metafile::setMetadata(const Track *track) {
 	released = track->album->released;
 	//puid = track->puid;
 	metadata_changed = true;
-	/* update group */
-	setGroup();
 	return true;
 }
 
@@ -511,28 +530,4 @@ void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
 	tag->addField(DATE, released, true);
 	tag->addField(GENRE, genre, true);
 	//tag->addField(MUSICIP_PUID, track->puid, true);
-}
-
-void Metafile::setGroup() {
-	/* sets group to either artist-album, album, last directory name or ""
-	 * used for grouping tracks that possibly are from the same album(s) */
-	if (album.size() > 0) {
-		if (artist.size() > 0) {
-			group = artist;
-			group.push_back('-');
-			group.append(album);
-			return;
-		}
-		group = album;
-		return;
-	}
-	string::size_type pos = filename.find_last_of('/');
-	if (pos != string::npos && pos > 0) {
-		string::size_type pos2 = filename.find_last_of('/', pos - 1);
-		if (pos2 != string::npos) {
-			++pos2;
-			group = filename.substr(pos2, pos - pos2);
-			return;
-		}
-	}
 }

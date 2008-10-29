@@ -196,7 +196,7 @@ bool Locutus::parseFile() {
 		}
 	}
 	mf->meta_lookup = true;
-	grouped_files[mf->group].push_back(mf);
+	grouped_files[mf->getGroup()].push_back(mf);
 	return true;
 }
 

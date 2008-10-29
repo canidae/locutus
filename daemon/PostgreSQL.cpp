@@ -116,7 +116,6 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->released = getString(0, 18);
 	metafile->genre = getString(0, 19);
 	metafile->pinned = getBool(0, 20);
-	metafile->group = getString(0, 21);
 	return true;
 }
 
@@ -149,7 +148,6 @@ vector<Metafile> PostgreSQL::loadMetafiles(const string &filename_pattern) {
 		metafile.released = getString(r, 18);
 		metafile.genre = getString(r, 19);
 		metafile.pinned = getBool(r, 20);
-		metafile.group = getString(r, 21);
 		files.push_back(metafile);
 	}
 	return files;
@@ -318,7 +316,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	string e_tracknumber = escapeString(metafile.tracknumber);
 	string e_released = escapeString(metafile.released);
 	string e_genre = escapeString(metafile.genre);
-	string e_group = escapeString(metafile.group);
+	string e_group = escapeString(metafile.getGroup());
 	if (old_filename == "") {
 		query.str("");
 		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname) SELECT '" << e_filename << "', " << metafile.duration << ", " << metafile.channels << ", " << metafile.bitrate << ", " << metafile.samplerate << ", ";
