@@ -7,13 +7,16 @@
 [% IF albums.size() > 0 %]
     <table>
       <tr>
-        <th>Album</th>
-        <th>Tracks</th>
-        <th>Matched</th>
-        <th>MBID matches</th>
-        <th>Max track score</th>
-        <th>Min track score</th>
-        <th>Average track score</th>
+        <th rowspan="2">Album</th>
+        <th rowspan="2">Tracks</th>
+        <th rowspan="2">Files matched</th>
+        <th rowspan="2">MBID matches</th>
+        <th colspan="3">Track scores</th>
+      </tr>
+      <tr>
+        <th>Max</th>
+        <th>Min</th>
+        <th>Average</th>
       </tr>
     [% FOREACH album IN albums %]
       <tr>
