@@ -1,0 +1,31 @@
+[% INCLUDE header.tmpl
+  title = 'Album matching'
+%]
+    <p>
+      <input type="text" value="filter albums here" />
+    </p>
+[% IF albums.size() > 0 %]
+    <table>
+      <tr>
+        <th>Album</th>
+        <th>Tracks</th>
+        <th>Matched</th>
+        <th>MBID matches</th>
+        <th>Max score</th>
+        <th>Min score</th>
+        <th>Average score</th>
+      </tr>
+    [% FOREACH album IN albums %]
+      <tr>
+        <td><a href="album.pl?alid=[% album.album_id %]">[% album.title %]</a></td>
+        <td>[% album.tracks %]</td>
+        <td>[% album.matched %]</td>
+        <td>[% album.mbid_matches %]</td>
+        <td style="background: #[% album.max_color %];">[% album.max_score %]</td>
+        <td style="background: #[% album.min_color %];">[% album.min_score %]</td>
+        <td style="background: #[% album.avg_color %];">[% album.avg_score %]</td>
+      </tr>
+  [% END %]
+    </table>
+[% END %]
+[% INCLUDE footer.tmpl %]

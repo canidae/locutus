@@ -28,7 +28,7 @@ sub score_to_color {
 	} elsif ($score > 0.25) {
 		return sprintf("%02x%02x00", 255, (($score - 0.25) * 2) * 255);
 	}
-	return '#ff0000';
+	return 'ff0000';
 }
 
 1;
