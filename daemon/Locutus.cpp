@@ -67,8 +67,15 @@ long Locutus::run() {
 		matcher->match(gf->first, gf->second);
 		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
-			if (!(*f)->metadata_updated)
+			if (!(*f)->metadata_updated) {
+				/* we'll need to save this file too, for example,
+				 * it may have been marked as matched earlier,
+				 * but it's no longer matching anything */
+				(*f)->matched = false;
+				(*f)->duplicate = false;
+				database->saveMetafile(**f);
 				continue;
+			}
 			saveFile(*f);
 		}
 	}
