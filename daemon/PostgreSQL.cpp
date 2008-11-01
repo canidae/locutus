@@ -51,14 +51,14 @@ bool PostgreSQL::loadAlbum(Album *album) {
 	album->title = getString(0, 3);
 	album->released = getString(0, 4);
 	/* artist data */
-	album->artist->mbid = getString(0, 8);
-	album->artist->name = getString(0,9);
-	album->artist->sortname = getString(0, 10);
+	album->artist->mbid = getString(0, 7);
+	album->artist->name = getString(0,8);
+	album->artist->sortname = getString(0, 9);
 	/* track data */
 	int trackcount = getRows();
 	album->tracks.resize(trackcount);
 	for (int t = 0; t < trackcount; ++t) {
-		int trackindex = getInt(t, 15) - 1;
+		int trackindex = getInt(t, 14) - 1;
 		if (trackindex < 0 || trackindex >= (int) album->tracks.capacity()) {
 			/* this really shouldn't happen.
 			 * seemingly we're missing entries in the track table */
@@ -69,14 +69,14 @@ bool PostgreSQL::loadAlbum(Album *album) {
 		}
 		album->tracks[trackindex] = new Track(album);
 		/* track data */
-		album->tracks[trackindex]->mbid = getString(t, 12);
-		album->tracks[trackindex]->title = getString(t, 13);
-		album->tracks[trackindex]->duration = getInt(t, 14);
+		album->tracks[trackindex]->mbid = getString(t, 11);
+		album->tracks[trackindex]->title = getString(t, 12);
+		album->tracks[trackindex]->duration = getInt(t, 13);
 		album->tracks[trackindex]->tracknumber = trackindex + 1;
 		/* track artist data */
-		album->tracks[trackindex]->artist->mbid = getString(t, 17);
-		album->tracks[trackindex]->artist->name = getString(t, 18);
-		album->tracks[trackindex]->artist->sortname = getString(t, 19);
+		album->tracks[trackindex]->artist->mbid = getString(t, 16);
+		album->tracks[trackindex]->artist->name = getString(t, 17);
+		album->tracks[trackindex]->artist->sortname = getString(t, 18);
 	}
 	return true;
 }

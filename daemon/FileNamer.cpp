@@ -117,19 +117,10 @@ const string &FileNamer::getFilename(Metafile *file) {
 					break;
 
 				case TYPE_CUSTOM_ARTIST:
-					/*
-					if (file->custom_artist_sortname != "") {
-						tmp = file->custom_artist_sortname;
-					} else {
-					*/
-					if (file->musicbrainz_artistid != VARIOUS_ARTISTS_MBID) {
+					if (file->musicbrainz_artistid != VARIOUS_ARTISTS_MBID)
 						tmp = file->albumartistsort;
-					} else {
+					else
 						tmp = file->artistsort;
-					}
-					/*
-					}
-					*/
 					break;
 
 				case TYPE_GENRE:

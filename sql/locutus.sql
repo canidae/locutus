@@ -32,7 +32,6 @@ CREATE TABLE album (
     type character varying NOT NULL,
     title character varying NOT NULL,
     released date,
-    custom_artist_sortname character varying,
     last_updated timestamp without time zone DEFAULT now() NOT NULL
 );
 
@@ -174,7 +173,7 @@ CREATE TABLE track (
 --
 
 CREATE VIEW v_daemon_load_album AS
-    SELECT al.album_id AS album_album_id, al.mbid AS album_mbid, al.type AS album_type, al.title AS album_title, al.released AS album_released, al.custom_artist_sortname AS album_custom_artist_sortname, al.last_updated AS album_last_updated, ar.artist_id AS artist_artist_id, ar.mbid AS artist_mbid, ar.name AS artist_name, ar.sortname AS artist_sortname, tr.track_id AS track_track_id, tr.mbid AS track_mbid, tr.title AS track_title, tr.duration AS track_duration, tr.tracknumber AS track_tracknumber, ta.artist_id AS track_artist_artist_id, ta.mbid AS track_artist_mbid, ta.name AS track_artist_name, ta.sortname AS track_artist_sortname FROM (((album al JOIN artist ar ON ((al.artist_id = ar.artist_id))) JOIN track tr ON ((tr.album_id = al.album_id))) JOIN artist ta ON ((tr.artist_id = ta.artist_id)));
+    SELECT al.album_id AS album_album_id, al.mbid AS album_mbid, al.type AS album_type, al.title AS album_title, al.released AS album_released, al.last_updated AS album_last_updated, ar.artist_id AS artist_artist_id, ar.mbid AS artist_mbid, ar.name AS artist_name, ar.sortname AS artist_sortname, tr.track_id AS track_track_id, tr.mbid AS track_mbid, tr.title AS track_title, tr.duration AS track_duration, tr.tracknumber AS track_tracknumber, ta.artist_id AS track_artist_artist_id, ta.mbid AS track_artist_mbid, ta.name AS track_artist_name, ta.sortname AS track_artist_sortname FROM (((album al JOIN artist ar ON ((al.artist_id = ar.artist_id))) JOIN track tr ON ((tr.album_id = al.album_id))) JOIN artist ta ON ((tr.artist_id = ta.artist_id)));
 
 
 --
@@ -190,7 +189,7 @@ CREATE VIEW v_daemon_load_metafile AS
 --
 
 CREATE VIEW v_web_info_album AS
-    SELECT al.album_id, al.artist_id, al.mbid, al.type, al.title, al.released, al.custom_artist_sortname, al.last_updated, ar.name AS artist_name FROM (album al JOIN artist ar ON ((al.artist_id = ar.artist_id)));
+    SELECT al.album_id, al.artist_id, al.mbid, al.type, al.title, al.released, al.last_updated, ar.name AS artist_name FROM (album al JOIN artist ar ON ((al.artist_id = ar.artist_id)));
 
 
 --
@@ -230,7 +229,7 @@ CREATE VIEW v_web_list_album_matching AS
 --
 
 CREATE VIEW v_web_list_albums AS
-    SELECT al.album_id, al.artist_id, al.mbid, al.type, al.title, al.released, al.custom_artist_sortname, al.last_updated, COALESCE((SELECT count(*) AS count FROM track tr WHERE (tr.album_id = al.album_id)), (0)::bigint) AS tracks, ar.name AS artist_name FROM (album al LEFT JOIN artist ar ON ((al.artist_id = ar.artist_id)));
+    SELECT al.album_id, al.artist_id, al.mbid, al.type, al.title, al.released, al.last_updated, COALESCE((SELECT count(*) AS count FROM track tr WHERE (tr.album_id = al.album_id)), (0)::bigint) AS tracks, ar.name AS artist_name FROM (album al LEFT JOIN artist ar ON ((al.artist_id = ar.artist_id)));
 
 
 --
