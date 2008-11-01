@@ -67,7 +67,7 @@ long Locutus::run() {
 		matcher->match(gf->first, gf->second);
 		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
-			if (!(*f)->metadata_changed)
+			if (!(*f)->metadata_updated)
 				continue;
 			saveFile(*f);
 		}
