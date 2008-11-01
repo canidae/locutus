@@ -20,7 +20,7 @@ Locutus::Locutus(Database *database) : database(database) {
 	musicbrainz = new MusicBrainz(database);
 	matcher = new Matcher(database, musicbrainz);
 
-	force_genre_lookup = database->loadSettingBool(FORCE_GENRE_LOOKUP_KEY, FORCE_GENRE_LOOKUP_VALUE, FORCE_GENRE_LOOKUP_DESCRIPTION);
+	lookup_genre = database->loadSettingBool(LOOKUP_GENRE_KEY, LOOKUP_GENRE_VALUE, LOOKUP_GENRE_DESCRIPTION);
 	input_dir = database->loadSettingString(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
 	if (input_dir.size() <= 0 || input_dir[input_dir.size() - 1] != '/')
 		input_dir.push_back('/');
@@ -217,7 +217,7 @@ void Locutus::removeGoneFiles() {
 
 void Locutus::saveFile(Metafile *file) {
 	/* genre */
-	if (force_genre_lookup || file->genre == "") {
+	if (lookup_genre) {
 		vector<string> tags = audioscrobbler->getTags(file);
 		if (tags.size() > 0)
 			file->genre = tags[0];
