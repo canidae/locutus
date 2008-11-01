@@ -59,6 +59,8 @@ class Track;
 
 class Metafile {
 	public:
+		bool duplicate;
+		bool matched;
 		bool meta_lookup;
 		bool metadata_changed;
 		bool pinned;

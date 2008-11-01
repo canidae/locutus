@@ -77,6 +77,8 @@ CREATE TABLE file (
     genre character varying NOT NULL,
     pinned boolean DEFAULT false NOT NULL,
     groupname character varying DEFAULT ''::character varying NOT NULL,
+    matched boolean DEFAULT false NOT NULL,
+    duplicate boolean DEFAULT false NOT NULL,
     CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length((musicbrainz_albumartistid)::text) = 0) OR (length((musicbrainz_albumartistid)::text) = 36))),
     CONSTRAINT file_musicbrainz_albumid_check CHECK (((length((musicbrainz_albumid)::text) = 0) OR (length((musicbrainz_albumid)::text) = 36))),
     CONSTRAINT file_musicbrainz_artistid_check CHECK (((length((musicbrainz_artistid)::text) = 0) OR (length((musicbrainz_artistid)::text) = 36))),
