@@ -224,6 +224,8 @@ void Locutus::saveFile(Metafile *file) {
 		else
 			file->genre = ""; // clear genre if we didn't find a tag
 	}
+	/* set file as "matched" */
+	file->matched = true;
 	/* create new filename */
 	string filename = output_dir;
 	filename.append(filenamer->getFilename(file));
@@ -244,6 +246,8 @@ void Locutus::saveFile(Metafile *file) {
 			/* an existing file is better and new file isn't pinned, or old file is pinned.
 			 * move the new file to duplicates and update its metadata */
 			filename = findDuplicateFilename(file);
+			/* also mark it as a duplicate */
+			file->duplicate = true;
 			break;
 		}
 		/* new file is better */
@@ -270,6 +274,8 @@ void Locutus::saveFile(Metafile *file) {
 			Debug::notice(tmp.str());
 			break;
 		}
+		/* mark existing file as a duplicate */
+		f->duplicate = true;
 		/* update database for the existing file */
 		database->saveMetafile(*f, tmp_old_filename);
 		/* find and update the file in grouped_files */
