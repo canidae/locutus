@@ -249,6 +249,14 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 						continue;
 					/* find best file */
 					for (vector<Match *>::iterator m = t->second.begin(); m != t->second.end(); ++m) {
+						if ((*m)->metafile->force_save && (*m)->mbid_match) {
+							/* user demands that this file is saved, even if it means
+							 * that we won't satisfy the settings */
+							setMetadata(*m);
+							/* no "continue" here, or we won't get "complete album" or
+							 * "complete group" which may keep other files from being
+							 * saved */
+						}
 						if (used_files.find((*m)->metafile->filename) != used_files.end() || save_files.find((*m)->metafile->filename) != save_files.end())
 							continue; // file already used
 						else if ((*m)->total_score <= best_match_score)
@@ -291,24 +299,8 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	if (save_files.size() <= 0 || (only_save_if_all_match && (int) save_files.size() != (int) files.size()))
 		return;
 	/* set new metadata */
-	for (map<string, Match *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf) {
-		/* we don't have enough information in a metatrack, we'll have to find the track */
-		map<string, AlbumMatch>::iterator am = ams.find(sf->second->metatrack.album_mbid);
-		if (am == ams.end()) {
-			ostringstream tmp;
-			tmp << "Album " << sf->second->metatrack.album_mbid << " is not loaded, and we tried to save a file referencing to it: " << sf->first;
-			Debug::warning(tmp.str());
-			continue;
-		}
-		int tnum = sf->second->metatrack.tracknumber - 1;
-		if ((int) am->second.album->tracks.size() <= tnum || tnum < 0) {
-			ostringstream tmp;
-			tmp << "File " << sf->first << " referenced to track " << tnum << " on album " << sf->second->metatrack.album_mbid << ", however that track does not exist";
-			Debug::warning(tmp.str());
-			continue;
-		}
-		sf->second->metafile->setMetadata(am->second.album->tracks[tnum]);
-	}
+	for (map<string, Match *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf)
+		setMetadata(sf->second);
 }
 
 void Matcher::searchMetadata(const string &group, const vector<Metafile *> &files) {
@@ -329,4 +321,23 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 			delete m;
 		}
 	}
+}
+
+void Matcher::setMetadata(Match *match) {
+	/* we don't have enough information in a metatrack, we'll have to find the track */
+	map<string, AlbumMatch>::iterator am = ams.find(match->metatrack.album_mbid);
+	if (am == ams.end()) {
+		ostringstream tmp;
+		tmp << "Album " << match->metatrack.album_mbid << " is not loaded, and we tried to save a file referencing to it: " << match->metafile->filename;
+		Debug::warning(tmp.str());
+		return;
+	}
+	int tnum = match->metatrack.tracknumber - 1;
+	if ((int) am->second.album->tracks.size() <= tnum || tnum < 0) {
+		ostringstream tmp;
+		tmp << "File " << match->metafile->filename << " referenced to track " << tnum << " on album " << match->metatrack.album_mbid << ", however that track does not exist";
+		Debug::warning(tmp.str());
+		return;
+	}
+	match->metafile->setMetadata(am->second.album->tracks[tnum]);
 }

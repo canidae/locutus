@@ -105,5 +105,6 @@ class Matcher {
 		void lookupPUIDs(const std::vector<Metafile *> &files);
 		void matchFilesToAlbums(const std::vector<Metafile *> &files);
 		void searchMetadata(const std::string &group, const std::vector<Metafile *> &files);
+		void setMetadata(Match *match);
 };
 #endif

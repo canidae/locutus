@@ -60,10 +60,12 @@ class Track;
 class Metafile {
 	public:
 		bool duplicate;
+		bool force_save;
 		bool matched;
 		bool meta_lookup;
 		bool metadata_updated;
 		bool pinned;
+		bool user_changed;
 		int bitrate;
 		int channels;
 		int duration;

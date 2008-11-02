@@ -116,6 +116,8 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->released = getString(0, 18);
 	metafile->genre = getString(0, 19);
 	metafile->pinned = getBool(0, 20);
+	metafile->force_save = getBool(0, 21);
+	metafile->user_changed = getBool(0, 22);
 	return true;
 }
 
@@ -148,6 +150,8 @@ vector<Metafile> PostgreSQL::loadMetafiles(const string &filename_pattern) {
 		metafile.released = getString(r, 18);
 		metafile.genre = getString(r, 19);
 		metafile.pinned = getBool(r, 20);
+		metafile.force_save = getBool(r, 21);
+		metafile.user_changed = getBool(r, 22);
 		files.push_back(metafile);
 	}
 	return files;
@@ -319,12 +323,12 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	string e_group = escapeString(metafile.getGroup());
 	if (old_filename == "") {
 		query.str("");
-		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, matched, duplicate) SELECT '" << e_filename << "', " << metafile.duration << ", " << metafile.channels << ", " << metafile.bitrate << ", " << metafile.samplerate << ", ";
+		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, matched, duplicate, force_save, user_changed) SELECT '" << e_filename << "', " << metafile.duration << ", " << metafile.channels << ", " << metafile.bitrate << ", " << metafile.samplerate << ", ";
 		if (e_puid != "")
 			query << "(SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
 		else
 			query << "NULL, ";
-		query << "'" << e_album << "', '" << e_albumartist << "', '" << e_albumartistsort << "', '" << e_artist << "', '" << e_artistsort << "', '" << e_musicbrainz_albumartistid << "', '" << e_musicbrainz_albumid << "', '" << e_musicbrainz_artistid << "', '" << e_musicbrainz_trackid << "', '" << e_title << "', '" << e_tracknumber << "', '" << e_released << "' , '" << e_genre << "', " << (metafile.pinned ? "true" : "false") << ", '" << e_group << "', " << (metafile.matched ? "true" : "false") << ", " << (metafile.duplicate ? "true" : "false") << " WHERE NOT EXISTS (SELECT true FROM file WHERE filename = '" << e_filename << "')";
+		query << "'" << e_album << "', '" << e_albumartist << "', '" << e_albumartistsort << "', '" << e_artist << "', '" << e_artistsort << "', '" << e_musicbrainz_albumartistid << "', '" << e_musicbrainz_albumid << "', '" << e_musicbrainz_artistid << "', '" << e_musicbrainz_trackid << "', '" << e_title << "', '" << e_tracknumber << "', '" << e_released << "' , '" << e_genre << "', " << (metafile.pinned ? "true" : "false") << ", '" << e_group << "', " << (metafile.matched ? "true" : "false") << ", " << (metafile.duplicate ? "true" : "false") << ", " << (metafile.force_save ? "true" : "false") << ", " << (metafile.user_changed ? "true" : "false") << " WHERE NOT EXISTS (SELECT true FROM file WHERE filename = '" << e_filename << "')";
 		if (!doQuery(query.str())) {
 			Debug::notice("Unable to store file in database. See error above");
 			return false;
@@ -335,7 +339,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		query << "UPDATE file SET filename = '" << e_filename << "', duration = " << metafile.duration << ", channels = " << metafile.channels << ", bitrate = " << metafile.bitrate << ", samplerate = " << metafile.samplerate << ", ";
 		if (e_puid != "")
 			query << "puid = (SELECT puid_id FROM puid WHERE puid = '" << e_puid << "'), ";
-		query << "album = '" << e_album << "', albumartist = '" << e_albumartist << "', albumartistsort = '" << e_albumartistsort << "', artist = '" << e_artist << "', artistsort = '" << e_artistsort << "', musicbrainz_albumartistid = '" << e_musicbrainz_albumartistid << "', musicbrainz_albumid = '" << e_musicbrainz_albumid << "', musicbrainz_artistid = '" << e_musicbrainz_artistid << "', musicbrainz_trackid = '" << e_musicbrainz_trackid << "', title = '" << e_title << "', tracknumber = '" << e_tracknumber << "', released = '" << e_released << "', genre = '" << e_genre << "', pinned = " << (metafile.pinned ? "true" : "false") << ", groupname = '" << e_group << "', matched = " << (metafile.matched ? "true" : "false") << ", duplicate = " << (metafile.duplicate ? "true" : "false") << " WHERE filename = '" << e_old_filename << "'";
+		query << "album = '" << e_album << "', albumartist = '" << e_albumartist << "', albumartistsort = '" << e_albumartistsort << "', artist = '" << e_artist << "', artistsort = '" << e_artistsort << "', musicbrainz_albumartistid = '" << e_musicbrainz_albumartistid << "', musicbrainz_albumid = '" << e_musicbrainz_albumid << "', musicbrainz_artistid = '" << e_musicbrainz_artistid << "', musicbrainz_trackid = '" << e_musicbrainz_trackid << "', title = '" << e_title << "', tracknumber = '" << e_tracknumber << "', released = '" << e_released << "', genre = '" << e_genre << "', pinned = " << (metafile.pinned ? "true" : "false") << ", groupname = '" << e_group << "', matched = " << (metafile.matched ? "true" : "false") << ", duplicate = " << (metafile.duplicate ? "true" : "false") << ", force_save = " << (metafile.force_save ? "true" : "false") << ", user_changed = " << (metafile.user_changed ? "true" : "false") << " WHERE filename = '" << e_old_filename << "'";
 		if (!doQuery(query.str())) {
 			Debug::notice("Unable to store file in database. See error above");
 			return false;

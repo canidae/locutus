@@ -73,6 +73,7 @@ long Locutus::run() {
 				 * but it's no longer matching anything */
 				(*f)->matched = false;
 				(*f)->duplicate = false;
+				(*f)->user_changed = false;
 				database->saveMetafile(**f);
 				continue;
 			}
@@ -231,7 +232,9 @@ void Locutus::saveFile(Metafile *file) {
 		else
 			file->genre = ""; // clear genre if we didn't find a tag
 	}
-	/* set file as "matched" */
+	/* unset force_save and user_changed and set file as "matched" */
+	file->force_save = false;
+	file->user_changed = false;
 	file->matched = true;
 	/* create new filename */
 	string filename = output_dir;
@@ -283,6 +286,9 @@ void Locutus::saveFile(Metafile *file) {
 		}
 		/* mark existing file as a duplicate */
 		f->duplicate = true;
+		/* it's no longer user_changed nor force_save */
+		f->force_save = false;
+		f->user_changed = false;
 		/* update database for the existing file */
 		database->saveMetafile(*f, tmp_old_filename);
 		/* find and update the file in grouped_files */
