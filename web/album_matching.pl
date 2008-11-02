@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 
+use CGI qw(:standard);
 use Data::Dumper;
 
 use lib '../include';
@@ -10,9 +11,17 @@ use Locutus;
 my $page = 'album_matching';
 my %vars = ();
 
-my $dbh = Locutus::db_connect();
+my $offset = int(param('offset'));
+$offset = 0 if ($offset < 0);
+my $filter = param('filter') || '';
 
-$vars{'albums'} = $dbh->selectall_arrayref('SELECT * FROM v_web_list_album_matching WHERE tracks_matched > 0 ORDER BY tracks - tracks_matched ASC, tracks_matched * avg_score DESC', {Slice => {}});
+my $dbh = Locutus::db_connect();
+$filter = $dbh->quote('%' . $filter . '%');
+
+my $query = 'SELECT * FROM v_web_list_album_matching WHERE tracks_matched > 0 AND title ILIKE ' . $filter;
+$query = $query . ' ORDER BY tracks - tracks_matched ASC, tracks_matched * avg_score DESC LIMIT 50 OFFSET ' . $offset;
+
+$vars{'albums'} = $dbh->selectall_arrayref($query, {Slice => {}});
 
 foreach my $album (@{$vars{albums}}) {
 	$album->{max_color} = Locutus::score_to_color($album->{max_score});

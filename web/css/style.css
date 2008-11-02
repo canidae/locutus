@@ -16,7 +16,7 @@ h1 {
 	font-size: 160%;
 }
 h2 {
-	font-size: 130%;
+	font-size: 1.5em;
 }
 h3 {
 	font-size: 110%;
@@ -215,21 +215,43 @@ td.error a {
 	text-align: right;
 }
 #content {
-	padding: 0.5em 2em;
+	padding: 0.5em 5em;
+	min-height: 640px;
+	clear: both;
 }
 #footer {
+	background: #912822 url('header_top.png') repeat-x top;
 	border-top: 1px solid #babdb6;
-	margin: 0 1em;
-	padding: 0.5em;
+	padding: 1.5em;
+	color: white;
+	text-align: center;
 }
 #menu {
 	background: #EEEEEC;
 	padding: 0.1em 0;
 	border-bottom: 1px solid #D3D7CF;
+	padding-left: 5em;
 }
-#menu .odd {
-	background: #D3D7CF;
+
+#settings {
+	float: right;
+	margin-right: 5em;
 }
-#menu span {
-	padding: 0.1em 0.5em;
+
+#menu li, #settings li {
+	background: #F9F9F9;
+	padding: 0.5em;
+	width: auto;
+	border: 1px dotted #babdb6;
+	float: left;
+}
+
+#search {
+	float: right;
+}
+
+h1,h2,h3,h4,h5,h6 { font-family: Georgia, Times, Times New Roman, serif;}
+
+ul.list {
+	list-style-type: none;
 }
