@@ -12,7 +12,7 @@ my %vars = ();
 
 my $dbh = Locutus::db_connect();
 
-$vars{'albums'} = $dbh->selectall_arrayref('SELECT * FROM v_web_list_album_matching WHERE matched > 0 ORDER BY matched * avg_score DESC', {Slice => {}});
+$vars{'albums'} = $dbh->selectall_arrayref('SELECT * FROM v_web_list_album_matching WHERE tracks_matched > 0 ORDER BY tracks - tracks_matched ASC, tracks_matched * avg_score DESC', {Slice => {}});
 
 foreach my $album (@{$vars{albums}}) {
 	$album->{max_color} = Locutus::score_to_color($album->{max_score});

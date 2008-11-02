@@ -9,8 +9,8 @@
       <tr>
         <th rowspan="2">Album</th>
         <th rowspan="2">Tracks</th>
-        <th rowspan="2">Files matched</th>
-        <th rowspan="2">MBID matches</th>
+        <th rowspan="2">Tracks matched</th>
+        <th rowspan="2">MBIDs matched</th>
         <th colspan="3">Track scores</th>
       </tr>
       <tr>
@@ -22,8 +22,8 @@
       <tr>
         <td><a href="album.pl?alid=[% album.album_id %]">[% album.title %]</a></td>
         <td>[% album.tracks %]</td>
-        <td>[% album.matched %]</td>
-        <td>[% album.mbid_matches %]</td>
+        <td>[% album.tracks_matched %]</td>
+        <td>[% album.mbids_matched %]</td>
         <td style="background: #[% album.max_color %];">[% album.max_score %]</td>
         <td style="background: #[% album.min_color %];">[% album.min_score %]</td>
         <td style="background: #[% album.avg_color %];">[% album.avg_score %]</td>
