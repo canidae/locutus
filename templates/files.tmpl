@@ -6,7 +6,7 @@
         <label for="filter">Search...</label>
         <input type="text" id="filter" name="filter" />
         <label for="list_unmatched_only">Only list unmatched files</label>
-        <input type="checkbox" name="list_unmatched_only" id="list_unmatched_only" value="[% file.unmatched %]" />
+        <input type="checkbox" name="list_unmatched_only" id="list_unmatched_only" value="1" [% unmatched ? 'checked="checked"' : '' %] />
       </p>
     </form>
     <h2>Files</h2>

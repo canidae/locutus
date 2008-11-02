@@ -240,10 +240,14 @@ td.error a {
 
 #menu li, #settings li {
 	background: #F9F9F9;
-	padding: 0.5em;
 	width: auto;
 	border: 1px dotted #babdb6;
 	float: left;
+}
+
+ul.list li > a {
+	display: block;
+	padding: 0.5em;
 }
 
 #search {
