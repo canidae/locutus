@@ -20,7 +20,7 @@ my $filter = param('filter') || '';
 $filter = $dbh->quote('%' . $filter . '%');
 
 my $query = 'SELECT * FROM v_web_list_albums WHERE title ILIKE ' . $filter . ' OR artist_name ILIKE ' . $filter;
-$query = $query . ' ORDER BY title LIMIT $limit OFFSET ' . $offset;
+$query = $query . ' ORDER BY title LIMIT ' . $limit . ' OFFSET ' . $offset;
 $vars{'albums'} = $dbh->selectall_arrayref($query, {Slice => {}});
 
 $query = 'SELECT count(*) FROM v_web_list_albums WHERE title ILIKE ' . $filter . ' OR artist_name ILIKE ' . $filter;
