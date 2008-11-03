@@ -16,7 +16,7 @@ h1 {
 	font-size: 160%;
 }
 h2 {
-	font-size: 130%;
+	font-size: 1.5em;
 }
 h3 {
 	font-size: 110%;
@@ -156,9 +156,7 @@ option.optgroup {
 	padding-left: 1em;
 	padding-right: 0.5em;
 }
-.disabled {
-	text-decoration: line-through;
-}
+
 .outdated {
 	color: gray;
 }
@@ -215,21 +213,72 @@ td.error a {
 	text-align: right;
 }
 #content {
-	padding: 0.5em 2em;
+	padding: 0.5em 5em;
+	min-height: 640px;
+	clear: both;
 }
 #footer {
+	background: #912822 url('header_top.png') repeat-x top;
 	border-top: 1px solid #babdb6;
-	margin: 0 1em;
-	padding: 0.5em;
+	padding: 1.5em;
+	color: white;
+	text-align: center;
 }
 #menu {
 	background: #EEEEEC;
 	padding: 0.1em 0;
 	border-bottom: 1px solid #D3D7CF;
+	padding-left: 5em;
 }
-#menu .odd {
-	background: #D3D7CF;
+
+#settings {
+	float: right;
+	margin-right: 5em;
 }
-#menu span {
-	padding: 0.1em 0.5em;
+
+#menu li, #settings li {
+	background: #F9F9F9;
+	width: auto;
+	border: 1px dotted #babdb6;
+}
+
+ul.list li > a {
+	display: block;
+	padding: 0.5em;
+}
+
+#search {
+	float: right;
+}
+
+ul.list {
+	list-style-type: none;
+}
+ul.list li {
+	float: left;
+}
+
+
+#pagination a:visited, #pagination a:link {
+	color: black;
+}
+
+#pagination span, #pagination a {
+	margin: 0px 2px;
+	display: block;
+	border: 1px solid #f1c8c2;
+	padding: 4px 9px;
+	text-decoration: none;
+}
+#pagination a:hover, #pagination span:hover {
+	border-color: #912822;
+}
+#pagination span.disabled {
+	opacity: 0.3;
+	border-color: #f1c8c2 !important;
+}
+#pagination span.current {
+	background-color: #912822;
+	border-color: #912822 !important;
+	color: white;
 }

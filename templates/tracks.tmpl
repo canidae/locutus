@@ -1,9 +1,13 @@
 [% INCLUDE header.tmpl
   title = 'Tracks'
 %]
-    <p>
-      <input type="text" value="filter tracks here" />
-    </p>
+    <form action="" method="get" id="search">
+      <p>
+        <label for="filter">Filter</label>
+        <input type="text" name="filter" id="filter" />
+      </p>
+    </form>
+    <h2>Tracks</h2>
 [% IF tracks.size() > 0 %]
     <ul>
   [% FOREACH track IN tracks %]

@@ -1,9 +1,13 @@
 [% INCLUDE header.tmpl
   title = 'Album matching'
 %]
-    <p>
-      <input type="text" value="filter albums here" />
-    </p>
+    <form action="" method="get" id="search">
+      <p>
+        <label for="filter">Filter</label>
+        <input type="text" name="filter" id="filter" />
+      </p>
+    </form>
+    <h2>Album Matching</h2>
 [% IF albums.size() > 0 %]
     <table>
       <tr>

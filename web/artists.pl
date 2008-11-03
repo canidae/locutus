@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 
+use CGI qw(:standard);
 use Data::Dumper;
 
 use lib '../include';
@@ -12,7 +13,13 @@ my %vars = ();
 
 my $dbh = Locutus::db_connect();
 
-$vars{'artists'} = $dbh->selectall_arrayref('SELECT * FROM v_web_list_artists ORDER BY sortname LIMIT 25', {Slice => {}});
+my $offset = int(param('offset'));
+$offset = 0 if ($offset < 0);
+my $filter = param('filter') || '';
+my $query = 'SELECT * FROM v_web_list_artists WHERE name ILIKE ' . $dbh->quote('%' . $filter . '%');
+$query = $query . ' ORDER BY sortname LIMIT 25 OFFSET ' . $offset;
+
+$vars{'artists'} = $dbh->selectall_arrayref($query, {Slice => {}});
 
 #print Dumper(\%vars);
 

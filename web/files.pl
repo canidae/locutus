@@ -15,6 +15,7 @@ my $dbh = Locutus::db_connect();
 my $offset = int(param('offset'));
 $offset = 0 if ($offset < 0);
 my $only_unmatched = int(param('list_unmatched_only') || 0);
+$vars{'unmatched'} = $only_unmatched;
 my $filter = param('filter') || '';
 
 my $query = 'SELECT * FROM v_web_list_files WHERE filename ILIKE ' . $dbh->quote('%' . $filter . '%');

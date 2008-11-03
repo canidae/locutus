@@ -1,10 +1,15 @@
 [% INCLUDE header.tmpl
   title = 'Files'
 %]
-    <p>
-      <input type="text" value="filter files here" />
-      <input type="checkbox" name='list_unmatched_only' value="1" />Only list unmatched files
-    </p>
+    <form action="" method="get" id="search">
+      <p>
+        <label for="filter">Search</label>
+        <input type="text" id="filter" name="filter" />
+        <label for="list_unmatched_only">Only list unmatched files</label>
+        <input type="checkbox" name="list_unmatched_only" id="list_unmatched_only" value="1" [% unmatched ? 'checked="checked"' : '' %] />
+      </p>
+    </form>
+    <h2>Files</h2>
 [% IF files.size() > 0 %]
     <ul>
   [% FOREACH file IN files %]
