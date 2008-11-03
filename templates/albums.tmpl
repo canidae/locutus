@@ -3,7 +3,7 @@
 %]
     <form action="" method="get" id="search">
       <p>
-        <label for="filter">Filter...</label>
+        <label for="filter">Filter</label>
         <input type="text" name="filter" id="filter" />
       </p>
     </form>
@@ -13,6 +13,36 @@
   [% FOREACH album IN albums %]
       <li><a href="album.pl?alid=[% album.album_id %]">[% album.title %], [% album.artist_name %] ([% album.tracks %] track[% IF album.tracks != 1 %]s[% END %][% IF album.type %], [% album.type %][% END %][% IF album.released %], released [% album.released %][% END %])</a></li>
   [% END %]
+    </ul>
+[% END %]
+
+[% IF pagination %]
+    <ul id="pagination" class="list">
+      <li id="navPrev">
+  [% IF pagination.prev %]
+        <a href="?page=[% pagination.prev %]">&laquo; Previous</a></li>
+  [% ELSE %]
+        <span class="disabled">&laquo; Previous</span>
+  [% END %]
+      </li>
+  [% FOREACH page IN pagination.data %]
+    [% IF page %]
+      [% IF page.1 %]
+      <li><span class="current">[% page.0 %]</span></li>
+      [% ELSE %]
+      <li><a href="?page=[% page.0 %]">[% page.0 %]</a></li>
+      [% END %]
+    [% ELSE %]
+      <li>..</li>
+    [% END %]
+  [% END %]
+      <li id="navNext">
+  [% IF pagination.next %]
+        <a href="?page=[% pagination.next %]">Next &raquo;</a></li>
+  [% ELSE %]
+        <span class="disabled">Next &raquo;</span>
+  [% END %]
+      </li>
     </ul>
 [% END %]
 [% INCLUDE footer.tmpl %]
