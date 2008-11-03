@@ -2,18 +2,20 @@
     <ul id="pagination" class="list">
       <li id="navPrev">
   [% IF pagination.prev %]
-        <a href="?page=[% pagination.prev %]">&laquo; Previous</a></li>
+        <a href="?page=[% pagination.prev %]">&laquo; Previous</a>
   [% ELSE %]
         <span class="disabled">&laquo; Previous</span>
   [% END %]
       </li>
   [% FOREACH page IN pagination.data %]
     [% IF page %]
+      <li>
       [% IF page.1 %]
-      <li><span class="current">[% page.0 %]</span></li>
+        <span class="current">[% page.0 %]</span>
       [% ELSE %]
-      <li><a href="?page=[% page.0 %]">[% page.0 %]</a></li>
+        <a href="?page=[% page.0 %]">[% page.0 %]</a>
       [% END %]
+      </li>
     [% ELSE %]
       <li>..</li>
     [% END %]
