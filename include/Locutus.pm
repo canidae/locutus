@@ -32,28 +32,24 @@ sub score_to_color {
 }
 
 sub paginate {
-	my ($count,
-		 $offset,
-		 $limit
-		) = @_;
+	my ($count, $offset, $limit) = @_;
 
 	my $page = !$offset ? 1 : int($offset / $limit) + 1;
 	my $max = int($count / $limit) + ($count % $limit > 0 ? 1 : 0);
 
-	if($max == 1) {
+	if ($max == 1) {
 		return 0;
 	}
 
-	my %data = (prev => $page > 1 ? $page - 1 : 0,
-				next => $page < $max ? $page + 1 : 0);
+	my %data = (prev => ($page > 1 ? $page - 1 : 0), next => ($page < $max ? $page + 1 : 0));
 	my @pages = ();
 
-	if($max < 9) {
-		for(my $i = 1; $i <= $max; $i++) {
+	if ($max < 9) {
+		for (my $i = 1; $i <= $max; $i++) {
 			push(@pages, [$i, $page == $i ? 1 : 0]);
 		}
 	} elsif ($max > 7) {
-		if($page < 3) {
+		if ($page < 3) {
 			for (my $i = 1; $i < 6; $i++) {
 				push(@pages, [$i, $page == $i ? 1 : 0]);
 			}
