@@ -8,18 +8,24 @@ use Data::Dumper;
 use lib '../include';
 use Locutus;
 
+my $dbh = Locutus::db_connect();
+my $limit = 25;
 my $page = 'artists';
 my %vars = ();
 
-my $dbh = Locutus::db_connect();
-
-my $offset = int(param('offset'));
+my $offset = (int(param('page')) - 1) * $limit;
 $offset = 0 if ($offset < 0);
-my $filter = param('filter') || '';
-my $query = 'SELECT * FROM v_web_list_artists WHERE name ILIKE ' . $dbh->quote('%' . $filter . '%');
-$query = $query . ' ORDER BY sortname LIMIT 25 OFFSET ' . $offset;
 
+my $filter = param('filter') || '';
+$filter = $dbh->quote('%' . $filter . '%');
+
+my $query = 'SELECT * FROM v_web_list_artists WHERE name ILIKE ' . $filter;
+$query = $query . ' ORDER BY sortname LIMIT $limit OFFSET ' . $offset;
 $vars{'artists'} = $dbh->selectall_arrayref($query, {Slice => {}});
+
+$query = 'SELECT count(*) FROM v_web_list_artists WHERE name ILIKE ' . $filter;
+my $count = int($dbh->selectrow_array($query));
+$vars{'pagination'} = Locutus::paginate($count, $offset, $limit);
 
 #print Dumper(\%vars);
 

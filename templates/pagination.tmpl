@@ -1,0 +1,29 @@
+[% IF pagination %]
+    <ul id="pagination" class="list">
+      <li id="navPrev">
+  [% IF pagination.prev %]
+        <a href="?page=[% pagination.prev %]">&laquo; Previous</a></li>
+  [% ELSE %]
+        <span class="disabled">&laquo; Previous</span>
+  [% END %]
+      </li>
+  [% FOREACH page IN pagination.data %]
+    [% IF page %]
+      [% IF page.1 %]
+      <li><span class="current">[% page.0 %]</span></li>
+      [% ELSE %]
+      <li><a href="?page=[% page.0 %]">[% page.0 %]</a></li>
+      [% END %]
+    [% ELSE %]
+      <li>..</li>
+    [% END %]
+  [% END %]
+      <li id="navNext">
+  [% IF pagination.next %]
+        <a href="?page=[% pagination.next %]">Next &raquo;</a>
+  [% ELSE %]
+        <span class="disabled">Next &raquo;</span>
+  [% END %]
+      </li>
+    </ul>
+[% END %]
