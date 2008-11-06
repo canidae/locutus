@@ -187,6 +187,14 @@ CREATE VIEW v_daemon_load_metafile AS
 
 
 --
+-- Name: v_web_file_list_matches; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_file_list_matches AS
+    SELECT f.file_id, ar.artist_id AS albumartist_id, ar.name AS albumartist, al.album_id, al.title AS album, ta.artist_id, ta.name AS artist, tr.track_id, tr.title, tr.tracknumber, tr.duration, m.mbid_match, m.meta_score FROM ((((((file f JOIN match m ON ((m.file_id = f.file_id))) JOIN metatrack mt ON ((mt.metatrack_id = m.metatrack_id))) JOIN album al ON ((al.mbid = mt.album_mbid))) JOIN artist ar ON ((ar.artist_id = al.artist_id))) JOIN track tr ON ((tr.mbid = mt.track_mbid))) JOIN artist ta ON ((ta.artist_id = tr.artist_id)));
+
+
+--
 -- Name: v_web_info_album; Type: VIEW; Schema: public; Owner: -
 --
 

@@ -29,7 +29,7 @@ if (defined param('save_metadata') && $fiid >= 0) {
 }
 
 $vars{file} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_file WHERE file_id = ' . $fiid);
-$vars{matches} = $dbh->selectall_arrayref('SELECT * FROM v_web_list_matches WHERE file_file_id = ' . $fiid . ' ORDER BY mbid_match DESC, puid_match DESC, meta_score DESC', {Slice => {}});
+$vars{matches} = $dbh->selectall_arrayref('SELECT * FROM v_web_file_list_matches WHERE file_id = ' . $fiid . ' ORDER BY mbid_match DESC, meta_score DESC', {Slice => {}});
 
 foreach my $match (@{$vars{matches}}) {
 	$match->{color} = Locutus::score_to_color($match->{meta_score});
