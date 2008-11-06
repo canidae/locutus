@@ -41,7 +41,6 @@ class PostgreSQL : public Database {
 		bool saveArtist(const Artist &artist);
 		bool saveMatch(const Match &match);
 		bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "");
-		bool saveMetatrack(const Metatrack &metatrack);
 		bool saveTrack(const Track &track);
 
 	private:

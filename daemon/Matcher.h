@@ -61,6 +61,7 @@ class Match;
 class Metafile;
 class Metatrack;
 class MusicBrainz;
+class Track;
 
 struct AlbumMatch {
 	Album *album;
@@ -99,12 +100,11 @@ class Matcher {
 
 		void clearAlbumMatch();
 		void compareFilesWithAlbum(AlbumMatch *am, const std::vector<Metafile *> &files);
-		Match *compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack);
+		Match *compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack, Track *track = NULL);
 		bool loadAlbum(const std::string &mbid, const std::vector<Metafile *> files);
 		void lookupMBIDs(const std::vector<Metafile *> &files);
 		void lookupPUIDs(const std::vector<Metafile *> &files);
 		void matchFilesToAlbums(const std::vector<Metafile *> &files);
 		void searchMetadata(const std::string &group, const std::vector<Metafile *> &files);
-		void setMetadata(Match *match);
 };
 #endif

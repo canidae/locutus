@@ -73,9 +73,8 @@ void Matcher::clearAlbumMatch() {
 void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &files) {
 	for (vector<Track *>::iterator t = am->album->tracks.begin(); t != am->album->tracks.end(); ++t) {
 		Metatrack mt = (*t)->getAsMetatrack();
-		database->saveMetatrack(mt);
 		for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf) {
-			Match *m = compareMetafileWithMetatrack(*mf, mt);
+			Match *m = compareMetafileWithMetatrack(*mf, mt, *t);
 			if (m == NULL)
 				continue;
 			am->matches[(*t)->mbid].push_back(m);
@@ -88,7 +87,7 @@ void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &fi
 	}
 }
 
-Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack) {
+Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack, Track *track) {
 	if (duration_must_match && abs(metafile->duration - metatrack.duration) > duration_limit)
 		return NULL;
 	list<string> values = metafile->getValues(combine_threshold);
@@ -143,7 +142,7 @@ Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack
 	if (durationdiff < duration_limit)
 		meta_score += (1.0 - durationdiff / duration_limit) * duration_weight;
 	meta_score /= album_weight + artist_weight + title_weight + tracknumber_weight + duration_weight;
-	Match *match = new Match(metafile, metatrack, (metafile->musicbrainz_trackid != "" && metafile->musicbrainz_trackid == metatrack.track_mbid), (metafile->puid != "" && metafile->puid == metatrack.puid), meta_score);
+	Match *match = new Match(metafile, track, (metafile->musicbrainz_trackid != "" && metafile->musicbrainz_trackid == metatrack.track_mbid), (metafile->puid != "" && metafile->puid == metatrack.puid), meta_score);
 	map<string, double>::iterator bfm = best_file_match.find(metafile->filename);
 	if (bfm == best_file_match.end() || bfm->second < match->total_score)
 		best_file_match[metafile->filename] = match->total_score;
@@ -196,8 +195,6 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 			Match *m = compareMetafileWithMetatrack(mf, *mt);
 			if (m == NULL)
 				continue;
-			database->saveMetatrack(*mt);
-			database->saveMatch(*m);
 			/* check that score is high enough for us to load this album */
 			if (m->meta_score >= puid_min_score)
 				loadAlbum(mt->album_mbid, files);
@@ -252,7 +249,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 						if ((*m)->metafile->force_save && (*m)->mbid_match) {
 							/* user demands that this file is saved, even if it means
 							 * that we won't satisfy the settings */
-							setMetadata(*m);
+							(*m)->metafile->setMetadata((*m)->track);
 							/* no "continue" here, or we won't get "complete album" or
 							 * "complete group" which may keep other files from being
 							 * saved */
@@ -275,8 +272,8 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				if (best_match == NULL)
 					break;
 				used_files[best_match->metafile->filename] = true;
-				if (used_tracks.find(best_match->metatrack.track_mbid) == used_tracks.end()) {
-					used_tracks[best_match->metatrack.track_mbid] = true;
+				if (used_tracks.find(best_match->track->mbid) == used_tracks.end()) {
+					used_tracks[best_match->track->mbid] = true;
 					++tracks_matched;
 					album_score += best_match_score;
 				}
@@ -300,7 +297,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		return;
 	/* set new metadata */
 	for (map<string, Match *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf)
-		setMetadata(sf->second);
+		sf->second->metafile->setMetadata(sf->second->track);
 }
 
 void Matcher::searchMetadata(const string &group, const vector<Metafile *> &files) {
@@ -313,31 +310,10 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 			Match *m = compareMetafileWithMetatrack(mf, *mt);
 			if (m == NULL)
 				continue;
-			database->saveMetatrack(*mt);
-			database->saveMatch(*m);
 			/* check that score is high enough for us to load this album */
 			if (m->meta_score >= metadata_min_score)
 				loadAlbum(mt->album_mbid, files);
 			delete m;
 		}
 	}
-}
-
-void Matcher::setMetadata(Match *match) {
-	/* we don't have enough information in a metatrack, we'll have to find the track */
-	map<string, AlbumMatch>::iterator am = ams.find(match->metatrack.album_mbid);
-	if (am == ams.end()) {
-		ostringstream tmp;
-		tmp << "Album " << match->metatrack.album_mbid << " is not loaded, and we tried to save a file referencing to it: " << match->metafile->filename;
-		Debug::warning(tmp.str());
-		return;
-	}
-	int tnum = match->metatrack.tracknumber - 1;
-	if ((int) am->second.album->tracks.size() <= tnum || tnum < 0) {
-		ostringstream tmp;
-		tmp << "File " << match->metafile->filename << " referenced to track " << tnum << " on album " << match->metatrack.album_mbid << ", however that track does not exist";
-		Debug::warning(tmp.str());
-		return;
-	}
-	match->metafile->setMetadata(am->second.album->tracks[tnum]);
 }

@@ -93,29 +93,11 @@ CREATE TABLE file (
 
 CREATE TABLE match (
     file_id integer NOT NULL,
-    metatrack_id integer NOT NULL,
+    track_id integer NOT NULL,
     mbid_match boolean NOT NULL,
     puid_match boolean NOT NULL,
     meta_score double precision NOT NULL,
     CONSTRAINT match_meta_score_check CHECK (((meta_score >= (0.0)::double precision) AND (meta_score <= (1.0)::double precision)))
-);
-
-
---
--- Name: metatrack; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE metatrack (
-    metatrack_id integer NOT NULL,
-    track_mbid character(36) NOT NULL,
-    track_title character varying NOT NULL,
-    track_duration integer DEFAULT 0 NOT NULL,
-    track_tracknumber integer NOT NULL,
-    artist_mbid character(36) NOT NULL,
-    artist_name character varying NOT NULL,
-    album_mbid character(36) NOT NULL,
-    album_title character varying NOT NULL,
-    last_updated timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -126,17 +108,6 @@ CREATE TABLE metatrack (
 CREATE TABLE puid (
     puid_id integer NOT NULL,
     puid character(36) NOT NULL
-);
-
-
---
--- Name: puid_metatrack; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE puid_metatrack (
-    puid_id integer NOT NULL,
-    metatrack_id integer NOT NULL,
-    last_updated timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
@@ -187,14 +158,6 @@ CREATE VIEW v_daemon_load_metafile AS
 
 
 --
--- Name: v_web_file_list_matches; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW v_web_file_list_matches AS
-    SELECT f.file_id, ar.artist_id AS albumartist_id, ar.name AS albumartist, al.album_id, al.title AS album, ta.artist_id, ta.name AS artist, tr.track_id, tr.title, tr.tracknumber, tr.duration, m.mbid_match, m.meta_score FROM ((((((file f JOIN match m ON ((m.file_id = f.file_id))) JOIN metatrack mt ON ((mt.metatrack_id = m.metatrack_id))) JOIN album al ON ((al.mbid = mt.album_mbid))) JOIN artist ar ON ((ar.artist_id = al.artist_id))) JOIN track tr ON ((tr.mbid = mt.track_mbid))) JOIN artist ta ON ((ta.artist_id = tr.artist_id)));
-
-
---
 -- Name: v_web_info_album; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -227,14 +190,6 @@ CREATE VIEW v_web_info_track AS
 
 
 --
--- Name: v_web_list_album_matching; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW v_web_list_album_matching AS
-    SELECT a.album_id, a.title, count(t.track_id) AS tracks, COALESCE(count(tmp.meta_score), (0)::bigint) AS tracks_matched, COALESCE(sum(tmp.mbid_match), (0)::bigint) AS mbids_matched, COALESCE(max(tmp.meta_score), (0)::double precision) AS max_score, COALESCE(min(tmp.meta_score), (0)::double precision) AS min_score, (COALESCE(avg(tmp.meta_score), (0)::double precision) * ((COALESCE(count(tmp.meta_score), (0)::bigint))::real / (count(t.track_id))::real)) AS avg_score FROM (((album a JOIN track t ON ((t.album_id = a.album_id))) JOIN metatrack mt ON ((mt.track_mbid = t.mbid))) LEFT JOIN (SELECT mt.metatrack_id, (bool_or(m.mbid_match))::integer AS mbid_match, max(m.meta_score) AS meta_score FROM ((metatrack mt JOIN match m ON ((m.metatrack_id = mt.metatrack_id))) JOIN file f ON ((f.file_id = m.file_id))) WHERE (f.matched = false) GROUP BY mt.metatrack_id) tmp ON ((tmp.metatrack_id = mt.metatrack_id))) GROUP BY a.album_id, a.title;
-
-
---
 -- Name: v_web_list_albums; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -256,14 +211,6 @@ CREATE VIEW v_web_list_artists AS
 
 CREATE VIEW v_web_list_files AS
     SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file;
-
-
---
--- Name: v_web_list_matches; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW v_web_list_matches AS
-    SELECT me.metatrack_id AS metatrack_metatrack_id, me.track_mbid AS metatrack_track_mbid, me.track_title AS metatrack_track_title, me.track_duration AS metatrack_track_duration, me.track_tracknumber AS metatrack_track_tracknumber, me.artist_mbid AS metatrack_artist_mbid, me.artist_name AS metatrack_artist_name, me.album_mbid AS metatrack_album_mbid, me.album_title AS metatrack_album_title, me.last_updated AS metatrack_last_updated, fi.file_id AS file_file_id, fi.filename AS file_filename, fi.last_updated AS file_last_updated, fi.duration AS file_duration, fi.channels AS file_channels, fi.bitrate AS file_bitrate, fi.samplerate AS file_samplerate, fi.puid_id AS file_puid_id, fi.album AS file_album, fi.albumartist AS file_albumartist, fi.albumartistsort AS file_albumartistsort, fi.artist AS file_artist, fi.artistsort AS file_artistsort, fi.musicbrainz_albumartistid AS file_musicbrainz_albumartistid, fi.musicbrainz_albumid AS file_musicbrainz_albumid, fi.musicbrainz_artistid AS file_musicbrainz_artistid, fi.musicbrainz_trackid AS file_musicbrainz_trackid, fi.title AS file_title, fi.tracknumber AS file_tracknumber, fi.released AS file_released, ma.mbid_match, ma.puid_match, ma.meta_score, tr.track_id FROM (((metatrack me JOIN match ma ON ((me.metatrack_id = ma.metatrack_id))) JOIN file fi ON ((ma.file_id = fi.file_id))) LEFT JOIN track tr ON ((me.track_mbid = tr.mbid)));
 
 
 --
@@ -335,24 +282,6 @@ CREATE SEQUENCE file_file_id_seq
 --
 
 ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
-
-
---
--- Name: metatrack_metatrack_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE metatrack_metatrack_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
---
--- Name: metatrack_metatrack_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE metatrack_metatrack_id_seq OWNED BY metatrack.metatrack_id;
 
 
 --
@@ -432,13 +361,6 @@ ALTER TABLE file ALTER COLUMN file_id SET DEFAULT nextval('file_file_id_seq'::re
 
 
 --
--- Name: metatrack_id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE metatrack ALTER COLUMN metatrack_id SET DEFAULT nextval('metatrack_metatrack_id_seq'::regclass);
-
-
---
 -- Name: puid_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -512,31 +434,7 @@ ALTER TABLE ONLY file
 --
 
 ALTER TABLE ONLY match
-    ADD CONSTRAINT match_pkey PRIMARY KEY (file_id, metatrack_id);
-
-
---
--- Name: metatrack_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY metatrack
-    ADD CONSTRAINT metatrack_pkey PRIMARY KEY (metatrack_id);
-
-
---
--- Name: metatrack_track_mbid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY metatrack
-    ADD CONSTRAINT metatrack_track_mbid_key UNIQUE (track_mbid);
-
-
---
--- Name: puid_metatrack_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY puid_metatrack
-    ADD CONSTRAINT puid_metatrack_pkey PRIMARY KEY (puid_id, metatrack_id);
+    ADD CONSTRAINT match_pkey PRIMARY KEY (file_id, track_id);
 
 
 --
@@ -612,27 +510,11 @@ ALTER TABLE ONLY match
 
 
 --
--- Name: match_metatrack_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: match_track_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY match
-    ADD CONSTRAINT match_metatrack_id_fkey FOREIGN KEY (metatrack_id) REFERENCES metatrack(metatrack_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: puid_metatrack_metatrack_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY puid_metatrack
-    ADD CONSTRAINT puid_metatrack_metatrack_id_fkey FOREIGN KEY (metatrack_id) REFERENCES metatrack(metatrack_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: puid_metatrack_puid_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY puid_metatrack
-    ADD CONSTRAINT puid_metatrack_puid_id_fkey FOREIGN KEY (puid_id) REFERENCES puid(puid_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT match_track_id_fkey FOREIGN KEY (track_id) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

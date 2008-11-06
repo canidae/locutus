@@ -60,10 +60,6 @@ bool Database::saveMetafile(const Metafile &metafile, const string &old_filename
 	return false;
 }
 
-bool Database::saveMetatrack(const Metatrack &metatrack) {
-	return false;
-}
-
 bool Database::saveTrack(const Track &track) {
 	return false;
 }

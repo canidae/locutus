@@ -285,14 +285,16 @@ bool PostgreSQL::saveArtist(const Artist &artist) {
 }
 
 bool PostgreSQL::saveMatch(const Match &match) {
+	if (match.track == NULL)
+		return false;
 	string e_filename = escapeString(match.metafile->filename);
-	string e_track_mbid = escapeString(match.metatrack.track_mbid);
+	string e_track_mbid = escapeString(match.track->mbid);
 	ostringstream query;
-	query << "INSERT INTO match(file_id, metatrack_id, mbid_match, puid_match, meta_score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'), " << (match.mbid_match ? "true" : "false") << ", " << (match.puid_match ? "true" : "false") << ", " << match.meta_score << " WHERE NOT EXISTS (SELECT true FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "'))";
+	query << "INSERT INTO match(file_id, track_id, mbid_match, puid_match, meta_score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "'), " << (match.mbid_match ? "true" : "false") << ", " << (match.puid_match ? "true" : "false") << ", " << match.meta_score << " WHERE NOT EXISTS (SELECT true FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "'))";
 	if (!doQuery(query.str()))
 		Debug::notice("Unable to save metadata match in cache, query failed. See error above");
 	query.str("");
-	query << "UPDATE match SET mbid_match = " << (match.mbid_match ? "true" : "false") << ", puid_match = "  << (match.puid_match ? "true" : "false") << ", meta_score = " << match.meta_score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND metatrack_id = (SELECT metatrack_id FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
+	query << "UPDATE match SET mbid_match = " << (match.mbid_match ? "true" : "false") << ", puid_match = "  << (match.puid_match ? "true" : "false") << ", meta_score = " << match.meta_score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "')";
 	if (!doQuery(query.str()))
 		Debug::notice("Unable to save metadata match in cache, query failed. See error above");
 	return true;
@@ -345,28 +347,6 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 			return false;
 		}
 	}
-	return true;
-}
-
-bool PostgreSQL::saveMetatrack(const Metatrack &metatrack) {
-	if (metatrack.track_mbid.size() != 36) {
-		Debug::notice("Won't save metatrack in cache, missing MBIDs");
-		return false;
-	}
-	string e_track_mbid = escapeString(metatrack.track_mbid);
-	string e_track_title = escapeString(metatrack.track_title);
-	string e_artist_mbid = escapeString(metatrack.artist_mbid);
-	string e_artist_name = escapeString(metatrack.artist_name);
-	string e_album_mbid = escapeString(metatrack.album_mbid);
-	string e_album_title = escapeString(metatrack.album_title);
-	ostringstream query;
-	query << "INSERT INTO metatrack(track_mbid, track_title, track_duration, track_tracknumber, artist_mbid, artist_name, album_mbid, album_title) SELECT '" << e_track_mbid << "', '" << e_track_title << "', " << metatrack.duration << ", " << metatrack.tracknumber << ", '" << e_artist_mbid << "', '" << e_artist_name << "', '" << e_album_mbid << "', '" << e_album_title << "' WHERE NOT EXISTS (SELECT true FROM metatrack WHERE track_mbid = '" << e_track_mbid << "')";
-	if (!doQuery(query.str()))
-		Debug::notice("Unable to save metatrack, query failed. See error above");
-	query.str("");
-	query << "UPDATE metatrack SET track_title = '" << e_track_title << "', track_duration = " << metatrack.duration << ", track_tracknumber = " << metatrack.tracknumber << ", artist_mbid = '" << e_artist_mbid << "', artist_name = '" << e_artist_name << "', album_mbid = '" << e_album_mbid << "', album_title = '" << e_album_title << "' WHERE track_mbid = '" << e_track_mbid << "'";
-	if (!doQuery(query.str()))
-		Debug::notice("Unable to save metatrack, query failed. See error above");
 	return true;
 }
 
