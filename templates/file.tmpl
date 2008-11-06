@@ -39,6 +39,7 @@
           <td><input type="text" name="musicbrainz_trackid" value="[% file.musicbrainz_trackid %]" /></td>
         </tr>
       </table>
+      <div><input type="hidden" name="fiid" value="[% file.file_id %]" /></div>
       <p><input type="submit" name="save_metadata" value="Save metadata" /></p>
   [% IF matches.size() > 0 %]
       <h2>Matching tracks:</h2>

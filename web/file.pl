@@ -24,10 +24,8 @@ if (defined param('save_metadata') && $fiid >= 0) {
 	my $tracknumber = param('tracknumber') || "";
 	my $musicbrainz_albumid = param('musicbrainz_albumid') || "";
 	my $musicbrainz_trackid = param('musicbrainz_trackid') || "";
-	my $query = 'UPDATE file SET album=' . $dbh->quote($album) . ', albumartist=' . $dbh->quote($albumartist) . ', artist=' . $dbh->quote($artist) . ', musicbrainz_albumid=' . $dbh->quote($musicbrainz_albumid) . ', musicbrainz_trackid=' . $dbh->quote($musicbrainz_trackid) . ', title=' . $dbh->quote($title) . ', tracknumber=' . $dbh->quote($tracknumber) . ' WHERE file_id=' . $fiid;
+	my $query = 'UPDATE file SET album=' . $dbh->quote($album) . ', albumartist=' . $dbh->quote($albumartist) . ', artist=' . $dbh->quote($artist) . ', musicbrainz_albumid=' . $dbh->quote($musicbrainz_albumid) . ', musicbrainz_trackid=' . $dbh->quote($musicbrainz_trackid) . ', title=' . $dbh->quote($title) . ', tracknumber=' . $dbh->quote($tracknumber) . ', user_changed = true WHERE file_id=' . $fiid;
 	$dbh->do($query);
-} elsif (defined param('use_selected') && $fiid >= 0) {
-	# some magic needed here
 }
 
 $vars{file} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_file WHERE file_id = ' . $fiid);
