@@ -13,7 +13,6 @@
     <table>
       <tr>
         <th>Score</th>
-        <th><input type="radio" name="use_file[[% track.track_id %]]" value="-1" checked="checked" /></th>
         <th>[% track.tracknumber %]</th>
         <th>fixme?</th>
         <th>[% track.album_title %]</th>
@@ -24,16 +23,15 @@
     [% FOREACH match IN matches %]
       <tr>
         <td rowspan="2" style="background: #[% match.color %];">[% match.meta_score %]</td>
-        <td rowspan="2"><input type="radio" name="use_file[[% track.track_id %]]" value="[% match.file_file_id %]" /></td>
-        <td>[% match.file_tracknumber %]</td>
-        <td>[% match.file_albumartist %]</td>
-        <td>[% match.file_album %]</td>
-        <td>[% match.file_artist %]</td>
-        <td>[% match.file_title %]</td>
-        <td>[% match.file_duration %]</td>
+        <td>[% match.tracknumber %]</td>
+        <td>[% match.albumartist %]</td>
+        <td>[% match.album %]</td>
+        <td>[% match.artist %]</td>
+        <td>[% match.title %]</td>
+        <td>[% match.duration %]</td>
       </tr>
       <tr>
-        <td colspan="6"><a href="file.pl?fiid=[% match.file_file_id %]">[% match.file_filename %]</a></td>
+        <td colspan="6"><a href="file.pl?fiid=[% match.file_id %]">[% match.filename %]</a></td>
       </tr>
     [% END %]
     </table>
