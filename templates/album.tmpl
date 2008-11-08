@@ -12,30 +12,34 @@
     <h2>Tracks:</h2>
     <table>
     [% FOREACH track IN tracks %]
+      [% IF loop.prev.tracknumber != track.tracknumber %]
       <tr>
         <th>Score</th>
         <th>[% track.tracknumber %]</th>
         <th>[% album.artist_name %]</th>
         <th>[% album.title %]</th>
+        [% IF track.artist_id != album.artist_id %]
+        <th><a href="artist.pl?arid=[% track.artist_id %]">[% track.artist_name %]</a></th>
+        [% ELSE %]
         <th>[% track.artist_name %]</th>
-        <th><a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a></th>
+        [% END %]
+        <th><a href="track.pl?trid=[% track.track_id %]">[% track.track_title %]</a></th>
         <th>[% track.duration %]</th>
       </tr>
-      [% IF track.matches.size > 0 %]
-        [% FOREACH match IN track.matches %]
+      [% END %]
+      [% IF track.file_id %]
       <tr>
-        <td rowspan="2" style="background: #[% match.color %];">[% match.meta_score %]</td>
-        <td>[% match.tracknumber %]</td>
-        <td>[% match.albumartist %]</td>
-        <td>[% match.album %]</td>
-        <td>[% match.artist %]</td>
-        <td>[% match.title %]</td>
-        <td>[% match.duration %]</td>
+        <td rowspan="2" style="background: #[% track.color %];">[% track.meta_score %]</td>
+        <td>[% track.file_tracknumber %]</td>
+        <td>[% track.file_albumartist %]</td>
+        <td>[% track.file_album %]</td>
+        <td>[% track.file_artist %]</td>
+        <td>[% track.file_title %]</td>
+        <td>[% track.file_duration %]</td>
       </tr>
       <tr>
-        <td colspan="6"><a href="file.pl?fiid=[% match.file_id %]">[% match.filename %]</a></td>
+        <td colspan="6"><a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a></td>
       </tr>
-        [% END %]
       [% END %]
     [% END %]
     </table>

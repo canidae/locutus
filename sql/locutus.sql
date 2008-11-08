@@ -158,6 +158,30 @@ CREATE VIEW v_daemon_load_metafile AS
 
 
 --
+-- Name: v_web_album_list_matching_files; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_album_list_matching_files AS
+    SELECT DISTINCT ON (t.album_id, m.file_id) t.album_id, m.file_id, m.track_id, m.mbid_match, m.meta_score, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.matched, f.duplicate, f.force_save, f.user_changed FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC;
+
+
+--
+-- Name: v_web_album_list_tracks_and_matching_files; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_album_list_tracks_and_matching_files AS
+    SELECT t.album_id, t.track_id, t.title AS track_title, t.duration, t.tracknumber, a.artist_id, a.name AS artist_name, tmp.mbid_match, tmp.meta_score, tmp.file_id, tmp.filename, tmp.duration AS file_duration, tmp.album AS file_album, tmp.albumartist AS file_albumartist, tmp.artist AS file_artist, tmp.title AS file_title, tmp.tracknumber AS file_tracknumber, tmp.pinned, tmp.groupname, tmp.matched, tmp.duplicate, tmp.force_save, tmp.user_changed FROM ((track t JOIN artist a ON ((a.artist_id = t.artist_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, m.file_id) m.track_id, m.mbid_match, m.meta_score, f.file_id, f.filename, f.duration, f.album, f.albumartist, f.artist, f.title, f.tracknumber, f.pinned, f.groupname, f.matched, f.duplicate, f.force_save, f.user_changed FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC) tmp ON ((tmp.track_id = t.track_id)));
+
+
+--
+-- Name: v_web_album_matching_list_albums; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_album_matching_list_albums AS
+    SELECT a.album_id, a.title AS album, count(DISTINCT t.track_id) AS tracks, count(DISTINCT tmp.track_id) AS tracks_matched, count(tmp.file_id) AS files_matched, sum((tmp.mbid_match)::integer) AS mbids_matched, max(tmp.meta_score) AS max_score, min(tmp.meta_score) AS min_score, COALESCE(avg(COALESCE(tmp.meta_score, (0)::double precision)), (0)::double precision) AS avg_score FROM ((album a JOIN track t ON ((t.album_id = a.album_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, m.file_id) m.track_id, m.file_id, m.mbid_match, m.meta_score FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) WHERE (f.matched = false) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC) tmp ON ((tmp.track_id = t.track_id))) GROUP BY a.album_id, a.title;
+
+
+--
 -- Name: v_web_file_list_matching_tracks; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -195,14 +219,6 @@ CREATE VIEW v_web_info_file AS
 
 CREATE VIEW v_web_info_track AS
     SELECT tr.track_id, tr.album_id, tr.artist_id, tr.mbid, tr.title, tr.duration, tr.tracknumber, ar.name AS artist_name, al.title AS album_title FROM ((track tr LEFT JOIN artist ar ON ((tr.artist_id = ar.artist_id))) LEFT JOIN album al ON ((tr.album_id = al.album_id)));
-
-
---
--- Name: v_web_list_album_matching; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW v_web_list_album_matching AS
-    SELECT a.album_id, a.title, count(t.track_id) AS tracks, COALESCE(count(tmp.meta_score), (0)::bigint) AS tracks_matched, COALESCE(sum(tmp.mbid_match), (0)::bigint) AS mbids_matched, COALESCE(max(tmp.meta_score), (0)::double precision) AS max_score, COALESCE(min(tmp.meta_score), (0)::double precision) AS min_score, (COALESCE(avg(tmp.meta_score), (0)::double precision) * ((COALESCE(count(tmp.meta_score), (0)::bigint))::real / (count(t.track_id))::real)) AS avg_score FROM ((album a JOIN track t ON ((t.album_id = a.album_id))) LEFT JOIN (SELECT m.track_id, (bool_or(m.mbid_match))::integer AS mbid_match, max(m.meta_score) AS meta_score FROM (match m JOIN file f ON ((f.file_id = m.file_id))) WHERE (f.matched = false) GROUP BY m.track_id) tmp ON ((tmp.track_id = t.track_id))) GROUP BY a.album_id, a.title;
 
 
 --
