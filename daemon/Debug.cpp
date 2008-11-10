@@ -8,30 +8,6 @@ string Debug::timestamp;
 ofstream Debug::debugfile;
 
 /* static methods */
-void Debug::error(const string &text) {
-	if (!initialized)
-		return;
-	debugfile << "[" << printTime() << "] [ERROR  ] " << text << endl;
-}
-
-void Debug::info(const string &text) {
-	if (!initialized)
-		return;
-	debugfile << "[" << printTime() << "] [INFO   ] " << text << endl;
-}
-
-void Debug::notice(const string &text) {
-	if (!initialized)
-		return;
-	debugfile << "[" << printTime() << "] [NOTICE ] " << text << endl;
-}
-
-void Debug::warning(const string &text) {
-	if (!initialized)
-		return;
-	debugfile << "[" << printTime() << "] [WARNING] " << text << endl;
-}
-
 bool Debug::close() {
 	if (!initialized)
 		return true;
@@ -40,12 +16,32 @@ bool Debug::close() {
 	return true;
 }
 
+ofstream &Debug::error() {
+	debugfile << "[" << printTime() << "] [ERROR  ] ";
+	return debugfile;
+}
+
+ofstream &Debug::info() {
+	debugfile << "[" << printTime() << "] [INFO   ] ";
+	return debugfile;
+}
+
+ofstream &Debug::notice() {
+	debugfile << "[" << printTime() << "] [NOTICE ] ";
+	return debugfile;
+}
+
 bool Debug::open(const string &file) {
 	if (initialized)
 		close();
 	initialized = true;
-	debugfile.open(file.c_str(), ios::app);
+	debugfile.open(file.c_str(), ios_base::trunc);
 	return true;
+}
+
+ofstream &Debug::warning() {
+	debugfile << "[" << printTime() << "] [WARNING] ";
+	return debugfile;
 }
 
 /* private static methods */

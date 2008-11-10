@@ -58,10 +58,10 @@ long Locutus::run() {
 	/* remove file entries where file doesn't exist */
 	removeGoneFiles();
 	/* parse sorted directory */
-	Debug::info("Scanning output directory");
+	Debug::info() << "Scanning output directory" << endl;
 	scanFiles(output_dir);
 	/* parse unsorted directory */
-	Debug::info("Scanning input directory");
+	Debug::info() << "Scanning input directory" << endl;
 	scanFiles(input_dir);
 	/* match files */
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf) {
@@ -146,8 +146,7 @@ bool Locutus::moveFile(Metafile *file, const string &filename) {
 		if (result == 0)
 			continue;                                                                                                                      
 		/* unable to create directory */
-		dirname.insert(0, "Unable to create directory: ");
-		Debug::warning(dirname);
+		Debug::warning() << "Unable to create directory: " << dirname << endl;
 		return false;
 	}
 	if (stat(filename.c_str(), &data) != 0 && rename(file->filename.c_str(), filename.c_str()) == 0) {
@@ -165,7 +164,7 @@ bool Locutus::parseDirectory() {
 	if (dir_queue.size() <= 0)
 		return false;
 	string directory(*dir_queue.begin());
-	Debug::info(directory);
+	Debug::info() << directory << endl;
 	dir_queue.pop_front();
 	DIR *dir = opendir(directory.c_str());
 	if (dir == NULL)
@@ -195,7 +194,7 @@ bool Locutus::parseFile() {
 	if (file_queue.size() <= 0)
 		return false;
 	string filename(*file_queue.begin());
-	Debug::info(filename);
+	Debug::info() << filename << endl;
 	file_queue.pop_front();
 	Metafile *mf = new Metafile(filename);
 	if (!database->loadMetafile(mf)) {
@@ -272,9 +271,7 @@ void Locutus::saveFile(Metafile *file) {
 			 * we'll set filename to file->filename so we won't move
 			 * the new file, despite it begin better */
 			filename = file->filename;
-			ostringstream tmp;
-			tmp << "Unable to find a new filename for duplicate file " << f->filename;
-			Debug::notice(tmp.str());
+			Debug::notice() << "Unable to find a new filename for duplicate file " << f->filename << endl;
 			break;
 		}
 		/* move the existing file */
@@ -283,9 +280,7 @@ void Locutus::saveFile(Metafile *file) {
 			/* hmm, couldn't move the existing file.
 			 * then we can't move new file either */
 			filename = file->filename;
-			ostringstream tmp;
-			tmp << "Unable to move duplicate file " << f->filename << " to " << new_filename;
-			Debug::notice(tmp.str());
+			Debug::notice() << "Unable to move duplicate file " << f->filename << " to " << new_filename << endl;
 			break;
 		}
 		/* mark existing file as a duplicate */
@@ -311,9 +306,7 @@ void Locutus::saveFile(Metafile *file) {
 	cout << "Meta: " << file->albumartistsort << " - " << file->album << " - " << file->tracknumber << " - " << file->artistsort << " - " << file->title << " (" << file->genre << ")" << endl;
 	/* save metadata */
 	if (!file->saveMetadata()) {
-		ostringstream tmp;
-		tmp << "Unable to save metadata for file " << file->filename;
-		Debug::warning(tmp.str());
+		Debug::warning() << "Unable to save metadata for file " << file->filename << endl;
 		return;
 	}
 	/* move file */
@@ -321,9 +314,7 @@ void Locutus::saveFile(Metafile *file) {
 	if (filename != file->filename) {
 		if (!moveFile(file, filename)) {
 			file->filename = old_filename;
-			ostringstream tmp;
-			tmp << "Unable to move file " << old_filename << " to " << filename;
-			Debug::warning(tmp.str());
+			Debug::warning() << "Unable to move file " << old_filename << " to " << filename << endl;
 		}
 	}
 	/* update database */
@@ -353,9 +344,9 @@ int main() {
 
 	//while (true) {
 		Locutus *locutus = new Locutus(database);
-		Debug::info("Checking files...");
+		Debug::info() << "Checking files..." << endl;
 		long sleeptime = locutus->run();
-		Debug::info("Finished checking files");
+		Debug::info() << "Finished checking files" << endl;
 		delete locutus;
 
 		usleep(sleeptime);

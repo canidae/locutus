@@ -17,12 +17,12 @@ WebService::~WebService() {
 XMLNode *WebService::fetch(const char *url) {
 	char *urle = new char[4096];
 	urle = urlEncode(url, urle, 4096);
-	Debug::info(urle);
+	Debug::info() << urle << endl;
 	status = get(urle);
 	delete [] urle;
 	if (status) {
 		//cout << "failed; reason=" << status << endl;
-		Debug::warning("Unable to fetch data");
+		Debug::warning() << "Unable to fetch data" << endl;
 		close();
 		return NULL;
 	}
@@ -34,7 +34,7 @@ XMLNode *WebService::fetch(const char *url) {
 	root->value = "";
 	curnode = root;
 	if (!parse())
-		Debug::warning("XML is not well formed");
+		Debug::warning() << "XML is not well formed" << endl;
 	close();
 	//printXML(root, 0);
 	return root;

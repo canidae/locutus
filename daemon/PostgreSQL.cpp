@@ -12,7 +12,7 @@ using namespace std;
 PostgreSQL::PostgreSQL(const string connection) : Database(), pg_result(NULL), got_result(false) {
 	pg_connection = PQconnectdb(connection.c_str());
 	if (PQstatus(pg_connection) != CONNECTION_OK) {
-		Debug::error("Unable to connect to the database");
+		Debug::error() << "Unable to connect to the database" << endl;
 		exit(1);
 	}
 	album_cache_lifetime = loadSettingInt(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
@@ -31,18 +31,14 @@ bool PostgreSQL::loadAlbum(Album *album) {
 	if (album == NULL)
 		return false;
 	if (album->mbid.size() != 36 || album->mbid[8] != '-' || album->mbid[13] != '-' || album->mbid[18] != '-' || album->mbid[23] != '-') {
-		string msg = "Unable to load album from cache. Illegal MusicBrainz ID: ";
-		msg.append(album->mbid);
-		Debug::notice(msg);
+		Debug::notice() << "Unable to load album from cache. Illegal MusicBrainz ID: " << album->mbid << endl;
 		return false;
 	}
 	ostringstream query;
 	query << "SELECT * FROM v_daemon_load_album WHERE album_mbid = '" << escapeString(album->mbid) << "' AND album_last_updated + INTERVAL '" << album_cache_lifetime << " months' > now()";
 	if (!doQuery(query.str()) || getRows() <= 0) {
 		/* album not in cache */
-		string msg = "Unable to load album from cache. MusicBrainz ID not found or cache is too old: ";
-		msg.append(album->mbid);
-		Debug::notice(msg);
+		Debug::notice() << "Unable to load album from cache. MusicBrainz ID not found or cache is too old: " << album->mbid << endl;
 		return false;
 	}
 	/* album data */
@@ -62,9 +58,7 @@ bool PostgreSQL::loadAlbum(Album *album) {
 		if (trackindex < 0 || trackindex >= (int) album->tracks.capacity()) {
 			/* this really shouldn't happen.
 			 * seemingly we're missing entries in the track table */
-			string msg = "Tracknumber either exceed album track count or is less than 1. Did you mess with the track table? MusicBrainz Album ID: ";
-			msg.append(album->mbid);
-			Debug::warning(msg);
+			Debug::warning() << "Tracknumber either exceed album track count or is less than 1. Did you mess with the track table? MusicBrainz Album ID: " << album->mbid << endl;
 			return false;
 		}
 		album->tracks[trackindex] = new Track(album);
@@ -85,16 +79,14 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	if (metafile == NULL)
 		return false;
 	if (metafile->filename.size() <= 0) {
-		Debug::notice("Length of filename is 0 or less? Can't load that from cache");
+		Debug::notice() << "Length of filename is 0 or less? Can't load that from cache" << endl;
 		return false;
 	}
 	string e_filename = escapeString(metafile->filename);
 	ostringstream query;
 	query << "SELECT * FROM v_daemon_load_metafile WHERE filename = '" << e_filename << "'";
 	if (!doQuery(query.str()) || getRows() <= 0) {
-		string msg = "Didn't find file in database: ";
-		msg.append(metafile->filename);
-		Debug::notice(msg);
+		Debug::notice() << "Didn't find file in database: " << metafile->filename << endl;
 		return false;
 	}
 	metafile->duration = getInt(0, 1);
@@ -221,9 +213,7 @@ bool PostgreSQL::removeMetafiles(const vector<Metafile> &files) {
 
 bool PostgreSQL::saveAlbum(const Album &album) {
 	if (album.mbid.size() != 36) {
-		string msg = "Unable to save album in cache. Illegal MusicBrainz ID: ";
-		msg.append(album.mbid);
-		Debug::notice(msg);
+		Debug::notice() << "Unable to save album in cache. Illegal MusicBrainz ID: " << album.mbid << endl;
 		return false;
 	}
 	string e_artist_mbid = escapeString(album.artist->mbid);
@@ -242,18 +232,18 @@ bool PostgreSQL::saveAlbum(const Album &album) {
 	ostringstream query;
 	/* save artist */
 	if (!saveArtist(*album.artist))
-		Debug::notice("Failed to save album artist in cache. See errors above");
+		Debug::notice() << "Failed to save album artist in cache. See errors above" << endl;
 	/* save album */
 	query.str("");
 	query << "INSERT INTO album(artist_id, mbid, type, title, released) SELECT (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), '" << e_mbid << "', '" << e_type << "', '" << e_title << "', " << e_released << " WHERE NOT EXISTS (SELECT true FROM album WHERE mbid = '" << e_mbid << "')";
 	if (!doQuery(query.str())) {
-		Debug::notice("Unable to save album in cache, query failed. See error above");
+		Debug::notice() << "Unable to save album in cache, query failed. See error above" << endl;
 		return false;
 	}
 	query.str("");
 	query << "UPDATE album SET artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), type = '" << e_type << "', title = '" << e_title << "', released = " << e_released << ", last_updated = now() WHERE mbid = '" << e_mbid << "'";
 	if (!doQuery(query.str())) {
-		Debug::notice("Unable to save album in cache, query failed. See error above");
+		Debug::notice() << "Unable to save album in cache, query failed. See error above" << endl;
 		return false;
 	}
 	/* save tracks */
@@ -263,7 +253,7 @@ bool PostgreSQL::saveAlbum(const Album &album) {
 			status = false;
 	}
 	if (!status)
-		Debug::notice("One or more album tracks couldn't be saved in cache. See errors above");
+		Debug::notice() << "One or more album tracks couldn't be saved in cache. See errors above" << endl;
 	return status;
 }
 
@@ -276,11 +266,11 @@ bool PostgreSQL::saveArtist(const Artist &artist) {
 	ostringstream query;
 	query << "INSERT INTO artist(mbid, name, sortname) SELECT '" << e_mbid << "', '" << e_name << "', '" << e_sortname << "' WHERE NOT EXISTS (SELECT true FROM artist WHERE mbid = '" << e_mbid << "')";
 	if (!doQuery(query.str()))
-		Debug::notice("Unable to save artist in cache, query failed. See error above");
+		Debug::notice() << "Unable to save artist in cache, query failed. See error above" << endl;
 	query.str("");
 	query << "UPDATE artist SET name = '" << e_name << "', sortname = '" << e_sortname << "' WHERE mbid = '" << e_mbid << "'";
 	if (!doQuery(query.str()))
-		Debug::notice("Unable to save artist in cache, query failed. See error above");
+		Debug::notice() << "Unable to save artist in cache, query failed. See error above" << endl;
 	return true;
 }
 
@@ -292,11 +282,11 @@ bool PostgreSQL::saveMatch(const Match &match) {
 	ostringstream query;
 	query << "INSERT INTO match(file_id, track_id, mbid_match, puid_match, meta_score) SELECT (SELECT file_id FROM file WHERE filename = '" << e_filename << "'), (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "'), " << (match.mbid_match ? "true" : "false") << ", " << (match.puid_match ? "true" : "false") << ", " << match.meta_score << " WHERE NOT EXISTS (SELECT true FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "'))";
 	if (!doQuery(query.str()))
-		Debug::notice("Unable to save metadata match in cache, query failed. See error above");
+		Debug::notice() << "Unable to save metadata match in cache, query failed. See error above" << endl;
 	query.str("");
 	query << "UPDATE match SET mbid_match = " << (match.mbid_match ? "true" : "false") << ", puid_match = "  << (match.puid_match ? "true" : "false") << ", meta_score = " << match.meta_score << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "')";
 	if (!doQuery(query.str()))
-		Debug::notice("Unable to save metadata match in cache, query failed. See error above");
+		Debug::notice() << "Unable to save metadata match in cache, query failed. See error above" << endl;
 	return true;
 }
 
@@ -306,7 +296,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	if (e_puid != "") {
 		query << "INSERT INTO puid(puid) SELECT '" << e_puid << "' WHERE NOT EXISTS (SELECT true FROM puid WHERE puid = '" << e_puid << "')";
 		if (!doQuery(query.str()))
-			Debug::notice("Unable to store PUID in database. See error above");
+			Debug::notice() << "Unable to store PUID in database. See error above" << endl;
 	}
 	string e_filename = escapeString(metafile.filename);
 	string e_album = escapeString(metafile.album);
@@ -343,7 +333,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		query.str("");
 		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, force_save, user_changed, matched) SELECT '" << e_filename << "', " << metafile.duration << ", " << metafile.channels << ", " << metafile.bitrate << ", " << metafile.samplerate << ", " << e_puid << ", " << "'" << e_album << "', '" << e_albumartist << "', '" << e_albumartistsort << "', '" << e_artist << "', '" << e_artistsort << "', '" << e_musicbrainz_albumartistid << "', '" << e_musicbrainz_albumid << "', '" << e_musicbrainz_artistid << "', '" << e_musicbrainz_trackid << "', '" << e_title << "', '" << e_tracknumber << "', '" << e_released << "' , '" << e_genre << "', " << (metafile.pinned ? "true" : "false") << ", '" << e_group << "', " << ", " << (metafile.duplicate ? "true" : "false") << ", " << (metafile.force_save ? "true" : "false") << ", false, " << e_matched << ") WHERE NOT EXISTS (SELECT true FROM file WHERE filename = '" << e_filename << "')";
 		if (!doQuery(query.str())) {
-			Debug::notice("Unable to store file in database. See error above");
+			Debug::notice() << "Unable to store file in database. See error above" << endl;
 			return false;
 		}
 	} else {
@@ -351,7 +341,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		query.str("");
 		query << "UPDATE file SET filename = '" << e_filename << "', duration = " << metafile.duration << ", channels = " << metafile.channels << ", bitrate = " << metafile.bitrate << ", samplerate = " << metafile.samplerate << ", puid = " << e_puid << ", album = '" << e_album << "', albumartist = '" << e_albumartist << "', albumartistsort = '" << e_albumartistsort << "', artist = '" << e_artist << "', artistsort = '" << e_artistsort << "', musicbrainz_albumartistid = '" << e_musicbrainz_albumartistid << "', musicbrainz_albumid = '" << e_musicbrainz_albumid << "', musicbrainz_artistid = '" << e_musicbrainz_artistid << "', musicbrainz_trackid = '" << e_musicbrainz_trackid << "', title = '" << e_title << "', tracknumber = '" << e_tracknumber << "', released = '" << e_released << "', genre = '" << e_genre << "', pinned = " << (metafile.pinned ? "true" : "false") << ", groupname = '" << e_group << "', duplicate = " << (metafile.duplicate ? "true" : "false") << ", force_save = " << (metafile.force_save ? "true" : "false") << ", user_changed = false, matched = " << e_matched << " WHERE filename = '" << e_old_filename << "'";
 		if (!doQuery(query.str())) {
-			Debug::notice("Unable to store file in database. See error above");
+			Debug::notice() << "Unable to store file in database. See error above" << endl;
 			return false;
 		}
 	}
@@ -360,9 +350,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 
 bool PostgreSQL::saveTrack(const Track &track) {
 	if (track.mbid.size() != 36) {
-		string msg = "Unable to save track in cache. Illegal MusicBrainz ID: ";
-		msg.append(track.mbid);
-		Debug::notice(msg);
+		Debug::notice() << "Unable to save track in cache. Illegal MusicBrainz ID: " << track.mbid << endl;
 		return false;
 	}
 	saveArtist(*track.artist);
@@ -373,11 +361,11 @@ bool PostgreSQL::saveTrack(const Track &track) {
 	ostringstream query;
 	query << "INSERT INTO track(album_id, artist_id, mbid, title, duration, tracknumber) SELECT (SELECT album_id FROM album WHERE mbid = '" << e_album_mbid << "'), (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), '" << e_mbid << "', '" << e_title << "', " << track.duration << ", " << track.tracknumber << " WHERE NOT EXISTS (SELECT true FROM track WHERE mbid = '" << e_mbid << "')";
 	if (!doQuery(query.str()))
-		Debug::notice("Unable to save track in cache, query failed. See error above");
+		Debug::notice() << "Unable to save track in cache, query failed. See error above" << endl;
 	query.str("");
 	query << "UPDATE track SET album_id = (SELECT album_id FROM album WHERE mbid = '" << e_album_mbid << "'), artist_id = (SELECT artist_id FROM artist WHERE mbid = '" << e_artist_mbid << "'), title = '" << e_title << "', duration = " << track.duration << ", tracknumber = " << track.tracknumber << " WHERE mbid = '" << e_mbid << "'";
 	if (!doQuery(query.str()))
-		Debug::notice("Unable to save track in cache, query failed. See error above");
+		Debug::notice() << "Unable to save track in cache, query failed. See error above" << endl;
 	return true;
 }
 
@@ -391,19 +379,13 @@ void PostgreSQL::clear() {
 bool PostgreSQL::doQuery(const char *q) {
 	clear();
 	got_result = true;
-	string msg = "Query: ";
-	msg.append(q);
-	Debug::info(msg);
+	Debug::info() << "Query: " << q << endl;
 	pg_result = PQexec(pg_connection, q);
 	int status = PQresultStatus(pg_result);
 	if (status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK)
 		return true;
-	msg = "Query failed: ";
-	msg.append(q);
-	Debug::warning(msg);
-	msg = "Query error: ";
-	msg.append(PQresultErrorMessage(pg_result));
-	Debug::warning(msg);
+	Debug::warning() << "Query failed: " << q << endl;
+	Debug::warning() << "Query error: " << PQresultErrorMessage(pg_result) << endl;
 	return false;
 }
 

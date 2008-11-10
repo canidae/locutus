@@ -176,9 +176,7 @@ bool Metafile::readFromFile() {
 			delete file;
 		*/
 		} else {
-			string msg = "Unsupported file format (well, extension): ";
-			msg.append(filename);
-			Debug::notice(msg);
+			Debug::notice() << "Unsupported file format (well, extension): " << filename << endl;
 			return false;
 		}
 	}
@@ -265,9 +263,7 @@ bool Metafile::saveMetadata() {
 		delete file;
 	*/
 	} else {
-		ostringstream tmp;
-		tmp << "Unable to save file '" << filename << "': Unknown filetype";
-		Debug::warning(tmp.str());
+		Debug::warning() << "Unable to save file '" << filename << "': Unknown filetype" << endl;
 	}
 	if (ok)
 		metadata_updated = false;

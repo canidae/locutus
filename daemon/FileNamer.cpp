@@ -37,7 +37,7 @@ FileNamer::~FileNamer() {
 const string &FileNamer::getFilename(Metafile *file) {
 	if (file_format.size() <= 0) {
 		filename.clear();
-		Debug::warning("File format for output is way too short, refuse to save file");
+		Debug::warning() << "File format for output is way too short, refuse to save file" << endl;
 		return filename;
 	}
 	string::size_type start = 0;

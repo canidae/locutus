@@ -10,16 +10,17 @@ extern "C" {
 
 class Debug {
 	public:
+		static std::ofstream debugfile;
+
 		static bool close();
-		static void error(const std::string &text);
-		static void info(const std::string &text);
+		static std::ofstream &error();
+		static std::ofstream &info();
 		static bool open(const std::string &file);
-		static void notice(const std::string &text);
-		static void warning(const std::string &text);
+		static std::ofstream &notice();
+		static std::ofstream &warning();
 
 	private:
 		static bool initialized;
-		static std::ofstream debugfile;
 		static std::string timestamp;
 
 		static std::string &printTime();

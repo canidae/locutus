@@ -121,9 +121,7 @@ XMLNode *Audioscrobbler::lookup(const std::string &url) {
 		msec_since_last += last_fetch.tv_usec - tv.tv_usec;
 		msec_since_last += query_interval;
 		if (msec_since_last > 0 && msec_since_last < query_interval) {
-			ostringstream tmp;
-			tmp << "Sleeping " << msec_since_last << "µs to avoid hammering Audioscrobbler";
-			Debug::info(tmp.str());
+			Debug::info() << "Sleeping " << msec_since_last << "µs to avoid hammering Audioscrobbler" << endl;
 			usleep(msec_since_last);
 		}
 		if (gettimeofday(&last_fetch, NULL) != 0) {

@@ -40,9 +40,7 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 	else if (ext == "TTA")
 		codec = avcodec_find_decoder(CODEC_ID_TTA);
 	if (!codec) {
-		ostringstream error;
-		error << "Codec not found for file '" << filename << "'";
-		Debug::notice(error.str());
+		Debug::notice() << "Codec not found for file '" << filename << "'" << endl;
 		return puid;
 	}
 
@@ -51,9 +49,7 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 	/* open it */
 	if (avcodec_open(c, codec) < 0) {
 		av_free(c);                                                                                                                                    
-		ostringstream error;
-		error << "Unable to open codec for file '" << filename << "'";
-		Debug::notice(error.str());
+		Debug::notice() << "Unable to open codec for file '" << filename << "'" << endl;
 		return puid;
 	}
 
@@ -61,9 +57,7 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 	if (!f) {
 		avcodec_close(c);
 		av_free(c);                                                                                                                                    
-		ostringstream error;
-		error << "Unable to open file: " << filename;
-		Debug::notice(error.str());
+		Debug::notice() << "Unable to open file: " << filename << endl;
 		return puid;
 	}
 	FILE *outfile = fopen("/tmp/locutus.tmp.wav", "wb"); // FIXME: configurable tmp location
@@ -71,7 +65,7 @@ const string &PUIDGenerator::generatePUID(const string &filename) {
 		fclose(f);
 		avcodec_close(c);
 		av_free(c);                                                                                                                                    
-		Debug::notice("Unable to open temporary file");
+		Debug::notice() << "Unable to open temporary file" << endl;
 		return puid;
 	}
 
