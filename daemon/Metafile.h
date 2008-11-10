@@ -65,7 +65,6 @@ class Metafile {
 		bool meta_lookup;
 		bool metadata_updated;
 		bool pinned;
-		bool user_changed;
 		int bitrate;
 		int channels;
 		int duration;

@@ -7,6 +7,9 @@
 #define MUSIC_INPUT_KEY "input_directory"
 #define MUSIC_INPUT_VALUE "/media/music/unsorted/"
 #define MUSIC_INPUT_DESCRIPTION "Input directory"
+#define DRY_RUN_KEY "dry_run"
+#define DRY_RUN_VALUE true
+#define DRY_RUN_DESCRIPTION "Only read files and look them up, don't save metadata or move files. Currently genre won't be looked up during a dry run."
 #define LOOKUP_GENRE_KEY "lookup_genre"
 #define LOOKUP_GENRE_VALUE true
 #define LOOKUP_GENRE_DESCRIPTION "Fetch genre (or tag) from Audioscrobbler before saving a file. If no genre is found then genre is set to an empty string. If this option is set to false, the genre field is left unmodified."
@@ -47,6 +50,7 @@ class Locutus {
 		Matcher *matcher;
 		//PUIDGenerator *puidgen;
 		MusicBrainz *musicbrainz;
+		bool dry_run;
 		bool lookup_genre;
 		std::list<std::string> dir_queue;
 		std::list<std::string> file_queue;
