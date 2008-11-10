@@ -35,7 +35,7 @@ bool Debug::open(const string &file) {
 	if (initialized)
 		close();
 	initialized = true;
-	debugfile.open(file.c_str(), ios_base::trunc);
+	debugfile.open(file.c_str(), ios_base::app);
 	return true;
 }
 
