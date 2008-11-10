@@ -9,7 +9,7 @@
 #define MUSIC_INPUT_DESCRIPTION "Input directory"
 #define DRY_RUN_KEY "dry_run"
 #define DRY_RUN_VALUE true
-#define DRY_RUN_DESCRIPTION "Only read files and look them up, don't save metadata or move files. Currently genre won't be looked up during a dry run."
+#define DRY_RUN_DESCRIPTION "Only read files and look them up, don't save and move files. Currently genre won't be looked up during a dry run."
 #define LOOKUP_GENRE_KEY "lookup_genre"
 #define LOOKUP_GENRE_VALUE true
 #define LOOKUP_GENRE_DESCRIPTION "Fetch genre (or tag) from Audioscrobbler before saving a file. If no genre is found then genre is set to an empty string. If this option is set to false, the genre field is left unmodified."
