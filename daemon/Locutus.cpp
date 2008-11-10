@@ -78,7 +78,10 @@ long Locutus::run() {
 				continue;
 			}
 			if (dry_run) {
-				/* dry run, don't save, only update database */
+				/* dry run, don't save, only update database.
+				 * however, set "matched" to true as we would've
+				 * saved this file if it wasn't for dry_run */
+				(*f)->matched = true;
 				database->saveMetafile(**f);
 			} else {
 				saveFile(*f);
