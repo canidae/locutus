@@ -76,11 +76,10 @@ CREATE TABLE file (
     genre character varying NOT NULL,
     pinned boolean DEFAULT false NOT NULL,
     groupname character varying DEFAULT ''::character varying NOT NULL,
-    matched boolean DEFAULT false NOT NULL,
     duplicate boolean DEFAULT false NOT NULL,
     force_save boolean DEFAULT false NOT NULL,
     user_changed boolean DEFAULT false NOT NULL,
-    user_matched integer,
+    matched integer,
     CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length((musicbrainz_albumartistid)::text) = 0) OR (length((musicbrainz_albumartistid)::text) = 36))),
     CONSTRAINT file_musicbrainz_albumid_check CHECK (((length((musicbrainz_albumid)::text) = 0) OR (length((musicbrainz_albumid)::text) = 36))),
     CONSTRAINT file_musicbrainz_artistid_check CHECK (((length((musicbrainz_artistid)::text) = 0) OR (length((musicbrainz_artistid)::text) = 36))),
@@ -155,15 +154,7 @@ CREATE VIEW v_daemon_load_album AS
 --
 
 CREATE VIEW v_daemon_load_metafile AS
-    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.force_save FROM (((((file f LEFT JOIN puid p ON ((p.puid_id = f.puid_id))) LEFT JOIN track t ON ((t.track_id = f.user_matched))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
-
-
---
--- Name: v_web_album_list_matching_files; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW v_web_album_list_matching_files AS
-    SELECT DISTINCT ON (t.album_id, m.file_id) t.album_id, m.file_id, m.track_id, m.mbid_match, m.meta_score, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.matched, f.duplicate, f.force_save, f.user_changed FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC;
+    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.force_save, (f.matched IS NOT NULL) AS matched FROM (((((file f LEFT JOIN puid p ON ((p.puid_id = f.puid_id))) LEFT JOIN track t ON ((t.track_id = f.matched))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
 
 
 --
@@ -179,7 +170,7 @@ CREATE VIEW v_web_album_list_tracks_and_matching_files AS
 --
 
 CREATE VIEW v_web_album_matching_list_albums AS
-    SELECT a.album_id, a.title AS album, count(DISTINCT t.track_id) AS tracks, count(DISTINCT tmp.track_id) AS tracks_matched, count(tmp.file_id) AS files_matched, sum((tmp.mbid_match)::integer) AS mbids_matched, max(tmp.meta_score) AS max_score, min(tmp.meta_score) AS min_score, COALESCE(avg(COALESCE(tmp.meta_score, (0)::double precision)), (0)::double precision) AS avg_score FROM ((album a JOIN track t ON ((t.album_id = a.album_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, m.file_id) m.track_id, m.file_id, m.mbid_match, m.meta_score FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) WHERE (f.matched = false) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC) tmp ON ((tmp.track_id = t.track_id))) GROUP BY a.album_id, a.title;
+    SELECT a.album_id, a.title AS album, count(DISTINCT t.track_id) AS tracks, count(DISTINCT tmp.track_id) AS tracks_matched, count(tmp.file_id) AS files_matched, sum((tmp.mbid_match)::integer) AS mbids_matched, max(tmp.meta_score) AS max_score, min(tmp.meta_score) AS min_score, COALESCE(avg(COALESCE(tmp.meta_score, (0)::double precision)), (0)::double precision) AS avg_score FROM ((album a JOIN track t ON ((t.album_id = a.album_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, m.file_id) m.track_id, m.file_id, m.mbid_match, m.meta_score FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) WHERE (f.matched IS NULL) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC) tmp ON ((tmp.track_id = t.track_id))) GROUP BY a.album_id, a.title;
 
 
 --
@@ -547,7 +538,7 @@ ALTER TABLE ONLY file
 --
 
 ALTER TABLE ONLY file
-    ADD CONSTRAINT file_user_matched_fkey FOREIGN KEY (user_matched) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT file_user_matched_fkey FOREIGN KEY (matched) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
