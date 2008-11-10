@@ -7,42 +7,49 @@
     <h3>Type: [% album.type %]</h3>
     <h3>Released: [% album.released %]</h3>
     <h3>MusicBrainz Album ID: <a href="http://musicbrainz.org/release/[% album.mbid %].html">[% album.mbid %]</a></h3>
-    <h3>Custom artist: <input type="text" value="[% album.custom_artist_name %]" /></h3>
     [% IF tracks.size > 0 %]
-    <h2>Tracks:</h2>
-    <table>
+    <form action="album.pl?alid=[% album.album_id %]" method="post">
+      <div><input type="hidden" name="alid" value="[% album.album_id %]" /></div>
+      <h2>Tracks:</h2>
+      <table>
     [% FOREACH track IN tracks %]
       [% IF loop.prev.tracknumber != track.tracknumber %]
-      <tr>
-        <th>Score</th>
-        <th>[% track.tracknumber %]</th>
-        <th>[% album.artist_name %]</th>
-        <th>[% album.title %]</th>
+        <tr>
+          <th>Score</th>
+          <th>[% track.tracknumber %]</th>
+          <th>[% album.artist_name %]</th>
+          <th>[% album.title %]</th>
         [% IF track.artist_id != album.artist_id %]
-        <th><a href="artist.pl?arid=[% track.artist_id %]">[% track.artist_name %]</a></th>
+          <th><a href="artist.pl?arid=[% track.artist_id %]">[% track.artist_name %]</a></th>
         [% ELSE %]
-        <th>[% track.artist_name %]</th>
+          <th>[% track.artist_name %]</th>
         [% END %]
-        <th><a href="track.pl?trid=[% track.track_id %]">[% track.track_title %]</a></th>
-        <th>[% track.duration %]</th>
-      </tr>
+          <th><a href="track.pl?trid=[% track.track_id %]">[% track.track_title %]</a></th>
+          <th>[% track.duration %]</th>
+        </tr>
       [% END %]
       [% IF track.file_id %]
-      <tr>
-        <td rowspan="2" style="background: #[% track.color %];">[% track.meta_score %]</td>
-        <td>[% track.file_tracknumber %]</td>
-        <td>[% track.file_albumartist %]</td>
-        <td>[% track.file_album %]</td>
-        <td>[% track.file_artist %]</td>
-        <td>[% track.file_title %]</td>
-        <td>[% track.file_duration %]</td>
-      </tr>
-      <tr>
-        <td colspan="6"><a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a></td>
-      </tr>
+        <tr>
+          <td style="background: #[% track.color %];">[% track.meta_score %]</td>
+          <td>[% track.file_tracknumber %]</td>
+          <td>[% track.file_albumartist %]</td>
+          <td>[% track.file_album %]</td>
+          <td>[% track.file_artist %]</td>
+          <td>[% track.file_title %]</td>
+          <td>[% track.file_duration %]</td>
+        </tr>
+        <tr>
+          <td style="text-align: center;"><input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>
+          <td colspan="6"><a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a></td>
+        </tr>
       [% END %]
     [% END %]
-    </table>
+      </table>
+      <p>
+        <input type="submit" name="match_selected" value="Match selected files with tracks" />
+        <input type="submit" name="save_selected" value="Match and save selected files" />
+      </p>
+    </form>
   [% END %]
 [% END %]
 [% INCLUDE footer.tmpl %]
