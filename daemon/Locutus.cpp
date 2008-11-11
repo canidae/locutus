@@ -69,21 +69,16 @@ long Locutus::run() {
 		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
 			if (!(*f)->metadata_updated) {
-				/* we'll need to save this file too, for example,
-				 * it may have been marked as matched earlier,
-				 * but it's no longer matching anything */
-				(*f)->matched = false;
-				(*f)->duplicate = false;
-				database->saveMetafile(**f);
+				/* file not updated, leave it be */
 				continue;
-			}
-			if (dry_run) {
+			} else if (dry_run) {
 				/* dry run, don't save, only update database.
 				 * however, set "matched" to true as we would've
 				 * saved this file if it wasn't for dry_run */
 				(*f)->matched = true;
 				database->saveMetafile(**f);
 			} else {
+				/* this file (may) be updated, save it */
 				saveFile(*f);
 			}
 		}
