@@ -17,14 +17,14 @@ my $alid = int(param('alid') || -1);
 
 my @match_file_track = param('match_file_track');
 if (defined @match_file_track) {
-	my $force_save = param('save_selected');
+	my $force_save = param('force_save');
 	foreach my $value (@match_file_track) {
 		my ($file_id, $track_id) = split (/@/, $value);
 		$file_id = int($file_id);
 		$track_id = int($track_id);
 		if ($file_id > 0 && $track_id > 0) {
 			my $query = 'UPDATE file SET matched = ' . $track_id;
-			$query .= ', force_save = true' if (defined $force_save);
+			$query .= ', force_save = true' if (defined $force_save && $force_save eq "force_save");
 			$query .= ' WHERE file_id = ' . $file_id;
 			$dbh->do($query);
 		}

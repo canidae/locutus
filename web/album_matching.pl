@@ -19,7 +19,7 @@ my $dbh = Locutus::db_connect();
 $filter = $dbh->quote('%' . $filter . '%');
 
 my $query = 'SELECT * FROM v_web_album_matching_list_albums WHERE tracks_matched > 0 AND album ILIKE ' . $filter;
-$query = $query . ' ORDER BY tracks - tracks_matched ASC, tracks_matched * avg_score DESC LIMIT 50 OFFSET ' . $offset;
+$query = $query . ' ORDER BY tracks_matched * avg_score DESC LIMIT 50 OFFSET ' . $offset;
 
 $vars{'albums'} = $dbh->selectall_arrayref($query, {Slice => {}});
 
