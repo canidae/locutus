@@ -492,14 +492,14 @@ bool PostgreSQL::saveTrack(const Track &track) {
 
 bool PostgreSQL::start() {
 	/* insert if there are no rows in the table */
-	doQuery("INSERT INTO locutus(active) VALUES (true) WHERE NOT EXISTS (SELECT true FROM locutus)");
+	doQuery("INSERT INTO locutus(active) SELECT true WHERE NOT EXISTS (SELECT true FROM locutus)");
 	/* then update the row(s) */
 	return doQuery("UPDATE locutus SET active = true, start = now()");
 }
 
 bool PostgreSQL::stop() {
 	/* insert if there are no rows in the table */
-	doQuery("INSERT INTO locutus(active) VALUES (false) WHERE NOT EXISTS (SELECT true FROM locutus)");
+	doQuery("INSERT INTO locutus(active) SELECT false WHERE NOT EXISTS (SELECT true FROM locutus)");
 	/* then update the row(s) */
 	return doQuery("UPDATE locutus SET active = false, stop = now()");
 }
