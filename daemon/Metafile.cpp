@@ -35,11 +35,11 @@ string Metafile::getBaseNameWithoutExtension() const {
 }
 
 string Metafile::getGroup() const {
-	/* gets group. it's either artist-album, album, last directory name or ""
+	/* gets group. it's either albumartist-album, album, last directory name or ""
 	 * used for grouping tracks that possibly are from the same album(s) */
 	if (album.size() > 0) {
-		if (artist.size() > 0) {
-			string group = artist;
+		if (albumartist.size() > 0) {
+			string group = albumartist;
 			group.push_back('-');
 			group.append(album);
 			return group;
