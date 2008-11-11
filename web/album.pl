@@ -23,7 +23,7 @@ if (defined @match_file_track) {
 		$file_id = int($file_id);
 		$track_id = int($track_id);
 		if ($file_id > 0 && $track_id > 0) {
-			my $query = 'UPDATE file SET user_matched = ' . $track_id;
+			my $query = 'UPDATE file SET matched = ' . $track_id;
 			$query .= ', force_save = true' if (defined $force_save);
 			$query .= ' WHERE file_id = ' . $file_id;
 			$dbh->do($query);
