@@ -2,5 +2,16 @@
   title = 'Main'
 %]
       <h1>Locutus - statistics</h1>
-      <p>There are x files. Total playlength is really long. Lots of albums &amp; stuff, etc</p>
+  [% IF daemon_stats.active == 't' %]
+      <p>Locutus is <span style="color: #ca9dae;">running</span> and run time so far is <span style="color: #ca9dae;">[% daemon_stats.current_run_time %]</span>, it started at <span style="color: #ca9dae;">[% daemon_stats.start %]</span> after it ended previous run at <span style="color: #ca9dae;">[% daemon_stats.stop %]</span>.</p>
+  [% ELSE %]
+      <p>Locutus is <span style="color: #ca9dae;">not running</span>. Last run time was <span style="color: #ca9dae;">[% daemon_stats.last_run_time %]</span>, it started at <span style="color: #ca9dae;">[% daemon_stats.start %]</span> and ended at <span style="color: #ca9dae;">[% daemon_stats.stop %]</span>.</p>
+  [% END %]
+      <h2>File statistics</h2>
+      <p>There are <span style="color: #ca9dae;">[% file_stats.files %]</span> files, <span style="color: #ca9dae;">[% file_stats.matched_files %]</span> are matched. The shortest track got a duration of <span style="color: #ca9dae;">[% file_stats.min_duration %]</span> ms, the longest lasts for <span style="color: #ca9dae;">[% file_stats.max_duration %]</span> ms and the total duration of all tracks is <span style="color: #ca9dae;">[% file_stats.total_duration %]</span> ms. Bitrate varies from <span style="color: #ca9dae;">[% file_stats.min_bitrate %]</span> kbps to <span style="color: #ca9dae;">[% file_stats.max_bitrate %]</span> kbps with an average of <span style="color: #ca9dae;">[% file_stats.avg_bitrate %]</span> kbps. Your archive got <span style="color: #ca9dae;">[% file_stats.duplicates %]</span> duplicates and there are <span style="color: #ca9dae;">[% file_stats.genres %]</span> different genres.</p>
+      <h2>Album &amp; track statistics</h2>
+      <p><span style="color: #ca9dae;">[% album_stats.albums %]</span> albums with <span style="color: #ca9dae;">[% album_stats.album_artists %]</span> different artists are cached.</p>
+      <p>The cache also contains <span style="color: #ca9dae;">[% track_stats.tracks %]</span> tracks with <span style="color: #ca9dae;">[% track_stats.track_artists %]</span> different artists. The shortest cached track is <span style="color: #ca9dae;">[% track_stats.min_duration %]</span> ms long, the longest track is <span style="color: #ca9dae;">[% track_stats.max_duration %]</span> ms long and the highest tracknumber is <span style="color: #ca9dae;">[% track_stats.max_tracknumber %]</span>.</p>
+      <h2>Match statistics</h2>
+      <p>There are <span style="color: #ca9dae;">[% match_stats.matches %]</span> connections between files and tracks, <span style="color: #ca9dae;">[% match_stats.mbid_matches %]</span> of those are matched using MusicBrainz ID. The scores range from <span style="color: #ca9dae;">[% match_stats.min_score %]</span> to <span style="color: #ca9dae;">[% match_stats.max_score %]</span> with an average of <span style="color: #ca9dae;">[% match_stats.avg_score %]</span>.</p>
 [% INCLUDE footer.tmpl %]
