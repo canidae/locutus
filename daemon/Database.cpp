@@ -63,3 +63,11 @@ bool Database::saveMetafile(const Metafile &metafile, const string &old_filename
 bool Database::saveTrack(const Track &track) {
 	return false;
 }
+
+bool Database::start() {
+	return false;
+}
+
+bool Database::stop() {
+	return false;
+}

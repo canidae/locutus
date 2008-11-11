@@ -29,5 +29,7 @@ class Database {
 		virtual bool saveMatch(const Match &match);
 		virtual bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "");
 		virtual bool saveTrack(const Track &track);
+		virtual bool start();
+		virtual bool stop();
 };
 #endif

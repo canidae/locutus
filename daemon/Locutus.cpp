@@ -348,9 +348,11 @@ int main() {
 
 	//while (true) {
 		Locutus *locutus = new Locutus(database);
+		database->start();
 		Debug::info() << "Checking files..." << endl;
 		long sleeptime = locutus->run();
 		Debug::info() << "Finished checking files" << endl;
+		database->stop();
 		delete locutus;
 
 		usleep(sleeptime);

@@ -88,6 +88,17 @@ CREATE TABLE file (
 
 
 --
+-- Name: locutus; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE locutus (
+    active boolean DEFAULT false NOT NULL,
+    start timestamp without time zone DEFAULT now() NOT NULL,
+    stop timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: match; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 

@@ -42,6 +42,8 @@ class PostgreSQL : public Database {
 		bool saveMatch(const Match &match);
 		bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "");
 		bool saveTrack(const Track &track);
+		bool start();
+		bool stop();
 
 	private:
 		PGconn *pg_connection;
