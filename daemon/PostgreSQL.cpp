@@ -384,42 +384,42 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		e_matched = "NULL";
 	}
 	string e_old_filename;
-	if (old_filename == "")
+	if (old_filename == "") {
 		e_old_filename = e_filename;
-	else
+		query.str("");
+		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, force_save, user_changed, matched) SELECT";
+		query << " '" << e_filename << "'";
+		query << ", " << metafile.duration;
+		query << ", " << metafile.channels;
+		query << ", " << metafile.bitrate;
+		query << ", " << metafile.samplerate;
+		query << ", " << e_puid;
+		query << ", '" << e_album << "'";
+		query << ", '" << e_albumartist << "'";
+		query << ", '" << e_albumartistsort << "'";
+		query << ", '" << e_artist << "'";
+		query << ", '" << e_artistsort << "'";
+		query << ", '" << e_musicbrainz_albumartistid << "'";
+		query << ", '" << e_musicbrainz_albumid << "'";
+		query << ", '" << e_musicbrainz_artistid << "'";
+		query << ", '" << e_musicbrainz_trackid << "'";
+		query << ", '" << e_title << "'";
+		query << ", '" << e_tracknumber << "'";
+		query << ", '" << e_released << "'";
+		query << ", '" << e_genre << "'";
+		query << ", " << (metafile.pinned ? "true" : "false");
+		query << ", '" << e_group << "'";
+		query << ", " << (metafile.duplicate ? "true" : "false");
+		query << ", " << (metafile.force_save ? "true" : "false");
+		query << ", false";
+		query << ", " << e_matched;
+		query << " WHERE NOT EXISTS";
+		query << " (SELECT true FROM file WHERE filename = '" << e_filename << "')";
+		if (!doQuery(query.str()))
+			return false;
+	} else {
 		e_old_filename = escapeString(old_filename);
-	query.str("");
-	query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, force_save, user_changed, matched) SELECT";
-	query << " '" << e_filename << "'";
-	query << ", " << metafile.duration;
-	query << ", " << metafile.channels;
-	query << ", " << metafile.bitrate;
-	query << ", " << metafile.samplerate;
-	query << ", " << e_puid;
-	query << ", '" << e_album << "'";
-	query << ", '" << e_albumartist << "'";
-	query << ", '" << e_albumartistsort << "'";
-	query << ", '" << e_artist << "'";
-	query << ", '" << e_artistsort << "'";
-	query << ", '" << e_musicbrainz_albumartistid << "'";
-	query << ", '" << e_musicbrainz_albumid << "'";
-	query << ", '" << e_musicbrainz_artistid << "'";
-	query << ", '" << e_musicbrainz_trackid << "'";
-	query << ", '" << e_title << "'";
-	query << ", '" << e_tracknumber << "'";
-	query << ", '" << e_released << "'";
-	query << ", '" << e_genre << "'";
-	query << ", " << (metafile.pinned ? "true" : "false");
-	query << ", '" << e_group << "'";
-	query << ", " << (metafile.duplicate ? "true" : "false");
-	query << ", " << (metafile.force_save ? "true" : "false");
-	query << ", false";
-	query << ", " << e_matched;
-	query << " WHERE NOT EXISTS";
-	query << " (SELECT true FROM file WHERE filename = '" << e_filename << "')";
-	if (!doQuery(query.str()))
-		return false;
-
+	}
 	query.str("");
 	query << "UPDATE file SET";
 	query << " filename = '" << e_filename << "'";
@@ -450,7 +450,6 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	query << " WHERE filename = '" << e_old_filename << "'";
 	if (!doQuery(query.str()))
 		return false;
-
 	return true;
 }
 
