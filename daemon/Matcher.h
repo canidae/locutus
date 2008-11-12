@@ -14,8 +14,8 @@
 #define DURATION_LIMIT_VALUE 15000.0
 #define DURATION_LIMIT_DESCRIPTION "If abs(file_duration - track_duration) is less than this value, higher match score is achieved. Decreasing this value will decrease files matched and mismatches, increasing it will increase files matched and mismatched."
 #define DURATION_MUST_MATCH_KEY "duration_must_match"
-#define DURATION_MUST_MATCH_VALUE true
-#define DURATION_MUST_MATCH_DESCRIPTION "When this value is set to true then track duration must be within duration_limit milliseconds or it'll be considered a different track regardless of how well metadata match. Since many tracks in MusicBrainz got unknown length it may be an idea to set this to false to increase amount of files matched, but that may increase mismatches too."
+#define DURATION_MUST_MATCH_VALUE false
+#define DURATION_MUST_MATCH_DESCRIPTION "When this value is set to true then track duration must be within duration_limit milliseconds or it'll be considered a different track regardless of how well metadata match. There are several tracks in MusicBrainz with either missing duration or \"wrong\" duration (sometimes artists release the same album where the tracks are lengthened/shortened). It's recommended that you leave this setting to \"false\", it increase the risk of more mismatched files, but the risk is fairly low."
 #define DURATION_WEIGHT_KEY "duration_weight"
 #define DURATION_WEIGHT_VALUE 100.0
 #define DURATION_WEIGHT_DESCRIPTION ""
