@@ -94,21 +94,20 @@ Match *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack
 	if (values.size() <= 0)
 		return NULL;
 	/* find highest score */
+	bool used_row[4];
+	for (int a = 0; a < 4; ++a)
+		used_row[a] = false;
+	bool used_col[(int) values.size()];
 	double scores[4][values.size()];
 	int pos = 0;
 	for (list<string>::iterator v = values.begin(); v != values.end(); ++v) {
+		used_col[pos] = false;
 		scores[0][pos] = Levenshtein::similarity(*v, metatrack.album_title);
 		scores[1][pos] = Levenshtein::similarity(*v, metatrack.artist_name);
 		scores[2][pos] = Levenshtein::similarity(*v, metatrack.track_title);
 		scores[3][pos] = (atoi(v->c_str()) == metatrack.tracknumber) ? 1.0 : 0.0;
 		++pos;
 	}
-	bool used_row[4];
-	for (int a = 0; a < 4; ++a)
-		used_row[a] = false;
-	bool used_col[4];
-	for (list<string>::size_type a = 0; a < values.size(); ++a)
-		used_col[a] = false;
 	for (int a = 0; a < 4; ++a) {
 		int best_row = -1;
 		list<string>::size_type best_col = -1;
