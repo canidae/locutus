@@ -209,12 +209,22 @@ string PostgreSQL::loadSettingString(const string &key, const string &default_va
 bool PostgreSQL::removeMetafiles(const vector<Metafile> &files) {
 	ostringstream query;
 	query.str("");
+	int count = 0;
 	for (vector<Metafile>::const_iterator f = files.begin(); f != files.end(); ++f) {
 		if (query.str() == "")
 			query << "DELETE FROM file WHERE filename IN ('" << escapeString(f->filename) << "'";
 		else
 			query << ", '" << escapeString(f->filename) << "'";
+		++count;
+		if (count >= 10) {
+			/* remove 10 files at a time from the database */
+			query << ")";
+			doQuery(query.str());
+			query.str("");
+			count = 0;
+		}
 	}
+	/* remove remaining files */
 	if (query.str() == "")
 		return true;
 	query << ")";
