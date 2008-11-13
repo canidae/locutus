@@ -1,7 +1,7 @@
 CXX = g++
 RM = rm -f
 CXXFLAGS = -O0 -Wall -g -I/usr/include/postgresql -I/usr/include/ffmpeg `taglib-config --cflags`
-LDFLAGS = -lccgnu2 -lccext2 -lpq -lavcodec `taglib-config --libs`
+LDFLAGS = -lccgnu2 -lccext2 -lpq `taglib-config --libs`
 OBJECTS = Album.o Artist.o Audioscrobbler.o Database.o Debug.o FileNamer.o Levenshtein.o Locutus.o Match.o Matcher.o Metafile.o Metatrack.o MusicBrainz.o PostgreSQL.o Track.o WebService.o
 
 locutus: $(OBJECTS)
