@@ -55,8 +55,6 @@ void Locutus::trim(string *text) {
 
 /* methods */
 long Locutus::run() {
-	/* remove file entries where file doesn't exist */
-	removeGoneFiles();
 	/* parse sorted directory */
 	Debug::info() << "Scanning output directory" << endl;
 	scanFiles(output_dir);
@@ -210,27 +208,6 @@ bool Locutus::parseFile() {
 	return true;
 }
 
-void Locutus::removeGoneFiles() {
-	vector<Metafile> files = database->loadMetafiles("");
-	struct stat file_info;
-	for (vector<Metafile>::iterator f = files.begin(); f != files.end(); ) {
-		if ((f->filename.find(input_dir, 0) == 0 || f->filename.find(output_dir, 0) == 0) && stat(f->filename.c_str(), &file_info) == 0) {
-			/* file is present in input/output directory, remove it from the list of files */
-			f = files.erase(f);
-			continue;
-		}
-		/* file isn't in input/output directory, or we couldn't stat() the file.
-		 * don't remove the file from the list as we're going to remove it from the database */
-		++f;
-	}
-	if (files.size() > 0) {
-		Debug::warning() << "Removing " << files.size() << " files from database. They weren't found in neither the input nor output directory:" << endl;
-		for (vector<Metafile>::iterator f = files.begin(); f != files.end(); ++f)
-			Debug::notice() << "Removing " << f->filename << " from database." << endl;
-	}
-	database->removeMetafiles(files);
-}
-
 void Locutus::saveFile(Metafile *file) {
 	/* genre */
 	if (lookup_genre) {
@@ -349,9 +326,11 @@ int main() {
 	//while (true) {
 		Locutus *locutus = new Locutus(database);
 		database->start();
+		database->init();
 		Debug::info() << "Checking files..." << endl;
 		long sleeptime = locutus->run();
 		Debug::info() << "Finished checking files" << endl;
+		database->clean();
 		database->stop();
 		delete locutus;
 

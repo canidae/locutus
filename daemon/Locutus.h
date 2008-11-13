@@ -63,7 +63,6 @@ class Locutus {
 		bool moveFile(Metafile *file, const std::string &filename);
 		bool parseDirectory();
 		bool parseFile();
-		void removeGoneFiles();
 		void saveFile(Metafile *file);
 		void scanFiles(const std::string &directory);
 };

@@ -39,6 +39,9 @@ Matcher::~Matcher() {
 
 /* methods */
 void Matcher::match(const string &group, const vector<Metafile *> &files) {
+	/* remove matches from database */
+	for (vector<Metafile *>::const_iterator f = files.begin(); f != files.end(); ++f)
+		database->removeMatches(**f);
 	/* clear data */
 	best_file_match.clear();
 	clearAlbumMatch();

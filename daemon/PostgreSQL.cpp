@@ -15,9 +15,6 @@ PostgreSQL::PostgreSQL(const string connection) : Database(), pg_result(NULL), g
 		Debug::error() << "Unable to connect to the database" << endl;
 		exit(1);
 	}
-	album_cache_lifetime = loadSettingInt(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
-	metatrack_cache_lifetime = loadSettingInt(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
-	puid_cache_lifetime = loadSettingInt(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
 }
 
 PostgreSQL::~PostgreSQL() {
@@ -26,6 +23,31 @@ PostgreSQL::~PostgreSQL() {
 }
 
 /* methods */
+bool PostgreSQL::clean() {
+	/* remove unchecked files, old cache, etc */
+	ostringstream query;
+	query << "DELETE FROM file WHERE checked = false";
+	doQuery(query.str());
+	return true;
+}
+
+bool PostgreSQL::init() {
+	/* we're gonna keep the database connection while locutus is running,
+	 * but the other classes will be freed and reloaded for each "run".
+	 * this means we'll have to load the settings here and not in the
+	 * initialized */
+	album_cache_lifetime = loadSettingInt(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
+	metatrack_cache_lifetime = loadSettingInt(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
+	puid_cache_lifetime = loadSettingInt(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
+
+	/* we'll also mark files as not "checked", they will be marked as
+	 * "checked" when we load them. basically this just means that the
+	 * file exists, and this is better than stat()'ing all the files
+	 * twice */
+	doQuery("UPDATE file SET checked = false");
+	return true;
+}
+
 bool PostgreSQL::loadAlbum(Album *album) {
 	/* fetch album from cache */
 	if (album == NULL) {
@@ -112,6 +134,10 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->pinned = getBool(0, 19);
 	metafile->force_save = getBool(0, 20);
 	metafile->matched = getBool(0, 21);
+	/* set file as "checked" so we won't remove it later */
+	query.str("");
+	query << "UPDATE file SET checked = true WHERE filename = '" << escapeString(metafile->filename) << "'";
+	doQuery(query.str());
 	return true;
 }
 
@@ -206,28 +232,10 @@ string PostgreSQL::loadSettingString(const string &key, const string &default_va
 	return back;
 }
 
-bool PostgreSQL::removeMetafiles(const vector<Metafile> &files) {
+bool PostgreSQL::removeMatches(const Metafile &metafile) {
 	ostringstream query;
-	query.str("");
-	int count = 0;
-	for (vector<Metafile>::const_iterator f = files.begin(); f != files.end(); ++f) {
-		if (query.str() == "")
-			query << "DELETE FROM file WHERE filename IN ('" << escapeString(f->filename) << "'";
-		else
-			query << ", '" << escapeString(f->filename) << "'";
-		++count;
-		if (count >= 10) {
-			/* remove 10 files at a time from the database */
-			query << ")";
-			doQuery(query.str());
-			query.str("");
-			count = 0;
-		}
-	}
-	/* remove remaining files */
-	if (query.str() == "")
-		return true;
-	query << ")";
+	query << "DELETE FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '";
+	query << escapeString(metafile.filename) << "')";
 	return doQuery(query.str());
 }
 

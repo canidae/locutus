@@ -10,6 +10,14 @@ Database::~Database() {
 }
 
 /* methods */
+bool Database::clean() {
+	return false;
+}
+
+bool Database::init() {
+	return false;
+}
+
 bool Database::loadAlbum(Album *album) {
 	return false;
 }
@@ -40,7 +48,7 @@ string Database::loadSettingString(const string &key, const string &default_valu
 	return default_value;
 }
 
-bool Database::removeMetafiles(const vector<Metafile> &files) {
+bool Database::removeMatches(const Metafile &metafile) {
 	return false;
 }
 

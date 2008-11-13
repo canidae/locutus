@@ -29,6 +29,8 @@ class PostgreSQL : public Database {
 		explicit PostgreSQL(const std::string connection);
 		~PostgreSQL();
 
+		bool clean();
+		bool init();
 		bool loadAlbum(Album *album);
 		bool loadMetafile(Metafile *metafile);
 		std::vector<Metafile> loadMetafiles(const std::string &filename_pattern);
@@ -36,7 +38,7 @@ class PostgreSQL : public Database {
 		double loadSettingDouble(const std::string &key, double default_value, const std::string &description);
 		int loadSettingInt(const std::string &key, int default_value, const std::string &description);
 		std::string loadSettingString(const std::string &key, const std::string &default_value, const std::string &description);
-		bool removeMetafiles(const std::vector<Metafile> &files);
+		bool removeMatches(const Metafile &metafile);
 		bool saveAlbum(const Album &album);
 		bool saveArtist(const Artist &artist);
 		bool saveMatch(const Match &match);
