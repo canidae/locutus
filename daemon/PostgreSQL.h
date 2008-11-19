@@ -46,6 +46,7 @@ class PostgreSQL : public Database {
 		bool saveTrack(const Track &track);
 		bool start();
 		bool stop();
+		bool updateProgress(double progress);
 
 	private:
 		PGconn *pg_connection;

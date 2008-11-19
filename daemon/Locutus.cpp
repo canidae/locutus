@@ -62,7 +62,11 @@ long Locutus::run() {
 	Debug::info() << "Scanning input directory" << endl;
 	scanFiles(input_dir);
 	/* match files */
+	int group_counter = 0;
 	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf) {
+		/* update progress */
+		database->updateProgress((double) group_counter++ / (double) grouped_files.size());
+		/* match files in group */
 		matcher->match(gf->first, gf->second);
 		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
@@ -82,7 +86,7 @@ long Locutus::run() {
 		}
 	}
 	/* submit new puids? */
-	// TODO
+	// TODO?
 	/* return */
 	return 10000;
 }

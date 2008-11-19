@@ -80,6 +80,7 @@ CREATE TABLE file (
     force_save boolean DEFAULT false NOT NULL,
     user_changed boolean DEFAULT false NOT NULL,
     matched integer,
+    checked boolean DEFAULT true NOT NULL,
     CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length((musicbrainz_albumartistid)::text) = 0) OR (length((musicbrainz_albumartistid)::text) = 36))),
     CONSTRAINT file_musicbrainz_albumid_check CHECK (((length((musicbrainz_albumid)::text) = 0) OR (length((musicbrainz_albumid)::text) = 36))),
     CONSTRAINT file_musicbrainz_artistid_check CHECK (((length((musicbrainz_artistid)::text) = 0) OR (length((musicbrainz_artistid)::text) = 36))),
@@ -94,7 +95,8 @@ CREATE TABLE file (
 CREATE TABLE locutus (
     active boolean DEFAULT false NOT NULL,
     start timestamp without time zone DEFAULT now() NOT NULL,
-    stop timestamp without time zone DEFAULT now() NOT NULL
+    stop timestamp without time zone DEFAULT now() NOT NULL,
+    progress real DEFAULT 0.0 NOT NULL
 );
 
 
@@ -332,7 +334,6 @@ ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 --
 
 CREATE SEQUENCE puid_puid_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE

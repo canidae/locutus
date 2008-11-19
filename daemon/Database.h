@@ -33,5 +33,6 @@ class Database {
 		virtual bool saveTrack(const Track &track);
 		virtual bool start();
 		virtual bool stop();
+		virtual bool updateProgress(double progress);
 };
 #endif

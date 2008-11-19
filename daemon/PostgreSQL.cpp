@@ -512,14 +512,21 @@ bool PostgreSQL::start() {
 	/* insert if there are no rows in the table */
 	doQuery("INSERT INTO locutus(active) SELECT true WHERE NOT EXISTS (SELECT true FROM locutus)");
 	/* then update the row(s) */
-	return doQuery("UPDATE locutus SET active = true, start = now()");
+	return doQuery("UPDATE locutus SET active = true, start = now(), progress = 0.0");
 }
 
 bool PostgreSQL::stop() {
 	/* insert if there are no rows in the table */
 	doQuery("INSERT INTO locutus(active) SELECT false WHERE NOT EXISTS (SELECT true FROM locutus)");
 	/* then update the row(s) */
-	return doQuery("UPDATE locutus SET active = false, stop = now()");
+	return doQuery("UPDATE locutus SET active = false, stop = now(), progress = 1.0");
+}
+
+bool PostgreSQL::updateProgress(double progress) {
+	/* set progress so the user knows about how far matching has come */
+	ostringstream query;
+	query << "UPDATE locutus SET progress = " << progress;
+	return doQuery(query.str());
 }
 
 /* private methods */

@@ -79,3 +79,7 @@ bool Database::start() {
 bool Database::stop() {
 	return false;
 }
+
+bool Database::updateProgress(double progress) {
+	return false;
+}
