@@ -18,8 +18,8 @@ my $filter = param('filter') || '';
 my $dbh = Locutus::db_connect();
 $filter = $dbh->quote('%' . $filter . '%');
 
-my $query = 'SELECT * FROM v_web_album_matching_list_albums WHERE tracks_matched > 0 AND album ILIKE ' . $filter;
-$query = $query . ' ORDER BY tracks_matched * avg_score DESC LIMIT 50 OFFSET ' . $offset;
+my $query = 'SELECT * FROM v_web_album_matching_list_albums WHERE album ILIKE ' . $filter;
+$query = $query . ' ORDER BY album_score DESC LIMIT 50 OFFSET ' . $offset;
 
 $vars{'albums'} = $dbh->selectall_arrayref($query, {Slice => {}});
 
@@ -27,9 +27,11 @@ foreach my $album (@{$vars{albums}}) {
 	$album->{max_color} = Locutus::score_to_color($album->{max_score});
 	$album->{min_color} = Locutus::score_to_color($album->{min_score});
 	$album->{avg_color} = Locutus::score_to_color($album->{avg_score});
+	$album->{album_color} = Locutus::score_to_color($album->{album_score});
 	$album->{max_score} = sprintf("%.1f%%", $album->{max_score} * 100);
 	$album->{min_score} = sprintf("%.1f%%", $album->{min_score} * 100);
 	$album->{avg_score} = sprintf("%.1f%%", $album->{avg_score} * 100);
+	$album->{album_score} = sprintf("%.1f%%", $album->{album_score} * 100);
 }
 
 #print Dumper(\%vars);

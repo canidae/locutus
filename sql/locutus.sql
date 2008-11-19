@@ -183,7 +183,7 @@ CREATE VIEW v_web_album_list_tracks_and_matching_files AS
 --
 
 CREATE VIEW v_web_album_matching_list_albums AS
-    SELECT a.album_id, a.title AS album, count(DISTINCT t.track_id) AS tracks, count(DISTINCT tmp.track_id) AS tracks_matched, count(tmp.file_id) AS files_matched, sum((tmp.mbid_match)::integer) AS mbids_matched, max(tmp.meta_score) AS max_score, min(tmp.meta_score) AS min_score, COALESCE(avg(COALESCE(tmp.meta_score, (0)::double precision)), (0)::double precision) AS avg_score FROM ((album a JOIN track t ON ((t.album_id = a.album_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, m.file_id) m.track_id, m.file_id, m.mbid_match, m.meta_score FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) WHERE (f.matched IS NULL) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC) tmp ON ((tmp.track_id = t.track_id))) GROUP BY a.album_id, a.title;
+    SELECT a.album_id, a.title AS album, (SELECT count(*) AS count FROM track t WHERE (t.album_id = a.album_id)) AS tracks, count(DISTINCT tmp.track_id) AS tracks_matched, count(tmp.file_id) AS files_matched, sum((tmp.mbid_match)::integer) AS mbids_matched, max(tmp.meta_score) AS max_score, min(tmp.meta_score) AS min_score, COALESCE(avg(COALESCE(tmp.meta_score, (0)::double precision)), (0)::double precision) AS avg_score, (sum(tmp.meta_score) / ((SELECT count(*) AS count FROM track t WHERE (t.album_id = a.album_id)))::double precision) AS album_score FROM ((album a JOIN track t ON ((t.album_id = a.album_id))) JOIN (SELECT DISTINCT ON (t.album_id, m.file_id) m.track_id, m.file_id, m.mbid_match, m.meta_score FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) WHERE (f.matched IS NULL) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC) tmp ON ((tmp.track_id = t.track_id))) GROUP BY a.album_id, a.title;
 
 
 --
@@ -264,6 +264,14 @@ CREATE VIEW v_web_list_tracks AS
 
 CREATE VIEW v_web_track_list_matching_files AS
     SELECT f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.matched, f.duplicate, f.force_save, f.user_changed, m.track_id, m.mbid_match, m.puid_match, m.meta_score FROM (file f JOIN match m ON ((f.file_id = m.file_id)));
+
+
+--
+-- Name: v_web_uncompared_files_list_files; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_uncompared_files_list_files AS
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released, file.genre, file.pinned, file.groupname, file.duplicate, file.force_save, file.user_changed, file.matched, file.checked FROM file WHERE (NOT (file.file_id IN (SELECT match.file_id FROM match)));
 
 
 --
