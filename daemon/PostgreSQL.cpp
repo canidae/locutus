@@ -532,7 +532,6 @@ void PostgreSQL::clear() {
 bool PostgreSQL::doQuery(const char *q) {
 	clear();
 	got_result = true;
-	Debug::info() << "Query: " << q << endl;
 	pg_result = PQexec(pg_connection, q);
 	int status = PQresultStatus(pg_result);
 	if (status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK)
