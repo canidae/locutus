@@ -16,6 +16,8 @@
       [% IF loop.prev.tracknumber != track.tracknumber %]
         <tr>
           <th>Score</th>
+          <th>Match</th>
+          <th>Remove</th>
           <th>[% track.tracknumber %]</th>
           <th>[% album.artist_name %]</th>
           <th>[% album.title %]</th>
@@ -31,6 +33,12 @@
       [% IF track.file_id %]
         <tr>
           <td style="background: #[% track.color %];">[% track.meta_score %]</td>
+        [% IF track.matched %]
+          <td style="text-align: center;">OK</td>
+        [% ELSE %]
+          <td style="text-align: center;"><input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>
+        [% END %]
+          <td style="text-align: center;"><input type="checkbox" name="remove_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>
           <td>[% track.file_tracknumber %]</td>
           <td>[% track.file_albumartist %]</td>
           <td>[% track.file_album %]</td>
@@ -39,12 +47,7 @@
           <td>[% track.file_duration %]</td>
         </tr>
         <tr>
-        [% IF track.matched %]
-          <td style="text-align: center;">OK</td>
-        [% ELSE %]
-          <td style="text-align: center;"><input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>
-        [% END %]
-          <td colspan="6"><a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a></td>
+          <td colspan="9"><a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a></td>
         </tr>
       [% END %]
     [% END %]
