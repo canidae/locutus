@@ -265,7 +265,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 						else if (!(*m)->mbid_match && !(*m)->puid_match && (*m)->meta_score < metadata_min_score)
 							continue; // metadata compare with too low meta_score
 						map<string, double>::iterator bfm = best_file_match.find((*m)->metafile->filename);
-						if (bfm != best_file_match.end() && bfm->second - (*m)->total_score > max_diff_best_score)
+						if (!(*m)->mbid_match && !(*m)->puid_match && bfm != best_file_match.end() && bfm->second - (*m)->total_score > max_diff_best_score)
 							continue; // total_score is too far away from this file's best total_score
 						best_match = *m;
 						best_match_score = (*m)->total_score;
