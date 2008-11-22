@@ -42,5 +42,59 @@
       </tr>
   [% END %]
     </table>
+    <h2>Legend</h2>
+    <ul>
+      <li>
+        <b>Tracks</b>
+        <ul>
+          <li>
+            <b>Count</b><br />
+            Amount of tracks in album.
+          </li>
+          <li>
+            <b>Compared</b><br />
+            Amount of tracks that are compared to a file.
+          </li>
+          <li>
+            <b>Matched</b><br />
+            Amount of tracks that are matched to a file.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <b>Files</b>
+        <ul>
+          <li>
+            <b>Compared</b><br />
+            Amount of files that are compared to a track.
+          </li>
+          <li>
+            <b>Matched</b><br />
+            Amount of files that are matched to a track.
+          </li>
+          <li>
+            <b>MBID</b><br />
+            Amount of files that are matched to a track using MusicBrainz ID.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <b>File scores</b>
+        <ul>
+          <li>
+            <b>Max</b><br />
+            The highest score of a match between a file and a track.
+          </li>
+          <li>
+            <b>Min</b><br />
+            The lowest score of a match between a file and a track.
+          </li>
+          <li>
+            <b>Average</b><br />
+            The average score of the matches between files and tracks.
+          </li>
+        </ul>
+      </li>
+    </ul>
 [% END %]
 [% INCLUDE footer.tmpl %]
