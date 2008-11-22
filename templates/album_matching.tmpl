@@ -12,14 +12,17 @@
     <table>
       <tr>
         <th rowspan="2">Album</th>
-        <th rowspan="2">Tracks</th>
-        <th rowspan="2">Tracks matched</th>
-        <th rowspan="2">Files matched</th>
-        <th rowspan="2">MBIDs matched</th>
-        <th rowspan="2">Files compared</th>
+        <th colspan="3">Tracks</th>
+        <th colspan="3">Files</th>
         <th colspan="3">File scores</th>
       </tr>
       <tr>
+        <th>Count</th>
+        <th>Matched</th>
+        <th>Compared</th>
+        <th>Matched</th>
+        <th>Compared</th>
+        <th>MBID</th>
         <th>Max</th>
         <th>Min</th>
         <th>Average</th>
@@ -28,10 +31,11 @@
       <tr>
         <td><a href="album.pl?alid=[% album.album_id %]">[% album.album %]</a></td>
         <td>[% album.tracks %]</td>
+        <td>[% album.tracks_compared %]</td>
         <td>[% album.tracks_matched %]</td>
+        <td>[% album.files_compared %]</td>
         <td>[% album.files_matched %]</td>
         <td>[% album.mbids_matched %]</td>
-        <td>[% album.files_compared %]</td>
         <td style="background: #[% album.max_color %];">[% album.max_score %]</td>
         <td style="background: #[% album.min_color %];">[% album.min_score %]</td>
         <td style="background: #[% album.avg_color %];">[% album.avg_score %]</td>
