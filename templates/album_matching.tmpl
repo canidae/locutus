@@ -18,10 +18,10 @@
       </tr>
       <tr>
         <th>Count</th>
-        <th>Matched</th>
         <th>Compared</th>
         <th>Matched</th>
         <th>Compared</th>
+        <th>Matched</th>
         <th>MBID</th>
         <th>Max</th>
         <th>Min</th>
@@ -31,10 +31,10 @@
       <tr>
         <td><a href="album.pl?alid=[% album.album_id %]">[% album.album %]</a></td>
         <td>[% album.tracks %]</td>
-        <td>[% album.tracks_matched %]</td>
         <td>[% album.tracks_compared %]</td>
-        <td>[% album.files_matched %]</td>
+        <td>[% album.tracks_matched %]</td>
         <td>[% album.files_compared %]</td>
+        <td>[% album.files_matched %]</td>
         <td>[% album.mbids_matched %]</td>
         <td style="background: #[% album.max_color %];">[% album.max_score %]</td>
         <td style="background: #[% album.min_color %];">[% album.min_score %]</td>
