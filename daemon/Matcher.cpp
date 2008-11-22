@@ -83,8 +83,11 @@ void Matcher::compareFilesWithAlbum(AlbumMatch *am, const vector<Metafile *> &fi
 			am->matches[(*t)->mbid].push_back(m);
 			if (!m->mbid_match && !m->puid_match && m->meta_score < mismatch_threshold)
 				continue; // horrible match, don't save it nor prevent a metadata search for this file
-			/* fair or better match. don't do a metadata search for this file and save the match */
-			(*mf)->meta_lookup = false;
+			/* fair or better match. if we're saving complete albums,
+			 * then don't do a metadata search for this file */
+			if (only_save_complete_albums)
+				(*mf)->meta_lookup = false;
+			/* save the match */
 			database->saveMatch(*m);
 		}
 	}

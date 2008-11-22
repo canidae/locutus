@@ -33,7 +33,7 @@
 #define NO_GROUP_DUPLICATES_DESCRIPTION "If you don't have or have few duplicate files that will end up in the same group then this option should be enabled. With this option enabled, 'only_save_if_all_match' enabled and 'only_save_complete_albums' enabled you can significantly reduce 'metadata_min_score' without getting mismatched files and at the same time increase amount of matched files. Please see the tuning guide for more information."
 #define ONLY_SAVE_COMPLETE_ALBUMS_KEY "only_save_complete_albums"
 #define ONLY_SAVE_COMPLETE_ALBUMS_VALUE true
-#define ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION "When this setting is set to true, Locutus will only save albums where we got a file matching every single track on the album. If your music archive only contains complete albums, it is a very good idea to leave this setting at true."
+#define ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION "When this setting is set to true, Locutus will only save albums where we got a file matching every single track on the album. If this setting is 'false' then Locutus will also do a metadata lookup for every file which will significantly slow down the matching. If your music archive only contains complete albums, it is a very good idea to leave this setting at true."
 #define ONLY_SAVE_IF_ALL_MATCH_KEY "only_save_if_all_match"
 #define ONLY_SAVE_IF_ALL_MATCH_VALUE true
 #define ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION "Locutus gather files in groups in this order: 'artist-album' if both tags are present, 'album' if tag is present or 'last_directory_name' if album tag is not present. If this setting is set to true Locutus will not save the files in such a group unless all files match something. This is generally a good idea for those who don't have a fragmented music archive."
