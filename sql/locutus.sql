@@ -538,6 +538,34 @@ ALTER TABLE ONLY track
 
 
 --
+-- Name: album_artist_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX album_artist_id_idx ON album USING btree (artist_id);
+
+
+--
+-- Name: file_matched_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX file_matched_idx ON file USING btree (matched);
+
+
+--
+-- Name: match_track_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX match_track_id_idx ON match USING btree (track_id);
+
+
+--
+-- Name: track_artist_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX track_artist_id_idx ON track USING btree (artist_id);
+
+
+--
 -- Name: album_artist_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
