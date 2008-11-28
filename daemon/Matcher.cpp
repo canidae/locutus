@@ -201,7 +201,7 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 			if (m == NULL)
 				continue;
 			/* check that score is high enough for us to load this album */
-			if (m->meta_score >= puid_min_score)
+			if (m->meta_score >= mismatch_threshold)
 				loadAlbum(mt->album_mbid, files);
 			delete m;
 		}
@@ -316,7 +316,7 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 			if (m == NULL)
 				continue;
 			/* check that score is high enough for us to load this album */
-			if (m->meta_score >= metadata_min_score)
+			if (m->meta_score >= mismatch_threshold)
 				loadAlbum(mt->album_mbid, files);
 			delete m;
 		}
