@@ -19,18 +19,9 @@ my $dbh = Locutus::db_connect();
 $filter = $dbh->quote('%' . $filter . '%');
 
 my $query = 'SELECT * FROM v_web_album_matching_list_albums WHERE album ILIKE ' . $filter;
-$query = $query . ' ORDER BY avg_score * files_compared - files_matched DESC LIMIT 50 OFFSET ' . $offset;
-
+$query .= ' ORDER BY score DESC';
+$query .= ' LIMIT 50 OFFSET ' . $offset;
 $vars{'albums'} = $dbh->selectall_arrayref($query, {Slice => {}});
-
-foreach my $album (@{$vars{albums}}) {
-	$album->{max_color} = Locutus::score_to_color($album->{max_score});
-	$album->{min_color} = Locutus::score_to_color($album->{min_score});
-	$album->{avg_color} = Locutus::score_to_color($album->{avg_score});
-	$album->{max_score} = sprintf("%.1f%%", $album->{max_score} * 100);
-	$album->{min_score} = sprintf("%.1f%%", $album->{min_score} * 100);
-	$album->{avg_score} = sprintf("%.1f%%", $album->{avg_score} * 100);
-}
 
 #print Dumper(\%vars);
 

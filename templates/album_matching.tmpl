@@ -11,90 +11,19 @@
 [% IF albums.size() > 0 %]
     <table>
       <tr>
-        <th rowspan="2">Album</th>
-        <th colspan="3">Tracks</th>
-        <th colspan="3">Files</th>
-        <th colspan="3">File scores</th>
-      </tr>
-      <tr>
-        <th>Count</th>
-        <th>Compared</th>
-        <th>Matched</th>
-        <th>Compared</th>
-        <th>Matched</th>
-        <th>MBID</th>
-        <th>Max</th>
-        <th>Min</th>
-        <th>Average</th>
+        <th>Album</th>
+        <th>Tracks</th>
+        <th>MBID matches</th>
+        <th>Score</th>
       </tr>
     [% FOREACH album IN albums %]
       <tr>
         <td><a href="album.pl?alid=[% album.album_id %]">[% album.album %]</a></td>
         <td>[% album.tracks %]</td>
-        <td>[% album.tracks_compared %]</td>
-        <td>[% album.tracks_matched %]</td>
-        <td>[% album.files_compared %]</td>
-        <td>[% album.files_matched %]</td>
-        <td>[% album.mbids_matched %]</td>
-        <td style="background: #[% album.max_color %];">[% album.max_score %]</td>
-        <td style="background: #[% album.min_color %];">[% album.min_score %]</td>
-        <td style="background: #[% album.avg_color %];">[% album.avg_score %]</td>
+        <td>[% album.mbid_matches %]</td>
+        <td>[% album.sum_score %]</td>
       </tr>
   [% END %]
     </table>
-    <h2>Legend</h2>
-    <ul>
-      <li>
-        <b>Tracks</b>
-        <ul>
-          <li>
-            <b>Count</b><br />
-            Amount of tracks in album.
-          </li>
-          <li>
-            <b>Compared</b><br />
-            Amount of tracks that are compared to a file.
-          </li>
-          <li>
-            <b>Matched</b><br />
-            Amount of tracks that are matched to a file.
-          </li>
-        </ul>
-      </li>
-      <li>
-        <b>Files</b>
-        <ul>
-          <li>
-            <b>Compared</b><br />
-            Amount of files that are compared to a track.
-          </li>
-          <li>
-            <b>Matched</b><br />
-            Amount of files that are matched to a track.
-          </li>
-          <li>
-            <b>MBID</b><br />
-            Amount of files that are matched to a track using MusicBrainz ID.
-          </li>
-        </ul>
-      </li>
-      <li>
-        <b>File scores</b>
-        <ul>
-          <li>
-            <b>Max</b><br />
-            The highest score of a match between a file and a track.
-          </li>
-          <li>
-            <b>Min</b><br />
-            The lowest score of a match between a file and a track.
-          </li>
-          <li>
-            <b>Average</b><br />
-            The average score of the matches between files and tracks.
-          </li>
-        </ul>
-      </li>
-    </ul>
 [% END %]
 [% INCLUDE footer.tmpl %]

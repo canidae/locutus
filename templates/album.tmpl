@@ -15,7 +15,7 @@
       <p>This album got files from multiple groups. You can narrow down to one group:</p>
       <ul>
         [% FOREACH group IN groups %]
-        <li><a href="album.pl?alid=[% album.album_id %]&figrid=[% group.value %]">[% group.key %]</a></li>
+        <li><a href="album.pl?alid=[% album.album_id %]&amp;figrid=[% group.value %]">[% group.key %]</a></li>
         [% END %]
       </ul>
       [% END %]
