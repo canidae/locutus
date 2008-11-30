@@ -175,7 +175,7 @@ CREATE VIEW v_daemon_load_metafile AS
 --
 
 CREATE VIEW v_web_album_list_tracks_and_matching_files AS
-    SELECT t.album_id, t.track_id, t.title AS track_title, t.duration, t.tracknumber, a.artist_id, a.name AS artist_name, tmp.mbid_match, tmp.meta_score, tmp.file_id, tmp.filename, tmp.duration AS file_duration, tmp.album AS file_album, tmp.albumartist AS file_albumartist, tmp.artist AS file_artist, tmp.title AS file_title, tmp.tracknumber AS file_tracknumber, tmp.pinned, tmp.groupname, tmp.matched, tmp.duplicate, tmp.force_save, tmp.user_changed FROM ((track t JOIN artist a ON ((a.artist_id = t.artist_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, m.file_id) m.track_id, m.mbid_match, m.meta_score, f.file_id, f.filename, f.duration, f.album, f.albumartist, f.artist, f.title, f.tracknumber, f.pinned, f.groupname, f.matched, f.duplicate, f.force_save, f.user_changed FROM ((match m JOIN track t ON ((t.track_id = m.track_id))) JOIN file f ON ((f.file_id = m.file_id))) ORDER BY t.album_id, m.file_id, m.mbid_match DESC, m.meta_score DESC) tmp ON ((tmp.track_id = t.track_id)));
+    SELECT t.album_id, t.track_id, t.title AS track_title, t.duration, t.tracknumber, a.artist_id, a.name AS artist_name, m.mbid_match, m.meta_score, m.file_id, f.filename, f.duration AS file_duration, f.album AS file_album, f.albumartist AS file_albumartist, f.artist AS file_artist, f.title AS file_title, f.tracknumber AS file_tracknumber, f.pinned, f.groupname, f.matched, f.duplicate, f.force_save, f.user_changed FROM (((track t JOIN artist a ON ((a.artist_id = t.artist_id))) LEFT JOIN match m ON ((t.track_id = m.track_id))) LEFT JOIN file f ON ((m.file_id = f.file_id)));
 
 
 --
