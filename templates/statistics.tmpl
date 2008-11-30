@@ -3,7 +3,7 @@
 %]
       <h1>Locutus - statistics</h1>
   [% IF daemon_stats.active %]
-      <p>Locutus is <span style="color: #ca9dae;">running</span> and run time so far is <span style="color: #ca9dae;">[% daemon_stats.current_run_time %]</span>, it started at <span style="color: #ca9dae;">[% daemon_stats.start %]</span> after it ended previous run at <span style="color: #ca9dae;">[% daemon_stats.stop %]</span>.</p>
+      <p>Locutus is <span style="color: #ca9dae;">running</span> and run time so far is <span style="color: #ca9dae;">[% daemon_stats.current_run_time %]</span>, it started at <span style="color: #ca9dae;">[% daemon_stats.start %]</span> after it ended previous run at <span style="color: #ca9dae;">[% daemon_stats.stop %]</span>. Progress so far is <span style="color: #ca9dae;">[% daemon_stats.progress %]</span> and estimated time remaining is <span style="color: #ca9dae;">[% daemon_stats.remaining %]</span></p>
   [% ELSE %]
       <p>Locutus is <span style="color: #ca9dae;">not running</span>. Last run time was <span style="color: #ca9dae;">[% daemon_stats.last_run_time %]</span>, it started at <span style="color: #ca9dae;">[% daemon_stats.start %]</span> and ended at <span style="color: #ca9dae;">[% daemon_stats.stop %]</span>.</p>
   [% END %]
