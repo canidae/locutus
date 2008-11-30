@@ -11,6 +11,14 @@
     <form action="album.pl?alid=[% album.album_id %]" method="post">
       <div><input type="hidden" name="alid" value="[% album.album_id %]" /></div>
       <h2>Tracks:</h2>
+      [% IF groups.size > 1 %]
+      <p>This album got files from multiple groups. You can narrow down to one group:</p>
+      <ul>
+        [% FOREACH group IN groups %]
+        <li><a href="album.pl?alid=[% album.album_id %]&figrid=[% group.value %]">[% group.key %]</a></li>
+        [% END %]
+      </ul>
+      [% END %]
       <table>
     [% FOREACH track IN tracks %]
       [% IF loop.prev.tracknumber != track.tracknumber %]
@@ -26,7 +34,7 @@
         [% ELSE %]
           <th>[% track.artist_name %]</th>
         [% END %]
-          <th><a href="track.pl?trid=[% track.track_id %]">[% track.track_title %]</a></th>
+          <th><a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a></th>
           <th>[% track.duration %]</th>
         </tr>
       [% END %]

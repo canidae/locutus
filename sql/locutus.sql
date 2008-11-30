@@ -8,13 +8,6 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET escape_string_warning = off;
 
---
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: -
---
-
-CREATE PROCEDURAL LANGUAGE plpgsql;
-
-
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
@@ -175,7 +168,7 @@ CREATE VIEW v_daemon_load_metafile AS
 --
 
 CREATE VIEW v_web_album_list_tracks_and_matching_files AS
-    SELECT t.album_id, t.track_id, t.title AS track_title, t.duration, t.tracknumber, a.artist_id, a.name AS artist_name, m.mbid_match, m.meta_score, m.file_id, f.filename, f.duration AS file_duration, f.album AS file_album, f.albumartist AS file_albumartist, f.artist AS file_artist, f.title AS file_title, f.tracknumber AS file_tracknumber, f.pinned, f.groupname, f.matched, f.duplicate, f.force_save, f.user_changed FROM (((track t JOIN artist a ON ((a.artist_id = t.artist_id))) LEFT JOIN match m ON ((t.track_id = m.track_id))) LEFT JOIN file f ON ((m.file_id = f.file_id)));
+    SELECT t.album_id, t.track_id, m.mbid_match, m.meta_score, f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.duplicate, f.force_save, f.user_changed, f.matched, f.checked FROM ((track t LEFT JOIN match m USING (track_id)) LEFT JOIN file f USING (file_id));
 
 
 --
@@ -275,15 +268,6 @@ CREATE VIEW v_web_uncompared_files_list_files AS
 
 
 --
--- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
-    AS '$libdir/plpgsql.so', 'plpgsql_call_handler'
-    LANGUAGE c;
-
-
---
 -- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -342,6 +326,7 @@ ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 --
 
 CREATE SEQUENCE puid_puid_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE

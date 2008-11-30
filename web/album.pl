@@ -14,9 +14,10 @@ my %vars = ();
 my $dbh = Locutus::db_connect();
 
 my $alid = int(param('alid') || -1);
+my $figrid = int(param('figrid') || -1);
 
 my @match_file_track = param('match_file_track');
-if (defined @match_file_track) {
+if (@match_file_track) {
 	my $force_save = param('force_save');
 	foreach my $value (@match_file_track) {
 		my ($file_id, $track_id) = split (/@/, $value);
@@ -32,7 +33,7 @@ if (defined @match_file_track) {
 }
 
 my @remove_file_track = param('remove_file_track');
-if (defined @remove_file_track) {
+if (@remove_file_track) {
 	foreach my $value (@remove_file_track) {
 		my ($file_id, $track_id) = split (/@/, $value);
 		$file_id = int($file_id);
@@ -46,9 +47,14 @@ if (defined @remove_file_track) {
 }
 
 $vars{album} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_album WHERE album_id = ' . $alid);
-$vars{tracks} = $dbh->selectall_arrayref('SELECT * FROM (SELECT DISTINCT ON (file_id) * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ' . $alid . ' ORDER BY file_id, mbid_match desc, meta_score desc) tmp ORDER BY tracknumber ASC, mbid_match DESC, meta_score DESC', {Slice => {}});
+my $query = 'SELECT t.*, a.name AS artist_name, tmp.mbid_match, tmp.meta_score, tmp.file_id, tmp.filename, tmp.duration AS file_duration, tmp.album AS file_album, tmp.albumartist AS file_albumartist, tmp.artist AS file_artist, tmp.title AS file_title, tmp.tracknumber AS file_tracknumber, tmp.pinned, tmp.groupname, tmp.matched, tmp.duplicate, tmp.force_save, tmp.user_changed FROM track t JOIN artist a USING (artist_id) LEFT JOIN (SELECT DISTINCT ON (file_id) * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ' . $alid;
+$query .= ' AND groupname = (SELECT groupname FROM file WHERE file_id = ' . $figrid . ')' if ($figrid > -1);
+$query .= ' ORDER BY file_id, mbid_match desc, meta_score desc) tmp USING (track_id) WHERE t.album_id = ' . $alid . ' ORDER BY tracknumber ASC, mbid_match DESC, meta_score DESC';
+$vars{tracks} = $dbh->selectall_arrayref($query, {Slice => {}});
+
 
 foreach my $track (@{$vars{tracks}}) {
+	$vars{groups}->{$track->{groupname}} = $track->{file_id} if ($track->{groupname} ne '');
 	$track->{color} = Locutus::score_to_color($track->{meta_score});
 	$track->{meta_score} = sprintf("%.1f%%", $track->{meta_score} * 100);
 }
