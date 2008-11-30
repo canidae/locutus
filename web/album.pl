@@ -46,7 +46,7 @@ if (defined @remove_file_track) {
 }
 
 $vars{album} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_album WHERE album_id = ' . $alid);
-$vars{tracks} = $dbh->selectall_arrayref('SELECT DISTINCT ON (tracknumber, file_id) * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ' . $alid . ' ORDER BY tracknumber ASC, file_id', {Slice => {}});
+$vars{tracks} = $dbh->selectall_arrayref('SELECT * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ' . $alid . ' ORDER BY tracknumber ASC, mbid_match DESC, meta_score DESC', {Slice => {}});
 
 foreach my $track (@{$vars{tracks}}) {
 	$track->{color} = Locutus::score_to_color($track->{meta_score});
