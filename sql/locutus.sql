@@ -8,6 +8,13 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET escape_string_warning = off;
 
+--
+-- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: -
+--
+
+CREATE PROCEDURAL LANGUAGE plpgsql;
+
+
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
@@ -148,6 +155,14 @@ CREATE TABLE track (
 
 
 --
+-- Name: test; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW test AS
+    SELECT ar.artist_id, ar.name AS artist, al.album_id, al.title AS album, count(DISTINCT t.track_id) AS tracks, count(DISTINCT m.track_id) AS tracks_compared, count(DISTINCT m.file_id) AS unique_files, count(m.file_id) AS files_compared, sum((m.mbid_match)::integer) AS mbids_matched, min(m.meta_score) AS min_score, max(m.meta_score) AS max_score, avg(m.meta_score) AS avg_score FROM (((album al JOIN artist ar ON ((al.artist_id = ar.artist_id))) JOIN track t USING (album_id)) LEFT JOIN match m USING (track_id)) WHERE (al.album_id IN (SELECT t.album_id FROM ((track t JOIN match m USING (track_id)) JOIN (SELECT file.file_id FROM file WHERE (file.matched IS NULL) ORDER BY random() LIMIT 5) tmp USING (file_id)))) GROUP BY ar.artist_id, ar.name, al.album_id, al.title ORDER BY (avg(m.meta_score) * (count(DISTINCT m.track_id))::double precision) DESC;
+
+
+--
 -- Name: v_daemon_load_album; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -168,7 +183,7 @@ CREATE VIEW v_daemon_load_metafile AS
 --
 
 CREATE VIEW v_web_album_list_tracks_and_matching_files AS
-    SELECT t.album_id, t.track_id, m.mbid_match, m.meta_score, f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.duplicate, f.force_save, f.user_changed, f.matched, f.checked FROM ((track t LEFT JOIN match m USING (track_id)) LEFT JOIN file f USING (file_id));
+    SELECT t.album_id, t.track_id, m.mbid_match, m.meta_score, f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.duplicate, f.force_save, f.user_changed, f.matched, f.checked FROM ((track t LEFT JOIN match m USING (track_id)) LEFT JOIN file f USING (file_id)) WHERE ((f.matched IS NULL) OR (f.matched = t.track_id));
 
 
 --
@@ -268,6 +283,15 @@ CREATE VIEW v_web_uncompared_files_list_files AS
 
 
 --
+-- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
+    AS '$libdir/plpgsql.so', 'plpgsql_call_handler'
+    LANGUAGE c;
+
+
+--
 -- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -326,7 +350,6 @@ ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 --
 
 CREATE SEQUENCE puid_puid_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -534,6 +557,13 @@ CREATE INDEX album_artist_id_idx ON album USING btree (artist_id);
 --
 
 CREATE INDEX file_matched_idx ON file USING btree (matched);
+
+
+--
+-- Name: match_meta_score_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX match_meta_score_idx ON match USING btree (meta_score);
 
 
 --
