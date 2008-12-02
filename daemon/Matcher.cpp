@@ -204,6 +204,10 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 			if (m->meta_score >= mismatch_threshold)
 				loadAlbum(mt->album_mbid, files);
 			delete m;
+			/* only load the best album.
+			 * TODO: should we make this user customizable?
+			 * eg. "load n best albums where score > mismatch_threshold"? */
+			break;
 		}
 	}
 }
@@ -319,6 +323,10 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 			if (m->meta_score >= mismatch_threshold)
 				loadAlbum(mt->album_mbid, files);
 			delete m;
+			/* only load the best album.
+			 * TODO: should we make this user customizable?
+			 * eg. "load n best albums where score > mismatch_threshold"? */
+			break;
 		}
 	}
 }
