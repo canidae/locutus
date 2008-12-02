@@ -183,7 +183,7 @@ CREATE VIEW v_web_album_list_tracks_and_matching_files AS
 --
 
 CREATE VIEW v_web_album_matching_list_albums AS
-    SELECT a.album_id, a.title AS album, count(*) AS tracks, sum(m.mbid_matches) AS mbid_matches, max(m.max_score) AS max_track_score, min(m.max_score) AS min_track_score, avg(m.max_score) AS avg_track_score FROM ((album a JOIN track t USING (album_id)) JOIN (SELECT match.track_id, sum((match.mbid_match)::integer) AS mbid_matches, max(match.meta_score) AS max_score FROM match GROUP BY match.track_id) m USING (track_id)) WHERE (a.album_id IN (SELECT t.album_id FROM ((file f JOIN match m USING (file_id)) JOIN track t USING (track_id)) WHERE (f.matched IS NULL))) GROUP BY a.album_id, a.title;
+    SELECT a.album_id, a.title AS album, count(*) AS tracks, sum(m.mbid_matches) AS mbid_matches, max(m.max_score) AS max_track_score, min(m.max_score) AS min_track_score, avg(m.max_score) AS avg_track_score FROM ((album a JOIN track t USING (album_id)) JOIN (SELECT match.track_id, sum((match.mbid_match)::integer) AS mbid_matches, max(match.meta_score) AS max_score FROM match GROUP BY match.track_id) m USING (track_id)) WHERE (a.album_id IN (SELECT t.album_id FROM track t WHERE (t.track_id IN (SELECT m.track_id FROM match m WHERE (m.file_id IN (SELECT f.file_id FROM file f WHERE (f.matched IS NULL))))))) GROUP BY a.album_id, a.title;
 
 
 --
