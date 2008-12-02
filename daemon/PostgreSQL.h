@@ -20,7 +20,7 @@ extern "C" {
 
 class Album;
 class Artist;
-class Match;
+class Comparison;
 class Metatrack;
 class Track;
 
@@ -38,10 +38,10 @@ class PostgreSQL : public Database {
 		double loadSettingDouble(const std::string &key, double default_value, const std::string &description);
 		int loadSettingInt(const std::string &key, int default_value, const std::string &description);
 		std::string loadSettingString(const std::string &key, const std::string &default_value, const std::string &description);
-		bool removeMatches(const Metafile &metafile);
+		bool removeComparisons(const Metafile &metafile);
 		bool saveAlbum(const Album &album);
 		bool saveArtist(const Artist &artist);
-		bool saveMatch(const Match &match);
+		bool saveComparison(const Comparison &comparison);
 		bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "");
 		bool saveTrack(const Track &track);
 		bool start();

@@ -1,7 +1,7 @@
 #include "Album.h"
 #include "Artist.h"
+#include "Comparison.h"
 #include "Debug.h"
-#include "Match.h"
 #include "Metatrack.h"
 #include "PostgreSQL.h"
 #include "Track.h"
@@ -232,9 +232,9 @@ string PostgreSQL::loadSettingString(const string &key, const string &default_va
 	return back;
 }
 
-bool PostgreSQL::removeMatches(const Metafile &metafile) {
+bool PostgreSQL::removeComparisons(const Metafile &metafile) {
 	ostringstream query;
-	query << "DELETE FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '";
+	query << "DELETE FROM comparison WHERE file_id = (SELECT file_id FROM file WHERE filename = '";
 	query << escapeString(metafile.filename) << "')";
 	return doQuery(query.str());
 }
@@ -325,33 +325,33 @@ bool PostgreSQL::saveArtist(const Artist &artist) {
 	return true;
 }
 
-bool PostgreSQL::saveMatch(const Match &match) {
-	if (match.metafile == NULL) {
-		Debug::notice() << "Unable to save match. No file in match. " << endl;
+bool PostgreSQL::saveComparison(const Comparison &comparison) {
+	if (comparison.metafile == NULL) {
+		Debug::notice() << "Unable to save comparison. No file in comparison. " << endl;
 		return false;
-	} else if (match.track == NULL) {
-		Debug::notice() << "Unable to save match. File is not matched with a track: " << match.metafile->filename << endl;
+	} else if (comparison.track == NULL) {
+		Debug::notice() << "Unable to save comparison. File is not compared with a track: " << comparison.metafile->filename << endl;
 		return false;
 	}
-	string e_filename = escapeString(match.metafile->filename);
-	string e_track_mbid = escapeString(match.track->mbid);
+	string e_filename = escapeString(comparison.metafile->filename);
+	string e_track_mbid = escapeString(comparison.track->mbid);
 	ostringstream query;
-	query << "INSERT INTO match(file_id, track_id, mbid_match, puid_match, meta_score) SELECT";
+	query << "INSERT INTO comparison(file_id, track_id, mbid_match, puid_match, score) SELECT";
 	query << " (SELECT file_id FROM file WHERE filename = '" << e_filename << "')";
 	query << ", (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "')";
-	query << ", " << (match.mbid_match ? "true" : "false");
-	query << ", " << (match.puid_match ? "true" : "false");
-	query << ", " << match.meta_score;
+	query << ", " << (comparison.mbid_match ? "true" : "false");
+	query << ", " << (comparison.puid_match ? "true" : "false");
+	query << ", " << comparison.score;
 	query << " WHERE NOT EXISTS";
-	query << " (SELECT true FROM match WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "'))";
+	query << " (SELECT true FROM comparison WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "'))";
 	if (!doQuery(query.str()))
 		return false;
 
 	query.str("");
-	query << "UPDATE match SET";
-	query << " mbid_match = " << (match.mbid_match ? "true" : "false");
-	query << ", puid_match = "  << (match.puid_match ? "true" : "false");
-	query << ", meta_score = " << match.meta_score;
+	query << "UPDATE comparison SET";
+	query << " mbid_match = " << (comparison.mbid_match ? "true" : "false");
+	query << ", puid_match = "  << (comparison.puid_match ? "true" : "false");
+	query << ", score = " << comparison.score;
 	query << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "')";
 	if (!doQuery(query.str()))
 		return false;
@@ -393,19 +393,19 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		e_puid.append(tmp);
 		e_puid.append("')");
 	}
-	string e_matched;
+	string e_track_id;
 	if (metafile.matched) {
-		e_matched = "(SELECT track_id FROM track WHERE mbid = '";
-		e_matched.append(e_musicbrainz_trackid);
-		e_matched.append("')");
+		e_track_id = "(SELECT track_id FROM track WHERE mbid = '";
+		e_track_id.append(e_musicbrainz_trackid);
+		e_track_id.append("')");
 	} else {
-		e_matched = "NULL";
+		e_track_id = "NULL";
 	}
 	string e_old_filename;
 	if (old_filename == "") {
 		e_old_filename = e_filename;
 		query.str("");
-		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, force_save, user_changed, matched) SELECT";
+		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, force_save, user_changed, track_id) SELECT";
 		query << " '" << e_filename << "'";
 		query << ", " << metafile.duration;
 		query << ", " << metafile.channels;
@@ -430,7 +430,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		query << ", " << (metafile.duplicate ? "true" : "false");
 		query << ", " << (metafile.force_save ? "true" : "false");
 		query << ", false";
-		query << ", " << e_matched;
+		query << ", " << e_track_id;
 		query << " WHERE NOT EXISTS";
 		query << " (SELECT true FROM file WHERE filename = '" << e_filename << "')";
 		if (!doQuery(query.str()))
@@ -464,7 +464,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	query << ", duplicate = " << (metafile.duplicate ? "true" : "false");
 	query << ", force_save = " << (metafile.force_save ? "true" : "false");
 	query << ", user_changed = false";
-	query << ", matched = " << e_matched;
+	query << ", track_id = " << e_track_id;
 	query << " WHERE filename = '" << e_old_filename << "'";
 	if (!doQuery(query.str()))
 		return false;

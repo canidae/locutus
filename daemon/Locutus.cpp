@@ -325,7 +325,7 @@ int main() {
 	Levenshtein::initialize();
 
 	/* connect to database */
-	Database *database = new PostgreSQL("host=sql.samfundet.no user=locutus password=locutus dbname=locutus");
+	Database *database = new PostgreSQL("host=localhost user=locutus password=locutus dbname=locutus");
 
 	//while (true) {
 		Locutus *locutus = new Locutus(database);

@@ -48,7 +48,7 @@ string Database::loadSettingString(const string &key, const string &default_valu
 	return default_value;
 }
 
-bool Database::removeMatches(const Metafile &metafile) {
+bool Database::removeComparisons(const Metafile &metafile) {
 	return false;
 }
 
@@ -60,7 +60,7 @@ bool Database::saveArtist(const Artist &artist) {
 	return false;
 }
 
-bool Database::saveMatch(const Match &match) {
+bool Database::saveComparison(const Comparison &comparison) {
 	return false;
 }
 

@@ -1,5 +1,5 @@
-#ifndef MATCH_H
-#define MATCH_H
+#ifndef COMPARISON_H
+#define COMPARISON_H
 
 #include <string>
 #include "Metatrack.h"
@@ -7,16 +7,16 @@
 class Metafile;
 class Track;
 
-class Match {
+class Comparison {
 	public:
 		Metafile *metafile;
 		Track *track;
 		bool mbid_match;
 		bool puid_match;
-		double meta_score;
+		double score;
 		double total_score;
 
-		Match(Metafile *metafile, Track *track, bool mbid_match, bool puid_match, double meta_score);
-		~Match();
+		Comparison(Metafile *metafile, Track *track, bool mbid_match, bool puid_match, double score);
+		~Comparison();
 };
 #endif

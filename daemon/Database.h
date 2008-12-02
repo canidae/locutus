@@ -7,7 +7,7 @@
 
 class Album;
 class Artist;
-class Match;
+class Comparison;
 class Metatrack;
 class Track;
 
@@ -25,10 +25,10 @@ class Database {
 		virtual double loadSettingDouble(const std::string &key, double default_value, const std::string &description);
 		virtual int loadSettingInt(const std::string &key, int default_value, const std::string &description);
 		virtual std::string loadSettingString(const std::string &key, const std::string &default_value, const std::string &description);
-		virtual bool removeMatches(const Metafile &metafile);
+		virtual bool removeComparisons(const Metafile &metafile);
 		virtual bool saveAlbum(const Album &album);
 		virtual bool saveArtist(const Artist &artist);
-		virtual bool saveMatch(const Match &match);
+		virtual bool saveComparison(const Comparison &comparison);
 		virtual bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "");
 		virtual bool saveTrack(const Track &track);
 		virtual bool start();
