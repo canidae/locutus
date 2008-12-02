@@ -19,11 +19,11 @@ $offset = 0 if ($offset < 0);
 my $filter = param('filter') || '';
 $filter = $dbh->quote('%' . $filter . '%');
 
-my $query = 'SELECT * FROM v_web_list_files WHERE filename ILIKE ' . $filter;
+my $query = 'SELECT * FROM v_web_list_files WHERE filename::varchar ILIKE ' . $filter;
 $query = $query . ' ORDER BY filename LIMIT ' . $limit . ' OFFSET ' . $offset;
 $vars{'files'} = $dbh->selectall_arrayref($query, {Slice => {}});
 
-$query = 'SELECT count(*) FROM v_web_list_files WHERE filename ILIKE ' . $filter;
+$query = 'SELECT count(*) FROM v_web_list_files WHERE filename::varchar ILIKE ' . $filter;
 my $count = int($dbh->selectrow_array($query));
 $vars{'pagination'} = Locutus::paginate($count, $offset, $limit);
 

@@ -49,12 +49,26 @@ CREATE TABLE artist (
 
 
 --
+-- Name: comparison; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE comparison (
+    file_id integer NOT NULL,
+    track_id integer NOT NULL,
+    mbid_match boolean NOT NULL,
+    puid_match boolean NOT NULL,
+    score double precision NOT NULL,
+    CONSTRAINT comparison_score_check CHECK (((score >= (0.0)::double precision) AND (score <= (1.0)::double precision)))
+);
+
+
+--
 -- Name: file; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE file (
     file_id integer NOT NULL,
-    filename character varying NOT NULL,
+    filename bytea NOT NULL,
     last_updated timestamp without time zone DEFAULT now() NOT NULL,
     duration integer NOT NULL,
     channels integer NOT NULL,
@@ -79,7 +93,7 @@ CREATE TABLE file (
     duplicate boolean DEFAULT false NOT NULL,
     force_save boolean DEFAULT false NOT NULL,
     user_changed boolean DEFAULT false NOT NULL,
-    matched integer,
+    track_id integer,
     checked boolean DEFAULT true NOT NULL,
     CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length((musicbrainz_albumartistid)::text) = 0) OR (length((musicbrainz_albumartistid)::text) = 36))),
     CONSTRAINT file_musicbrainz_albumid_check CHECK (((length((musicbrainz_albumid)::text) = 0) OR (length((musicbrainz_albumid)::text) = 36))),
@@ -97,20 +111,6 @@ CREATE TABLE locutus (
     start timestamp without time zone DEFAULT now() NOT NULL,
     stop timestamp without time zone DEFAULT now() NOT NULL,
     progress real DEFAULT 0.0 NOT NULL
-);
-
-
---
--- Name: match; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE match (
-    file_id integer NOT NULL,
-    track_id integer NOT NULL,
-    mbid_match boolean NOT NULL,
-    puid_match boolean NOT NULL,
-    meta_score double precision NOT NULL,
-    CONSTRAINT match_meta_score_check CHECK (((meta_score >= (0.0)::double precision) AND (meta_score <= (1.0)::double precision)))
 );
 
 
@@ -167,7 +167,7 @@ CREATE VIEW v_daemon_load_album AS
 --
 
 CREATE VIEW v_daemon_load_metafile AS
-    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.force_save, (f.matched IS NOT NULL) AS matched FROM (((((file f LEFT JOIN puid p ON ((p.puid_id = f.puid_id))) LEFT JOIN track t ON ((t.track_id = f.matched))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
+    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.force_save, (f.track_id IS NOT NULL) AS track_id FROM (((((file f LEFT JOIN puid p ON ((p.puid_id = f.puid_id))) LEFT JOIN track t ON ((t.track_id = f.track_id))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
 
 
 --
@@ -175,15 +175,7 @@ CREATE VIEW v_daemon_load_metafile AS
 --
 
 CREATE VIEW v_web_album_list_tracks_and_matching_files AS
-    SELECT t.album_id, t.track_id, m.mbid_match, m.meta_score, f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.duplicate, f.force_save, f.user_changed, f.matched, f.checked FROM ((track t LEFT JOIN match m USING (track_id)) LEFT JOIN file f USING (file_id)) WHERE ((f.matched IS NULL) OR (f.matched = t.track_id));
-
-
---
--- Name: v_web_album_matching_list_albums; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW v_web_album_matching_list_albums AS
-    SELECT a.album_id, a.title AS album, count(*) AS tracks, sum(m.mbid_matches) AS mbid_matches, max(m.max_score) AS max_track_score, min(m.max_score) AS min_track_score, avg(m.max_score) AS avg_track_score FROM ((album a JOIN track t USING (album_id)) JOIN (SELECT match.track_id, sum((match.mbid_match)::integer) AS mbid_matches, max(match.meta_score) AS max_score FROM match GROUP BY match.track_id) m USING (track_id)) WHERE (a.album_id IN (SELECT t.album_id FROM track t WHERE (t.track_id IN (SELECT m.track_id FROM match m WHERE (m.file_id IN (SELECT f.file_id FROM file f WHERE (f.matched IS NULL))))))) GROUP BY a.album_id, a.title;
+    SELECT t.album_id, t.track_id, m.mbid_match, m.score, f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.duplicate, f.force_save, f.user_changed, f.track_id AS file_track_id, f.checked FROM ((track t LEFT JOIN comparison m USING (track_id)) LEFT JOIN file f USING (file_id)) WHERE ((f.track_id IS NULL) OR (f.track_id = t.track_id));
 
 
 --
@@ -191,7 +183,7 @@ CREATE VIEW v_web_album_matching_list_albums AS
 --
 
 CREATE VIEW v_web_file_list_matching_tracks AS
-    SELECT f.file_id, ar.artist_id AS albumartist_id, ar.name AS albumartist, al.album_id, al.title AS album, ta.artist_id, ta.name AS artist, tr.track_id, tr.title, tr.tracknumber, tr.duration, m.mbid_match, m.meta_score FROM (((((file f JOIN match m ON ((m.file_id = f.file_id))) JOIN track tr ON ((tr.track_id = m.track_id))) JOIN album al ON ((al.album_id = tr.album_id))) JOIN artist ar ON ((ar.artist_id = al.artist_id))) JOIN artist ta ON ((ta.artist_id = tr.artist_id)));
+    SELECT f.file_id, ar.artist_id AS albumartist_id, ar.name AS albumartist, al.album_id, al.title AS album, ta.artist_id, ta.name AS artist, tr.track_id, tr.title, tr.tracknumber, tr.duration, m.mbid_match, m.score FROM (((((file f JOIN comparison m ON ((m.file_id = f.file_id))) JOIN track tr ON ((tr.track_id = m.track_id))) JOIN album al ON ((al.album_id = tr.album_id))) JOIN artist ar ON ((ar.artist_id = al.artist_id))) JOIN artist ta ON ((ta.artist_id = tr.artist_id)));
 
 
 --
@@ -259,28 +251,27 @@ CREATE VIEW v_web_list_tracks AS
 
 
 --
+-- Name: v_web_matching_list_albums; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_matching_list_albums AS
+    SELECT a.album_id, a.title AS album, count(*) AS tracks, sum(c.mbid_matches) AS mbid_matches, max(c.max_score) AS max_track_score, min(c.max_score) AS min_track_score, avg(c.max_score) AS avg_track_score FROM ((album a JOIN track t USING (album_id)) JOIN (SELECT c.track_id, sum((c.mbid_match)::integer) AS mbid_matches, max(c.score) AS max_score FROM comparison c GROUP BY c.track_id) c USING (track_id)) WHERE (a.album_id IN (SELECT t.album_id FROM track t WHERE (t.track_id IN (SELECT c.track_id FROM comparison c WHERE (c.file_id IN (SELECT f.file_id FROM file f WHERE (f.track_id IS NULL))))))) GROUP BY a.album_id, a.title;
+
+
+--
 -- Name: v_web_track_list_matching_files; Type: VIEW; Schema: public; Owner: -
 --
 
 CREATE VIEW v_web_track_list_matching_files AS
-    SELECT f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.matched, f.duplicate, f.force_save, f.user_changed, m.track_id, m.mbid_match, m.puid_match, m.meta_score FROM (file f JOIN match m ON ((f.file_id = m.file_id)));
+    SELECT f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.force_save, f.user_changed, m.track_id, m.mbid_match, m.puid_match, m.score FROM (file f JOIN comparison m ON ((f.file_id = m.file_id)));
 
 
 --
--- Name: v_web_uncompared_files_list_files; Type: VIEW; Schema: public; Owner: -
+-- Name: v_web_uncompared_list_files; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW v_web_uncompared_files_list_files AS
-    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released, file.genre, file.pinned, file.groupname, file.duplicate, file.force_save, file.user_changed, file.matched, file.checked FROM file WHERE (NOT (file.file_id IN (SELECT match.file_id FROM match)));
-
-
---
--- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
-    AS '$libdir/plpgsql.so', 'plpgsql_call_handler'
-    LANGUAGE c;
+CREATE VIEW v_web_uncompared_list_files AS
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released, file.genre, file.pinned, file.groupname, file.duplicate, file.force_save, file.user_changed, file.track_id, file.checked FROM file WHERE (NOT (file.file_id IN (SELECT comparison.file_id FROM comparison)));
 
 
 --
@@ -342,6 +333,7 @@ ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 --
 
 CREATE SEQUENCE puid_puid_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -466,6 +458,14 @@ ALTER TABLE ONLY artist
 
 
 --
+-- Name: comparison_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY comparison
+    ADD CONSTRAINT comparison_pkey PRIMARY KEY (file_id, track_id);
+
+
+--
 -- Name: file_filename_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -479,14 +479,6 @@ ALTER TABLE ONLY file
 
 ALTER TABLE ONLY file
     ADD CONSTRAINT file_pkey PRIMARY KEY (file_id);
-
-
---
--- Name: match_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY match
-    ADD CONSTRAINT match_pkey PRIMARY KEY (file_id, track_id);
 
 
 --
@@ -545,24 +537,24 @@ CREATE INDEX album_artist_id_idx ON album USING btree (artist_id);
 
 
 --
--- Name: file_matched_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: comparison_score_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX file_matched_idx ON file USING btree (matched);
-
-
---
--- Name: match_meta_score_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX match_meta_score_idx ON match USING btree (meta_score);
+CREATE INDEX comparison_score_idx ON comparison USING btree (score);
 
 
 --
--- Name: match_track_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: comparison_track_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX match_track_id_idx ON match USING btree (track_id);
+CREATE INDEX comparison_track_id_idx ON comparison USING btree (track_id);
+
+
+--
+-- Name: file_track_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX file_track_id_idx ON file USING btree (track_id);
 
 
 --
@@ -581,6 +573,22 @@ ALTER TABLE ONLY album
 
 
 --
+-- Name: comparison_file_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY comparison
+    ADD CONSTRAINT comparison_file_id_fkey FOREIGN KEY (file_id) REFERENCES file(file_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: comparison_track_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY comparison
+    ADD CONSTRAINT comparison_track_id_fkey FOREIGN KEY (track_id) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: file_puid_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -589,27 +597,11 @@ ALTER TABLE ONLY file
 
 
 --
--- Name: file_user_matched_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: file_user_track_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY file
-    ADD CONSTRAINT file_user_matched_fkey FOREIGN KEY (matched) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: match_file_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY match
-    ADD CONSTRAINT match_file_id_fkey FOREIGN KEY (file_id) REFERENCES file(file_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: match_track_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY match
-    ADD CONSTRAINT match_track_id_fkey FOREIGN KEY (track_id) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT file_user_track_id_fkey FOREIGN KEY (track_id) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --

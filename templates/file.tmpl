@@ -55,7 +55,7 @@
         </tr>
     [% FOREACH match IN matches %]
         <tr>
-          <td style="background: #[% match.color %];">[% match.meta_score %]</td>
+          <td style="background: #[% match.color %];">[% match.score %]</td>
           <td>[% match.tracknumber %]</td>
           <td><a href="artist.pl?arid=[% match.albumartist_id %]">[% match.albumartist %]</a></td>
           <td><a href="album.pl?alid=[% match.album_id %]">[% match.album %]</a></td>

@@ -1,0 +1,19 @@
+[% INCLUDE header.tmpl
+  title = 'Uncompared files'
+%]
+    <form action="" method="get" id="search">
+      <p>
+        <label for="filter">Search</label>
+        <input type="text" id="filter" name="filter" />
+      </p>
+    </form>
+    <h2>Uncompared files</h2>
+[% IF files.size() > 0 %]
+    <ul>
+  [% FOREACH file IN files %]
+      <li><a href="file.pl?fiid=[% file.file_id %]">[% file.filename %]</a></li>
+  [% END %]
+    </ul>
+[% END %]
+[% INCLUDE pagination.tmpl %]
+[% INCLUDE footer.tmpl %]
