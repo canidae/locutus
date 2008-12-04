@@ -194,20 +194,26 @@ void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
 		if (!puid_lookup || mf->puid.size() != 36)
 			continue;
 		vector<Metatrack> tracks = musicbrainz->searchPUID(mf->puid);
+		string load_album_title = "";
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			/* puid search won't return puid, so let's set it manually */
 			mt->puid = mf->puid;
 			Comparison *c = compareMetafileWithMetatrack(mf, *mt);
 			if (c == NULL)
 				continue;
-			/* check that score is high enough for us to load this album */
-			if (c->score >= mismatch_threshold)
+			/* check that score is high enough for us to load this album
+			 * and that we've not loaded any albums or this album got the
+			 * same name as the first album we loaded */
+			if (c->score >= mismatch_threshold && (load_album_title == "" || load_album_title == mt->album_title)) {
 				loadAlbum(mt->album_mbid, files);
+				/* set load_album_title.
+				 * we'll load albums of the same name because it's quite
+				 * common that an album is released multiple times with
+				 * different track count. if we load an album with too
+				 * few tracks then the album won't be saved */
+				load_album_title = mt->album_title;
+			}
 			delete c;
-			/* only load the best album.
-			 * TODO: should we make this user customizable?
-			 * eg. "load n best albums where score > mismatch_threshold"? */
-			break;
 		}
 	}
 }
@@ -315,18 +321,24 @@ void Matcher::searchMetadata(const string &group, const vector<Metafile *> &file
 		if (!mf->meta_lookup)
 			continue;
 		vector<Metatrack> tracks = musicbrainz->searchMetadata(group, *mf);
+		string load_album_title = "";
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			Comparison *c = compareMetafileWithMetatrack(mf, *mt);
 			if (c == NULL)
 				continue;
-			/* check that score is high enough for us to load this album */
-			if (c->score >= mismatch_threshold)
+			/* check that score is high enough for us to load this album
+			 * and that we've not loaded any albums or this album got the
+			 * same name as the first album we loaded */
+			if (c->score >= mismatch_threshold && (load_album_title == "" || load_album_title == mt->album_title)) {
 				loadAlbum(mt->album_mbid, files);
+				/* set load_album_title.
+				 * we'll load albums of the same name because it's quite
+				 * common that an album is released multiple times with
+				 * different track count. if we load an album with too
+				 * few tracks then the album won't be saved */
+				load_album_title = mt->album_title;
+			}
 			delete c;
-			/* only load the best album.
-			 * TODO: should we make this user customizable?
-			 * eg. "load n best albums where score > mismatch_threshold"? */
-			break;
 		}
 	}
 }
