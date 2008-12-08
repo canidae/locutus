@@ -10,7 +10,6 @@
     [% IF tracks.size > 0 %]
     <form action="album.pl?alid=[% album.album_id %]" method="post">
       <div><input type="hidden" name="alid" value="[% album.album_id %]" /></div>
-      <h2>Tracks:</h2>
       [% IF groups.size > 1 %]
       <p>This album got files from multiple groups. You can narrow down to one group:</p>
       <ul>
@@ -19,6 +18,15 @@
         [% END %]
       </ul>
       [% END %]
+      [% IF similar_albums.size > 0 %]
+      <p>There are other albums with the same name from the same artist as this album. Most likely this album was released multiple times with different track count or with rearranged tracks. You should check the other albums, maybe the files match another album better?</p>
+      <ul>
+        [% FOREACH sa IN similar_albums %]
+        <li><a href="album.pl?alid=[% sa.album_id %]">[% sa.album %] ([% sa.tracks %] tracks)</a></li>
+        [% END %]
+      </ul>
+      [% END %]
+      <h2>Tracks:</h2>
       <table>
     [% FOREACH track IN tracks %]
       [% IF loop.prev.tracknumber != track.tracknumber %]
@@ -41,7 +49,7 @@
       [% IF track.file_id %]
         <tr>
           <td style="background: #[% track.color %];">[% track.score %]</td>
-        [% IF track.matched %]
+        [% IF track.track_id == track.track_id %]
           <td style="text-align: center;">OK</td>
         [% ELSE %]
           <td style="text-align: center;"><input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>

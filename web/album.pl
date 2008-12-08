@@ -47,7 +47,7 @@ if (@remove_file_track) {
 }
 
 $vars{album} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_album WHERE album_id = ' . $alid);
-$vars{similar_albums} = $dbh->selectall_arrayref('SELECT album_id FROM album a WHERE album_id != ' . $alid . ' AND album_id IN (SELECT album_id FROM album WHERE artist_id = (SELECT artist_id FROM album WHERE album_id = ' . $alid . ' AND title = a.title))');
+$vars{similar_albums} = $dbh->selectall_arrayref('SELECT album_id, title AS album, (SELECT count(*) FROM track t WHERE t.album_id = a.album_id) AS tracks FROM album a WHERE album_id != ' . $alid . ' AND album_id IN (SELECT album_id FROM album WHERE artist_id = (SELECT artist_id FROM album WHERE album_id = ' . $alid . ' AND title = a.title)) ORDER BY tracks, album_id', {Slice => {}});
 my $query = 'SELECT t.*, a.name AS artist_name, tmp.mbid_match, tmp.score, tmp.file_id, tmp.filename, tmp.duration AS file_duration, tmp.album AS file_album, tmp.albumartist AS file_albumartist, tmp.artist AS file_artist, tmp.title AS file_title, tmp.tracknumber AS file_tracknumber, tmp.pinned, tmp.groupname, tmp.track_id, tmp.duplicate, tmp.force_save, tmp.user_changed FROM track t JOIN artist a USING (artist_id) LEFT JOIN (SELECT DISTINCT ON (file_id) * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ' . $alid;
 $query .= ' AND groupname = (SELECT groupname FROM file WHERE file_id = ' . $figrid . ')' if ($figrid > -1);
 $query .= ' ORDER BY file_id, mbid_match desc, score desc) tmp USING (track_id) WHERE t.album_id = ' . $alid . ' ORDER BY tracknumber ASC, mbid_match DESC, score DESC';
