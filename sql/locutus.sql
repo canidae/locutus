@@ -279,7 +279,6 @@ CREATE VIEW v_web_uncompared_list_files AS
 --
 
 CREATE SEQUENCE album_album_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -298,7 +297,6 @@ ALTER SEQUENCE album_album_id_seq OWNED BY album.album_id;
 --
 
 CREATE SEQUENCE artist_artist_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -317,7 +315,6 @@ ALTER SEQUENCE artist_artist_id_seq OWNED BY artist.artist_id;
 --
 
 CREATE SEQUENCE file_file_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -355,7 +352,6 @@ ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
 --
 
 CREATE SEQUENCE setting_setting_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -374,7 +370,6 @@ ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
 --
 
 CREATE SEQUENCE track_track_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -553,6 +548,13 @@ CREATE INDEX comparison_score_idx ON comparison USING btree (score);
 --
 
 CREATE INDEX comparison_track_id_idx ON comparison USING btree (track_id);
+
+
+--
+-- Name: file_groupname_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX file_groupname_idx ON file USING btree (groupname);
 
 
 --
