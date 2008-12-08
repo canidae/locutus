@@ -49,7 +49,7 @@
       [% IF track.file_id %]
         <tr>
           <td style="background: #[% track.color %];">[% track.score %]</td>
-        [% IF track.track_id == track.track_id %]
+        [% IF track.file_track_id == track.track_id %]
           <td style="text-align: center;">OK</td>
         [% ELSE %]
           <td style="text-align: center;"><input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>

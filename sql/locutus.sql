@@ -68,7 +68,7 @@ CREATE TABLE comparison (
 
 CREATE TABLE file (
     file_id integer NOT NULL,
-    filename bytea NOT NULL,
+    filename character varying NOT NULL,
     last_updated timestamp without time zone DEFAULT now() NOT NULL,
     duration integer NOT NULL,
     channels integer NOT NULL,
@@ -147,8 +147,8 @@ CREATE TABLE track (
     artist_id integer NOT NULL,
     mbid character(36) NOT NULL,
     title character varying NOT NULL,
-    duration integer DEFAULT 0 NOT NULL,
     tracknumber integer NOT NULL,
+    duration integer DEFAULT 0 NOT NULL,
     CONSTRAINT track_duration_check CHECK ((duration >= 0)),
     CONSTRAINT track_tracknumber_check CHECK ((tracknumber > 0))
 );
@@ -175,7 +175,7 @@ CREATE VIEW v_daemon_load_metafile AS
 --
 
 CREATE VIEW v_web_album_list_tracks_and_matching_files AS
-    SELECT t.album_id, t.track_id, m.mbid_match, m.score, f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.duplicate, f.force_save, f.user_changed, f.track_id AS file_track_id, f.checked FROM ((track t LEFT JOIN comparison m USING (track_id)) LEFT JOIN file f USING (file_id)) WHERE ((f.track_id IS NULL) OR (f.track_id = t.track_id));
+    SELECT al.album_id, al.title AS album, ar.name AS artist, t.track_id, t.title, t.tracknumber, t.duration, tmp.mbid_match, tmp.score, tmp.file_id, tmp.filename, tmp.file_duration, tmp.file_album, tmp.file_albumartist, tmp.file_artist, tmp.file_title, tmp.file_tracknumber, tmp.pinned, tmp.groupname, tmp.file_track_id, tmp.duplicate, tmp.force_save, tmp.user_changed FROM (((album al JOIN artist ar ON ((al.artist_id = ar.artist_id))) JOIN track t ON ((al.album_id = t.album_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, f.file_id) t.album_id, t.track_id, c.mbid_match, c.score, f.file_id, f.filename, f.duration AS file_duration, f.album AS file_album, f.albumartist AS file_albumartist, f.artist AS file_artist, f.title AS file_title, f.tracknumber AS file_tracknumber, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.force_save, f.user_changed FROM ((comparison c JOIN file f USING (file_id)) JOIN track t ON ((c.track_id = t.track_id))) ORDER BY t.album_id, f.file_id, c.mbid_match DESC, c.score DESC) tmp ON (((t.album_id = tmp.album_id) AND (t.track_id = tmp.track_id))));
 
 
 --
@@ -279,6 +279,7 @@ CREATE VIEW v_web_uncompared_list_files AS
 --
 
 CREATE SEQUENCE album_album_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -297,6 +298,7 @@ ALTER SEQUENCE album_album_id_seq OWNED BY album.album_id;
 --
 
 CREATE SEQUENCE artist_artist_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -315,6 +317,7 @@ ALTER SEQUENCE artist_artist_id_seq OWNED BY artist.artist_id;
 --
 
 CREATE SEQUENCE file_file_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -352,6 +355,7 @@ ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
 --
 
 CREATE SEQUENCE setting_setting_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -370,6 +374,7 @@ ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
 --
 
 CREATE SEQUENCE track_track_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
