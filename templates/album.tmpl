@@ -38,9 +38,9 @@
           <th>[% album.artist_name %]</th>
           <th>[% album.title %]</th>
         [% IF track.artist_id != album.artist_id %]
-          <th><a href="artist.pl?arid=[% track.artist_id %]">[% track.artist_name %]</a></th>
+          <th><a href="artist.pl?arid=[% track.artist_id %]">[% track.artist %]</a></th>
         [% ELSE %]
-          <th>[% track.artist_name %]</th>
+          <th>[% track.artist %]</th>
         [% END %]
           <th><a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a></th>
           <th>[% track.duration %]</th>
