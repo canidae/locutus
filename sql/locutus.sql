@@ -175,7 +175,7 @@ CREATE VIEW v_daemon_load_metafile AS
 --
 
 CREATE VIEW v_web_album_list_tracks_and_matching_files AS
-    SELECT al.album_id, al.title AS album, ar.name AS artist, t.track_id, t.title, t.tracknumber, t.duration, tmp.mbid_match, tmp.score, tmp.file_id, tmp.filename, tmp.file_duration, tmp.file_album, tmp.file_albumartist, tmp.file_artist, tmp.file_title, tmp.file_tracknumber, tmp.pinned, tmp.groupname, tmp.file_track_id, tmp.duplicate, tmp.force_save, tmp.user_changed FROM (((album al JOIN artist ar ON ((al.artist_id = ar.artist_id))) JOIN track t ON ((al.album_id = t.album_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, f.file_id) t.album_id, t.track_id, c.mbid_match, c.score, f.file_id, f.filename, f.duration AS file_duration, f.album AS file_album, f.albumartist AS file_albumartist, f.artist AS file_artist, f.title AS file_title, f.tracknumber AS file_tracknumber, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.force_save, f.user_changed FROM ((comparison c JOIN file f USING (file_id)) JOIN track t ON ((c.track_id = t.track_id))) ORDER BY t.album_id, f.file_id, c.mbid_match DESC, c.score DESC) tmp ON (((t.album_id = tmp.album_id) AND (t.track_id = tmp.track_id))));
+    SELECT al.album_id, al.title AS album, ar.name AS artist, ar.artist_id, t.track_id, t.title, t.tracknumber, t.duration, ta.name AS track_artist, ta.artist_id AS track_artist_id, tmp.mbid_match, tmp.score, tmp.file_id, tmp.filename, tmp.file_duration, tmp.file_album, tmp.file_albumartist, tmp.file_artist, tmp.file_title, tmp.file_tracknumber, tmp.pinned, tmp.groupname, tmp.file_track_id, tmp.duplicate, tmp.force_save, tmp.user_changed FROM ((((album al JOIN artist ar ON ((al.artist_id = ar.artist_id))) JOIN track t ON ((al.album_id = t.album_id))) JOIN artist ta ON ((t.artist_id = ta.artist_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, f.file_id) t.album_id, t.track_id, c.mbid_match, c.score, f.file_id, f.filename, f.duration AS file_duration, f.album AS file_album, f.albumartist AS file_albumartist, f.artist AS file_artist, f.title AS file_title, f.tracknumber AS file_tracknumber, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.force_save, f.user_changed FROM ((comparison c JOIN file f USING (file_id)) JOIN track t ON ((c.track_id = t.track_id))) ORDER BY t.album_id, f.file_id, c.mbid_match DESC, c.score DESC) tmp ON (((t.album_id = tmp.album_id) AND (t.track_id = tmp.track_id))));
 
 
 --
@@ -275,6 +275,15 @@ CREATE VIEW v_web_uncompared_list_files AS
 
 
 --
+-- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
+    AS '$libdir/plpgsql.so', 'plpgsql_call_handler'
+    LANGUAGE c;
+
+
+--
 -- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -333,7 +342,6 @@ ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 --
 
 CREATE SEQUENCE puid_puid_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE

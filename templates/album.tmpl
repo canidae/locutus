@@ -37,8 +37,8 @@
           <th>[% track.tracknumber %]</th>
           <th>[% album.artist_name %]</th>
           <th>[% album.title %]</th>
-        [% IF track.artist_id != album.artist_id %]
-          <th><a href="artist.pl?arid=[% track.artist_id %]">[% track.artist %]</a></th>
+        [% IF track.track_artist_id != album.artist_id %]
+          <th><a href="artist.pl?arid=[% track.track_artist_id %]">[% track.track_artist %]</a></th>
         [% ELSE %]
           <th>[% track.artist %]</th>
         [% END %]
