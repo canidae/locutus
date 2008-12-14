@@ -25,7 +25,6 @@ const string &FileNamer::getFilename(Metafile *file) {
 	filename.clear();
 	for (vector<Field>::const_iterator f = fields.begin(); f != fields.end(); ++f)
 		filename.append(parseField(file, f));
-	convertIllegalCharacters(&filename);
 	return filename;
 }
 
@@ -41,88 +40,170 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 	switch (field->type) {
 		/* static */
 		case TYPE_STATIC:
+			/* we do not convert illegal characters from static entries.
+			 * directory separators are set here */
 			return field->data;
 
 		/* variables */
 		case TYPE_ALBUM:
-			return file->album;
+			tmp_field = file->album;
+			break;
 
 		case TYPE_ALBUMARTIST:
-			return file->albumartist;
+			tmp_field = file->albumartist;
+			break;
 
 		case TYPE_ALBUMARTISTSORT:
-			return file->albumartistsort;
+			tmp_field = file->albumartistsort;
+			break;
 
 		case TYPE_ARTIST:
-			return file->artist;
+			tmp_field = file->artist;
+			break;
 
 		case TYPE_ARTISTSORT:
-			return file->artistsort;
+			tmp_field = file->artistsort;
+			break;
 
 		case TYPE_MUSICBRAINZ_ALBUMARTISTID:
-			return file->musicbrainz_albumartistid;
+			tmp_field = file->musicbrainz_albumartistid;
+			break;
 
 		case TYPE_MUSICBRAINZ_ALBUMID:
-			return file->musicbrainz_albumid;
+			tmp_field = file->musicbrainz_albumid;
+			break;
 
 		case TYPE_MUSICBRAINZ_ARTISTID:
-			return file->musicbrainz_artistid;
+			tmp_field = file->musicbrainz_artistid;
+			break;
 
 		case TYPE_MUSICBRAINZ_TRACKID:
-			return file->musicbrainz_trackid;
+			tmp_field = file->musicbrainz_trackid;
+			break;
 
 		case TYPE_MUSICIP_PUID:
-			return file->puid;
+			tmp_field = file->puid;
+			break;
 
 		case TYPE_TITLE:
-			return file->title;
+			tmp_field = file->title;
+			break;
 
 		case TYPE_TRACKNUMBER:
-			return file->tracknumber;
+			tmp_field = file->tracknumber;
+			break;
 
 		case TYPE_DATE:
-			return file->released;
+			tmp_field = file->released;
+			break;
 
 		case TYPE_GENRE:
-			return file->genre;
+			tmp_field = file->genre;
+			break;
+
+		/* delimiter */
+		case TYPE_DELIMITER:
+			/* we shouldn't call parseField() for delimiter type.
+			 * this is not dangerous at all, but let's issue a notice */
+			Debug::notice() << "Method 'parseFields()' was called for a delimiter field, please report this as a bug along with your 'filename_format' setting" << endl;
+			break;
 
 		/* functions */
 		case TYPE_IF:
-			/* return field->fields[1] if field->fields[0] is not empty,
-			 * otherwise return field->fields[2] */
-			if (field->fields.size() == 3) {
+			/* return second non-delimiter field(s) if first non-delimiter field
+			 * is empty, otherwise return third non-delimiter field(s) */
+			if (field->fields.size() >= 5) {
+				string tmp = "";
 				vector<Field>::const_iterator f = field->fields.begin();
-				if (parseField(file, f++) != "")
-					return (parseField(file, f));
-				return (parseField(file, ++f));
+				while (f != field->fields.end() && f->type != TYPE_DELIMITER)
+					tmp.append(parseField(file, f++));
+				if (f == field->fields.end()) {
+					/* hmm, looks like user error */
+					tmp_field.clear();
+					break;
+				}
+				++f;
+				if (tmp.empty()) {
+					/* "if" is empty, return 2nd non-delimiter field(s) */
+					while (f != field->fields.end() && f->type != TYPE_DELIMITER)
+						++f;
+					if (f == field->fields.end()) {
+						/* hmm, looks like user error */
+						tmp_field.clear();
+						break;
+					}
+					++f;
+				}
+				tmp.clear();
+				while (f != field->fields.end() && f->type != TYPE_DELIMITER)
+					tmp.append(parseField(file, f++));
+				tmp_field = tmp;
+				break;
 			}
 			break;
 
 		case TYPE_COALESCE:
-			/* return first non-empty field */
-			for (vector<Field>::const_iterator f = field->fields.begin(); f != field->fields.end(); ++f) {
-				if (parseField(file, f) != "")
-					return tmp_field;
+			/* return first non-empty non-delimiter field */
+			if (field->fields.size() > 0) {
+				string tmp = "";
+				for (vector<Field>::const_iterator f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER) {
+						if (!tmp.empty()) {
+							/* found a non-empty non-delimiter field */
+							tmp_field = tmp;
+							break;
+						}
+						continue;
+					}
+					tmp.append(parseField(file, f));
+				}
 			}
 			break;
 
 		case TYPE_LOWER:
 			/* return data in lower case */
-			if (field->fields.size() == 1) {
+			if (field->fields.size() > 0) {
 				ostringstream tmp;
-				tmp << nouppercase << parseField(file, field->fields.begin());
+				for (vector<Field>::const_iterator f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type != TYPE_DELIMITER)
+						tmp << nouppercase << parseField(file, f);
+				}
 				tmp_field = tmp.str();
-				return tmp_field;
 			}
 			break;
 
 		case TYPE_UPPER:
 			/* return data in upper case */
-			if (field->fields.size() == 1) {
+			if (field->fields.size() > 0) {
 				ostringstream tmp;
-				tmp << uppercase << parseField(file, field->fields.begin());
+				for (vector<Field>::const_iterator f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type != TYPE_DELIMITER)
+						tmp << uppercase << parseField(file, f);
+				}
 				tmp_field = tmp.str();
-				return tmp_field;
+			}
+			break;
+
+		case TYPE_LEFT:
+			/* return first n characters */
+			if (field->fields.size() >= 3) {
+				string tmp = "";
+				vector<Field>::const_iterator f;
+				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER) {
+						++f;
+						break;
+					}
+					tmp.append(parseField(file, f));
+				}
+				if (f != field->fields.end()) {
+					int chars = atoi(parseField(file, f).c_str());
+					if (chars < 0)
+						chars = 0;
+					tmp_field = tmp.substr(0, chars);
+				} else {
+					tmp_field.clear();
+				}
 			}
 			break;
 
@@ -131,6 +212,7 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 			Debug::warning() << "Field not implemented. Type: " << field->type << ", data: " << field->data << ", fields: " << field->fields.size() << endl;
 			break;
 	}
+	convertIllegalCharacters(&tmp_field);
 	return tmp_field;
 }
 
@@ -143,57 +225,69 @@ void FileNamer::removeEscapes(string *text) {
 		text->erase(pos, 1);
 }
 
-void FileNamer::setupFields(string::size_type start, string::size_type stop, vector<Field> *fields) {
+void FileNamer::setupFields(string::size_type start, string::size_type stop, vector<Field> *fields, bool split_on_comma) {
 	/* setup fields for filename pattern */
 	string::size_type pos = start - 1;
 	string::size_type prev = start;
-	while ((pos = file_format.find_first_of("%$", pos + 1)) < stop && pos != string::npos) {
+	cout << "Setting up fields for: " << file_format.substr(start, stop - start) << endl;
+	while ((pos = file_format.find_first_of(",%$", pos + 1)) != string::npos && pos < stop) {
+		if (!split_on_comma && file_format[pos] == ',')
+			continue; // not using ',' as delimiter
 		int backslashes = 0;
 		for (string::size_type a = pos - 1; a >= 0; --a) {
 			if (file_format[a] != '\\')
 				break;
 			++backslashes;
 		}
-		if (backslashes % 2 == 0)
-			continue; // this '%' or '$' is escaped, neither variable nor function
+		if (backslashes % 2 != 0)
+			continue; // this ',', '%' or '$' is escaped, neither delimiter, variable nor function
 		if (prev < pos) {
-			/* static field before variable/function */
+			/* static field before delimiter/variable/function */
 			Field f;
 			f.type = TYPE_STATIC;
 			f.data = file_format.substr(prev, pos - prev);
 			removeEscapes(&f.data);
 			fields->push_back(f);
+			cout << "Adding static field: data = '" << f.data << "', prev = " << prev << ", pos = " << pos << endl;
 		}
-		if (file_format[pos] == '%') {
+		if (file_format[pos] == ',') {
+			/* delimiter */
+			prev = pos + 1;
+			Field f;
+			f.type = TYPE_DELIMITER;
+			f.data.clear();
+			fields->push_back(f);
+			cout << "Adding delimiter field: prev = " << prev << ", pos = " << pos << endl;
+		} else if (file_format[pos] == '%') {
 			/* variable */
 			int type;
-			if (file_format.find("%musicbrainz_albumartistid%", pos) == 0)
+			if (file_format.find("%musicbrainz_albumartistid%", pos) == pos)
 				type = TYPE_MUSICBRAINZ_ALBUMARTISTID;
-			else if (file_format.find("%musicbrainz_artistid%", pos) == 0)
+			else if (file_format.find("%musicbrainz_artistid%", pos) == pos)
 				type = TYPE_MUSICBRAINZ_ARTISTID;
-			else if (file_format.find("%musicbrainz_albumid%", pos) == 0)
+			else if (file_format.find("%musicbrainz_albumid%", pos) == pos)
 				type = TYPE_MUSICBRAINZ_ALBUMID;
-			else if (file_format.find("%musicbrainz_trackid%", pos) == 0)
+			else if (file_format.find("%musicbrainz_trackid%", pos) == pos)
 				type = TYPE_MUSICBRAINZ_TRACKID;
-			else if (file_format.find("%albumartistsort%", pos) == 0)
+			else if (file_format.find("%albumartistsort%", pos) == pos)
 				type = TYPE_ALBUMARTISTSORT;
-			else if (file_format.find("%musicip_puid%", pos) == 0)
+			else if (file_format.find("%musicip_puid%", pos) == pos)
 				type = TYPE_MUSICIP_PUID;
-			else if (file_format.find("%albumartist%", pos) == 0)
+			else if (file_format.find("%albumartist%", pos) == pos)
 				type = TYPE_ALBUMARTIST;
-			else if (file_format.find("%tracknumber%", pos) == 0)
+			else if (file_format.find("%tracknumber%", pos) == pos)
 				type = TYPE_TRACKNUMBER;
-			else if (file_format.find("%artistsort%", pos) == 0)
+			else if (file_format.find("%artistsort%", pos) == pos)
 				type = TYPE_ARTISTSORT;
-			else if (file_format.find("%artist%", pos) == 0)
+			else if (file_format.find("%artist%", pos) == pos)
 				type = TYPE_ARTIST;
-			else if (file_format.find("%album%", pos) == 0)
+			else if (file_format.find("%album%", pos) == pos)
 				type = TYPE_ALBUM;
-			else if (file_format.find("%genre%", pos) == 0)
+			else if (file_format.find("%genre%", pos) == pos)
 				type = TYPE_GENRE;
-			else if (file_format.find("%title%", pos) == 0)
+			else if (file_format.find("%title%", pos) == pos)
 				type = TYPE_TITLE;
-			else if (file_format.find("%date%", pos) == 0)
+			else if (file_format.find("%date%", pos) == pos)
 				type = TYPE_DATE;
 			else
 				continue; // not matching any variable, must be static entry
@@ -204,32 +298,69 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 			/* add variable to field list */
 			Field f;
 			f.type = type;
-			f.data = "";
+			f.data.clear();
 			fields->push_back(f);
+			cout << "Adding variable field: type = " << f.type << ", prev = " << prev << ", pos = " << pos << endl;
 		} else if (file_format[pos] == '$') {
 			/* function */
 			int type;
-			if (file_format.find("$coalesce(", pos) == 0)
+			if (file_format.find("$coalesce(", pos) == pos)
 				type = TYPE_COALESCE;
-			else if (file_format.find("$lower(", pos) == 0)
+			else if (file_format.find("$lower(", pos) == pos)
 				type = TYPE_LOWER;
-			else if (file_format.find("$upper(", pos) == 0)
+			else if (file_format.find("$upper(", pos) == pos)
 				type = TYPE_UPPER;
-			else if (file_format.find("$if(", pos) == 0)
+			else if (file_format.find("$left(", pos) == pos)
+				type = TYPE_LEFT;
+			else if (file_format.find("$if(", pos) == pos)
 				type = TYPE_IF;
 			else
 				continue; // not matching any function, must be static entry
-			/* find end parenthese */
+			/* find first unescaped ")" */
 			string::size_type end = pos;
-			while ((end = file_format.find(")", end + 1)) != string::npos) {
+			while ((end = file_format.find(")", end + 1)) != string::npos && end < stop) {
 				int backslashes = 0;
 				for (string::size_type a = end - 1; a >= 0; --a) {
 					if (file_format[a] != '\\')
 						break;
 					++backslashes;
 				}
-				if (backslashes % 2 == 0)
-					break; // this parenthese is escaped, not the end parenthese
+				if (backslashes % 2 != 0)
+					continue; // this parenthese is escaped
+				break;
+			}
+			if (end == string::npos) {
+				/* no end parenthese?
+				 * user probably did something wrong or it's a static entry */
+				continue;
+			}
+			/* find amount of unescaped "(" between pos & first unescaped ")" */
+			string::size_type begin = pos;
+			int begin_count = 0;
+			while ((begin = file_format.find("(", begin + 1)) != string::npos && begin < end) {
+				int backslashes = 0;
+				for (string::size_type a = end - 1; a >= 0; --a) {
+					if (file_format[a] != '\\')
+						break;
+					++backslashes;
+				}
+				if (backslashes % 2 != 0)
+					continue; // this parenthese is escaped
+				++begin_count;
+			}
+			/* find n'th unescaped ")", where n'th is the amount of unescaped "(" found in last step */
+			for (; begin_count > 1; --begin_count) {
+				while ((end = file_format.find(")", end + 1)) != string::npos && end < stop) {
+					int backslashes = 0;
+					for (string::size_type a = end - 1; a >= 0; --a) {
+						if (file_format[a] != '\\')
+							break;
+						++backslashes;
+					}
+					if (backslashes % 2 != 0)
+						continue; // this parenthese is escaped
+					break;
+				}
 			}
 			if (end == string::npos) {
 				/* no end parenthese?
@@ -239,23 +370,26 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 			/* set up function */
 			Field f;
 			f.type = type;
-			f.data = "";
+			f.data.clear();
 			/* call this method recursively for fields within parentheses in this function */
-			setupFields(file_format.find("(", pos + 1) + 1, end - 1, &f.fields);
+			begin = file_format.find("(", pos + 1) + 1;
+			setupFields(begin, end, &f.fields, true);
 			/* add function to field list */
 			fields->push_back(f);
 			/* set pos to end parenthese */
 			pos = end;
 			/* set prev to char after end parenthese */
 			prev = pos + 1;
+			cout << "Adding function field: type = " << f.type << ", prev = " << prev << ", pos = " << pos << endl;
 		}
 	}
-	if (prev < stop) {
+	if (prev != string::npos && prev < stop) {
 		/* static field after last variable/function */
 		Field f;
 		f.type = TYPE_STATIC;
-		f.data = file_format.substr(prev);
+		f.data = file_format.substr(prev, stop - prev);
 		removeEscapes(&f.data);
 		fields->push_back(f);
+		cout << "Adding last static field: data = '" << f.data << "', prev = " << prev << ", pos = " << pos << endl;
 	}
 }

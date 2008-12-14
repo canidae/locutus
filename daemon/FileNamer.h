@@ -26,11 +26,14 @@
 #define TYPE_TRACKNUMBER 12
 #define TYPE_DATE 13
 #define TYPE_GENRE 14
+/* delimiter */
+#define TYPE_DELIMITER 100
 /* functions */
 #define TYPE_IF 101
 #define TYPE_COALESCE 102
 #define TYPE_LOWER 103
 #define TYPE_UPPER 104
+#define TYPE_LEFT 105
 
 #include <string>
 #include <vector>
@@ -62,6 +65,6 @@ class FileNamer {
 		void convertIllegalCharacters(std::string *text);
 		const std::string &parseField(Metafile *file, const std::vector<Field>::const_iterator field);
 		void removeEscapes(std::string *text);
-		void setupFields(std::string::size_type start, std::string::size_type stop, std::vector<Field> *fields);
+		void setupFields(std::string::size_type start, std::string::size_type stop, std::vector<Field> *fields, bool split_on_comma = false);
 };
 #endif
