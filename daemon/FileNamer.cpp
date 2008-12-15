@@ -8,6 +8,28 @@ using namespace std;
 
 /* constructors/destructor */
 FileNamer::FileNamer(Database *database) : database(database) {
+	/* test file format */
+	/*
+	Metafile f("/media/music/unsorted/Within Temptation - The Silent Force (Limited Premium Edition)/12. A Dangerous Mind (Bonus Track).mp3");
+	f.album = "The Silent Force";
+	f.albumartist = "Within Temptation";
+	f.albumartistsort = "Within Temptation";
+	f.artist = "Within Temptation";
+	f.artistsort = "Within Temptation";
+	f.musicbrainz_albumartistid = "eace2373-31c8-4aba-9a5c-7bce22dd140a";
+	f.musicbrainz_albumid = "7d4af6bd-62de-4b0f-a39b-3fbd337416a7";
+	f.musicbrainz_artistid = "eace2373-31c8-4aba-9a5c-7bce22dd140a";
+	f.musicbrainz_trackid = "fba916cf-8324-4941-a8b3-5dfb4e424456";
+	f.title = "A Dangerous Mind";
+	f.tracknumber = "";
+	f.released = "2004-11-15";
+	f.genre = "gothic rock";
+
+	file_format = "$left(%albumartist%,1)/%albumartist%/%album%/$num(%tracknumber%,3) - %artist% - %title% [h4xx0r3d by c4n1d43]";
+	setupFields(0, file_format.size(), &fields);
+	cout << getFilename(&f) << endl;
+	fields.clear();
+	*/
 	file_format = database->loadSettingString(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
 	illegal_characters = database->loadSettingString(FILENAME_ILLEGAL_CHARACTERS_KEY, FILENAME_ILLEGAL_CHARACTERS_VALUE, FILENAME_ILLEGAL_CHARACTERS_DESCRIPTION);
 	string::size_type pos = illegal_characters.find('_', 0);
@@ -207,6 +229,51 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 			}
 			break;
 
+		case TYPE_RIGHT:
+			/* return last n characters */
+			if (field->fields.size() >= 3) {
+				string tmp = "";
+				vector<Field>::const_iterator f;
+				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER) {
+						++f;
+						break;
+					}
+					tmp.append(parseField(file, f));
+				}
+				if (f != field->fields.end()) {
+					int pos = tmp.size() - atoi(parseField(file, f).c_str());
+					if (pos < 0)
+						pos = 0;
+					tmp_field = tmp.substr(pos);
+				} else {
+					tmp_field.clear();
+				}
+			}
+			break;
+
+		case TYPE_NUM:
+			/* zeropad text to n characters */
+			if (field->fields.size() >= 3) {
+				string tmp = "";
+				vector<Field>::const_iterator f;
+				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER) {
+						++f;
+						break;
+					}
+					tmp.append(parseField(file, f));
+				}
+				if (f != field->fields.end()) {
+					int chars = atoi(parseField(file, f).c_str());
+					for (; chars > (int) tmp.size(); --chars)
+						tmp_field.push_back('0');
+					tmp_field.append(tmp);
+				} else {
+					tmp_field.clear();
+				}
+			}
+
 		/* error */
 		default:
 			Debug::warning() << "Field not implemented. Type: " << field->type << ", data: " << field->data << ", fields: " << field->fields.size() << endl;
@@ -229,7 +296,7 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 	/* setup fields for filename pattern */
 	string::size_type pos = start - 1;
 	string::size_type prev = start;
-	cout << "Setting up fields for: " << file_format.substr(start, stop - start) << endl;
+	Debug::info() << "Setting up fields for: " << file_format.substr(start, stop - start) << endl;
 	while ((pos = file_format.find_first_of(",%$", pos + 1)) != string::npos && pos < stop) {
 		if (!split_on_comma && file_format[pos] == ',')
 			continue; // not using ',' as delimiter
@@ -248,7 +315,7 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 			f.data = file_format.substr(prev, pos - prev);
 			removeEscapes(&f.data);
 			fields->push_back(f);
-			cout << "Adding static field: data = '" << f.data << "', prev = " << prev << ", pos = " << pos << endl;
+			Debug::info() << "Adding static field: data = '" << f.data << "', prev = " << prev << ", pos = " << pos << endl;
 		}
 		if (file_format[pos] == ',') {
 			/* delimiter */
@@ -257,7 +324,7 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 			f.type = TYPE_DELIMITER;
 			f.data.clear();
 			fields->push_back(f);
-			cout << "Adding delimiter field: prev = " << prev << ", pos = " << pos << endl;
+			Debug::info() << "Adding delimiter field: prev = " << prev << ", pos = " << pos << endl;
 		} else if (file_format[pos] == '%') {
 			/* variable */
 			int type;
@@ -300,7 +367,7 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 			f.type = type;
 			f.data.clear();
 			fields->push_back(f);
-			cout << "Adding variable field: type = " << f.type << ", prev = " << prev << ", pos = " << pos << endl;
+			Debug::info() << "Adding variable field: type = " << f.type << ", prev = " << prev << ", pos = " << pos << endl;
 		} else if (file_format[pos] == '$') {
 			/* function */
 			int type;
@@ -308,10 +375,14 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 				type = TYPE_COALESCE;
 			else if (file_format.find("$lower(", pos) == pos)
 				type = TYPE_LOWER;
+			else if (file_format.find("$right(", pos) == pos)
+				type = TYPE_RIGHT;
 			else if (file_format.find("$upper(", pos) == pos)
 				type = TYPE_UPPER;
 			else if (file_format.find("$left(", pos) == pos)
 				type = TYPE_LEFT;
+			else if (file_format.find("$num(", pos) == pos)
+				type = TYPE_NUM;
 			else if (file_format.find("$if(", pos) == pos)
 				type = TYPE_IF;
 			else
@@ -380,7 +451,7 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 			pos = end;
 			/* set prev to char after end parenthese */
 			prev = pos + 1;
-			cout << "Adding function field: type = " << f.type << ", prev = " << prev << ", pos = " << pos << endl;
+			Debug::info() << "Adding function field: type = " << f.type << ", prev = " << prev << ", pos = " << pos << endl;
 		}
 	}
 	if (prev != string::npos && prev < stop) {
@@ -390,6 +461,6 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 		f.data = file_format.substr(prev, stop - prev);
 		removeEscapes(&f.data);
 		fields->push_back(f);
-		cout << "Adding last static field: data = '" << f.data << "', prev = " << prev << ", pos = " << pos << endl;
+		Debug::info() << "Adding last static field: data = '" << f.data << "', prev = " << prev << ", pos = " << pos << endl;
 	}
 }

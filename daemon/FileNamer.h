@@ -34,6 +34,8 @@
 #define TYPE_LOWER 103
 #define TYPE_UPPER 104
 #define TYPE_LEFT 105
+#define TYPE_RIGHT 106
+#define TYPE_NUM 107
 
 #include <string>
 #include <vector>
