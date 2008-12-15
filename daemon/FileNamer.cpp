@@ -9,27 +9,25 @@ using namespace std;
 /* constructors/destructor */
 FileNamer::FileNamer(Database *database) : database(database) {
 	/* test file format */
-	/*
 	Metafile f("/media/music/unsorted/Within Temptation - The Silent Force (Limited Premium Edition)/12. A Dangerous Mind (Bonus Track).mp3");
 	f.album = "The Silent Force";
 	f.albumartist = "Within Temptation";
 	f.albumartistsort = "Within Temptation";
-	f.artist = "Within Temptation";
+	f.artist = "Within Temptation, ÆØÅæøå";
 	f.artistsort = "Within Temptation";
 	f.musicbrainz_albumartistid = "eace2373-31c8-4aba-9a5c-7bce22dd140a";
 	f.musicbrainz_albumid = "7d4af6bd-62de-4b0f-a39b-3fbd337416a7";
 	f.musicbrainz_artistid = "eace2373-31c8-4aba-9a5c-7bce22dd140a";
 	f.musicbrainz_trackid = "fba916cf-8324-4941-a8b3-5dfb4e424456";
-	f.title = "A Dangerous Mind";
-	f.tracknumber = "";
+	f.title = "A Dangerous Mind, ÆØÅæøå";
+	f.tracknumber = "12";
 	f.released = "2004-11-15";
 	f.genre = "gothic rock";
 
-	file_format = "$left(%albumartist%,1)/%albumartist%/%album%/$num(%tracknumber%,3) - %artist% - %title% [h4xx0r3d by c4n1d43]";
+	file_format = "$upper($left(%albumartist%,2))/%albumartist%/%album%/$num(%tracknumber%,3) - $upper($right(%artist%,3)) - $lower(%title%) [h4xx0r3d by c4n1d43]";
 	setupFields(0, file_format.size(), &fields);
 	cout << getFilename(&f) << endl;
 	fields.clear();
-	*/
 	file_format = database->loadSettingString(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
 	illegal_characters = database->loadSettingString(FILENAME_ILLEGAL_CHARACTERS_KEY, FILENAME_ILLEGAL_CHARACTERS_VALUE, FILENAME_ILLEGAL_CHARACTERS_DESCRIPTION);
 	string::size_type pos = illegal_characters.find('_', 0);
@@ -135,7 +133,7 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 			/* return second non-delimiter field(s) if first non-delimiter field
 			 * is empty, otherwise return third non-delimiter field(s) */
 			if (field->fields.size() >= 5) {
-				string tmp = "";
+				string tmp("");
 				vector<Field>::const_iterator f = field->fields.begin();
 				while (f != field->fields.end() && f->type != TYPE_DELIMITER)
 					tmp.append(parseField(file, f++));
@@ -167,7 +165,7 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 		case TYPE_COALESCE:
 			/* return first non-empty non-delimiter field */
 			if (field->fields.size() > 0) {
-				string tmp = "";
+				string tmp("");
 				for (vector<Field>::const_iterator f = field->fields.begin(); f != field->fields.end(); ++f) {
 					if (f->type == TYPE_DELIMITER) {
 						if (!tmp.empty()) {
@@ -185,31 +183,37 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 		case TYPE_LOWER:
 			/* return data in lower case */
 			if (field->fields.size() > 0) {
-				ostringstream tmp;
+				string tmp("");
 				for (vector<Field>::const_iterator f = field->fields.begin(); f != field->fields.end(); ++f) {
-					if (f->type != TYPE_DELIMITER)
-						tmp << nouppercase << parseField(file, f);
+					if (f->type == TYPE_DELIMITER)
+						continue;
+					tmp.append(parseField(file, f));
 				}
-				tmp_field = tmp.str();
+				for (string::size_type a = 0; a < tmp.size(); ++a)
+					tmp[a] = tolower(tmp[a]);
+				tmp_field = tmp;
 			}
 			break;
 
 		case TYPE_UPPER:
 			/* return data in upper case */
 			if (field->fields.size() > 0) {
-				ostringstream tmp;
+				string tmp("");
 				for (vector<Field>::const_iterator f = field->fields.begin(); f != field->fields.end(); ++f) {
-					if (f->type != TYPE_DELIMITER)
-						tmp << uppercase << parseField(file, f);
+					if (f->type == TYPE_DELIMITER)
+						continue;
+					tmp.append(parseField(file, f));
 				}
-				tmp_field = tmp.str();
+				for (string::size_type a = 0; a < tmp.size(); ++a)
+					tmp[a] = toupper(tmp[a]);
+				tmp_field = tmp;
 			}
 			break;
 
 		case TYPE_LEFT:
 			/* return first n characters */
 			if (field->fields.size() >= 3) {
-				string tmp = "";
+				string tmp("");
 				vector<Field>::const_iterator f;
 				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
 					if (f->type == TYPE_DELIMITER) {
@@ -232,7 +236,7 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 		case TYPE_RIGHT:
 			/* return last n characters */
 			if (field->fields.size() >= 3) {
-				string tmp = "";
+				string tmp("");
 				vector<Field>::const_iterator f;
 				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
 					if (f->type == TYPE_DELIMITER) {
@@ -255,7 +259,7 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 		case TYPE_NUM:
 			/* zeropad text to n characters */
 			if (field->fields.size() >= 3) {
-				string tmp = "";
+				string tmp("");
 				vector<Field>::const_iterator f;
 				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
 					if (f->type == TYPE_DELIMITER) {
