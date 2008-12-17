@@ -9,7 +9,12 @@ using namespace std;
 
 /* constructors/destructor */
 FileNamer::FileNamer(Database *database) : database(database) {
+	/* set up iconv */
+	u2w = iconv_open("WCHAR_T", "UTF8");
+	w2u = iconv_open("UTF8", "WCHAR_T");
+
 	/* test file format */
+	/*
 	Metafile f("/media/music/unsorted/Within Temptation - The Silent Force (Limited Premium Edition)/12. A Dangerous Mind (Bonus Track).mp3");
 	f.album = "The Silent Force";
 	f.albumartist = "Within Temptation";
@@ -24,15 +29,13 @@ FileNamer::FileNamer(Database *database) : database(database) {
 	f.tracknumber = "12";
 	f.released = "2004-11-15";
 	f.genre = "gothic rock";
-
-	/* set up iconv */
-	u2w = iconv_open("WCHAR_T", "UTF8");
-	w2u = iconv_open("UTF8", "WCHAR_T");
-
 	file_format = "$upper($left(%albumartist%,2))/%albumartist%/%album%/$num(%tracknumber%,3) - $upper($right(%artist%,3)) - $lower(%title%) [h4xx0r3d by c4n1d43]";
 	setupFields(0, file_format.size(), &fields);
 	cout << getFilename(&f) << endl;
 	fields.clear();
+	*/
+	/* end testing file format */
+
 	file_format = database->loadSettingString(FILENAME_FORMAT_KEY, FILENAME_FORMAT_VALUE, FILENAME_FORMAT_DESCRIPTION);
 	illegal_characters = database->loadSettingString(FILENAME_ILLEGAL_CHARACTERS_KEY, FILENAME_ILLEGAL_CHARACTERS_VALUE, FILENAME_ILLEGAL_CHARACTERS_DESCRIPTION);
 	string::size_type pos = illegal_characters.find('_', 0);
