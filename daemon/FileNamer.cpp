@@ -1,4 +1,5 @@
 #include <ostream>
+#include <string.h>
 #include "Database.h"
 #include "Debug.h"
 #include "FileNamer.h"
@@ -24,6 +25,10 @@ FileNamer::FileNamer(Database *database) : database(database) {
 	f.released = "2004-11-15";
 	f.genre = "gothic rock";
 
+	/* set up iconv */
+	u2w = iconv_open("WCHAR_T", "UTF8");
+	w2u = iconv_open("UTF8", "WCHAR_T");
+
 	file_format = "$upper($left(%albumartist%,2))/%albumartist%/%album%/$num(%tracknumber%,3) - $upper($right(%artist%,3)) - $lower(%title%) [h4xx0r3d by c4n1d43]";
 	setupFields(0, file_format.size(), &fields);
 	cout << getFilename(&f) << endl;
@@ -38,6 +43,9 @@ FileNamer::FileNamer(Database *database) : database(database) {
 }
 
 FileNamer::~FileNamer() {
+	/* close iconv */
+	iconv_close(u2w);
+	iconv_close(w2u);
 }
 
 /* methods */
@@ -55,8 +63,40 @@ void FileNamer::convertIllegalCharacters(string *text) {
 		text->replace(pos, 1, "_");
 }
 
-const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::const_iterator field) {
-	tmp_field.clear();
+wstring FileNamer::convertUnicodeToWide(const string &text) {
+	if (text.size() <= 0)
+		return wstring(L"");
+	char src[text.size()];
+	char *src_ptr = (char *) src;
+	size_t src_size = sizeof (src);
+	wchar_t dest[text.size()];
+	char *dest_ptr = (char *) dest;
+	size_t dest_size = sizeof (dest);
+	for (string::size_type a = 0; a < text.size(); ++a)
+		src[a] = text[a];
+	if (iconv(u2w, &src_ptr, &src_size, &dest_ptr, &dest_size) == (size_t) -1)
+		Debug::warning() << "Unable to convert unicode string to wide character string: " << text << endl;
+	return wstring(dest, (sizeof (dest) - dest_size) / sizeof (wchar_t));
+}
+
+string FileNamer::convertWideToUnicode(const wstring &text) {
+	if (text.size() <= 0)
+		return string("");
+	wchar_t src[text.size()];
+	char *src_ptr = (char *) src;
+	size_t src_size = sizeof (src);
+	char dest[text.size() * sizeof (wchar_t)];
+	char *dest_ptr = (char *) dest;
+	size_t dest_size = sizeof (dest);
+	for (wstring::size_type a = 0; a < text.size(); ++a)
+		src[a] = text[a];
+	if (iconv(w2u, &src_ptr, &src_size, &dest_ptr, &dest_size) == (size_t) -1)
+		Debug::warning() << "Unable to convert wide character string to unicode string: " << text << endl;
+	return string(dest, (sizeof (dest) - dest_size));
+}
+
+const std::string FileNamer::parseField(Metafile *file, const vector<Field>::const_iterator field) {
+	string tmp_field("");
 	switch (field->type) {
 		/* static */
 		case TYPE_STATIC:
@@ -139,7 +179,6 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 					tmp.append(parseField(file, f++));
 				if (f == field->fields.end()) {
 					/* hmm, looks like user error */
-					tmp_field.clear();
 					break;
 				}
 				++f;
@@ -149,7 +188,6 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 						++f;
 					if (f == field->fields.end()) {
 						/* hmm, looks like user error */
-						tmp_field.clear();
 						break;
 					}
 					++f;
@@ -189,9 +227,10 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 						continue;
 					tmp.append(parseField(file, f));
 				}
-				for (string::size_type a = 0; a < tmp.size(); ++a)
-					tmp[a] = tolower(tmp[a]);
-				tmp_field = tmp;
+				wstring tmp2 = convertUnicodeToWide(tmp);
+				for (wstring::size_type a = 0; a < tmp2.size(); ++a)
+					tmp2[a] = towlower(tmp2[a]);
+				tmp_field = convertWideToUnicode(tmp2);
 			}
 			break;
 
@@ -204,9 +243,10 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 						continue;
 					tmp.append(parseField(file, f));
 				}
-				for (string::size_type a = 0; a < tmp.size(); ++a)
-					tmp[a] = toupper(tmp[a]);
-				tmp_field = tmp;
+				wstring tmp2 = convertUnicodeToWide(tmp);
+				for (wstring::size_type a = 0; a < tmp2.size(); ++a)
+					tmp2[a] = towupper(tmp2[a]);
+				tmp_field = convertWideToUnicode(tmp2);
 			}
 			break;
 
@@ -226,9 +266,9 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 					int chars = atoi(parseField(file, f).c_str());
 					if (chars < 0)
 						chars = 0;
-					tmp_field = tmp.substr(0, chars);
-				} else {
-					tmp_field.clear();
+					wstring tmp2 = convertUnicodeToWide(tmp);
+					tmp2.erase(chars);
+					tmp_field = convertWideToUnicode(tmp2);
 				}
 			}
 			break;
@@ -246,12 +286,13 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 					tmp.append(parseField(file, f));
 				}
 				if (f != field->fields.end()) {
-					int pos = tmp.size() - atoi(parseField(file, f).c_str());
-					if (pos < 0)
-						pos = 0;
-					tmp_field = tmp.substr(pos);
-				} else {
-					tmp_field.clear();
+					int erase = atoi(parseField(file, f).c_str());
+					wstring tmp2 = convertUnicodeToWide(tmp);
+					erase = tmp2.size() - erase;
+					if (erase < 0)
+						erase = 0;
+					tmp2.erase(0, erase);
+					tmp_field = convertWideToUnicode(tmp2);
 				}
 			}
 			break;
@@ -273,10 +314,9 @@ const std::string &FileNamer::parseField(Metafile *file, const vector<Field>::co
 					for (; chars > (int) tmp.size(); --chars)
 						tmp_field.push_back('0');
 					tmp_field.append(tmp);
-				} else {
-					tmp_field.clear();
 				}
 			}
+			break;
 
 		/* error */
 		default:
