@@ -84,9 +84,8 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 	return true;
 }
 
-const vector<Metatrack> &MusicBrainz::searchMetadata(const string &group, const Metafile &metafile) {
+const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 	ostringstream query;
-	string e_group = escapeString(group);
 	string bnwe = escapeString(metafile.getBaseNameWithoutExtension());
 	query << "limit=25&query=";
 	query << "tnum:(" << escapeString(metafile.tracknumber) << " " << bnwe << ") ";
@@ -97,9 +96,9 @@ const vector<Metatrack> &MusicBrainz::searchMetadata(const string &group, const 
 			lower = 0;
 		query << "qdur:[" << lower << " TO " << upper << "] ";
 	}
-	query << "artist:(" << escapeString(metafile.artist) << " " << bnwe << " " << e_group << ") ";
+	query << "artist:(" << escapeString(metafile.artist) << " " << bnwe << ") ";
 	query << "track:(" << escapeString(metafile.title) << " " << bnwe << " " << ") ";
-	query << "release:(" << escapeString(metafile.album) << " " << bnwe << " " << e_group << ") ";
+	query << "release:(" << escapeString(metafile.album) << " " << bnwe << ") ";
 	return searchMetadata(query.str());
 }
 

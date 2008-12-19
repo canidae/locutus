@@ -38,7 +38,7 @@ Matcher::~Matcher() {
 }
 
 /* methods */
-void Matcher::match(const string &group, const vector<Metafile *> &files) {
+void Matcher::match(const vector<Metafile *> &files) {
 	/* remove matches from database */
 	for (vector<Metafile *>::const_iterator f = files.begin(); f != files.end(); ++f)
 		database->removeComparisons(**f);
@@ -53,7 +53,7 @@ void Matcher::match(const string &group, const vector<Metafile *> &files) {
 	for (map<string, AlbumComparison>::iterator ac = acs.begin(); ac != acs.end(); ++ac)
 		compareFilesWithAlbum(&(ac->second), files);
 	/* search using metadata */
-	searchMetadata(group, files);
+	searchMetadata(files);
 	/* and then match the files to albums */
 	matchFilesToAlbums(files);
 	/* and clear the "values" list in the metafiles */
@@ -315,12 +315,12 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		sf->second->metafile->setMetadata(sf->second->track);
 }
 
-void Matcher::searchMetadata(const string &group, const vector<Metafile *> &files) {
+void Matcher::searchMetadata(const vector<Metafile *> &files) {
 	for (vector<Metafile *>::const_iterator file = files.begin(); file != files.end(); ++file) {
 		Metafile *mf = *file;
 		if (!mf->meta_lookup)
 			continue;
-		vector<Metatrack> tracks = musicbrainz->searchMetadata(group, *mf);
+		vector<Metatrack> tracks = musicbrainz->searchMetadata(*mf);
 		string load_album_title = "";
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
 			Comparison *c = compareMetafileWithMetatrack(mf, *mt);

@@ -73,7 +73,7 @@ class Matcher {
 		Matcher(Database *database, MusicBrainz *musicbrainz);
 		~Matcher();
 
-		void match(const std::string &group, const std::vector<Metafile *> &files);
+		void match(const std::vector<Metafile *> &files);
 
 	private:
 		Database *database;
@@ -105,6 +105,6 @@ class Matcher {
 		void lookupMBIDs(const std::vector<Metafile *> &files);
 		void lookupPUIDs(const std::vector<Metafile *> &files);
 		void matchFilesToAlbums(const std::vector<Metafile *> &files);
-		void searchMetadata(const std::string &group, const std::vector<Metafile *> &files);
+		void searchMetadata(const std::vector<Metafile *> &files);
 };
 #endif

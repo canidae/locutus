@@ -67,7 +67,7 @@ long Locutus::run() {
 		/* update progress */
 		database->updateProgress((double) group_counter++ / (double) grouped_files.size());
 		/* match files in group */
-		matcher->match(gf->first, gf->second);
+		matcher->match(gf->second);
 		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
 			if (!(*f)->metadata_updated) {

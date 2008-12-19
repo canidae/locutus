@@ -28,7 +28,7 @@ class MusicBrainz : public WebService {
 		~MusicBrainz();
 
 		bool lookupAlbum(Album *album);
-		const std::vector<Metatrack> &searchMetadata(const std::string &group, const Metafile &metafile);
+		const std::vector<Metatrack> &searchMetadata(const Metafile &metafile);
 		const std::vector<Metatrack> &searchPUID(const std::string &puid);
 
 	private:
