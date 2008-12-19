@@ -19,13 +19,20 @@ XMLNode *WebService::fetch(const char *url) {
 	urle = urlEncode(url, urle, 4096);
 	Debug::info() << urle << endl;
 	status = get(urle);
-	delete [] urle;
 	if (status) {
-		//cout << "failed; reason=" << status << endl;
-		Debug::warning() << "Unable to fetch data" << endl;
+		Debug::notice() << "Unable to fetch data. Reason: " << status << endl;
 		close();
-		return NULL;
+		Debug::notice() << "Trying once more..." << endl;
+		sleep(3); // sleep a bit before trying again
+		status = get(urle);
+		if (status) {
+			Debug::warning() << "Unable to fetch data. Reason: " << status << endl;
+			close();
+			delete [] urle;
+			return NULL;
+		}
 	}
+	delete [] urle;
 	clearXMLNode(root);
 	delete root;
 	root = new XMLNode;
