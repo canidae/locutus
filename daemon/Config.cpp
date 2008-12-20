@@ -40,9 +40,6 @@ Config::Config() {
 			value_length -= value_start;
 		string value = line.substr(value_start, value_length);
 
-		/* debug */
-		Debug::info() << setting << "=" << value << endl;
-
 		/* and store in map */
 		settings[setting] = value;
 	}
