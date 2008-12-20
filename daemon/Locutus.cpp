@@ -1,4 +1,5 @@
 #include "Audioscrobbler.h"
+#include "Config.h"
 #include "Database.h"
 #include "Debug.h"
 #include "FileNamer.h"
@@ -324,8 +325,15 @@ int main() {
 	Debug::open("locutus.log");
 	Levenshtein::initialize();
 
+	/* get configuration */
+	Config config;
+	string db_host = config.getSettingValue("database_host");
+	string db_user = config.getSettingValue("database_user");
+	string db_pass = config.getSettingValue("database_pass");
+	string db_name = config.getSettingValue("database_name");
+
 	/* connect to database */
-	Database *database = new PostgreSQL("host=sql.samfundet.no user=locutus password=locutus dbname=locutus");
+	Database *database = new PostgreSQL(db_host, db_user, db_pass, db_name);
 
 	//while (true) {
 		Locutus *locutus = new Locutus(database);

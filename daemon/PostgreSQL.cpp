@@ -9,10 +9,18 @@
 using namespace std;
 
 /* constructors/destructor */
-PostgreSQL::PostgreSQL(const string connection) : Database(), pg_result(NULL), got_result(false) {
-	pg_connection = PQconnectdb(connection.c_str());
+PostgreSQL::PostgreSQL(const string &host, const string &user, const string &pass, const string &name) : Database(), pg_result(NULL), got_result(false) {
+	string connection_url = "host=";
+	connection_url.append(host);
+	connection_url.append(" user=");
+	connection_url.append(user);
+	connection_url.append(" password=");
+	connection_url.append(pass);
+	connection_url.append(" dbname=");
+	connection_url.append(name);
+	pg_connection = PQconnectdb(connection_url.c_str());
 	if (PQstatus(pg_connection) != CONNECTION_OK) {
-		Debug::error() << "Unable to connect to the database" << endl;
+		Debug::error() << "Unable to connect to the database: " << connection_url << endl;
 		exit(1);
 	}
 }
@@ -24,7 +32,7 @@ PostgreSQL::~PostgreSQL() {
 
 /* methods */
 bool PostgreSQL::clean() {
-	/* remove unchecked files, old cache, etc */
+	/* remove unchecked files */
 	ostringstream query;
 	query << "DELETE FROM file WHERE checked = false";
 	doQuery(query.str());
@@ -34,8 +42,7 @@ bool PostgreSQL::clean() {
 bool PostgreSQL::init() {
 	/* we're gonna keep the database connection while locutus is running,
 	 * but the other classes will be freed and reloaded for each "run".
-	 * this means we'll have to load the settings here and not in the
-	 * initialized */
+	 * this means we'll have to load the settings here */
 	album_cache_lifetime = loadSettingInt(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
 	metatrack_cache_lifetime = loadSettingInt(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
 	puid_cache_lifetime = loadSettingInt(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);

@@ -26,7 +26,7 @@ class Track;
 
 class PostgreSQL : public Database {
 	public:
-		explicit PostgreSQL(const std::string connection);
+		PostgreSQL(const std::string &host, const std::string &user, const std::string &pass, const std::string &name);
 		~PostgreSQL();
 
 		bool clean();
