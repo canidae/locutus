@@ -114,58 +114,72 @@ const std::string FileNamer::parseField(Metafile *file, const vector<Field>::con
 		/* variables */
 		case TYPE_ALBUM:
 			tmp_field = file->album;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_ALBUMARTIST:
 			tmp_field = file->albumartist;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_ALBUMARTISTSORT:
 			tmp_field = file->albumartistsort;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_ARTIST:
 			tmp_field = file->artist;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_ARTISTSORT:
 			tmp_field = file->artistsort;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICBRAINZ_ALBUMARTISTID:
 			tmp_field = file->musicbrainz_albumartistid;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICBRAINZ_ALBUMID:
 			tmp_field = file->musicbrainz_albumid;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICBRAINZ_ARTISTID:
 			tmp_field = file->musicbrainz_artistid;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICBRAINZ_TRACKID:
 			tmp_field = file->musicbrainz_trackid;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICIP_PUID:
 			tmp_field = file->puid;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_TITLE:
 			tmp_field = file->title;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_TRACKNUMBER:
 			tmp_field = file->tracknumber;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_DATE:
 			tmp_field = file->released;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_GENRE:
 			tmp_field = file->genre;
+			convertIllegalCharacters(&tmp_field);
 			break;
 
 		/* delimiter */
@@ -357,7 +371,6 @@ const std::string FileNamer::parseField(Metafile *file, const vector<Field>::con
 			Debug::warning() << "Field not implemented. Type: " << field->type << ", data: " << field->data << ", fields: " << field->fields.size() << endl;
 			break;
 	}
-	convertIllegalCharacters(&tmp_field);
 	return tmp_field;
 }
 
