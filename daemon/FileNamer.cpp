@@ -29,7 +29,7 @@ FileNamer::FileNamer(Database *database) : database(database) {
 	f.tracknumber = "12";
 	f.released = "2004-11-15";
 	f.genre = "gothic rock";
-	file_format = "$upper($left(%albumartist%,2))/%albumartist%/%album%/$num(%tracknumber%,3) - $upper($right(%artist%,3)) - $lower(%title%) [h4xx0r3d by c4n1d43]";
+	file_format = "$if($eq(%musicbrainz_albumartistid%,89ad4ac3-39f7-470e-963a-56509c546377),$left(%artistsort%,1)/%artistsort%,$left(%albumartistsort%,1)/%albumartistsort%)/%album% - $num(%tracknumber%,2) - %artist% - %title%";
 	setupFields(0, file_format.size(), &fields);
 	cout << getFilename(&f) << endl;
 	fields.clear();
@@ -56,6 +56,10 @@ const string &FileNamer::getFilename(Metafile *file) {
 	filename.clear();
 	for (vector<Field>::const_iterator f = fields.begin(); f != fields.end(); ++f)
 		filename.append(parseField(file, f));
+	/* append extension */
+	string::size_type dotpos = file->filename.find_last_of('.');
+	if (dotpos != string::npos)
+		filename.append(file->filename.substr(dotpos));
 	return filename;
 }
 
@@ -463,9 +467,10 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 				type = TYPE_IF;
 			else
 				continue; // not matching any function, must be static entry
-			/* find first unescaped ")" */
+			/* figure out where this function ends */
 			string::size_type end = pos;
-			while ((end = file_format.find(")", end + 1)) != string::npos && end < stop) {
+			int parentheses_open = 0;
+			while ((end = file_format.find_first_of("()", end + 1)) != string::npos && end < stop) {
 				int backslashes = 0;
 				for (string::size_type a = end - 1; a >= 0; --a) {
 					if (file_format[a] != '\\')
@@ -474,40 +479,12 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 				}
 				if (backslashes % 2 != 0)
 					continue; // this parenthese is escaped
-				break;
-			}
-			if (end == string::npos) {
-				/* no end parenthese?
-				 * user probably did something wrong or it's a static entry */
-				continue;
-			}
-			/* find amount of unescaped "(" between pos & first unescaped ")" */
-			string::size_type begin = pos;
-			int begin_count = 0;
-			while ((begin = file_format.find("(", begin + 1)) != string::npos && begin < end) {
-				int backslashes = 0;
-				for (string::size_type a = end - 1; a >= 0; --a) {
-					if (file_format[a] != '\\')
-						break;
-					++backslashes;
-				}
-				if (backslashes % 2 != 0)
-					continue; // this parenthese is escaped
-				++begin_count;
-			}
-			/* find n'th unescaped ")", where n'th is the amount of unescaped "(" found in last step */
-			for (; begin_count > 1; --begin_count) {
-				while ((end = file_format.find(")", end + 1)) != string::npos && end < stop) {
-					int backslashes = 0;
-					for (string::size_type a = end - 1; a >= 0; --a) {
-						if (file_format[a] != '\\')
-							break;
-						++backslashes;
-					}
-					if (backslashes % 2 != 0)
-						continue; // this parenthese is escaped
+				if (file_format[end] == '(')
+					++parentheses_open;
+				else
+					--parentheses_open;
+				if (parentheses_open <= 0)
 					break;
-				}
 			}
 			if (end == string::npos) {
 				/* no end parenthese?
@@ -519,7 +496,7 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 			f.type = type;
 			f.data.clear();
 			/* call this method recursively for fields within parentheses in this function */
-			begin = file_format.find("(", pos + 1) + 1;
+			string::size_type begin = file_format.find("(", pos + 1) + 1;
 			setupFields(begin, end, &f.fields, true);
 			/* add function to field list */
 			fields->push_back(f);
