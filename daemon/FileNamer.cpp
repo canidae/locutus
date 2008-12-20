@@ -321,6 +321,33 @@ const std::string FileNamer::parseField(Metafile *file, const vector<Field>::con
 			}
 			break;
 
+		case TYPE_EQ:
+			/* return "true" if fields are equal, "" if not */
+			if (field->fields.size() >= 3) {
+				string tmp("");
+				vector<Field>::const_iterator f;
+				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER) {
+						++f;
+						break;
+					}
+					tmp.append(parseField(file, f));
+				}
+				string tmp2("");
+				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER) {
+						++f;
+						break;
+					}
+					tmp2.append(parseField(file, f));
+				}
+				if (tmp == tmp2)
+					tmp_field = "true";
+				else
+					tmp_field = "";
+			}
+			break;
+
 		/* error */
 		default:
 			Debug::warning() << "Field not implemented. Type: " << field->type << ", data: " << field->data << ", fields: " << field->fields.size() << endl;
@@ -430,6 +457,8 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 				type = TYPE_LEFT;
 			else if (file_format.find("$num(", pos) == pos)
 				type = TYPE_NUM;
+			else if (file_format.find("$eq(", pos) == pos)
+				type = TYPE_EQ;
 			else if (file_format.find("$if(", pos) == pos)
 				type = TYPE_IF;
 			else

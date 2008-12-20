@@ -36,6 +36,7 @@
 #define TYPE_LEFT 105
 #define TYPE_RIGHT 106
 #define TYPE_NUM 107
+#define TYPE_EQ 108
 
 #include <iconv.h>
 #include <string>
