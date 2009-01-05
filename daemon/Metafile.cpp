@@ -222,17 +222,17 @@ bool Metafile::saveMetadata() {
 		delete file;
 	} else if (ext == "MP3") {
 		MPEG::File *file = new MPEG::File(filename.c_str(), false);
-		saveID3v2Tag(file->ID3v2Tag());
+		saveID3v2Tag(file->ID3v2Tag(true));
 		ok = file->save();
 		delete file;
 	} else if (ext == "FLAC") {
 		FLAC::File *file = new FLAC::File(filename.c_str(), false);
-		saveXiphComment(file->xiphComment());
+		saveXiphComment(file->xiphComment(true));
 		ok = file->save();
 		delete file;
 	} else if (ext == "MPC") {
 		MPC::File *file = new MPC::File(filename.c_str(), false);
-		saveAPETag(file->APETag());
+		saveAPETag(file->APETag(true));
 		ok = file->save();
 		delete file;
 	} else if (ext == "OGA") {
@@ -243,7 +243,7 @@ bool Metafile::saveMetadata() {
 	/*
 	} else if (ext == "WV") {
 		WavPack::File *file = new WavPack::File(filename.c_str(), false);
-		saveAPETag(file->APETag());
+		saveAPETag(file->APETag(true));
 		ok = file->save();
 		delete file;
 	} else if (ext == "SPX") {
@@ -253,7 +253,7 @@ bool Metafile::saveMetadata() {
 		delete file;
 	} else if (ext == "TTA") {
 		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), false);
-		saveAPETag(file->APETag());
+		saveAPETag(file->APETag(true));
 		ok = file->save();
 		delete file;
 	*/
