@@ -352,11 +352,9 @@ const std::string FileNamer::parseField(Metafile *file, const vector<Field>::con
 					tmp.append(parseField(file, f));
 				}
 				string tmp2("");
-				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
-					if (f->type == TYPE_DELIMITER) {
-						++f;
+				for (; f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER)
 						break;
-					}
 					tmp2.append(parseField(file, f));
 				}
 				if (tmp == tmp2)
