@@ -35,17 +35,10 @@ string Metafile::getBaseNameWithoutExtension() const {
 }
 
 string Metafile::getGroup() const {
-	/* gets group. it's either albumartist-album, album, full directory path or ""
+	/* gets group. it's either musicbrainz album id, full directory path or ""
 	 * used for grouping tracks that possibly are from the same album(s) */
-	if (album.size() > 0) {
-		if (albumartist.size() > 0) {
-			string group = albumartist;
-			group.push_back('-');
-			group.append(album);
-			return group;
-		}
-		return album;
-	}
+	if (musicbrainz_albumid.size() > 0)
+		return musicbrainz_albumid;
 	string::size_type pos = filename.find_last_of('/');
 	if (pos != string::npos && pos > 0)
 		return filename.substr(0, pos);
