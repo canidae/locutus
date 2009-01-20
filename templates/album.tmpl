@@ -31,39 +31,29 @@
     [% FOREACH track IN tracks %]
       [% IF loop.prev.tracknumber != track.tracknumber %]
         <tr>
+          <th>Track [% track.tracknumber %]</th>
           <th>Score</th>
-          <th>Match</th>
-          <th>Remove</th>
-          <th>[% track.tracknumber %]</th>
-          <th>[% album.artist_name %]</th>
-          <th>[% album.title %]</th>
-        [% IF track.track_artist_id != album.artist_id %]
-          <th><a href="artist.pl?arid=[% track.track_artist_id %]">[% track.track_artist %]</a></th>
-        [% ELSE %]
-          <th>[% track.artist %]</th>
-        [% END %]
-          <th><a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a></th>
           <th>[% track.duration %]</th>
+          <th>[% album.artist_name %] - [% album.title %] - [% track.tracknumber %] - [% IF track.track_artist_id != album.artist_id %]<a href="artist.pl?arid=[% track.track_artist_id %]">[% track.track_artist %]</a>[% ELSE %][% track.artist %][% END %] - <a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a></th>
+          <th>Remove</th>
         </tr>
       [% END %]
       [% IF track.file_id %]
         <tr>
-          <td style="background: #[% track.color %];">[% track.score %]</td>
+          <td style="text-align: center;">
         [% IF track.file_track_id == track.track_id %]
-          <td style="text-align: center;">OK</td>
+            OK
         [% ELSE %]
-          <td style="text-align: center;"><input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>
+            <input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" />
         [% END %]
-          <td style="text-align: center;"><input type="checkbox" name="remove_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>
-          <td>[% track.file_tracknumber %]</td>
-          <td>[% track.file_albumartist %]</td>
-          <td>[% track.file_album %]</td>
-          <td>[% track.file_artist %]</td>
-          <td>[% track.file_title %]</td>
+          </td>
+          <td style="background: #[% track.color %];">[% track.score %]</td>
           <td>[% track.file_duration %]</td>
-        </tr>
-        <tr>
-          <td colspan="9"><a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a></td>
+          <td>
+            [% track.file_albumartist OR '???' %] - [% track.file_album OR '???' %] - [% track.file_tracknumber OR '???'  %] - [% track.file_artist OR '???' %] - [% track.file_title OR '???' %]<br />
+            <a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a>
+          </td>
+          <td style="text-align: center;"><input type="checkbox" name="remove_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>
         </tr>
       [% END %]
     [% END %]

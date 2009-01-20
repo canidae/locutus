@@ -54,6 +54,7 @@ table {
 th, td {
 	border: 1px solid #babdb6;
 	padding: 0.3em;
+	font-size: 75%;
 }
 th {
 	background: #F5F5F5;
