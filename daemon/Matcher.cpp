@@ -294,13 +294,14 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				}
 				album_files.push_back(best_comparison);
 			}
-			if (tracks_matched == 0 || (only_save_complete_albums && tracks_matched != (int) ac->second.album->tracks.size()))
-				continue;
 			album_score *= (double) tracks_matched / (double) ac->second.album->tracks.size();
 			cout << "Album: " << ac->second.album->title << " | Score: " << album_score << " | Tracks: " << ac->second.album->tracks.size() << " | Matched: " << tracks_matched << " | Group: " << files.size() << endl;
 			if (album_score > best_album_score) {
 				best_album_score = album_score;
-				best_album_files = album_files;
+				if (!only_save_complete_albums || tracks_matched == (int) ac->second.album->tracks.size())
+					best_album_files = album_files;
+				else
+					best_album_files.clear();
 			}
 		}
 		if (best_album_files.size() <= 0)
