@@ -288,7 +288,8 @@ const std::string FileNamer::parseField(Metafile *file, const vector<Field>::con
 					if (chars < 0)
 						chars = 0;
 					wstring tmp2 = convertUnicodeToWide(tmp);
-					tmp2.erase(chars);
+					if (chars < tmp2.size())
+						tmp2.erase(chars);
 					tmp_field = convertWideToUnicode(tmp2);
 				}
 			}
@@ -310,9 +311,8 @@ const std::string FileNamer::parseField(Metafile *file, const vector<Field>::con
 					int erase = atoi(parseField(file, f).c_str());
 					wstring tmp2 = convertUnicodeToWide(tmp);
 					erase = tmp2.size() - erase;
-					if (erase < 0)
-						erase = 0;
-					tmp2.erase(0, erase);
+					if (erase > 0)
+						tmp2.erase(0, erase);
 					tmp_field = convertWideToUnicode(tmp2);
 				}
 			}
