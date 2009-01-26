@@ -115,58 +115,58 @@ const list<string> &Metafile::getValues(double combine_threshold) {
 
 bool Metafile::readFromFile() {
 	string::size_type pos = filename.find_last_of('.');
-	if (pos != string::npos) {
-		string ext = filename.substr(pos + 1);
-		for (string::size_type a = 0; a < ext.size(); ++a) {
-			if (ext[a] >= 'a' && ext[a] <= 'z')
-				ext[a] -= 32;
-		}
-		if (ext == "OGG") {
-			Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
-			readXiphComment(file->tag());
-			readAudioProperties(file->audioProperties());
-			delete file;
-		} else if (ext == "MP3") {
-			MPEG::File *file = new MPEG::File(filename.c_str(), true, AudioProperties::Accurate);
-			readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
-			readAudioProperties(file->audioProperties());
-			delete file;
-		} else if (ext == "FLAC") {
-			FLAC::File *file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
-			readXiphComment(file->xiphComment());
-			readAudioProperties(file->audioProperties());
-			delete file;
-		} else if (ext == "MPC") {
-			MPC::File *file = new MPC::File(filename.c_str(), true, AudioProperties::Accurate);
-			readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
-			readAudioProperties(file->audioProperties());
-			delete file;
-		} else if (ext == "OGA") {
-			Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
-			readXiphComment(file->tag());
-			readAudioProperties(file->audioProperties());
-			delete file;
-		/*
-		} else if (ext == "WV") {
-			WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
-			readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
-			readAudioProperties(file->audioProperties());
-			delete file;
-		} else if (ext == "SPX") {
-			Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
-			readXiphComment(file->tag());
-			readAudioProperties(file->audioProperties());
-			delete file;
-		} else if (ext == "TTA") {
-			TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
-			readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
-			readAudioProperties(file->audioProperties());
-			delete file;
-		*/
-		} else {
-			Debug::notice() << "Unsupported file format (well, extension): " << filename << endl;
-			return false;
-		}
+	string ext = "";
+	if (pos != string::npos)
+		ext = filename.substr(pos + 1);
+	for (string::size_type a = 0; a < ext.size(); ++a) {
+		if (ext[a] >= 'a' && ext[a] <= 'z')
+			ext[a] -= 32;
+	}
+	if (ext == "OGG") {
+		Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
+		readXiphComment(file->tag());
+		readAudioProperties(file->audioProperties());
+		delete file;
+	} else if (ext == "MP3") {
+		MPEG::File *file = new MPEG::File(filename.c_str(), true, AudioProperties::Accurate);
+		readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+		readAudioProperties(file->audioProperties());
+		delete file;
+	} else if (ext == "FLAC") {
+		FLAC::File *file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+		readXiphComment(file->xiphComment());
+		readAudioProperties(file->audioProperties());
+		delete file;
+	} else if (ext == "MPC") {
+		MPC::File *file = new MPC::File(filename.c_str(), true, AudioProperties::Accurate);
+		readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+		readAudioProperties(file->audioProperties());
+		delete file;
+	} else if (ext == "OGA") {
+		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+		readXiphComment(file->tag());
+		readAudioProperties(file->audioProperties());
+		delete file;
+	/*
+	} else if (ext == "WV") {
+		WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
+		readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+		readAudioProperties(file->audioProperties());
+		delete file;
+	} else if (ext == "SPX") {
+		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
+		readXiphComment(file->tag());
+		readAudioProperties(file->audioProperties());
+		delete file;
+	} else if (ext == "TTA") {
+		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
+		readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+		readAudioProperties(file->audioProperties());
+		delete file;
+	*/
+	} else {
+		Debug::notice() << "Unsupported file format (well, extension): " << filename << endl;
+		return false;
 	}
 	/* trim strings */
 	Locutus::trim(&album);

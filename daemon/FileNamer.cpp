@@ -288,7 +288,7 @@ const std::string FileNamer::parseField(Metafile *file, const vector<Field>::con
 					if (chars < 0)
 						chars = 0;
 					wstring tmp2 = convertUnicodeToWide(tmp);
-					if (chars < tmp2.size())
+					if (chars < (int) tmp2.size())
 						tmp2.erase(chars);
 					tmp_field = convertWideToUnicode(tmp2);
 				}
