@@ -35,23 +35,21 @@ string Metafile::getBaseNameWithoutExtension() const {
 }
 
 string Metafile::getGroup() const {
-	/* gets group. it's either musicbrainz album id, full directory path or ""
-	 * used for grouping tracks that possibly are from the same album(s) */
-	string group;
+	/* get the group this file belongs to. format of the group is:
+	 * <extension> - <samplerate> - <channels> - [<album mbid>|<directory>] */
+	ostringstream group;
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos && pos < filename.size() - 1)
-		group = filename.substr(pos + 1);
-	else
-		group = "";
-	group.push_back('@');
+		group << filename.substr(pos + 1);
+	group << " - " << samplerate << " - " << channels << " - ";
 	if (musicbrainz_albumid.size() > 0) {
-		group.append(musicbrainz_albumid);
+		group << musicbrainz_albumid;
 	} else {
 		string::size_type pos = filename.find_last_of('/');
 		if (pos != string::npos && pos > 0)
-			group.append(filename.substr(0, pos));
+			group << filename.substr(0, pos);
 	}
-	return group;
+	return group.str();
 }
 
 const list<string> &Metafile::getValues(double combine_threshold) {
