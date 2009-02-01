@@ -287,9 +287,7 @@ void Locutus::saveFile(Metafile *file) {
 			}
 		}
 	}
-	cout << " Old: " << file->filename << endl;
-	cout << " New: " << filename << endl;
-	cout << "Meta: " << file->albumartistsort << " - " << file->album << " - " << file->tracknumber << " - " << file->artistsort << " - " << file->title << " (" << file->genre << ")" << endl;
+	Debug::info() << "Moving " << file->filename << " to " << filename << endl;
 	/* save metadata */
 	if (!file->saveMetadata()) {
 		Debug::warning() << "Unable to save metadata for file " << file->filename << endl;
