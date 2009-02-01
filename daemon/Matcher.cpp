@@ -21,7 +21,7 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 	mbid_lookup = database->loadSettingBool(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION);
 	max_diff_best_score = database->loadSettingDouble(MAX_DIFF_BEST_SCORE_KEY, MAX_DIFF_BEST_SCORE_VALUE, MAX_DIFF_BEST_SCORE_DESCRIPTION);
 	metadata_min_score = database->loadSettingDouble(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
-	no_group_duplicates = database->loadSettingBool(NO_GROUP_DUPLICATES_KEY, NO_GROUP_DUPLICATES_VALUE, NO_GROUP_DUPLICATES_DESCRIPTION);
+	allow_group_duplicates = database->loadSettingBool(ALLOW_GROUP_DUPLICATES_KEY, ALLOW_GROUP_DUPLICATES_VALUE, ALLOW_GROUP_DUPLICATES_DESCRIPTION);
 	only_save_complete_albums = database->loadSettingBool(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION);
 	only_save_if_all_match = database->loadSettingBool(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
 	puid_lookup = database->loadSettingBool(PUID_LOOKUP_KEY, PUID_LOOKUP_VALUE, PUID_LOOKUP_DESCRIPTION);
@@ -257,7 +257,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 				Comparison *best_comparison = NULL;
 				double best_comparison_score = -1.0;
 				for (map<string, vector<Comparison *> >::iterator t = ac->second.comparisons.begin(); t != ac->second.comparisons.end(); ++t) {
-					if (no_group_duplicates && used_tracks.find(t->first) != used_tracks.end())
+					if (!allow_group_duplicates && used_tracks.find(t->first) != used_tracks.end())
 						continue;
 					/* find best file */
 					for (vector<Comparison *>::iterator c = t->second.begin(); c != t->second.end(); ++c) {
