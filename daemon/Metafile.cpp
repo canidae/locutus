@@ -223,7 +223,7 @@ bool Metafile::saveMetadata() {
 	} else if (ext == "MP3") {
 		MPEG::File *file = new MPEG::File(filename.c_str(), false);
 		saveID3v2Tag(file->ID3v2Tag(true));
-		ok = file->save();
+		ok = file->save(MPEG::File::ID3v2);
 		delete file;
 	} else if (ext == "FLAC") {
 		FLAC::File *file = new FLAC::File(filename.c_str(), false);
@@ -460,7 +460,7 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	tag->addFrame(tpe2);
 	/* albumartistsort */
 	ID3v2::UserTextIdentificationFrame *txxxaas = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	txxxaas->setDescription("ALBUMARTISTSORT");
+	txxxaas->setDescription(ID3_TXXX_ALBUMARTISTSORT);
 	txxxaas->setText(albumartistsort);
 	tag->addFrame(txxxaas);
 	/* artist */
@@ -471,17 +471,17 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	tag->addFrame(tsop);
 	/* musicbrainz_albumartistid */
 	ID3v2::UserTextIdentificationFrame *txxxaai = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	txxxaai->setDescription("MusicBrainz Album Artist Id");
+	txxxaai->setDescription(ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID);
 	txxxaai->setText(musicbrainz_albumartistid);
 	tag->addFrame(txxxaai);
 	/* musicbrainz_albumid */
 	ID3v2::UserTextIdentificationFrame *txxxali = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	txxxali->setDescription("MusicBrainz Album Id");
+	txxxali->setDescription(ID3_TXXX_MUSICBRAINZ_ALBUMID);
 	txxxali->setText(musicbrainz_albumid);
 	tag->addFrame(txxxali);
 	/* musicbrainz_artistid */
 	ID3v2::UserTextIdentificationFrame *txxxari = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	txxxari->setDescription("MusicBrainz Artist Id");
+	txxxari->setDescription(ID3_TXXX_MUSICBRAINZ_ARTISTID);
 	txxxari->setText(musicbrainz_artistid);
 	tag->addFrame(txxxari);
 	/* musicbrainz_trackid */
