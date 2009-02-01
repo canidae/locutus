@@ -43,6 +43,7 @@ string Metafile::getGroup() const {
 		group = filename.substr(pos + 1);
 	else
 		group = "";
+	group.push_back('@');
 	if (musicbrainz_albumid.size() > 0) {
 		group.append(musicbrainz_albumid);
 	} else {
