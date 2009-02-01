@@ -149,7 +149,6 @@ CREATE TABLE track (
     title character varying NOT NULL,
     tracknumber integer NOT NULL,
     duration integer DEFAULT 0 NOT NULL,
-    CONSTRAINT track_duration_check CHECK ((duration >= 0)),
     CONSTRAINT track_tracknumber_check CHECK ((tracknumber > 0))
 );
 
@@ -275,12 +274,66 @@ CREATE VIEW v_web_uncompared_list_files AS
 
 
 --
--- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: difference(text, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
-    AS '$libdir/plpgsql.so', 'plpgsql_call_handler'
-    LANGUAGE c;
+CREATE FUNCTION difference(text, text) RETURNS integer
+    AS '$libdir/fuzzystrmatch', 'difference'
+    LANGUAGE c IMMUTABLE STRICT;
+
+
+--
+-- Name: dmetaphone(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION dmetaphone(text) RETURNS text
+    AS '$libdir/fuzzystrmatch', 'dmetaphone'
+    LANGUAGE c IMMUTABLE STRICT;
+
+
+--
+-- Name: dmetaphone_alt(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION dmetaphone_alt(text) RETURNS text
+    AS '$libdir/fuzzystrmatch', 'dmetaphone_alt'
+    LANGUAGE c IMMUTABLE STRICT;
+
+
+--
+-- Name: levenshtein(text, text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION levenshtein(text, text) RETURNS integer
+    AS '$libdir/fuzzystrmatch', 'levenshtein'
+    LANGUAGE c IMMUTABLE STRICT;
+
+
+--
+-- Name: metaphone(text, integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION metaphone(text, integer) RETURNS text
+    AS '$libdir/fuzzystrmatch', 'metaphone'
+    LANGUAGE c IMMUTABLE STRICT;
+
+
+--
+-- Name: soundex(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION soundex(text) RETURNS text
+    AS '$libdir/fuzzystrmatch', 'soundex'
+    LANGUAGE c IMMUTABLE STRICT;
+
+
+--
+-- Name: text_soundex(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION text_soundex(text) RETURNS text
+    AS '$libdir/fuzzystrmatch', 'soundex'
+    LANGUAGE c IMMUTABLE STRICT;
 
 
 --
