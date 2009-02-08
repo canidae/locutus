@@ -65,13 +65,13 @@ class Locutus {
 		MusicBrainz *musicbrainz;
 		bool dry_run;
 		bool lookup_genre;
+		int total_files;
 		std::list<std::string> dir_queue;
 		std::list<std::string> file_queue;
-		std::map<std::string, std::vector<Metafile *> > grouped_files;
+		std::map<std::string, int> groups;
 		std::string input_dir;
 		std::string output_dir;
 
-		void clearFiles();
 		std::string findDuplicateFilename(Metafile *file);
 		bool moveFile(Metafile *file, const std::string &filename);
 		bool parseDirectory();

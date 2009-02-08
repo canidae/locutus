@@ -42,10 +42,11 @@ Locutus::Locutus(Database *database) : database(database) {
 	output_dir = database->loadSettingString(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
 	if (output_dir.size() <= 0 || output_dir[output_dir.size() - 1] != '/')
 		output_dir.push_back('/');
+
+	total_files = 0;
 }
 
 Locutus::~Locutus() {
-	clearFiles();
 	delete audioscrobbler;
 	//delete puidgen;
 	delete matcher;
@@ -76,14 +77,13 @@ long Locutus::run() {
 	Debug::info() << "Scanning input directory" << endl;
 	scanFiles(input_dir);
 	/* match files */
-	int group_counter = 0;
-	for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end(); ++gf) {
-		/* update progress */
-		database->updateProgress((double) group_counter++ / (double) grouped_files.size());
+	int file_counter = 0;
+	for (map<string, int>::iterator g = groups.begin(); g != groups.end(); ++g) {
 		/* match files in group */
-		matcher->match(gf->second);
+		vector<Metafile *> files = database->loadGroup(g->first);
+		matcher->match(files);
 		/* save files with new metadata */
-		for (vector<Metafile *>::iterator f = gf->second.begin(); f != gf->second.end(); ++f) {
+		for (vector<Metafile *>::const_iterator f = files.begin(); f != files.end(); ++f) {
 			if (!(*f)->metadata_updated) {
 				/* file not updated, leave it be */
 				continue;
@@ -98,7 +98,12 @@ long Locutus::run() {
 				saveFile(*f);
 			}
 		}
+		/* update progress */
+		file_counter += g->second;
+		database->updateProgress((double) file_counter / (double) total_files);
 	}
+	/* just in case files disappeared from the database while we were working */
+	database->updateProgress(1.0);
 	/* submit new puids? */
 	// TODO?
 	/* return */
@@ -106,14 +111,6 @@ long Locutus::run() {
 }
 
 /* private methods */
-void Locutus::clearFiles() {
-	for (map<string, vector<Metafile *> >::iterator group = grouped_files.begin(); group != grouped_files.end(); ++group) {
-		for (vector<Metafile *>::iterator file = group->second.begin(); file != group->second.end(); ++file)
-			delete (*file);
-	}
-	grouped_files.clear();
-}
-
 string Locutus::findDuplicateFilename(Metafile *file) {
 	/* find a name for a duplicate */
 	string tmp_filename = input_dir;
@@ -221,8 +218,13 @@ bool Locutus::parseFile() {
 			return false;
 		}
 	}
-	mf->meta_lookup = true;
-	grouped_files[mf->getGroup()].push_back(mf);
+	map<string, int>::iterator g = groups.find(mf->getGroup());
+	if (g == groups.end())
+		groups[mf->getGroup()] = 1;
+	else
+		++(g->second);
+	++total_files;
+	delete mf;
 	return true;
 }
 
@@ -288,17 +290,6 @@ void Locutus::saveFile(Metafile *file) {
 		(*f)->force_save = false;
 		/* update database for the existing file */
 		database->saveMetafile(**f, tmp_old_filename);
-		/* find and update the file in grouped_files */
-		bool stop = false;
-		for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end() && !stop; ++gf) {
-			for (vector<Metafile *>::iterator f2 = gf->second.begin(); f2 != gf->second.end(); ++f2) {
-				if ((*f2)->filename != (*f)->filename)
-					continue;
-				(*f2)->filename = new_filename;
-				stop = true;
-				break;
-			}
-		}
 	}
 	Debug::info() << "Moving " << file->filename << " to " << filename << endl;
 	/* save metadata */
