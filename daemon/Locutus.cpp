@@ -118,7 +118,7 @@ string Locutus::findDuplicateFilename(Metafile *file) {
 	/* find a name for a duplicate */
 	string tmp_filename = input_dir;
 	tmp_filename.append("duplicates/");
-	string tmp_gen_filename = filenamer->getFilename(file);
+	string tmp_gen_filename = filenamer->getFilename(*file);
 	string::size_type pos = tmp_gen_filename.find_last_of('.');
 	string tmp_extension = (pos == string::npos) ? "" : tmp_gen_filename.substr(pos);
 	tmp_filename.append(tmp_gen_filename.substr(0, pos));
@@ -240,7 +240,7 @@ void Locutus::saveFile(Metafile *file) {
 	file->matched = true;
 	/* create new filename */
 	string filename = output_dir;
-	filename.append(filenamer->getFilename(file));
+	filename.append(filenamer->getFilename(*file));
 	/* check if file (possibly with different extension) already exist */
 	string filename_without_extension = filename.substr(0, filename.find_last_of('.'));
 	vector<Metafile> files = database->loadMetafiles(filename_without_extension);

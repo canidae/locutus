@@ -65,14 +65,14 @@ FileNamer::~FileNamer() {
 }
 
 /* methods */
-const string &FileNamer::getFilename(Metafile *file) {
+const string &FileNamer::getFilename(const Metafile &file) {
 	filename.clear();
 	for (vector<Field>::const_iterator f = fields.begin(); f != fields.end(); ++f)
 		filename.append(parseField(file, f));
 	/* append extension */
-	string::size_type dotpos = file->filename.find_last_of('.');
+	string::size_type dotpos = file.filename.find_last_of('.');
 	if (dotpos != string::npos)
-		filename.append(file->filename.substr(dotpos));
+		filename.append(file.filename.substr(dotpos));
 	return filename;
 }
 
@@ -115,7 +115,7 @@ string FileNamer::convertWideToUnicode(const wstring &text) {
 	return string(dest, (sizeof (dest) - dest_size));
 }
 
-const std::string FileNamer::parseField(Metafile *file, const vector<Field>::const_iterator field) {
+const std::string FileNamer::parseField(const Metafile &file, const vector<Field>::const_iterator field) {
 	string tmp_field("");
 	switch (field->type) {
 		/* static */
@@ -126,72 +126,72 @@ const std::string FileNamer::parseField(Metafile *file, const vector<Field>::con
 
 		/* variables */
 		case TYPE_ALBUM:
-			tmp_field = file->album;
+			tmp_field = file.album;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_ALBUMARTIST:
-			tmp_field = file->albumartist;
+			tmp_field = file.albumartist;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_ALBUMARTISTSORT:
-			tmp_field = file->albumartistsort;
+			tmp_field = file.albumartistsort;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_ARTIST:
-			tmp_field = file->artist;
+			tmp_field = file.artist;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_ARTISTSORT:
-			tmp_field = file->artistsort;
+			tmp_field = file.artistsort;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICBRAINZ_ALBUMARTISTID:
-			tmp_field = file->musicbrainz_albumartistid;
+			tmp_field = file.musicbrainz_albumartistid;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICBRAINZ_ALBUMID:
-			tmp_field = file->musicbrainz_albumid;
+			tmp_field = file.musicbrainz_albumid;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICBRAINZ_ARTISTID:
-			tmp_field = file->musicbrainz_artistid;
+			tmp_field = file.musicbrainz_artistid;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICBRAINZ_TRACKID:
-			tmp_field = file->musicbrainz_trackid;
+			tmp_field = file.musicbrainz_trackid;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_MUSICIP_PUID:
-			tmp_field = file->puid;
+			tmp_field = file.puid;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_TITLE:
-			tmp_field = file->title;
+			tmp_field = file.title;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_TRACKNUMBER:
-			tmp_field = file->tracknumber;
+			tmp_field = file.tracknumber;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_DATE:
-			tmp_field = file->released;
+			tmp_field = file.released;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
 		case TYPE_GENRE:
-			tmp_field = file->genre;
+			tmp_field = file.genre;
 			convertIllegalCharacters(&tmp_field);
 			break;
 
