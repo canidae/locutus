@@ -278,22 +278,22 @@ bool Metafile::saveMetadata() {
 	return ok;
 }
 
-bool Metafile::setMetadata(const Track *track) {
-	album = track->album->title;
-	albumartist = track->album->artist->name;
-	albumartistsort = track->album->artist->sortname;
-	artist = track->artist->name;
-	artistsort = track->artist->sortname;
-	musicbrainz_albumartistid = track->album->artist->mbid;
-	musicbrainz_albumid = track->album->mbid;
-	musicbrainz_artistid = track->artist->mbid;
-	musicbrainz_trackid = track->mbid;
-	title = track->title;
+bool Metafile::setMetadata(const Track &track) {
+	album = track.album->title;
+	albumartist = track.album->artist->name;
+	albumartistsort = track.album->artist->sortname;
+	artist = track.artist->name;
+	artistsort = track.artist->sortname;
+	musicbrainz_albumartistid = track.album->artist->mbid;
+	musicbrainz_albumid = track.album->mbid;
+	musicbrainz_artistid = track.artist->mbid;
+	musicbrainz_trackid = track.mbid;
+	title = track.title;
 	ostringstream tracknum;
-	tracknum << track->tracknumber;
+	tracknum << track.tracknumber;
 	tracknumber = tracknum.str();
-	released = track->album->released;
-	//puid = track->puid;
+	released = track.album->released;
+	//puid = track.puid;
 	metadata_updated = true;
 	return true;
 }
@@ -409,6 +409,8 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 }
 
 void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
+	if (tag == NULL)
+		return;
 	const Ogg::FieldListMap map = tag->fieldListMap();
 	if (!map[ALBUM].isEmpty())
 		album = map[ALBUM].front().to8Bit(true);
@@ -441,6 +443,8 @@ void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 }
 
 void Metafile::saveAPETag(APE::Tag *tag) {
+	if (tag == NULL)
+		return;
 	tag->addValue(APEALBUM, album, true);
 	tag->addValue(APEALBUMARTIST, albumartist, true);
 	tag->addValue(APEALBUMARTISTSORT, albumartistsort, true);
@@ -458,6 +462,8 @@ void Metafile::saveAPETag(APE::Tag *tag) {
 }
 
 void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
+	if (tag == NULL)
+		return;
 	/* first clear the frames we're gonna use */
 	tag->removeFrames(ByteVector("TCON"));
 	tag->removeFrames(ByteVector("TDRC"));
@@ -520,6 +526,8 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 }
 
 void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
+	if (tag == NULL)
+		return;
 	tag->addField(ALBUM, album, true);
 	tag->addField(ALBUMARTIST, albumartist, true);
 	tag->addField(ALBUMARTISTSORT, albumartistsort, true);

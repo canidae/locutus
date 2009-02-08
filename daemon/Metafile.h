@@ -107,7 +107,7 @@ class Metafile {
 		const std::list<std::string> &getValues(double combine_threshold);
 		bool readFromFile();
 		bool saveMetadata();
-		bool setMetadata(const Track *track);
+		bool setMetadata(const Track &track);
 
 	private:
 		std::list<std::string> values;

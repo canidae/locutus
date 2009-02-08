@@ -277,7 +277,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 						if ((*c)->metafile->force_save && (*c)->mbid_match) {
 							/* user demands that this file is saved, even if it means
 							 * that we won't satisfy the settings */
-							(*c)->metafile->setMetadata((*c)->track);
+							(*c)->metafile->setMetadata(*((*c)->track));
 							/* no "continue" here, or we won't get "complete album" or
 							 * "complete group" which may keep other files from being
 							 * saved */
@@ -325,7 +325,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		return;
 	/* set new metadata */
 	for (map<string, Comparison *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf)
-		sf->second->metafile->setMetadata(sf->second->track);
+		sf->second->metafile->setMetadata(*(sf->second->track));
 }
 
 void Matcher::searchMetadata(const vector<Metafile *> &files) {
