@@ -38,7 +38,7 @@ class Audioscrobbler : public WebService {
 		explicit Audioscrobbler(Database *database);
 		~Audioscrobbler();
 
-		const std::vector<std::string> &getTags(Metafile *metafile);
+		const std::vector<std::string> &getTags(const Metafile &metafile);
 
 	private:
 		Database *database;

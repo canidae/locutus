@@ -229,7 +229,7 @@ bool Locutus::parseFile() {
 void Locutus::saveFile(Metafile *file) {
 	/* genre */
 	if (lookup_genre) {
-		vector<string> tags = audioscrobbler->getTags(file);
+		vector<string> tags = audioscrobbler->getTags(*file);
 		if (tags.size() > 0)
 			file->genre = tags[0];
 		else

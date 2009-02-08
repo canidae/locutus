@@ -34,14 +34,12 @@ Audioscrobbler::~Audioscrobbler() {
 }
 
 /* methods */
-const vector<string> &Audioscrobbler::getTags(Metafile *metafile) {
+const vector<string> &Audioscrobbler::getTags(const Metafile &metafile) {
 	tags.clear();
-	if (metafile == NULL)
-		return tags;
-	string artist = escapeString(metafile->artist);
+	string artist = escapeString(metafile.artist);
 	if (artist == "")
 		return tags;
-	string title = escapeString(metafile->title);
+	string title = escapeString(metafile.title);
 	string url;
 	if (title != "") {
 		url = track_tag_url;
