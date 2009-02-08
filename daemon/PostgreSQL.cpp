@@ -156,7 +156,10 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->matched = getBool(0, 21);
 	/* set file as "checked" so we won't remove it later */
 	query.str("");
-	query << "UPDATE file SET checked = true WHERE filename = '" << escapeString(metafile->filename) << "'";
+	query << "UPDATE file SET checked = true";
+	/* and update groupname in case it's changed */
+	query << ", groupname = '" << escapeString(metafile->getGroup()) << "'";
+	query << " WHERE filename = '" << escapeString(metafile->filename) << "'";
 	doQuery(query.str());
 	return true;
 }
