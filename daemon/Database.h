@@ -32,6 +32,7 @@ class Database {
 		virtual bool clean();
 		virtual bool init();
 		virtual bool loadAlbum(Album *album);
+		virtual std::vector<Metafile> loadGroup(const std::string &group);
 		virtual bool loadMetafile(Metafile *metafile);
 		virtual std::vector<Metafile> loadMetafiles(const std::string &filename_pattern);
 		virtual bool loadSettingBool(const std::string &key, bool default_value, const std::string &description);

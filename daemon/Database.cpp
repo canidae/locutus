@@ -35,6 +35,12 @@ bool Database::loadAlbum(Album *album) {
 	return false;
 }
 
+vector<Metafile> Database::loadGroup(const string &group) {
+	vector<Metafile> files;
+	files.clear();
+	return files;
+}
+
 bool Database::loadMetafile(Metafile *metafile) {
 	return false;
 }

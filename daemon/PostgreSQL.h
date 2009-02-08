@@ -45,6 +45,7 @@ class PostgreSQL : public Database {
 		bool clean();
 		bool init();
 		bool loadAlbum(Album *album);
+		std::vector<Metafile> loadGroup(const std::string &group);
 		bool loadMetafile(Metafile *metafile);
 		std::vector<Metafile> loadMetafiles(const std::string &filename_pattern);
 		bool loadSettingBool(const std::string &key, bool default_value, const std::string &description);

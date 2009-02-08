@@ -166,7 +166,7 @@ CREATE VIEW v_daemon_load_album AS
 --
 
 CREATE VIEW v_daemon_load_metafile AS
-    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.force_save, (f.track_id IS NOT NULL) AS track_id FROM (((((file f LEFT JOIN puid p ON ((p.puid_id = f.puid_id))) LEFT JOIN track t ON ((t.track_id = f.track_id))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
+    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.groupname, f.force_save, (f.track_id IS NOT NULL) AS track_id FROM (((((file f LEFT JOIN puid p ON ((p.puid_id = f.puid_id))) LEFT JOIN track t ON ((t.track_id = f.track_id))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
 
 
 --
@@ -274,69 +274,6 @@ CREATE VIEW v_web_uncompared_list_files AS
 
 
 --
--- Name: difference(text, text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION difference(text, text) RETURNS integer
-    AS '$libdir/fuzzystrmatch', 'difference'
-    LANGUAGE c IMMUTABLE STRICT;
-
-
---
--- Name: dmetaphone(text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION dmetaphone(text) RETURNS text
-    AS '$libdir/fuzzystrmatch', 'dmetaphone'
-    LANGUAGE c IMMUTABLE STRICT;
-
-
---
--- Name: dmetaphone_alt(text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION dmetaphone_alt(text) RETURNS text
-    AS '$libdir/fuzzystrmatch', 'dmetaphone_alt'
-    LANGUAGE c IMMUTABLE STRICT;
-
-
---
--- Name: levenshtein(text, text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION levenshtein(text, text) RETURNS integer
-    AS '$libdir/fuzzystrmatch', 'levenshtein'
-    LANGUAGE c IMMUTABLE STRICT;
-
-
---
--- Name: metaphone(text, integer); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION metaphone(text, integer) RETURNS text
-    AS '$libdir/fuzzystrmatch', 'metaphone'
-    LANGUAGE c IMMUTABLE STRICT;
-
-
---
--- Name: soundex(text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION soundex(text) RETURNS text
-    AS '$libdir/fuzzystrmatch', 'soundex'
-    LANGUAGE c IMMUTABLE STRICT;
-
-
---
--- Name: text_soundex(text); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION text_soundex(text) RETURNS text
-    AS '$libdir/fuzzystrmatch', 'soundex'
-    LANGUAGE c IMMUTABLE STRICT;
-
-
---
 -- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -395,6 +332,7 @@ ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
 --
 
 CREATE SEQUENCE puid_puid_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE

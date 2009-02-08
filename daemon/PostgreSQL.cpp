@@ -118,6 +118,42 @@ bool PostgreSQL::loadAlbum(Album *album) {
 	return true;
 }
 
+vector<Metafile> PostgreSQL::loadGroup(const string &group) {
+	string e_group = escapeString(group);
+	vector<Metafile> files;
+	ostringstream query;
+	query << "SELECT * FROM v_daemon_load_metafile WHERE groupname = '" << e_group << "'";
+	if (!doQuery(query.str()) || getRows() <= 0)
+		return files;
+	for (int r = 0; r < getRows(); ++r) {
+		Metafile metafile(getString(r, 0));
+		metafile.duration = getInt(r, 1);
+		metafile.channels = getInt(r, 2);
+		metafile.bitrate = getInt(r, 3);
+		metafile.samplerate = getInt(r, 4);
+		metafile.puid = getString(r, 5);
+		metafile.album = getString(r, 6);
+		metafile.albumartist = getString(r, 7);
+		metafile.albumartistsort = getString(r, 8);
+		metafile.artist = getString(r, 9);
+		metafile.artistsort = getString(r, 10);
+		metafile.musicbrainz_albumartistid = getString(r, 11);
+		metafile.musicbrainz_albumid = getString(r, 12);
+		metafile.musicbrainz_artistid = getString(r, 13);
+		metafile.musicbrainz_trackid = getString(r, 14);
+		metafile.title = getString(r, 15);
+		metafile.tracknumber = getString(r, 16);
+		metafile.released = getString(r, 17);
+		metafile.genre = getString(r, 18);
+		metafile.pinned = getBool(r, 19);
+		// r, 20 is groupname, we'll let metafile generate that
+		metafile.force_save = getBool(r, 21);
+		metafile.matched = getBool(r, 22);
+		files.push_back(metafile);
+	}
+	return files;
+}
+
 bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	if (metafile == NULL) {
 		Debug::notice() << "Unable to load file from cache. No file given." << endl;
@@ -152,8 +188,9 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->released = getString(0, 17);
 	metafile->genre = getString(0, 18);
 	metafile->pinned = getBool(0, 19);
-	metafile->force_save = getBool(0, 20);
-	metafile->matched = getBool(0, 21);
+	// 0, 20 is groupname, we'll let metafile generate that
+	metafile->force_save = getBool(0, 21);
+	metafile->matched = getBool(0, 22);
 	/* set file as "checked" so we won't remove it later */
 	query.str("");
 	query << "UPDATE file SET checked = true";
@@ -193,8 +230,9 @@ vector<Metafile> PostgreSQL::loadMetafiles(const string &filename_pattern) {
 		metafile.released = getString(r, 17);
 		metafile.genre = getString(r, 18);
 		metafile.pinned = getBool(r, 19);
-		metafile.force_save = getBool(r, 20);
-		metafile.matched = getBool(r, 21);
+		// r, 20 is groupname, we'll let metafile generate that
+		metafile.force_save = getBool(r, 21);
+		metafile.matched = getBool(r, 22);
 		files.push_back(metafile);
 	}
 	return files;
