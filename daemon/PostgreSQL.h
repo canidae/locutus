@@ -45,13 +45,13 @@ class PostgreSQL : public Database {
 		bool clean();
 		bool init();
 		bool loadAlbum(Album *album);
-		std::vector<Metafile> loadGroup(const std::string &group);
+		std::vector<Metafile *> &loadGroup(const std::string &group);
 		bool loadMetafile(Metafile *metafile);
-		std::vector<Metafile> loadMetafiles(const std::string &filename_pattern);
+		std::vector<Metafile *> &loadMetafiles(const std::string &filename_pattern);
 		bool loadSettingBool(const std::string &key, bool default_value, const std::string &description);
 		double loadSettingDouble(const std::string &key, double default_value, const std::string &description);
 		int loadSettingInt(const std::string &key, int default_value, const std::string &description);
-		std::string loadSettingString(const std::string &key, const std::string &default_value, const std::string &description);
+		std::string &loadSettingString(const std::string &key, const std::string &default_value, const std::string &description);
 		bool removeComparisons(const Metafile &metafile);
 		bool saveAlbum(const Album &album);
 		bool saveArtist(const Artist &artist);
@@ -69,8 +69,12 @@ class PostgreSQL : public Database {
 		int album_cache_lifetime;
 		int metatrack_cache_lifetime;
 		int puid_cache_lifetime;
+		std::string setting_string;
+		std::vector<Metafile *> groupfiles;
+		std::vector<Metafile *> metafiles;
 
 		void clear();
+		void deleteFiles(std::vector<Metafile *> *files);
 		bool doQuery(const char *q);
 		std::string escapeString(const std::string &str) const;
 		bool getBool(int row, int col) const;

@@ -243,18 +243,18 @@ void Locutus::saveFile(Metafile *file) {
 	filename.append(filenamer->getFilename(*file));
 	/* check if file (possibly with different extension) already exist */
 	string filename_without_extension = filename.substr(0, filename.find_last_of('.'));
-	vector<Metafile> files = database->loadMetafiles(filename_without_extension);
+	vector<Metafile *> files = database->loadMetafiles(filename_without_extension);
 	unsigned long file_quality = file->bitrate * file->channels * file->samplerate;
-	for (vector<Metafile>::iterator f = files.begin(); f != files.end(); ++f) {
+	for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
 		/* it is possible that loadMetafiles() return other tracks which happen
 		 * to match current filename (we're searching for 'blabla%' which would
 		 * match 'blablabla'), so we need to check that musicbrainz_trackid match */
-		if (file->filename == f->filename)
+		if (file->filename == (*f)->filename)
 			continue; // it's the exact same file
-		if (file->musicbrainz_trackid != f->musicbrainz_trackid)
+		if (file->musicbrainz_trackid != (*f)->musicbrainz_trackid)
 			continue; // FIXME: what if we got 2 "identical" albums? different track-id, same filename
-		unsigned long old_quality = f->bitrate * f->channels * f->samplerate;
-		if ((old_quality >= file_quality && !file->pinned) || f->pinned) {
+		unsigned long old_quality = (*f)->bitrate * (*f)->channels * (*f)->samplerate;
+		if ((old_quality >= file_quality && !file->pinned) || (*f)->pinned) {
 			/* an existing file is better and new file isn't pinned, or old file is pinned.
 			 * move the new file to duplicates and update its metadata */
 			filename = findDuplicateFilename(file);
@@ -264,35 +264,35 @@ void Locutus::saveFile(Metafile *file) {
 		}
 		/* new file is better */
 		/* find a new name for the existing file */
-		string new_filename = findDuplicateFilename(&*f);
-		if (new_filename == f->filename) {
+		string new_filename = findDuplicateFilename(*f);
+		if (new_filename == (*f)->filename) {
 			/* couldn't find a new filename for the existing file.
 			 * we'll set filename to file->filename so we won't move
 			 * the new file, despite it begin better */
 			filename = file->filename;
-			Debug::notice() << "Unable to find a new filename for duplicate file " << f->filename << endl;
+			Debug::notice() << "Unable to find a new filename for duplicate file " << (*f)->filename << endl;
 			break;
 		}
 		/* move the existing file */
-		string tmp_old_filename = f->filename;
-		if (!moveFile(&*f, new_filename)) {
+		string tmp_old_filename = (*f)->filename;
+		if (!moveFile(*f, new_filename)) {
 			/* hmm, couldn't move the existing file.
 			 * then we can't move new file either */
 			filename = file->filename;
-			Debug::notice() << "Unable to move duplicate file " << f->filename << " to " << new_filename << endl;
+			Debug::notice() << "Unable to move duplicate file " << (*f)->filename << " to " << new_filename << endl;
 			break;
 		}
 		/* mark existing file as a duplicate */
-		f->duplicate = true;
+		(*f)->duplicate = true;
 		/* unset force_save */
-		f->force_save = false;
+		(*f)->force_save = false;
 		/* update database for the existing file */
-		database->saveMetafile(*f, tmp_old_filename);
+		database->saveMetafile(**f, tmp_old_filename);
 		/* find and update the file in grouped_files */
 		bool stop = false;
 		for (map<string, vector<Metafile *> >::iterator gf = grouped_files.begin(); gf != grouped_files.end() && !stop; ++gf) {
 			for (vector<Metafile *>::iterator f2 = gf->second.begin(); f2 != gf->second.end(); ++f2) {
-				if ((*f2)->filename != f->filename)
+				if ((*f2)->filename != (*f)->filename)
 					continue;
 				(*f2)->filename = new_filename;
 				stop = true;

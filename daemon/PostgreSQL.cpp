@@ -39,6 +39,8 @@ PostgreSQL::PostgreSQL(const string &host, const string &user, const string &pas
 }
 
 PostgreSQL::~PostgreSQL() {
+	deleteFiles(&groupfiles);
+	deleteFiles(&metafiles);
 	clear();
 	PQfinish(pg_connection);
 }
@@ -118,40 +120,40 @@ bool PostgreSQL::loadAlbum(Album *album) {
 	return true;
 }
 
-vector<Metafile> PostgreSQL::loadGroup(const string &group) {
+vector<Metafile *> &PostgreSQL::loadGroup(const string &group) {
 	string e_group = escapeString(group);
-	vector<Metafile> files;
+	deleteFiles(&groupfiles);
 	ostringstream query;
 	query << "SELECT * FROM v_daemon_load_metafile WHERE groupname = '" << e_group << "'";
 	if (!doQuery(query.str()) || getRows() <= 0)
-		return files;
+		return groupfiles;
 	for (int r = 0; r < getRows(); ++r) {
-		Metafile metafile(getString(r, 0));
-		metafile.duration = getInt(r, 1);
-		metafile.channels = getInt(r, 2);
-		metafile.bitrate = getInt(r, 3);
-		metafile.samplerate = getInt(r, 4);
-		metafile.puid = getString(r, 5);
-		metafile.album = getString(r, 6);
-		metafile.albumartist = getString(r, 7);
-		metafile.albumartistsort = getString(r, 8);
-		metafile.artist = getString(r, 9);
-		metafile.artistsort = getString(r, 10);
-		metafile.musicbrainz_albumartistid = getString(r, 11);
-		metafile.musicbrainz_albumid = getString(r, 12);
-		metafile.musicbrainz_artistid = getString(r, 13);
-		metafile.musicbrainz_trackid = getString(r, 14);
-		metafile.title = getString(r, 15);
-		metafile.tracknumber = getString(r, 16);
-		metafile.released = getString(r, 17);
-		metafile.genre = getString(r, 18);
-		metafile.pinned = getBool(r, 19);
+		Metafile *metafile = new Metafile(getString(r, 0));
+		metafile->duration = getInt(r, 1);
+		metafile->channels = getInt(r, 2);
+		metafile->bitrate = getInt(r, 3);
+		metafile->samplerate = getInt(r, 4);
+		metafile->puid = getString(r, 5);
+		metafile->album = getString(r, 6);
+		metafile->albumartist = getString(r, 7);
+		metafile->albumartistsort = getString(r, 8);
+		metafile->artist = getString(r, 9);
+		metafile->artistsort = getString(r, 10);
+		metafile->musicbrainz_albumartistid = getString(r, 11);
+		metafile->musicbrainz_albumid = getString(r, 12);
+		metafile->musicbrainz_artistid = getString(r, 13);
+		metafile->musicbrainz_trackid = getString(r, 14);
+		metafile->title = getString(r, 15);
+		metafile->tracknumber = getString(r, 16);
+		metafile->released = getString(r, 17);
+		metafile->genre = getString(r, 18);
+		metafile->pinned = getBool(r, 19);
 		// r, 20 is groupname, we'll let metafile generate that
-		metafile.force_save = getBool(r, 21);
-		metafile.matched = getBool(r, 22);
-		files.push_back(metafile);
+		metafile->force_save = getBool(r, 21);
+		metafile->matched = getBool(r, 22);
+		groupfiles.push_back(metafile);
 	}
-	return files;
+	return groupfiles;
 }
 
 bool PostgreSQL::loadMetafile(Metafile *metafile) {
@@ -201,41 +203,40 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	return true;
 }
 
-vector<Metafile> PostgreSQL::loadMetafiles(const string &filename_pattern) {
+vector<Metafile *> &PostgreSQL::loadMetafiles(const string &filename_pattern) {
 	string e_filename_pattern = escapeString(filename_pattern);
-	vector<Metafile> files;
-	files.clear();
+	deleteFiles(&metafiles);
 	ostringstream query;
 	query << "SELECT * FROM v_daemon_load_metafile WHERE filename LIKE '" << e_filename_pattern << "%'";
 	if (!doQuery(query.str()) || getRows() <= 0)
-		return files;
+		return metafiles;
 	for (int r = 0; r < getRows(); ++r) {
-		Metafile metafile(getString(r, 0));
-		metafile.duration = getInt(r, 1);
-		metafile.channels = getInt(r, 2);
-		metafile.bitrate = getInt(r, 3);
-		metafile.samplerate = getInt(r, 4);
-		metafile.puid = getString(r, 5);
-		metafile.album = getString(r, 6);
-		metafile.albumartist = getString(r, 7);
-		metafile.albumartistsort = getString(r, 8);
-		metafile.artist = getString(r, 9);
-		metafile.artistsort = getString(r, 10);
-		metafile.musicbrainz_albumartistid = getString(r, 11);
-		metafile.musicbrainz_albumid = getString(r, 12);
-		metafile.musicbrainz_artistid = getString(r, 13);
-		metafile.musicbrainz_trackid = getString(r, 14);
-		metafile.title = getString(r, 15);
-		metafile.tracknumber = getString(r, 16);
-		metafile.released = getString(r, 17);
-		metafile.genre = getString(r, 18);
-		metafile.pinned = getBool(r, 19);
+		Metafile *metafile = new Metafile(getString(r, 0));
+		metafile->duration = getInt(r, 1);
+		metafile->channels = getInt(r, 2);
+		metafile->bitrate = getInt(r, 3);
+		metafile->samplerate = getInt(r, 4);
+		metafile->puid = getString(r, 5);
+		metafile->album = getString(r, 6);
+		metafile->albumartist = getString(r, 7);
+		metafile->albumartistsort = getString(r, 8);
+		metafile->artist = getString(r, 9);
+		metafile->artistsort = getString(r, 10);
+		metafile->musicbrainz_albumartistid = getString(r, 11);
+		metafile->musicbrainz_albumid = getString(r, 12);
+		metafile->musicbrainz_artistid = getString(r, 13);
+		metafile->musicbrainz_trackid = getString(r, 14);
+		metafile->title = getString(r, 15);
+		metafile->tracknumber = getString(r, 16);
+		metafile->released = getString(r, 17);
+		metafile->genre = getString(r, 18);
+		metafile->pinned = getBool(r, 19);
 		// r, 20 is groupname, we'll let metafile generate that
-		metafile.force_save = getBool(r, 21);
-		metafile.matched = getBool(r, 22);
-		files.push_back(metafile);
+		metafile->force_save = getBool(r, 21);
+		metafile->matched = getBool(r, 22);
+		metafiles.push_back(metafile);
 	}
-	return files;
+	return metafiles;
 }
 
 bool PostgreSQL::loadSettingBool(const string &key, bool default_value, const string &description) {
@@ -255,21 +256,21 @@ int PostgreSQL::loadSettingInt(const string &key, int default_value, const strin
 	return atoi(loadSettingString(key, def_val.str(), description).c_str());
 }
 
-string PostgreSQL::loadSettingString(const string &key, const string &default_value, const string &description) {
+string &PostgreSQL::loadSettingString(const string &key, const string &default_value, const string &description) {
 	string e_key = escapeString(key);
-	string back = default_value;
+	setting_string = default_value;
 	ostringstream query;
 	query << "SELECT value, (default_value = value) FROM setting WHERE key = '" << e_key << "'";
 	if (!doQuery(query.str()))
-		return back;
+		return setting_string;
 	string e_value = escapeString(default_value);
 	string e_description = escapeString(description);
 	if (getRows() > 0) {
-		back = getString(0, 0);
-		if (getBool(0, 1) && back != default_value) {
+		setting_string = getString(0, 0);
+		if (getBool(0, 1) && setting_string != default_value) {
 			/* user has not changed value and default value has changed.
 			 * update database */
-			back = default_value;
+			setting_string = default_value;
 			query.str("");
 			query << "UPDATE setting SET";
 			query << " default_value = '" << e_value << "'";
@@ -277,7 +278,7 @@ string PostgreSQL::loadSettingString(const string &key, const string &default_va
 			query << ", description = '" << e_description << "'";
 			query << " WHERE key = '" << e_key << "'";
 			if (!doQuery(query.str()))
-				return back;
+				return setting_string;
 		}
 	} else {
 		/* this key is missing, add it */
@@ -288,9 +289,9 @@ string PostgreSQL::loadSettingString(const string &key, const string &default_va
 		query << ", '" << e_value << "'";
 		query << ", '" << e_description << "')";  
 		if (!doQuery(query.str()))
-			return back;                                                                                                                   
+			return setting_string;                                                                                                                   
 	}                                                                                                                                              
-	return back;
+	return setting_string;
 }
 
 bool PostgreSQL::removeComparisons(const Metafile &metafile) {
@@ -595,6 +596,12 @@ void PostgreSQL::clear() {
 	if (got_result)
 		PQclear(pg_result);
 	got_result = false;
+}
+
+void PostgreSQL::deleteFiles(vector<Metafile *> *files) {
+	for (vector<Metafile *>::iterator f = files->begin(); f != files->end(); ++f)
+		delete (*f);
+	files->clear();
 }
 
 bool PostgreSQL::doQuery(const char *q) {
