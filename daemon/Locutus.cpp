@@ -253,8 +253,6 @@ void Locutus::saveFile(Metafile *file) {
 		 * match 'blablabla'), so we need to check that musicbrainz_trackid match */
 		if (file->filename == (*f)->filename)
 			continue; // it's the exact same file
-		if (file->musicbrainz_trackid != (*f)->musicbrainz_trackid)
-			continue; // FIXME: what if we got 2 "identical" albums? different track-id, same filename
 		unsigned long old_quality = (*f)->bitrate * (*f)->channels * (*f)->samplerate;
 		if ((old_quality >= file_quality && !file->pinned) || (*f)->pinned) {
 			/* an existing file is better and new file isn't pinned, or old file is pinned.
