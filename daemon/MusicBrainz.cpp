@@ -25,6 +25,8 @@ MusicBrainz::MusicBrainz(Database *database) : database(database) {
 	metadata_search_url = database->loadSettingString(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = database->loadSettingString(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
 	query_interval = database->loadSettingDouble(MUSICBRAINZ_QUERY_INTERVAL_KEY, MUSICBRAINZ_QUERY_INTERVAL_VALUE, MUSICBRAINZ_QUERY_INTERVAL_DESCRIPTION);
+	if (query_interval <= 0.0)
+		query_interval = 1.0;
 	query_interval *= 1000000.0;
 	last_fetch.tv_sec = 0;
 	last_fetch.tv_usec = 0;

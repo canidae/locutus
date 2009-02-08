@@ -26,21 +26,53 @@ using namespace std;
 /* constructors/destructor */
 Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(database), musicbrainz(musicbrainz) {
 	album_weight = database->loadSettingDouble(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
+	if (album_weight < 0.0)
+		album_weight = 0.0;
 	artist_weight = database->loadSettingDouble(ARTIST_WEIGHT_KEY, ARTIST_WEIGHT_VALUE, ARTIST_WEIGHT_DESCRIPTION);
+	if (artist_weight < 0.0)
+		artist_weight = 0.0;
 	combine_threshold = database->loadSettingDouble(COMBINE_THRESHOLD_KEY, COMBINE_THRESHOLD_VALUE, COMBINE_THRESHOLD_DESCRIPTION);
+	if (combine_threshold < 0.0)
+		combine_threshold = 0.0;
+	else if (combine_threshold > 1.0)
+		combine_threshold = 1.0;
 	duration_limit = database->loadSettingDouble(DURATION_LIMIT_KEY, DURATION_LIMIT_VALUE, DURATION_LIMIT_DESCRIPTION);
+	if (duration_limit < 0.0)
+		duration_limit = 0.0;
 	duration_must_match = database->loadSettingBool(DURATION_MUST_MATCH_KEY, DURATION_MUST_MATCH_VALUE, DURATION_MUST_MATCH_DESCRIPTION);
 	duration_weight = database->loadSettingDouble(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
+	if (duration_weight < 0.0)
+		duration_weight = 0.0;
 	mbid_lookup = database->loadSettingBool(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION);
 	max_diff_best_score = database->loadSettingDouble(MAX_DIFF_BEST_SCORE_KEY, MAX_DIFF_BEST_SCORE_VALUE, MAX_DIFF_BEST_SCORE_DESCRIPTION);
+	if (max_diff_best_score < 0.0)
+		max_diff_best_score = 0.0;
+	else if (max_diff_best_score > 1.0)
+		max_diff_best_score = 1.0;
 	metadata_min_score = database->loadSettingDouble(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
+	if (metadata_min_score < 0.0)
+		metadata_min_score = 0.0;
+	else if (metadata_min_score > 1.0)
+		metadata_min_score = 1.0;
 	allow_group_duplicates = database->loadSettingBool(ALLOW_GROUP_DUPLICATES_KEY, ALLOW_GROUP_DUPLICATES_VALUE, ALLOW_GROUP_DUPLICATES_DESCRIPTION);
 	only_save_complete_albums = database->loadSettingBool(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION);
 	only_save_if_all_match = database->loadSettingBool(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
 	puid_lookup = database->loadSettingBool(PUID_LOOKUP_KEY, PUID_LOOKUP_VALUE, PUID_LOOKUP_DESCRIPTION);
 	puid_min_score = database->loadSettingDouble(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
+	if (puid_min_score < 0.0)
+		puid_min_score = 0.0;
+	else if (puid_min_score > 1.0)
+		puid_min_score = 1.0;
 	title_weight = database->loadSettingDouble(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
+	if (title_weight < 0.0)
+		title_weight = 0.0;
+	else if (title_weight > 1.0)
+		title_weight = 1.0;
 	tracknumber_weight = database->loadSettingDouble(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
+	if (tracknumber_weight < 0.0)
+		tracknumber_weight = 0.0;
+	else if (tracknumber_weight > 1.0)
+		tracknumber_weight = 1.0;
 
 	/* if a metadata match score is less than half the metadata_min_score then we won't save the match */
 	mismatch_threshold = metadata_min_score / 2.0;

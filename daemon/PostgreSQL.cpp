@@ -59,8 +59,14 @@ bool PostgreSQL::init() {
 	 * but the other classes will be freed and reloaded for each "run".
 	 * this means we'll have to load the settings here */
 	album_cache_lifetime = loadSettingInt(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
+	if (album_cache_lifetime <= 0)
+		album_cache_lifetime = 1;
 	metatrack_cache_lifetime = loadSettingInt(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
+	if (metatrack_cache_lifetime <= 0)
+		metatrack_cache_lifetime = 1;
 	puid_cache_lifetime = loadSettingInt(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
+	if (puid_cache_lifetime <= 0)
+		puid_cache_lifetime = 1;
 
 	/* we'll also mark files as not "checked", they will be marked as
 	 * "checked" when we load them. basically this just means that the
