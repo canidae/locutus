@@ -62,7 +62,13 @@ string Metafile::getGroup() const {
 		if (pos != string::npos && pos > 0)
 			group << filename.substr(0, pos);
 	}
-	return group.str();
+	/* lowercase groupname */
+	string groupname = group.str();
+	for (string::size_type a = 0; a < groupname.size(); ++a) {
+		if (groupname[a] >= 'A' && groupname[a] <= 'Z')
+			groupname[a] += 32;
+	}
+	return groupname;
 }
 
 const list<string> &Metafile::getValues(double combine_threshold) {
