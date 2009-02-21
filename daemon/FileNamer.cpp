@@ -69,10 +69,6 @@ const string &FileNamer::getFilename(const Metafile &file) {
 	filename.clear();
 	for (vector<Field>::const_iterator f = fields.begin(); f != fields.end(); ++f)
 		filename.append(parseField(file, f));
-	/* append extension */
-	string::size_type dotpos = file.filename.find_last_of('.');
-	if (dotpos != string::npos)
-		filename.append(file.filename.substr(dotpos));
 	return filename;
 }
 
@@ -117,6 +113,7 @@ string FileNamer::convertWideToUnicode(const wstring &text) {
 
 const std::string FileNamer::parseField(const Metafile &file, const vector<Field>::const_iterator field) {
 	string tmp_field("");
+	string::size_type pos;
 	switch (field->type) {
 		/* static */
 		case TYPE_STATIC:
@@ -377,6 +374,76 @@ const std::string FileNamer::parseField(const Metafile &file, const vector<Field
 			}
 			break;
 
+		case TYPE_BYTES_LEFT:
+			/* return first n bytes, without messing up characters */
+			if (field->fields.size() >= 3) {
+				string tmp("");
+				vector<Field>::const_iterator f;
+				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER) {
+						++f;
+						break;
+					}
+					tmp.append(parseField(file, f));
+				}
+				if (f != field->fields.end()) {
+					int chars = atoi(parseField(file, f).c_str());
+					if (chars < 0)
+						chars = 0;
+					wstring tmp2 = convertUnicodeToWide(tmp);
+					if (chars < (int) tmp2.size())
+						tmp2.erase(chars);
+					tmp_field = convertWideToUnicode(tmp2);
+					/* erase last character until size is less than our limit */
+					Debug::info() << "tmp_field.size(): " << tmp_field.size() << endl;
+					while ((int) tmp_field.size() > chars) {
+						Debug::info() << "tmp_field.size(): " << tmp_field.size() << endl;
+						wstring tmp2 = convertUnicodeToWide(tmp_field);
+						tmp2.erase(tmp2.size() - 1);
+						tmp_field = convertWideToUnicode(tmp2);
+					}
+				}
+			}
+			break;
+
+		case TYPE_BYTES_RIGHT:
+			/* return last n bytes, without messing up characters */
+			if (field->fields.size() >= 3) {
+				string tmp("");
+				vector<Field>::const_iterator f;
+				for (f = field->fields.begin(); f != field->fields.end(); ++f) {
+					if (f->type == TYPE_DELIMITER) {
+						++f;
+						break;
+					}
+					tmp.append(parseField(file, f));
+				}
+				if (f != field->fields.end()) {
+					int chars = atoi(parseField(file, f).c_str());
+					wstring tmp2 = convertUnicodeToWide(tmp);
+					int erase = tmp2.size() - chars;
+					if (erase > 0)
+						tmp2.erase(0, erase);
+					tmp_field = convertWideToUnicode(tmp2);
+					/* erase first character until size is less than our limit */
+					while ((int) tmp_field.size() > chars) {
+						wstring tmp2 = convertUnicodeToWide(tmp_field);
+						tmp2.erase(0, 1);
+						tmp_field = convertWideToUnicode(tmp2);
+					}
+				}
+			}
+			break;
+
+		case TYPE_EXTENSION:
+			/* filename extension */
+			pos = file.filename.find_last_of('.');
+			if (pos != string::npos)
+				tmp_field = file.filename.substr(pos + 1);
+			else
+				tmp_field = "";
+			break;
+
 		/* error */
 		default:
 			Debug::warning() << "Field not implemented. Type: " << field->type << ", data: " << field->data << ", fields: " << field->fields.size() << endl;
@@ -458,6 +525,8 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 				type = TYPE_TITLE;
 			else if (file_format.find("%date%", pos) == pos)
 				type = TYPE_DATE;
+			else if (file_format.find("%ext%", pos) == pos)
+				type = TYPE_EXTENSION;
 			else
 				continue; // not matching any variable, must be static entry
 			/* set pos to end '%' */
@@ -473,7 +542,11 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 		} else if (file_format[pos] == '$') {
 			/* function */
 			int type;
-			if (file_format.find("$coalesce(", pos) == pos)
+			if (file_format.find("$bytes_right(", pos) == pos)
+				type = TYPE_BYTES_RIGHT;
+			else if (file_format.find("$bytes_left(", pos) == pos)
+				type = TYPE_BYTES_LEFT;
+			else if (file_format.find("$coalesce(", pos) == pos)
 				type = TYPE_COALESCE;
 			else if (file_format.find("$lower(", pos) == pos)
 				type = TYPE_LOWER;

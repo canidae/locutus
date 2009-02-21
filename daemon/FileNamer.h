@@ -50,6 +50,9 @@
 #define TYPE_RIGHT 106
 #define TYPE_NUM 107
 #define TYPE_EQ 108
+#define TYPE_BYTES_LEFT 109
+#define TYPE_BYTES_RIGHT 110
+#define TYPE_EXTENSION 111
 
 #include <iconv.h>
 #include <string>
