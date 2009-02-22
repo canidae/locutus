@@ -76,6 +76,8 @@ long Locutus::run() {
 	/* parse unsorted directory */
 	Debug::info() << "Scanning input directory" << endl;
 	scanFiles(input_dir);
+	/* remove files that don't exist from database */
+	database->removeGoneFiles();
 	/* match files */
 	int file_counter = 0;
 	for (map<string, int>::iterator g = groups.begin(); g != groups.end(); ++g) {
@@ -342,7 +344,6 @@ int main() {
 		Debug::info() << "Checking files..." << endl;
 		long sleeptime = locutus->run();
 		Debug::info() << "Finished checking files" << endl;
-		database->clean();
 		database->stop();
 		delete locutus;
 

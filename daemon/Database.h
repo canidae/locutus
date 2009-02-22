@@ -29,7 +29,6 @@ class Database {
 		Database();
 		virtual ~Database();
 
-		virtual bool clean() = 0;
 		virtual bool init() = 0;
 		virtual bool loadAlbum(Album *album) = 0;
 		virtual const std::vector<Metafile *> &loadGroup(const std::string &group) = 0;
@@ -40,6 +39,7 @@ class Database {
 		virtual int loadSettingInt(const std::string &key, int default_value, const std::string &description) = 0;
 		virtual const std::string &loadSettingString(const std::string &key, const std::string &default_value, const std::string &description) = 0;
 		virtual bool removeComparisons(const Metafile &metafile) = 0;
+		virtual bool removeGoneFiles() = 0;
 		virtual bool saveAlbum(const Album &album) = 0;
 		virtual bool saveArtist(const Artist &artist) = 0;
 		virtual bool saveComparison(const Comparison &comparison) = 0;

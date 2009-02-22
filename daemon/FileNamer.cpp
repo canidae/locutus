@@ -395,9 +395,7 @@ const std::string FileNamer::parseField(const Metafile &file, const vector<Field
 						tmp2.erase(chars);
 					tmp_field = convertWideToUnicode(tmp2);
 					/* erase last character until size is less than our limit */
-					Debug::info() << "tmp_field.size(): " << tmp_field.size() << endl;
 					while ((int) tmp_field.size() > chars) {
-						Debug::info() << "tmp_field.size(): " << tmp_field.size() << endl;
 						wstring tmp2 = convertUnicodeToWide(tmp_field);
 						tmp2.erase(tmp2.size() - 1);
 						tmp_field = convertWideToUnicode(tmp2);

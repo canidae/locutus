@@ -42,7 +42,6 @@ class PostgreSQL : public Database {
 		PostgreSQL(const std::string &host, const std::string &user, const std::string &pass, const std::string &name);
 		~PostgreSQL();
 
-		bool clean();
 		bool init();
 		bool loadAlbum(Album *album);
 		std::vector<Metafile *> &loadGroup(const std::string &group);
@@ -53,6 +52,7 @@ class PostgreSQL : public Database {
 		int loadSettingInt(const std::string &key, int default_value, const std::string &description);
 		std::string &loadSettingString(const std::string &key, const std::string &default_value, const std::string &description);
 		bool removeComparisons(const Metafile &metafile);
+		bool removeGoneFiles();
 		bool saveAlbum(const Album &album);
 		bool saveArtist(const Artist &artist);
 		bool saveComparison(const Comparison &comparison);

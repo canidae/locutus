@@ -46,14 +46,6 @@ PostgreSQL::~PostgreSQL() {
 }
 
 /* methods */
-bool PostgreSQL::clean() {
-	/* remove unchecked files */
-	ostringstream query;
-	query << "DELETE FROM file WHERE checked = false";
-	doQuery(query.str());
-	return true;
-}
-
 bool PostgreSQL::init() {
 	/* we're gonna keep the database connection while locutus is running,
 	 * but the other classes will be freed and reloaded for each "run".
@@ -305,6 +297,14 @@ bool PostgreSQL::removeComparisons(const Metafile &metafile) {
 	query << "DELETE FROM comparison WHERE file_id = (SELECT file_id FROM file WHERE filename = '";
 	query << escapeString(metafile.filename) << "')";
 	return doQuery(query.str());
+}
+
+bool PostgreSQL::removeGoneFiles() {
+	/* remove unchecked files */
+	ostringstream query;
+	query << "DELETE FROM file WHERE checked = false";
+	doQuery(query.str());
+	return true;
 }
 
 bool PostgreSQL::saveAlbum(const Album &album) {
