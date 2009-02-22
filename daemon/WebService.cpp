@@ -78,7 +78,7 @@ void WebService::close() {
 	URLStream::close();
 }
 
-void WebService::endElement(const unsigned char *name) {
+void WebService::endElement(const unsigned char *) {
 	if (curnode != NULL)
 		curnode = curnode->parent;
 }

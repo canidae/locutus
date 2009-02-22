@@ -42,7 +42,7 @@ class WebService : public ost::URLStream, public ost::XMLStream {
 		void characters(const unsigned char *text, size_t len);
 		void clearXMLNode(XMLNode *node);
 		void close();
-		void endElement(const unsigned char *name);
+		void endElement(const unsigned char *);
 		void printXML(XMLNode *startnode, int indent) const;
 		int read(unsigned char *buffer, size_t len);
 		void startElement(const unsigned char *name, const unsigned char **attr);

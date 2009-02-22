@@ -468,7 +468,7 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 		if (!split_on_comma && file_format[pos] == ',')
 			continue; // not using ',' as delimiter
 		int backslashes = 0;
-		for (string::size_type a = pos - 1; a >= 0; --a) {
+		for (string::size_type a = pos - 1; a < file_format.size(); --a) {
 			if (file_format[a] != '\\')
 				break;
 			++backslashes;
@@ -567,7 +567,7 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 			int parentheses_open = 0;
 			while ((end = file_format.find_first_of("()", end + 1)) != string::npos && end < stop) {
 				int backslashes = 0;
-				for (string::size_type a = end - 1; a >= 0; --a) {
+				for (string::size_type a = end - 1; a < file_format.size(); --a) {
 					if (file_format[a] != '\\')
 						break;
 					++backslashes;
