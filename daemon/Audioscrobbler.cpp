@@ -65,14 +65,11 @@ const vector<string> &Audioscrobbler::getTags(const Metafile &metafile) {
 string Audioscrobbler::escapeString(const string &text) {
 	/* escape certain characters that mess up the url:
 	 * "$": %24
-	 * "&": %26
 	 * "+": %2b
 	 * ",": %2c
 	 * "/": %2f
 	 * ":": %3a
-	 * ";": %3b
 	 * "=": %3d
-	 * "?": %3f
 	 * "@": %40 */
 	ostringstream str;
 	for (string::size_type a = 0; a < text.size(); ++a) {
@@ -80,10 +77,6 @@ string Audioscrobbler::escapeString(const string &text) {
 		switch (c) {
 			case '$':
 				str << "%24";
-				break;
-
-			case '&':
-				str << "%26";
 				break;
 
 			case '+':
@@ -102,21 +95,19 @@ string Audioscrobbler::escapeString(const string &text) {
 				str << "%3a";
 				break;
 
-			case ';':
-				str << "%3b";
-				break;
-
 			case '=':
 				str << "%3d";
-				break;
-
-			case '?':
-				str << "%3f";
 				break;
 
 			case '@':
 				str << "%40";
 				break;
+
+			case '?':
+			case ';':
+			case '&':
+			case '#':
+				str << ' ';
 
 			default:
 				str << c;

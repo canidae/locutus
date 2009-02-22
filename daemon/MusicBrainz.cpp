@@ -129,18 +129,15 @@ const vector<Metatrack> &MusicBrainz::searchPUID(const string &puid) {
 /* private methods */
 string MusicBrainz::escapeString(const string &text) {
 	/* escape these characters:
-	 * + - && || ! ( ) { } [ ] ^ " ~ * ? : \ */
-	/* also change "_" to " " */
+	 * + - || ! ( ) { } [ ] ^ " ~ * : \ */
+	/* also change "_", "?", ";", "&" and "#" to " " */
 	/* remember these suckers too:
 	 * "$": %24
-         * "&": %26
          * "+": %2b
          * ",": %2c
          * "/": %2f
          * ":": %3a
-         * ";": %3b
          * "=": %3d
-         * "?": %3f
          * "@": %40 */
 
 	ostringstream str;
@@ -149,13 +146,6 @@ string MusicBrainz::escapeString(const string &text) {
 		switch (c) {
 			case '$':
 				str << "%24";
-				break;
-
-			case '&':
-				if (a + 1 < text.size() && text[a + 1] == c)
-					str << "\\%26";
-				else
-					str << "%26";
 				break;
 
 			case '+':
@@ -174,16 +164,8 @@ string MusicBrainz::escapeString(const string &text) {
 				str << "\\%3a";
 				break;
 
-			case ';':
-				str << "%3b";
-				break;
-
 			case '=':
 				str << "%3d";
-				break;
-
-			case '?':
-				str << "\\%3f";
 				break;
 
 			case '@':
@@ -214,6 +196,10 @@ string MusicBrainz::escapeString(const string &text) {
 				break;
 
 			case '_':
+			case '?':
+			case ';':
+			case '&':
+			case '#':
 				str << ' ';
 				break;                                                                                                                 
 
