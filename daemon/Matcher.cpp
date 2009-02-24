@@ -66,13 +66,9 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 	title_weight = database->loadSettingDouble(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
 	if (title_weight < 0.0)
 		title_weight = 0.0;
-	else if (title_weight > 1.0)
-		title_weight = 1.0;
 	tracknumber_weight = database->loadSettingDouble(TRACKNUMBER_WEIGHT_KEY, TRACKNUMBER_WEIGHT_VALUE, TRACKNUMBER_WEIGHT_DESCRIPTION);
 	if (tracknumber_weight < 0.0)
 		tracknumber_weight = 0.0;
-	else if (tracknumber_weight > 1.0)
-		tracknumber_weight = 1.0;
 
 	/* if a metadata match score is less than half the metadata_min_score then we won't save the match */
 	mismatch_threshold = metadata_min_score / 2.0;
