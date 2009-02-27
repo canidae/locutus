@@ -1,7 +1,7 @@
 CXX = g++
 RM = rm -f
-CXXFLAGS = -O0 -Wall -Wextra -g -I/usr/include/postgresql `taglib-config --cflags`
-LDFLAGS = -lccgnu2 -lccext2 -lpq `taglib-config --libs`
+CXXFLAGS = -O0 -Wall -Wextra -g -pg -I/usr/include/postgresql `taglib-config --cflags`
+LDFLAGS = -g -pg -lccgnu2 -lccext2 -lpq `taglib-config --libs`
 OBJECTS = Album.o Artist.o Audioscrobbler.o Comparison.o Config.o Database.o Debug.o FileNamer.o Levenshtein.o Locutus.o Matcher.o Metafile.o Metatrack.o MusicBrainz.o PostgreSQL.o Track.o WebService.o
 
 locutus: $(OBJECTS)
