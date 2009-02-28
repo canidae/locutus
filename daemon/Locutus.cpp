@@ -121,7 +121,7 @@ long Locutus::run() {
 		string groups_joined = "";
 		vector<Metafile *> files;
 		for (vector<string>::iterator g = c->second.begin(); g != c->second.end(); ++g) {
-			groups_joined.append(" ").append(*g);
+			groups_joined.append(" \"").append(*g).append("\"");
 			vector<Metafile *> tmpfiles = database->loadGroup(*g);
 			for (vector<Metafile *>::iterator f = tmpfiles.begin(); f != tmpfiles.end(); ++f)
 				files.push_back(new Metafile(**f));
