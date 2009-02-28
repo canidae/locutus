@@ -79,6 +79,14 @@ Matcher::~Matcher() {
 }
 
 /* methods */
+vector<string> Matcher::getLoadedAlbums() {
+	/* return all the albums loaded for this group */
+	vector<string> albums;
+	for (map<string, AlbumComparison>::iterator ac = acs.begin(); ac != acs.end(); ++ac)
+		albums.push_back(ac->first);
+	return albums;
+}
+
 void Matcher::match(const vector<Metafile *> &files) {
 	/* remove matches from database */
 	for (vector<Metafile *>::const_iterator f = files.begin(); f != files.end(); ++f)

@@ -20,6 +20,9 @@
 #define MUSIC_INPUT_KEY "input_directory"
 #define MUSIC_INPUT_VALUE "/media/music/unsorted/"
 #define MUSIC_INPUT_DESCRIPTION "Input directory"
+#define COMBINE_GROUPS_KEY "combine_groups"
+#define COMBINE_GROUPS_VALUE false
+#define COMBINE_GROUPS_DESCRIPTION "Temporary combine and relookup groups that loaded the same album. May be useful in archives where the files for the same album end up in different groups for some reason, but it will also slow down Locutus and may increase amount of mismatched files."
 #define DRY_RUN_KEY "dry_run"
 #define DRY_RUN_VALUE true
 #define DRY_RUN_DESCRIPTION "Only read files and look them up, don't save and move files. Currently genre won't be looked up during a dry run."
@@ -63,6 +66,7 @@ class Locutus {
 		Matcher *matcher;
 		//PUIDGenerator *puidgen;
 		MusicBrainz *musicbrainz;
+		bool combine_groups;
 		bool dry_run;
 		bool lookup_genre;
 		int total_files;

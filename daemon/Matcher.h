@@ -86,6 +86,7 @@ class Matcher {
 		Matcher(Database *database, MusicBrainz *musicbrainz);
 		~Matcher();
 
+		std::vector<std::string> getLoadedAlbums();
 		void match(const std::vector<Metafile *> &files);
 
 	private:

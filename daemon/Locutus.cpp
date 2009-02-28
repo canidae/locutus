@@ -34,6 +34,7 @@ Locutus::Locutus(Database *database) : database(database) {
 	musicbrainz = new MusicBrainz(database);
 	matcher = new Matcher(database, musicbrainz);
 
+	combine_groups = database->loadSettingBool(COMBINE_GROUPS_KEY, COMBINE_GROUPS_VALUE, COMBINE_GROUPS_DESCRIPTION);
 	dry_run = database->loadSettingBool(DRY_RUN_KEY, DRY_RUN_VALUE, DRY_RUN_DESCRIPTION);
 	lookup_genre = database->loadSettingBool(LOOKUP_GENRE_KEY, LOOKUP_GENRE_VALUE, LOOKUP_GENRE_DESCRIPTION);
 	input_dir = database->loadSettingString(MUSIC_INPUT_KEY, MUSIC_INPUT_VALUE, MUSIC_INPUT_DESCRIPTION);
@@ -78,14 +79,22 @@ long Locutus::run() {
 	scanFiles(input_dir);
 	/* remove files that don't exist from database */
 	database->removeGoneFiles();
+	/* set up map for combining groups that load same album */
+	map<string, vector<string> > combine;
 	/* match files */
 	int file_counter = 0;
 	for (map<string, int>::iterator g = groups.begin(); g != groups.end(); ++g) {
 		/* match files in group */
 		vector<Metafile *> files = database->loadGroup(g->first);
 		matcher->match(files);
+		/* combine groups */
+		if (combine_groups) {
+			vector<string> albums = matcher->getLoadedAlbums();
+			for (vector<string>::iterator a = albums.begin(); a != albums.end(); ++a)
+				combine[*a].push_back(g->first);
+		}
 		/* save files with new metadata */
-		for (vector<Metafile *>::const_iterator f = files.begin(); f != files.end(); ++f) {
+		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
 			if (!(*f)->metadata_updated) {
 				/* file not updated, leave it be */
 				continue;
@@ -103,6 +112,41 @@ long Locutus::run() {
 		/* update progress */
 		file_counter += g->second;
 		database->updateProgress((double) file_counter / (double) total_files);
+	}
+	/* relookup combined groups */
+	for (map<string, vector<string> >::iterator c = combine.begin(); c != combine.end(); ++c) {
+		if (c->second.size() <= 1)
+			continue; // only one group for this album
+		/* need to cheat here, copy the Metafile objects */
+		string groups_joined = "";
+		vector<Metafile *> files;
+		for (vector<string>::iterator g = c->second.begin(); g != c->second.end(); ++g) {
+			groups_joined.append(" ").append(*g);
+			vector<Metafile *> tmpfiles = database->loadGroup(*g);
+			for (vector<Metafile *>::iterator f = tmpfiles.begin(); f != tmpfiles.end(); ++f)
+				files.push_back(new Metafile(**f));
+		}
+		Debug::info() << "Joining groups that loaded album " << c->first << ":" << groups_joined << endl;
+		/* match files */
+		matcher->match(files);
+		/* save files with new metadata */
+		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
+			if ((*f)->metadata_updated) {
+				if (dry_run) {
+					/* dry run, don't save, only update database.
+					 * however, set "matched" to true as we would've
+					 * saved this file if it wasn't for dry_run */
+					(*f)->matched = true;
+					database->saveMetafile(**f);
+				} else {
+					/* this file (may) be updated, save it */
+					saveFile(*f);
+				}
+			}
+			/* delete metafile */
+			delete (*f);
+		}
+		/* TODO: update progress */
 	}
 	/* just in case files disappeared from the database while we were working */
 	database->updateProgress(1.0);
