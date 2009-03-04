@@ -87,18 +87,12 @@ long Locutus::run() {
 		/* match files in group */
 		vector<Metafile *> files = database->loadGroup(g->first);
 		matcher->match(files);
-		/* combine groups */
-		if (combine_groups) {
-			vector<string> albums = matcher->getLoadedAlbums();
-			for (vector<string>::iterator a = albums.begin(); a != albums.end(); ++a)
-				combine[*a].push_back(g->first);
-		}
 		/* save files with new metadata */
+		bool do_combine_groups = true;
 		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
-			if (!(*f)->metadata_updated) {
-				/* file not updated, leave it be */
-				continue;
-			} else if (dry_run) {
+			if (!(*f)->metadata_updated)
+				continue; // file not updated, leave it be
+			if (dry_run) {
 				/* dry run, don't save, only update database.
 				 * however, set "matched" to true as we would've
 				 * saved this file if it wasn't for dry_run */
@@ -108,6 +102,13 @@ long Locutus::run() {
 				/* this file (may) be updated, save it */
 				saveFile(*f);
 			}
+			do_combine_groups = false;
+		}
+		/* combine groups */
+		if (do_combine_groups && combine_groups) {
+			vector<string> albums = matcher->getLoadedAlbums();
+			for (vector<string>::iterator a = albums.begin(); a != albums.end(); ++a)
+				combine[*a].push_back(g->first);
 		}
 		/* update progress */
 		file_counter += g->second;
@@ -128,7 +129,7 @@ long Locutus::run() {
 		}
 		Debug::info() << "Joining groups that loaded album " << c->first << ":" << groups_joined << endl;
 		/* match files */
-		matcher->match(files);
+		matcher->match(files, c->first);
 		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
 			if ((*f)->metadata_updated) {

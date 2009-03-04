@@ -87,7 +87,7 @@ class Matcher {
 		~Matcher();
 
 		std::vector<std::string> getLoadedAlbums();
-		void match(const std::vector<Metafile *> &files);
+		void match(const std::vector<Metafile *> &files, const std::string &album = "");
 
 	private:
 		Database *database;

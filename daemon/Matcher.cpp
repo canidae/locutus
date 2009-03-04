@@ -87,22 +87,24 @@ vector<string> Matcher::getLoadedAlbums() {
 	return albums;
 }
 
-void Matcher::match(const vector<Metafile *> &files) {
+void Matcher::match(const vector<Metafile *> &files, const string &album) {
 	/* remove matches from database */
 	for (vector<Metafile *>::const_iterator f = files.begin(); f != files.end(); ++f)
 		database->removeComparisons(**f);
 	/* clear data */
 	best_file_comparison.clear();
 	clearAlbumComparison();
-	/* look up puids first */
-	lookupPUIDs(files);
-	/* then look up mbids */
-	lookupMBIDs(files);
-	/* compare all tracks in group with albums loaded so far */
-	for (map<string, AlbumComparison>::iterator ac = acs.begin(); ac != acs.end(); ++ac)
-		compareFilesWithAlbum(&(ac->second), files);
-	/* search using metadata */
-	searchMetadata(files);
+	/* if album is set, load only that album */
+	if (album != "") {
+		loadAlbum(album, files);
+	} else {
+		/* look up puids */
+		lookupPUIDs(files);
+		/* then look up mbids */
+		lookupMBIDs(files);
+		/* search using metadata */
+		searchMetadata(files);
+	}
 	/* and then match the files to albums */
 	matchFilesToAlbums(files);
 	/* and clear the "values" list in the metafiles */
