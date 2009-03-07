@@ -49,7 +49,7 @@ string Metafile::getBaseNameWithoutExtension() const {
 
 string Metafile::getGroup() const {
 	/* get the group this file belongs to. format of the group is:
-	 * <extension> - <samplerate> - <channels> - [<album mbid>|<directory>] */
+	 * <extension> - <samplerate> - <channels> - [<album mbid>|<album>|<directory>] */
 	ostringstream group;
 	string::size_type pos = filename.find_last_of('.');
 	if (pos != string::npos && pos < filename.size() - 1)
@@ -57,6 +57,8 @@ string Metafile::getGroup() const {
 	group << " - " << samplerate << " - " << channels << " - ";
 	if (musicbrainz_albumid.size() > 0) {
 		group << musicbrainz_albumid;
+	} else if (album.size() > 0) {
+		group << album;
 	} else {
 		string::size_type pos = filename.find_last_of('/');
 		if (pos != string::npos && pos > 0)
