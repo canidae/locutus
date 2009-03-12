@@ -66,11 +66,16 @@ $query .= ' AND groupname = (SELECT groupname FROM file WHERE file_id = ' . $fig
 $query .= ' ORDER BY tracknumber ASC, mbid_match DESC, score DESC';
 $vars{tracks} = $dbh->selectall_arrayref($query, {Slice => {}});
 
-
 foreach my $track (@{$vars{tracks}}) {
 	$vars{groups}->{$track->{groupname}} = $track->{file_id} if ($track->{groupname} ne '');
 	$track->{color} = Locutus::score_to_color($track->{score});
 	$track->{score} = sprintf("%.1f%%", $track->{score} * 100);
+	my $durdiff = abs($track->{duration} - $track->{file_duration});
+	if ($durdiff < 15000) {
+		$track->{duration_color} = Locutus::score_to_color(1.0 - $durdiff / 15000);
+	} else {
+		$track->{duration_color} = Locutus::score_to_color(0.0);
+	}
 }
 
 Locutus::process_template($page, \%vars);

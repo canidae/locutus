@@ -48,7 +48,7 @@
         [% END %]
           </td>
           <td style="background: #[% track.color %];">[% track.score %]</td>
-          <td>[% track.file_duration %]</td>
+          <td style="background: #[% track.duration_color %];">[% track.file_duration %]</td>
           <td>
             [% track.file_albumartist OR '???' %] - [% track.file_album OR '???' %] - [% track.file_tracknumber OR '???'  %] - [% track.file_artist OR '???' %] - [% track.file_title OR '???' %]<br />
             <a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a>
