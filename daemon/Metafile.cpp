@@ -453,20 +453,20 @@ void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 void Metafile::saveAPETag(APE::Tag *tag) {
 	if (tag == NULL)
 		return;
-	tag->addValue(APEALBUM, album, true);
-	tag->addValue(APEALBUMARTIST, albumartist, true);
-	tag->addValue(APEALBUMARTISTSORT, albumartistsort, true);
-	tag->addValue(APEARTIST, artist, true);
-	tag->addValue(APEARTISTSORT, artistsort, true);
-	tag->addValue(APEMUSICBRAINZ_ALBUMARTISTID, musicbrainz_albumartistid, true);
-	tag->addValue(APEMUSICBRAINZ_ALBUMID, musicbrainz_albumid, true);
-	tag->addValue(APEMUSICBRAINZ_ARTISTID, musicbrainz_artistid, true);
-	tag->addValue(APEMUSICBRAINZ_TRACKID, musicbrainz_trackid, true);
-	tag->addValue(APETITLE, title, true);
-	tag->addValue(APETRACKNUMBER, tracknumber, true);
-	tag->addValue(APEDATE, released, true);
-	tag->addValue(APEGENRE, genre, true);
-	//tag->addValue(APEMUSICIP_PUID, puid, true);
+	tag->addValue(APEALBUM, String(album, String::UTF8), true);
+	tag->addValue(APEALBUMARTIST, String(albumartist, String::UTF8), true);
+	tag->addValue(APEALBUMARTISTSORT, String(albumartistsort, String::UTF8), true);
+	tag->addValue(APEARTIST, String(artist, String::UTF8), true);
+	tag->addValue(APEARTISTSORT, String(artistsort, String::UTF8), true);
+	tag->addValue(APEMUSICBRAINZ_ALBUMARTISTID, String(musicbrainz_albumartistid, String::UTF8), true);
+	tag->addValue(APEMUSICBRAINZ_ALBUMID, String(musicbrainz_albumid, String::UTF8), true);
+	tag->addValue(APEMUSICBRAINZ_ARTISTID, String(musicbrainz_artistid, String::UTF8), true);
+	tag->addValue(APEMUSICBRAINZ_TRACKID, String(musicbrainz_trackid, String::UTF8), true);
+	tag->addValue(APETITLE, String(title, String::UTF8), true);
+	tag->addValue(APETRACKNUMBER, String(tracknumber, String::UTF8), true);
+	tag->addValue(APEDATE, String(released, String::UTF8), true);
+	tag->addValue(APEGENRE, String(genre, String::UTF8), true);
+	//tag->addValue(APEMUSICIP_PUID, String(puid, String::UTF8), true);
 }
 
 void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
@@ -480,55 +480,55 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	tag->removeFrames(ByteVector("TXXX"));
 	tag->removeFrames(ByteVector("UFID"));
 	/* album */
-	tag->setAlbum(album);
+	tag->setAlbum(String(album, String::UTF8));
 	/* albumartist */
-	ID3v2::TextIdentificationFrame *tpe2 = new ID3v2::TextIdentificationFrame(ByteVector("TPE2"), TagLib::String::UTF8);
-	tpe2->setText(albumartist);
+	ID3v2::TextIdentificationFrame *tpe2 = new ID3v2::TextIdentificationFrame(ByteVector("TPE2"), String::UTF8);
+	tpe2->setText(String(albumartist, String::UTF8));
 	tag->addFrame(tpe2);
 	/* albumartistsort */
-	ID3v2::UserTextIdentificationFrame *txxxaas = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	ID3v2::UserTextIdentificationFrame *txxxaas = new ID3v2::UserTextIdentificationFrame(String::UTF8);
 	txxxaas->setDescription(ID3_TXXX_ALBUMARTISTSORT);
-	txxxaas->setText(albumartistsort);
+	txxxaas->setText(String(albumartistsort, String::UTF8));
 	tag->addFrame(txxxaas);
 	/* artist */
-	tag->setArtist(artist);
+	tag->setArtist(String(artist, String::UTF8));
 	/* artistsort */
-	ID3v2::TextIdentificationFrame *tsop = new ID3v2::TextIdentificationFrame(ByteVector("TSOP"), TagLib::String::UTF8);
-	tsop->setText(artistsort);
+	ID3v2::TextIdentificationFrame *tsop = new ID3v2::TextIdentificationFrame(ByteVector("TSOP"), String::UTF8);
+	tsop->setText(String(artistsort, String::UTF8));
 	tag->addFrame(tsop);
 	/* musicbrainz_albumartistid */
-	ID3v2::UserTextIdentificationFrame *txxxaai = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	ID3v2::UserTextIdentificationFrame *txxxaai = new ID3v2::UserTextIdentificationFrame(String::UTF8);
 	txxxaai->setDescription(ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID);
-	txxxaai->setText(musicbrainz_albumartistid);
+	txxxaai->setText(String(musicbrainz_albumartistid, String::UTF8));
 	tag->addFrame(txxxaai);
 	/* musicbrainz_albumid */
-	ID3v2::UserTextIdentificationFrame *txxxali = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	ID3v2::UserTextIdentificationFrame *txxxali = new ID3v2::UserTextIdentificationFrame(String::UTF8);
 	txxxali->setDescription(ID3_TXXX_MUSICBRAINZ_ALBUMID);
-	txxxali->setText(musicbrainz_albumid);
+	txxxali->setText(String(musicbrainz_albumid, String::UTF8));
 	tag->addFrame(txxxali);
 	/* musicbrainz_artistid */
-	ID3v2::UserTextIdentificationFrame *txxxari = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
+	ID3v2::UserTextIdentificationFrame *txxxari = new ID3v2::UserTextIdentificationFrame(String::UTF8);
 	txxxari->setDescription(ID3_TXXX_MUSICBRAINZ_ARTISTID);
-	txxxari->setText(musicbrainz_artistid);
+	txxxari->setText(String(musicbrainz_artistid, String::UTF8));
 	tag->addFrame(txxxari);
 	/* musicbrainz_trackid */
 	tag->addFrame(new ID3v2::UniqueFileIdentifierFrame(ID3_UFID_MUSICBRAINZ_TRACKID, ByteVector(musicbrainz_trackid.c_str())));
 	/* title */
-	tag->setTitle(title);
+	tag->setTitle(String(title, String::UTF8));
 	/* tracknumber */
 	tag->setTrack(atoi(tracknumber.c_str()));
 	/* date */
-	ID3v2::TextIdentificationFrame *tdrc = new ID3v2::TextIdentificationFrame(ByteVector("TDRC"), TagLib::String::UTF8);
-	tdrc->setText(released);
+	ID3v2::TextIdentificationFrame *tdrc = new ID3v2::TextIdentificationFrame(ByteVector("TDRC"), String::UTF8);
+	tdrc->setText(String(released, String::UTF8));
 	tag->addFrame(tdrc);
 	/* genre */
-	ID3v2::TextIdentificationFrame *tcon = new ID3v2::TextIdentificationFrame(ByteVector("TCON"), TagLib::String::UTF8);
-	tcon->setText(genre);
+	ID3v2::TextIdentificationFrame *tcon = new ID3v2::TextIdentificationFrame(ByteVector("TCON"), String::UTF8);
+	tcon->setText(String(genre, String::UTF8));
 	tag->addFrame(tcon);
 	/* puid */
 	/*
-	ID3v2::UserTextIdentificationFrame *txxxpuid = new ID3v2::UserTextIdentificationFrame(TagLib::String::UTF8);
-	txxxpuid->setText(puid);
+	ID3v2::UserTextIdentificationFrame *txxxpuid = new ID3v2::UserTextIdentificationFrame(String::UTF8);
+	txxxpuid->setText(String(puid, String::UTF8));
 	tag->addFrame(txxxpuid);
 	*/
 }
@@ -536,18 +536,18 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
 	if (tag == NULL)
 		return;
-	tag->addField(ALBUM, album, true);
-	tag->addField(ALBUMARTIST, albumartist, true);
-	tag->addField(ALBUMARTISTSORT, albumartistsort, true);
-	tag->addField(ARTIST, artist, true);
-	tag->addField(ARTISTSORT, artistsort, true);
-	tag->addField(MUSICBRAINZ_ALBUMARTISTID, musicbrainz_albumartistid, true);
-	tag->addField(MUSICBRAINZ_ALBUMID, musicbrainz_albumid, true);
-	tag->addField(MUSICBRAINZ_ARTISTID, musicbrainz_artistid, true);
-	tag->addField(MUSICBRAINZ_TRACKID, musicbrainz_trackid, true);
-	tag->addField(TITLE, title, true);
-	tag->addField(TRACKNUMBER, tracknumber, true);
-	tag->addField(DATE, released, true);
-	tag->addField(GENRE, genre, true);
-	//tag->addField(MUSICIP_PUID, track->puid, true);
+	tag->addField(ALBUM, String(album, String::UTF8), true);
+	tag->addField(ALBUMARTIST, String(albumartist, String::UTF8), true);
+	tag->addField(ALBUMARTISTSORT, String(albumartistsort, String::UTF8), true);
+	tag->addField(ARTIST, String(artist, String::UTF8), true);
+	tag->addField(ARTISTSORT, String(artistsort, String::UTF8), true);
+	tag->addField(MUSICBRAINZ_ALBUMARTISTID, String(musicbrainz_albumartistid, String::UTF8), true);
+	tag->addField(MUSICBRAINZ_ALBUMID, String(musicbrainz_albumid, String::UTF8), true);
+	tag->addField(MUSICBRAINZ_ARTISTID, String(musicbrainz_artistid, String::UTF8), true);
+	tag->addField(MUSICBRAINZ_TRACKID, String(musicbrainz_trackid, String::UTF8), true);
+	tag->addField(TITLE, String(title, String::UTF8), true);
+	tag->addField(TRACKNUMBER, String(tracknumber, String::UTF8), true);
+	tag->addField(DATE, String(released, String::UTF8), true);
+	tag->addField(GENRE, String(genre, String::UTF8), true);
+	//tag->addField(MUSICIP_PUID, String(track->puid, String::UTF8), true);
 }
