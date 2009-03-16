@@ -59,9 +59,12 @@ if (@remove_file_track) {
 	}
 }
 
-my $maxdurdiff = $dbh->selectrow_hashref('SELECT value FROM setting WHERE key = \'duration_limit\'');
-$maxdurdiff = int($maxdurdiff->{value});
-$maxdurdiff = 15000 if ($maxdurdiff <= 0);
+my $duration_limit = $dbh->selectrow_hashref('SELECT value FROM setting WHERE key = \'duration_limit\'');
+$duration_limit = int($duration_limit->{value});
+$duration_limit = 15000 if ($duration_limit <= 0);
+my $metadata_min_score = $dbh->selectrow_hashref('SELECT value FROM setting WHERE key = \'metadata_min_score\'');
+$metadata_min_score = $metadata_min_score->{value};
+$metadata_min_score = 0.75 if ($metadata_min_score <= 0 || $metadata_min_score > 1.0);
 $vars{album} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_album WHERE album_id = ' . $alid);
 $vars{similar_albums} = $dbh->selectall_arrayref('SELECT album_id, title AS album, (SELECT count(*) FROM track t WHERE t.album_id = a.album_id) AS tracks FROM album a WHERE album_id != ' . $alid . ' AND album_id IN (SELECT album_id FROM album WHERE artist_id = (SELECT artist_id FROM album WHERE album_id = ' . $alid . ' AND title = a.title)) ORDER BY tracks, album_id', {Slice => {}});
 my $query = 'SELECT * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ' . $alid;
@@ -71,14 +74,15 @@ $vars{tracks} = $dbh->selectall_arrayref($query, {Slice => {}});
 
 foreach my $track (@{$vars{tracks}}) {
 	$vars{groups}->{$track->{groupname}} = $track->{file_id} if ($track->{groupname} ne '');
-	$track->{color} = Locutus::score_to_color($track->{score});
-	$track->{score} = sprintf("%.1f%%", $track->{score} * 100);
 	my $durdiff = abs($track->{duration} - $track->{file_duration});
-	if ($durdiff < $maxdurdiff) {
-		$track->{duration_color} = Locutus::score_to_color(1.0 - $durdiff / $maxdurdiff);
+	if ($durdiff < $duration_limit) {
+		$track->{duration_color} = Locutus::score_to_color(1.0 - $durdiff / $duration_limit);
+		$track->{autocheck} = 1 if ($track->{score} >= $metadata_min_score);
 	} else {
 		$track->{duration_color} = Locutus::score_to_color(0.0);
 	}
+	$track->{color} = Locutus::score_to_color($track->{score});
+	$track->{score} = sprintf("%.1f%%", $track->{score} * 100);
 }
 
 Locutus::process_template($page, \%vars);

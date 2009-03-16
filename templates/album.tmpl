@@ -44,7 +44,7 @@
         [% IF track.file_track_id == track.track_id %]
             OK
         [% ELSE %]
-            <input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" />
+            <input type="checkbox" name="match_file_track" value="[% track.file_id %]@[% track.track_id %]" [% IF track.autocheck == 1 %]checked="checked" [% END %] />
         [% END %]
           </td>
           <td style="background: #[% track.color %];">[% track.score %]</td>
