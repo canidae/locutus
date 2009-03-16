@@ -59,6 +59,9 @@ if (@remove_file_track) {
 	}
 }
 
+my $maxdurdiff = $dbh->selectrow_hashref('SELECT value FROM setting WHERE key = \'duration_limit\'');
+$maxdurdiff = int($maxdurdiff->{value});
+$maxdurdiff = 15000 if ($maxdurdiff <= 0);
 $vars{album} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_album WHERE album_id = ' . $alid);
 $vars{similar_albums} = $dbh->selectall_arrayref('SELECT album_id, title AS album, (SELECT count(*) FROM track t WHERE t.album_id = a.album_id) AS tracks FROM album a WHERE album_id != ' . $alid . ' AND album_id IN (SELECT album_id FROM album WHERE artist_id = (SELECT artist_id FROM album WHERE album_id = ' . $alid . ' AND title = a.title)) ORDER BY tracks, album_id', {Slice => {}});
 my $query = 'SELECT * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ' . $alid;
@@ -71,8 +74,8 @@ foreach my $track (@{$vars{tracks}}) {
 	$track->{color} = Locutus::score_to_color($track->{score});
 	$track->{score} = sprintf("%.1f%%", $track->{score} * 100);
 	my $durdiff = abs($track->{duration} - $track->{file_duration});
-	if ($durdiff < 15000) {
-		$track->{duration_color} = Locutus::score_to_color(1.0 - $durdiff / 15000);
+	if ($durdiff < $maxdurdiff) {
+		$track->{duration_color} = Locutus::score_to_color(1.0 - $durdiff / $maxdurdiff);
 	} else {
 		$track->{duration_color} = Locutus::score_to_color(0.0);
 	}
