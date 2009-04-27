@@ -1,14 +1,120 @@
+About
+=====
+
+Locutus is a software that compares audio files with the MusicBrainz database,
+updates the metadata in the files and stores the files in a structured
+directory.
+This project is still quite young, there may be bugs and I won't guarantee that
+it won't erase any files. That said, I still haven't lost a single file due to
+Locutus, so the risk is low.
+
+Some of Locutus' features:
+- Capable of handling extremely large music archives. It still has problems with
+  directories that contain a large amount of audio files (>500) that contains no
+  metadata, but as long as the audio files got metadata and/or are splitted
+  across multiple directories there's virtually no limit how large archives
+  Locutus can handle.
+- Clever metadata matching that's extensively configurable. As long as the
+  metadata found in audio files are correct Locutus mismatch files very rarily.
+  It is however possible to configure Locutus in a way that will cause
+  mismatched files, use precaution!
+- Locutus is split in 3 parts, the daemon, the database and the web interface.
+  Each part can run on its own computer, or they can all run on the same
+  computer. While the daemon compares files, updates metadata and store the
+  files, you can manually match the files the daemon was unable to automatically
+  match in the web interface.
+- Albums retrieved from Musicbrainz are stored in a local cache, reducing amount
+  of queries sent, and thus also reducing load generated on MusicBrainz.
+- Grouping files in assumed albums. To reduce amount of queries sent to
+  MusicBrainz the files are placed in groups that are assumed to be albums. This
+  makes Locutus look up the first file in a group, fetch the best matching
+  albums for that track and compare the other files in the group with that
+  album. If some of the files have a poor match, those files will be looked up
+  separately and albums returned from those will also be matched with the other
+  files in the group.
+- Automatically fetch tags from AudioScrobbler as "genre". Currently it only
+  supports storing the most popular tag. Since it needs to look up each file
+  this feature significantly slows down Locutus as it may only look up tags once
+  per second at most.
+
+
 Installation
 ============
-TODO
 
+Database:
+---------
+Locutus currently supports PostgreSQL version 8.3 or later (not tested on
+earlier version).
 
-Usage
-=====
-TODO
+1. Become the 'postgres' user:
+     su - postgres
+   Or if you're not root:
+     sudo su - postgres
+2. Create a user for locutus:
+     createuser -S -D -R -P -E locutus
+3. Create a database for locutus
+     createdb -O locutus locutus
+4. Log out the 'postgres' user and goto the "sql" directory of locutus where
+   you issue the following command:
+     psql -h localhost -f locutus.sql -U locutus locutus
+5. You'll need to grant locutus access to the database. Edit (most likely)
+   "/etc/postgresql/8.3/main/pg_hba.conf" and add the following entry after
+   "# TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD":
+     host    locutus     locutus     127.0.0.1/32          md5
+   Change the IP if you're running the daemon/web interface on another computer.
+6. By default PostgreSQL only listen on 127.0.0.1. If you're accessing the
+   database from somewhere else, you'll need to edit
+   "/etc/postgresql/8.3/main/postgresql.conf":
+     listen_addresses = '*'
+7. Restart PostgreSQL:
+     /etc/init.d/postgresql restart
+             
+Daemon:      
+-------      
+The daemon r equires GNU Common C++, TagLib (version 1.5 or later) and the
+PostgreSQL C  client library.
+For Debian u sers:
+  aptitude i nstall libpq-dev libtag1-dev libcommoncpp2-dev build-essential
+             
+To build the daemon, simply enter the "daemon" directory and type "make". This
+will produce an executable file called "locutus". Currently this is not a daemon
+as it will only run once and exit, so for the time being you'll have to run this
+manually.
+The first time you run Locutus it will populate the "setting" table with default
+values. Make sure you don't have any audio files in "/media/music/sorted" or
+"/media/music/unsorted" as this is the default directory and any files there
+will be affected by Locutus.
+
+Web interface:
+--------------
+Perl, Apache2 and Template::Toolkit are required for the web interface.
+This guide is written for Debian Linux, if you're using another distro you may
+need to do things differently. I leave it as an exercise to those readers to
+figure this out :)
+For Debian users:
+  aptitude install libapache2-mod-speedycgi libapache-dbi-perl \
+  templatetoolkit-perl libdbd-pgsql libclass-dbi-pg-perl
+
+1. Open "/etc/apache2/sites-enabled/000-default" in your favourite editor and
+   add the following lines somewhere in the VirtualHost (changing the paths to
+   where you got the "web" directory):
+     Alias /locutus/ "/home/canidae/projects/locutus/web/"
+     <Directory /home/canidae/projects/locutus/web/>
+         Options ExecCGI Indexes FollowSymLinks MultiViews
+         AllowOverride None
+         Order allow,deny                                                                                                                                                                                                                                                                                               
+         allow from all                                                                                                                                                                                                                                                                                                 
+         AddHandler cgi-script .pl
+     </Directory>
+2. Restart Apache:
+     /etc/init.d/apache2 restart
+3. The interface should now be up at "http://localhost/locutus/" (or another URL
+   if you installed the web interface on another computer). If it isn't, then
+   check logs in "/var/log/apache2/" and "/var/log/postgresql/".
 
 
 Killer coding ninja monkeys (in order of appearance)
 ====================================================
+
 Vidar Wahlberg, <canidae@exent.net>
   Daemon, database, web interface
