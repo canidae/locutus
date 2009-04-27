@@ -68,14 +68,14 @@ earlier version).
      listen_addresses = '*'
 7. Restart PostgreSQL:
      /etc/init.d/postgresql restart
-             
-Daemon:      
--------      
+
+Daemon:
+-------
 The daemon r equires GNU Common C++, TagLib (version 1.5 or later) and the
 PostgreSQL C  client library.
 For Debian u sers:
   aptitude i nstall libpq-dev libtag1-dev libcommoncpp2-dev build-essential
-             
+
 To build the daemon, simply enter the "daemon" directory and type "make". This
 will produce an executable file called "locutus". Currently this is not a daemon
 as it will only run once and exit, so for the time being you'll have to run this
@@ -102,8 +102,8 @@ For Debian users:
      <Directory /home/canidae/projects/locutus/web/>
          Options ExecCGI Indexes FollowSymLinks MultiViews
          AllowOverride None
-         Order allow,deny                                                                                                                                                                                                                                                                                               
-         allow from all                                                                                                                                                                                                                                                                                                 
+         Order allow,deny
+         allow from all
          AddHandler cgi-script .pl
      </Directory>
 2. Restart Apache:
