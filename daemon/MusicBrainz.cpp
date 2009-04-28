@@ -42,7 +42,7 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 		return false;
 	string url = release_lookup_url;
 	url.append(album->mbid);
-	url.append("?type=xml&inc=tracks+puids+artist+release-events+labels+artist-rels+url-rels");
+	url.append("?type=xml&inc=tracks+artist+release-events+labels+artist-rels+url-rels");
 	XMLNode *root = lookup(url);
 	if (root == NULL)
 		return false;
@@ -116,15 +116,6 @@ const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 	query << "track:(" << escapeString(metafile.title) << " " << bnwe << " " << ") ";
 	query << "release:(" << escapeString(metafile.album) << " " << bnwe << ") ";
 	return searchMetadata(query.str());
-}
-
-const vector<Metatrack> &MusicBrainz::searchPUID(const string &puid) {
-	tracks.clear();
-	if (puid.size() != 36)
-		return tracks;
-	string query = "puid=";
-	query.append(puid);
-	return searchMetadata(query);
 }
 
 string MusicBrainz::escapeString(const string &text) {

@@ -48,7 +48,6 @@ class FileNamer;
 class Matcher;
 class Metafile;
 class MusicBrainz;
-//class PUIDGenerator;
 
 class Locutus {
 public:
@@ -64,7 +63,6 @@ private:
 	Database *database;
 	FileNamer *filenamer;
 	Matcher *matcher;
-	//PUIDGenerator *puidgen;
 	MusicBrainz *musicbrainz;
 	bool combine_groups;
 	bool dry_run;

@@ -22,11 +22,10 @@ public:
 	Metafile *metafile;
 	Track *track;
 	bool mbid_match;
-	bool puid_match;
 	double score;
 	double total_score;
 
-	Comparison(Metafile *metafile, Track *track, bool mbid_match, bool puid_match, double score);
+	Comparison(Metafile *metafile, Track *track, bool mbid_match, double score);
 	~Comparison();
 };
 #endif

@@ -37,6 +37,25 @@ CREATE TABLE album (
 
 
 --
+-- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE album_album_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: album_album_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE album_album_id_seq OWNED BY album.album_id;
+
+
+--
 -- Name: artist; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -49,6 +68,25 @@ CREATE TABLE artist (
 
 
 --
+-- Name: artist_artist_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE artist_artist_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: artist_artist_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE artist_artist_id_seq OWNED BY artist.artist_id;
+
+
+--
 -- Name: comparison; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -56,7 +94,6 @@ CREATE TABLE comparison (
     file_id integer NOT NULL,
     track_id integer NOT NULL,
     mbid_match boolean NOT NULL,
-    puid_match boolean NOT NULL,
     score double precision NOT NULL,
     CONSTRAINT comparison_score_check CHECK (((score >= (0.0)::double precision) AND (score <= (1.0)::double precision)))
 );
@@ -74,7 +111,6 @@ CREATE TABLE file (
     channels integer NOT NULL,
     bitrate integer NOT NULL,
     samplerate integer NOT NULL,
-    puid_id integer,
     album character varying NOT NULL,
     albumartist character varying NOT NULL,
     albumartistsort character varying NOT NULL,
@@ -103,6 +139,25 @@ CREATE TABLE file (
 
 
 --
+-- Name: file_file_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE file_file_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: file_file_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
+
+
+--
 -- Name: locutus; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -111,16 +166,6 @@ CREATE TABLE locutus (
     start timestamp without time zone DEFAULT now() NOT NULL,
     stop timestamp without time zone DEFAULT now() NOT NULL,
     progress real DEFAULT 0.0 NOT NULL
-);
-
-
---
--- Name: puid; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE puid (
-    puid_id integer NOT NULL,
-    puid character(36) NOT NULL
 );
 
 
@@ -135,6 +180,25 @@ CREATE TABLE setting (
     value character varying NOT NULL,
     description character varying NOT NULL
 );
+
+
+--
+-- Name: setting_setting_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE setting_setting_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: setting_setting_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
 
 
 --
@@ -154,6 +218,25 @@ CREATE TABLE track (
 
 
 --
+-- Name: track_track_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE track_track_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
+-- Name: track_track_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE track_track_id_seq OWNED BY track.track_id;
+
+
+--
 -- Name: v_daemon_load_album; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -166,7 +249,7 @@ CREATE VIEW v_daemon_load_album AS
 --
 
 CREATE VIEW v_daemon_load_metafile AS
-    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, p.puid, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.groupname, f.force_save, (f.track_id IS NOT NULL) AS track_id FROM (((((file f LEFT JOIN puid p ON ((p.puid_id = f.puid_id))) LEFT JOIN track t ON ((t.track_id = f.track_id))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
+    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.groupname, f.force_save, (f.track_id IS NOT NULL) AS track_id FROM ((((file f LEFT JOIN track t ON ((t.track_id = f.track_id))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
 
 
 --
@@ -206,7 +289,7 @@ CREATE VIEW v_web_info_artist AS
 --
 
 CREATE VIEW v_web_info_file AS
-    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file;
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file;
 
 
 --
@@ -238,7 +321,7 @@ CREATE VIEW v_web_list_artists AS
 --
 
 CREATE VIEW v_web_list_files AS
-    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file;
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released FROM file;
 
 
 --
@@ -254,7 +337,7 @@ CREATE VIEW v_web_list_tracks AS
 --
 
 CREATE VIEW v_web_matching_list_albums AS
-    SELECT tmp.album_id, a.title AS album, (SELECT count(*) AS count FROM track t WHERE (t.album_id = a.album_id)) AS tracks, count(DISTINCT tmp.file_id) AS files_compared, count(DISTINCT tmp.track_id) AS tracks_compared, sum((tmp.mbid_match)::integer) AS mbids_matched, max(tmp.score) AS max_score, avg(tmp.score) AS avg_score, min(tmp.score) AS min_score FROM ((SELECT DISTINCT ON (t.album_id, c.file_id) t.album_id, c.file_id, c.track_id, c.mbid_match, c.puid_match, c.score FROM ((file f JOIN comparison c USING (file_id)) JOIN track t ON ((c.track_id = t.track_id))) WHERE (f.track_id IS NULL) ORDER BY t.album_id, c.file_id, c.mbid_match DESC, c.score DESC) tmp JOIN album a USING (album_id)) GROUP BY tmp.album_id, a.title, (SELECT count(*) AS count FROM track t WHERE (t.album_id = a.album_id));
+    SELECT tmp.album_id, a.title AS album, (SELECT count(*) AS count FROM track t WHERE (t.album_id = a.album_id)) AS tracks, count(DISTINCT tmp.file_id) AS files_compared, count(DISTINCT tmp.track_id) AS tracks_compared, sum((tmp.mbid_match)::integer) AS mbids_matched, max(tmp.score) AS max_score, avg(tmp.score) AS avg_score, min(tmp.score) AS min_score FROM ((SELECT DISTINCT ON (t.album_id, c.file_id) t.album_id, c.file_id, c.track_id, c.mbid_match, c.score FROM ((file f JOIN comparison c USING (file_id)) JOIN track t ON ((c.track_id = t.track_id))) WHERE (f.track_id IS NULL) ORDER BY t.album_id, c.file_id, c.mbid_match DESC, c.score DESC) tmp JOIN album a USING (album_id)) GROUP BY tmp.album_id, a.title, (SELECT count(*) AS count FROM track t WHERE (t.album_id = a.album_id));
 
 
 --
@@ -262,7 +345,7 @@ CREATE VIEW v_web_matching_list_albums AS
 --
 
 CREATE VIEW v_web_track_list_matching_files AS
-    SELECT f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.puid_id, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.force_save, f.user_changed, m.track_id, m.mbid_match, m.puid_match, m.score FROM (file f JOIN comparison m ON ((f.file_id = m.file_id)));
+    SELECT f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.force_save, f.user_changed, m.track_id, m.mbid_match, m.score FROM (file f JOIN comparison m ON ((f.file_id = m.file_id)));
 
 
 --
@@ -270,116 +353,7 @@ CREATE VIEW v_web_track_list_matching_files AS
 --
 
 CREATE VIEW v_web_uncompared_list_files AS
-    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.puid_id, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released, file.genre, file.pinned, file.groupname, file.duplicate, file.force_save, file.user_changed, file.track_id, file.checked FROM file WHERE (NOT (file.file_id IN (SELECT comparison.file_id FROM comparison)));
-
-
---
--- Name: album_album_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE album_album_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
---
--- Name: album_album_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE album_album_id_seq OWNED BY album.album_id;
-
-
---
--- Name: artist_artist_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE artist_artist_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
---
--- Name: artist_artist_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE artist_artist_id_seq OWNED BY artist.artist_id;
-
-
---
--- Name: file_file_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE file_file_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
---
--- Name: file_file_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE file_file_id_seq OWNED BY file.file_id;
-
-
---
--- Name: puid_puid_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE puid_puid_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
---
--- Name: puid_puid_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE puid_puid_id_seq OWNED BY puid.puid_id;
-
-
---
--- Name: setting_setting_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE setting_setting_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
---
--- Name: setting_setting_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE setting_setting_id_seq OWNED BY setting.setting_id;
-
-
---
--- Name: track_track_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE track_track_id_seq
-    INCREMENT BY 1
-    NO MAXVALUE
-    NO MINVALUE
-    CACHE 1;
-
-
---
--- Name: track_track_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE track_track_id_seq OWNED BY track.track_id;
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released, file.genre, file.pinned, file.groupname, file.duplicate, file.force_save, file.user_changed, file.track_id, file.checked FROM file WHERE (NOT (file.file_id IN (SELECT comparison.file_id FROM comparison)));
 
 
 --
@@ -401,13 +375,6 @@ ALTER TABLE artist ALTER COLUMN artist_id SET DEFAULT nextval('artist_artist_id_
 --
 
 ALTER TABLE file ALTER COLUMN file_id SET DEFAULT nextval('file_file_id_seq'::regclass);
-
-
---
--- Name: puid_id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE puid ALTER COLUMN puid_id SET DEFAULT nextval('puid_puid_id_seq'::regclass);
 
 
 --
@@ -478,22 +445,6 @@ ALTER TABLE ONLY file
 
 ALTER TABLE ONLY file
     ADD CONSTRAINT file_pkey PRIMARY KEY (file_id);
-
-
---
--- Name: puid_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY puid
-    ADD CONSTRAINT puid_pkey PRIMARY KEY (puid_id);
-
-
---
--- Name: puid_puid_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY puid
-    ADD CONSTRAINT puid_puid_key UNIQUE (puid);
 
 
 --
@@ -592,14 +543,6 @@ ALTER TABLE ONLY comparison
 
 ALTER TABLE ONLY comparison
     ADD CONSTRAINT comparison_track_id_fkey FOREIGN KEY (track_id) REFERENCES track(track_id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: file_puid_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY file
-    ADD CONSTRAINT file_puid_id_fkey FOREIGN KEY (puid_id) REFERENCES puid(puid_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

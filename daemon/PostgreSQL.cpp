@@ -56,9 +56,6 @@ bool PostgreSQL::init() {
 	metatrack_cache_lifetime = loadSettingInt(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
 	if (metatrack_cache_lifetime <= 0)
 		metatrack_cache_lifetime = 1;
-	puid_cache_lifetime = loadSettingInt(PUID_CACHE_LIFETIME_KEY, PUID_CACHE_LIFETIME_VALUE, PUID_CACHE_LIFETIME_DESCRIPTION);
-	if (puid_cache_lifetime <= 0)
-		puid_cache_lifetime = 1;
 
 	/* we'll also mark files as not "checked", they will be marked as
 	 * "checked" when we load them. basically this just means that the
@@ -131,24 +128,23 @@ vector<Metafile *> &PostgreSQL::loadGroup(const string &group) {
 		metafile->channels = getInt(r, 2);
 		metafile->bitrate = getInt(r, 3);
 		metafile->samplerate = getInt(r, 4);
-		metafile->puid = getString(r, 5);
-		metafile->album = getString(r, 6);
-		metafile->albumartist = getString(r, 7);
-		metafile->albumartistsort = getString(r, 8);
-		metafile->artist = getString(r, 9);
-		metafile->artistsort = getString(r, 10);
-		metafile->musicbrainz_albumartistid = getString(r, 11);
-		metafile->musicbrainz_albumid = getString(r, 12);
-		metafile->musicbrainz_artistid = getString(r, 13);
-		metafile->musicbrainz_trackid = getString(r, 14);
-		metafile->title = getString(r, 15);
-		metafile->tracknumber = getString(r, 16);
-		metafile->released = getString(r, 17);
-		metafile->genre = getString(r, 18);
-		metafile->pinned = getBool(r, 19);
-		// r, 20 is groupname, we'll let metafile generate that
-		metafile->force_save = getBool(r, 21);
-		metafile->matched = getBool(r, 22);
+		metafile->album = getString(r, 5);
+		metafile->albumartist = getString(r, 6);
+		metafile->albumartistsort = getString(r, 7);
+		metafile->artist = getString(r, 8);
+		metafile->artistsort = getString(r, 9);
+		metafile->musicbrainz_albumartistid = getString(r, 10);
+		metafile->musicbrainz_albumid = getString(r, 11);
+		metafile->musicbrainz_artistid = getString(r, 12);
+		metafile->musicbrainz_trackid = getString(r, 13);
+		metafile->title = getString(r, 14);
+		metafile->tracknumber = getString(r, 15);
+		metafile->released = getString(r, 16);
+		metafile->genre = getString(r, 17);
+		metafile->pinned = getBool(r, 18);
+		// r, 19 is groupname, we'll let metafile generate that
+		metafile->force_save = getBool(r, 20);
+		metafile->matched = getBool(r, 21);
 		groupfiles.push_back(metafile);
 	}
 	return groupfiles;
@@ -173,24 +169,23 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->channels = getInt(0, 2);
 	metafile->bitrate = getInt(0, 3);
 	metafile->samplerate = getInt(0, 4);
-	metafile->puid = getString(0, 5);
-	metafile->album = getString(0, 6);
-	metafile->albumartist = getString(0, 7);
-	metafile->albumartistsort = getString(0, 8);
-	metafile->artist = getString(0, 9);
-	metafile->artistsort = getString(0, 10);
-	metafile->musicbrainz_albumartistid = getString(0, 11);
-	metafile->musicbrainz_albumid = getString(0, 12);
-	metafile->musicbrainz_artistid = getString(0, 13);
-	metafile->musicbrainz_trackid = getString(0, 14);
-	metafile->title = getString(0, 15);
-	metafile->tracknumber = getString(0, 16);
-	metafile->released = getString(0, 17);
-	metafile->genre = getString(0, 18);
-	metafile->pinned = getBool(0, 19);
-	// 0, 20 is groupname, we'll let metafile generate that
-	metafile->force_save = getBool(0, 21);
-	metafile->matched = getBool(0, 22);
+	metafile->album = getString(0, 5);
+	metafile->albumartist = getString(0, 6);
+	metafile->albumartistsort = getString(0, 7);
+	metafile->artist = getString(0, 8);
+	metafile->artistsort = getString(0, 9);
+	metafile->musicbrainz_albumartistid = getString(0, 10);
+	metafile->musicbrainz_albumid = getString(0, 11);
+	metafile->musicbrainz_artistid = getString(0, 12);
+	metafile->musicbrainz_trackid = getString(0, 13);
+	metafile->title = getString(0, 14);
+	metafile->tracknumber = getString(0, 15);
+	metafile->released = getString(0, 16);
+	metafile->genre = getString(0, 17);
+	metafile->pinned = getBool(0, 18);
+	// 0, 19 is groupname, we'll let metafile generate that
+	metafile->force_save = getBool(0, 20);
+	metafile->matched = getBool(0, 21);
 	/* set file as "checked" so we won't remove it later */
 	query.str("");
 	query << "UPDATE file SET checked = true";
@@ -214,24 +209,23 @@ vector<Metafile *> &PostgreSQL::loadMetafiles(const string &filename_pattern) {
 		metafile->channels = getInt(r, 2);
 		metafile->bitrate = getInt(r, 3);
 		metafile->samplerate = getInt(r, 4);
-		metafile->puid = getString(r, 5);
-		metafile->album = getString(r, 6);
-		metafile->albumartist = getString(r, 7);
-		metafile->albumartistsort = getString(r, 8);
-		metafile->artist = getString(r, 9);
-		metafile->artistsort = getString(r, 10);
-		metafile->musicbrainz_albumartistid = getString(r, 11);
-		metafile->musicbrainz_albumid = getString(r, 12);
-		metafile->musicbrainz_artistid = getString(r, 13);
-		metafile->musicbrainz_trackid = getString(r, 14);
-		metafile->title = getString(r, 15);
-		metafile->tracknumber = getString(r, 16);
-		metafile->released = getString(r, 17);
-		metafile->genre = getString(r, 18);
-		metafile->pinned = getBool(r, 19);
-		// r, 20 is groupname, we'll let metafile generate that
-		metafile->force_save = getBool(r, 21);
-		metafile->matched = getBool(r, 22);
+		metafile->album = getString(r, 5);
+		metafile->albumartist = getString(r, 6);
+		metafile->albumartistsort = getString(r, 7);
+		metafile->artist = getString(r, 8);
+		metafile->artistsort = getString(r, 9);
+		metafile->musicbrainz_albumartistid = getString(r, 10);
+		metafile->musicbrainz_albumid = getString(r, 11);
+		metafile->musicbrainz_artistid = getString(r, 12);
+		metafile->musicbrainz_trackid = getString(r, 13);
+		metafile->title = getString(r, 14);
+		metafile->tracknumber = getString(r, 15);
+		metafile->released = getString(r, 16);
+		metafile->genre = getString(r, 17);
+		metafile->pinned = getBool(r, 18);
+		// r, 19 is groupname, we'll let metafile generate that
+		metafile->force_save = getBool(r, 20);
+		metafile->matched = getBool(r, 21);
 		metafiles.push_back(metafile);
 	}
 	return metafiles;
@@ -404,11 +398,10 @@ bool PostgreSQL::saveComparison(const Comparison &comparison) {
 	string e_filename = escapeString(comparison.metafile->filename);
 	string e_track_mbid = escapeString(comparison.track->mbid);
 	ostringstream query;
-	query << "INSERT INTO comparison(file_id, track_id, mbid_match, puid_match, score) SELECT";
+	query << "INSERT INTO comparison(file_id, track_id, mbid_match, score) SELECT";
 	query << " (SELECT file_id FROM file WHERE filename = '" << e_filename << "')";
 	query << ", (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "')";
 	query << ", " << (comparison.mbid_match ? "true" : "false");
-	query << ", " << (comparison.puid_match ? "true" : "false");
 	query << ", " << comparison.score;
 	query << " WHERE NOT EXISTS";
 	query << " (SELECT true FROM comparison WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "'))";
@@ -418,7 +411,6 @@ bool PostgreSQL::saveComparison(const Comparison &comparison) {
 	query.str("");
 	query << "UPDATE comparison SET";
 	query << " mbid_match = " << (comparison.mbid_match ? "true" : "false");
-	query << ", puid_match = "  << (comparison.puid_match ? "true" : "false");
 	query << ", score = " << comparison.score;
 	query << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "')";
 	if (!doQuery(query.str()))
@@ -429,15 +421,6 @@ bool PostgreSQL::saveComparison(const Comparison &comparison) {
 
 bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filename) {
 	ostringstream query;
-	string e_puid = escapeString(metafile.puid);
-	if (e_puid != "") {
-		query << "INSERT INTO puid(puid) SELECT";
-		query << " '" << e_puid << "'";
-		query << " WHERE NOT EXISTS";
-		query << " (SELECT true FROM puid WHERE puid = '" << e_puid << "')";
-		if (!doQuery(query.str()))
-			Debug::notice() << "Unable to store PUID in database. See error above" << endl;
-	}
 	string e_filename = escapeString(metafile.filename);
 	string e_album = escapeString(metafile.album);
 	string e_albumartist = escapeString(metafile.albumartist);
@@ -453,14 +436,6 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	string e_released = escapeString(metafile.released);
 	string e_genre = escapeString(metafile.genre);
 	string e_group = escapeString(metafile.getGroup());
-	if (e_puid == "") {
-		e_puid = "NULL";
-	} else {
-		string tmp = e_puid;
-		e_puid = "(SELECT puid_id FROM puid WHERE puid = '";
-		e_puid.append(tmp);
-		e_puid.append("')");
-	}
 	string e_track_id;
 	if (metafile.matched) {
 		e_track_id = "(SELECT track_id FROM track WHERE mbid = '";
@@ -473,13 +448,12 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	if (old_filename == "") {
 		e_old_filename = e_filename;
 		query.str("");
-		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, puid_id, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, force_save, user_changed, track_id) SELECT";
+		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, force_save, user_changed, track_id) SELECT";
 		query << " '" << e_filename << "'";
 		query << ", " << metafile.duration;
 		query << ", " << metafile.channels;
 		query << ", " << metafile.bitrate;
 		query << ", " << metafile.samplerate;
-		query << ", " << e_puid;
 		query << ", '" << e_album << "'";
 		query << ", '" << e_albumartist << "'";
 		query << ", '" << e_albumartistsort << "'";
@@ -513,7 +487,6 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	query << ", channels = " << metafile.channels;
 	query << ", bitrate = " << metafile.bitrate;
 	query << ", samplerate = " << metafile.samplerate;
-	query << ", puid_id = " << e_puid;
 	query << ", album = '" << e_album << "'";
 	query << ", albumartist = '" << e_albumartist << "'";
 	query << ", albumartistsort = '" << e_albumartistsort << "'";

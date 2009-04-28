@@ -20,9 +20,6 @@
 #define METATRACK_CACHE_LIFETIME_KEY "metatrack_cache_lifetime"
 #define METATRACK_CACHE_LIFETIME_VALUE 3
 #define METATRACK_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since metatrack was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
-#define PUID_CACHE_LIFETIME_KEY "puid_cache_lifetime"
-#define PUID_CACHE_LIFETIME_VALUE 3
-#define PUID_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since puid was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
 
 extern "C" {
 #include <libpq-fe.h>
@@ -69,7 +66,6 @@ private:
 	bool got_result;
 	int album_cache_lifetime;
 	int metatrack_cache_lifetime;
-	int puid_cache_lifetime;
 	std::string setting_string;
 	std::vector<Metafile *> groupfiles;
 	std::vector<Metafile *> metafiles;

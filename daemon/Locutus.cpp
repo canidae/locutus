@@ -22,7 +22,6 @@
 #include "Matcher.h"
 #include "Metafile.h"
 #include "PostgreSQL.h"
-//#include "PUIDGenerator.h"
 #include "MusicBrainz.h"
 
 using namespace std;
@@ -30,7 +29,6 @@ using namespace std;
 Locutus::Locutus(Database *database) : database(database) {
 	audioscrobbler = new Audioscrobbler(database);
 	filenamer = new FileNamer(database);
-	//puidgen = new PUIDGenerator();
 	musicbrainz = new MusicBrainz(database);
 	matcher = new Matcher(database, musicbrainz);
 
@@ -49,7 +47,6 @@ Locutus::Locutus(Database *database) : database(database) {
 
 Locutus::~Locutus() {
 	delete audioscrobbler;
-	//delete puidgen;
 	delete matcher;
 	delete musicbrainz;
 	delete filenamer;
@@ -149,8 +146,6 @@ long Locutus::run() {
 	}
 	/* just in case files disappeared from the database while we were working */
 	database->updateProgress(1.0);
-	/* submit new puids? */
-	// TODO?
 	/* return */
 	return 10000;
 }

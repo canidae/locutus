@@ -27,7 +27,6 @@
 #define MUSICBRAINZ_ALBUMID "MUSICBRAINZ_ALBUMID"
 #define MUSICBRAINZ_ARTISTID "MUSICBRAINZ_ARTISTID"
 #define MUSICBRAINZ_TRACKID "MUSICBRAINZ_TRACKID"
-#define MUSICIP_PUID "MUSICIP_PUID"
 #define TITLE "TITLE"
 #define TRACKNUMBER "TRACKNUMBER"
 #define DATE "DATE"
@@ -37,7 +36,6 @@
 #define ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID "MusicBrainz Album Artist Id"
 #define ID3_TXXX_MUSICBRAINZ_ALBUMID "MusicBrainz Album Id"
 #define ID3_TXXX_MUSICBRAINZ_ARTISTID "MusicBrainz Artist Id"
-#define ID3_TXXX_MUSICIP_PUID "MusicIP PUID"
 #define ID3_UFID_MUSICBRAINZ_TRACKID "http://musicbrainz.org"
 /* ape crap */
 #define APEALBUM "Album"
@@ -49,7 +47,6 @@
 #define APEMUSICBRAINZ_ALBUMID "MUSICBRAINZ_ALBUMID"
 #define APEMUSICBRAINZ_ARTISTID "MUSICBRAINZ_ARTISTID"
 #define APEMUSICBRAINZ_TRACKID "MUSICBRAINZ_TRACKID"
-#define APEMUSICIP_PUID "MUSICIP_PUID"
 #define APETITLE "Title"
 #define APETRACKNUMBER "Track"
 #define APEDATE "Year"
@@ -95,7 +92,6 @@ public:
 	std::string musicbrainz_albumid;
 	std::string musicbrainz_artistid;
 	std::string musicbrainz_trackid;
-	std::string puid;
 	std::string released;
 	std::string title;
 	std::string tracknumber;

@@ -57,12 +57,6 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 	allow_group_duplicates = database->loadSettingBool(ALLOW_GROUP_DUPLICATES_KEY, ALLOW_GROUP_DUPLICATES_VALUE, ALLOW_GROUP_DUPLICATES_DESCRIPTION);
 	only_save_complete_albums = database->loadSettingBool(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION);
 	only_save_if_all_match = database->loadSettingBool(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
-	puid_lookup = database->loadSettingBool(PUID_LOOKUP_KEY, PUID_LOOKUP_VALUE, PUID_LOOKUP_DESCRIPTION);
-	puid_min_score = database->loadSettingDouble(PUID_MIN_SCORE_KEY, PUID_MIN_SCORE_VALUE, PUID_MIN_SCORE_DESCRIPTION);
-	if (puid_min_score < 0.0)
-		puid_min_score = 0.0;
-	else if (puid_min_score > 1.0)
-		puid_min_score = 1.0;
 	title_weight = database->loadSettingDouble(TITLE_WEIGHT_KEY, TITLE_WEIGHT_VALUE, TITLE_WEIGHT_DESCRIPTION);
 	if (title_weight < 0.0)
 		title_weight = 0.0;
@@ -97,9 +91,7 @@ void Matcher::match(const vector<Metafile *> &files, const string &album) {
 	if (album != "") {
 		loadAlbum(album, files);
 	} else {
-		/* look up puids */
-		lookupPUIDs(files);
-		/* then look up mbids */
+		/* look up mbids */
 		lookupMBIDs(files);
 		/* search using metadata */
 		searchMetadata(files);
@@ -130,7 +122,7 @@ void Matcher::compareFilesWithAlbum(AlbumComparison *ac, const vector<Metafile *
 			if (c == NULL)
 				continue;
 			ac->comparisons[(*t)->mbid].push_back(c);
-			if (!c->mbid_match && !c->puid_match && c->score < mismatch_threshold)
+			if (!c->mbid_match && c->score < mismatch_threshold)
 				continue; // horrible match, don't save it nor prevent a metadata search for this file
 			/* fair or better match. if we're saving complete albums,
 			 * then don't do a metadata search for this file */
@@ -196,7 +188,7 @@ Comparison *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Meta
 	if (durationdiff < duration_limit)
 		score += (1.0 - durationdiff / duration_limit) * duration_weight;
 	score /= album_weight + artist_weight + title_weight + tracknumber_weight + duration_weight;
-	Comparison *comparison = new Comparison(metafile, track, (metafile->musicbrainz_trackid != "" && metafile->musicbrainz_trackid == metatrack.track_mbid), (metafile->puid != "" && metafile->puid == metatrack.puid), score);
+	Comparison *comparison = new Comparison(metafile, track, (metafile->musicbrainz_trackid != "" && metafile->musicbrainz_trackid == metatrack.track_mbid), score);
 	map<string, double>::iterator bfm = best_file_comparison.find(metafile->filename);
 	if (bfm == best_file_comparison.end() || bfm->second < comparison->total_score)
 		best_file_comparison[metafile->filename] = comparison->total_score;
@@ -233,46 +225,12 @@ void Matcher::lookupMBIDs(const vector<Metafile *> &files) {
 	}
 }
 
-void Matcher::lookupPUIDs(const vector<Metafile *> &files) {
-	/* TODO:
-	 * we'll need some sort of handling when:
-	 * - no matching tracks
-	 * - matching tracks, but no good mbid/metadata match */
-	for (vector<Metafile *>::const_iterator file = files.begin(); file != files.end(); ++file) {
-		Metafile *mf = *file;
-		if (!puid_lookup || mf->puid.size() != 36)
-			continue;
-		vector<Metatrack> tracks = musicbrainz->searchPUID(mf->puid);
-		string load_album_title = "";
-		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
-			/* puid search won't return puid, so let's set it manually */
-			mt->puid = mf->puid;
-			Comparison *c = compareMetafileWithMetatrack(mf, *mt);
-			if (c == NULL)
-				continue;
-			/* check that score is high enough for us to load this album
-			 * and that we've not loaded any albums or this album got the
-			 * same name as the first album we loaded */
-			if (c->score >= mismatch_threshold && (load_album_title == "" || load_album_title == mt->album_title)) {
-				loadAlbum(mt->album_mbid, files);
-				/* set load_album_title.
-				 * we'll load albums of the same name because it's quite
-				 * common that an album is released multiple times with
-				 * different track count. if we load an album with too
-				 * few tracks then the album won't be saved */
-				load_album_title = mt->album_title;
-			}
-			delete c;
-		}
-	}
-}
-
 void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	/* well, this method is a total mess :(
 	 *
 	 * this is what it's supposed to do:
 	 * 1. find best album:
-	 *    * match_score = score * (3 if mbid_match, 2 if puid_match, 1 if neither)
+	 *    * match_score = score * (3 if mbid_match, 1 if metadata match)
 	 *    * album_score = matches/tracks * match_score
 	 * 2. make files matched unavailable for matching with next album
 	 * 3. goto 1
@@ -322,12 +280,10 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 							continue; // file already used
 						else if ((*c)->total_score <= best_comparison_score)
 							continue; // already found a better match
-						else if (!(*c)->mbid_match && (*c)->puid_match && (*c)->score < puid_min_score)
-							continue; // puid compare with too low score
-						else if (!(*c)->mbid_match && !(*c)->puid_match && (*c)->score < metadata_min_score)
+						else if (!(*c)->mbid_match && (*c)->score < metadata_min_score)
 							continue; // metadata compare with too low score
 						map<string, double>::iterator bfc = best_file_comparison.find((*c)->metafile->filename);
-						if (!(*c)->mbid_match && !(*c)->puid_match && bfc != best_file_comparison.end() && bfc->second - (*c)->total_score > max_diff_best_score)
+						if (!(*c)->mbid_match && bfc != best_file_comparison.end() && bfc->second - (*c)->total_score > max_diff_best_score)
 							continue; // total_score is too far away from this file's best total_score
 						best_comparison = *c;
 						best_comparison_score = (*c)->total_score;

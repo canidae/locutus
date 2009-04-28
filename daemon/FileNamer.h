@@ -22,7 +22,7 @@
 /* settings */
 #define FILENAME_FORMAT_KEY "filename_format"
 #define FILENAME_FORMAT_VALUE "%albumartist%/%album%/%tracknumber% - %artist% - %title%"
-#define FILENAME_FORMAT_DESCRIPTION "Output filename format. Available keys: %album%, %albumartist%, %albumartistsort%, %artist%, %artistsort%, %musicbrainz_albumartistid%, %musicbrainz_albumid%, %musicbrainz_artistid%, %musicbrainz_trackid%, %musicip_puid%, %title%, %tracknumber%, %date%, %custom_artist%, %genre%."
+#define FILENAME_FORMAT_DESCRIPTION "Output filename format. Available keys: %album%, %albumartist%, %albumartistsort%, %artist%, %artistsort%, %musicbrainz_albumartistid%, %musicbrainz_albumid%, %musicbrainz_artistid%, %musicbrainz_trackid%, %title%, %tracknumber%, %date%, %custom_artist%, %genre%."
 #define FILENAME_ILLEGAL_CHARACTERS_KEY "filename_illegal_characters"
 #define FILENAME_ILLEGAL_CHARACTERS_VALUE "/"
 #define FILENAME_ILLEGAL_CHARACTERS_DESCRIPTION "Characters in metadata that will be converted to '_' in filename."
@@ -39,11 +39,10 @@
 #define TYPE_MUSICBRAINZ_ALBUMID 7
 #define TYPE_MUSICBRAINZ_ARTISTID 8
 #define TYPE_MUSICBRAINZ_TRACKID 9
-#define TYPE_MUSICIP_PUID 10
-#define TYPE_TITLE 11
-#define TYPE_TRACKNUMBER 12
-#define TYPE_DATE 13
-#define TYPE_GENRE 14
+#define TYPE_TITLE 10
+#define TYPE_TRACKNUMBER 11
+#define TYPE_DATE 12
+#define TYPE_GENRE 13
 /* delimiter */
 #define TYPE_DELIMITER 100
 /* functions */

@@ -39,7 +39,7 @@
 using namespace std;
 using namespace TagLib;
 
-Metafile::Metafile(const string &filename) : duplicate(false), force_save(false), matched(false), meta_lookup(true), metadata_updated(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), puid(""), released(""), title(""), tracknumber(""), values() {
+Metafile::Metafile(const string &filename) : duplicate(false), force_save(false), matched(false), meta_lookup(true), metadata_updated(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), released(""), title(""), tracknumber(""), values() {
 }
 
 Metafile::~Metafile() {
@@ -221,11 +221,10 @@ bool Metafile::readFromFile() {
 	Locutus::trim(&musicbrainz_albumid);
 	Locutus::trim(&musicbrainz_artistid);
 	Locutus::trim(&musicbrainz_trackid);
-	Locutus::trim(&puid);
 	Locutus::trim(&released);
 	Locutus::trim(&title);
 	Locutus::trim(&tracknumber);
-	/* musicbrainz ids and puid should be 36 characters wide */
+	/* musicbrainz ids should be 36 characters wide */
 	if (musicbrainz_albumartistid.size() != 36)
 		musicbrainz_albumartistid = "";
 	if (musicbrainz_albumid.size() != 36)
@@ -234,8 +233,6 @@ bool Metafile::readFromFile() {
 		musicbrainz_artistid = "";
 	if (musicbrainz_trackid.size() != 36)
 		musicbrainz_trackid = "";
-	if (puid.size() != 36)
-		puid = "";
 	return true;
 }
 
@@ -313,7 +310,6 @@ bool Metafile::setMetadata(const Track &track) {
 	tracknum << track.tracknumber;
 	tracknumber = tracknum.str();
 	released = track.album->released;
-	//puid = track.puid;
 	metadata_updated = true;
 	return true;
 }
@@ -371,8 +367,6 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 				musicbrainz_albumid = txxx->fieldList()[1].to8Bit(true);
 			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICBRAINZ_ARTISTID)
 				musicbrainz_artistid = txxx->fieldList()[1].to8Bit(true);
-			else if (txxx->description().to8Bit(true) == ID3_TXXX_MUSICIP_PUID)
-				puid = txxx->fieldList()[1].to8Bit(true);
 		}
 		frames = map["UFID"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
@@ -422,8 +416,6 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 			released = map[APEDATE].toString().to8Bit(true);
 		if (!map[APEGENRE].isEmpty())
 			genre = map[APEGENRE].toString().to8Bit(true);
-		if (!map[APEMUSICIP_PUID].isEmpty())
-			puid = map[APEMUSICIP_PUID].toString().to8Bit(true);
 	}
 }
 
@@ -457,8 +449,6 @@ void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 		released = map[DATE].front().to8Bit(true);
 	if (!map[GENRE].isEmpty())
 		genre = map[GENRE].front().to8Bit(true);
-	if (!map[MUSICIP_PUID].isEmpty())
-		puid = map[MUSICIP_PUID].front().to8Bit(true);
 }
 
 void Metafile::saveAPETag(APE::Tag *tag) {
@@ -477,7 +467,6 @@ void Metafile::saveAPETag(APE::Tag *tag) {
 	tag->addValue(APETRACKNUMBER, String(tracknumber, String::UTF8), true);
 	tag->addValue(APEDATE, String(released, String::UTF8), true);
 	tag->addValue(APEGENRE, String(genre, String::UTF8), true);
-	//tag->addValue(APEMUSICIP_PUID, String(puid, String::UTF8), true);
 }
 
 void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
@@ -536,12 +525,6 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	ID3v2::TextIdentificationFrame *tcon = new ID3v2::TextIdentificationFrame(ByteVector("TCON"), String::UTF8);
 	tcon->setText(String(genre, String::UTF8));
 	tag->addFrame(tcon);
-	/* puid */
-	/*
-	ID3v2::UserTextIdentificationFrame *txxxpuid = new ID3v2::UserTextIdentificationFrame(String::UTF8);
-	txxxpuid->setText(String(puid, String::UTF8));
-	tag->addFrame(txxxpuid);
-	*/
 }
 
 void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
@@ -560,5 +543,4 @@ void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
 	tag->addField(TRACKNUMBER, String(tracknumber, String::UTF8), true);
 	tag->addField(DATE, String(released, String::UTF8), true);
 	tag->addField(GENRE, String(genre, String::UTF8), true);
-	//tag->addField(MUSICIP_PUID, String(track->puid, String::UTF8), true);
 }

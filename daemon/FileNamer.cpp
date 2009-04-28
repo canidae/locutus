@@ -166,11 +166,6 @@ const std::string FileNamer::parseField(const Metafile &file, const vector<Field
 			convertIllegalCharacters(&tmp_field);
 			break;
 
-		case TYPE_MUSICIP_PUID:
-			tmp_field = file.puid;
-			convertIllegalCharacters(&tmp_field);
-			break;
-
 		case TYPE_TITLE:
 			tmp_field = file.title;
 			convertIllegalCharacters(&tmp_field);
@@ -504,8 +499,6 @@ void FileNamer::setupFields(string::size_type start, string::size_type stop, vec
 				type = TYPE_MUSICBRAINZ_TRACKID;
 			else if (file_format.find("%albumartistsort%", pos) == pos)
 				type = TYPE_ALBUMARTISTSORT;
-			else if (file_format.find("%musicip_puid%", pos) == pos)
-				type = TYPE_MUSICIP_PUID;
 			else if (file_format.find("%albumartist%", pos) == pos)
 				type = TYPE_ALBUMARTIST;
 			else if (file_format.find("%tracknumber%", pos) == pos)

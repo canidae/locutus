@@ -55,12 +55,6 @@
 #define ONLY_SAVE_IF_ALL_MATCH_KEY "only_save_if_all_match"
 #define ONLY_SAVE_IF_ALL_MATCH_VALUE true
 #define ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION "Locutus gather files in groups in this order: 'albumartist-album' if both tags are present, 'album' if tag is present or 'full_directory_path' if album tag is not present. If this setting is set to true Locutus will not save the files in such a group unless all files match something. This is generally a good idea for those who don't have a fragmented music archive."
-#define PUID_LOOKUP_KEY "puid_lookup"
-#define PUID_LOOKUP_VALUE true
-#define PUID_LOOKUP_DESCRIPTION "If a file got a PUID then look up the track using that. This is generally a very good idea, this setting should only be turned off for testing purposes. If a PUID does not exist, Locutus will look up the track using metadata regardless of the value of this setting."
-#define PUID_MIN_SCORE_KEY "puid_min_score"
-#define PUID_MIN_SCORE_VALUE 0.60
-#define PUID_MIN_SCORE_DESCRIPTION "When comparing a file to a track using PUID and metadata, the score must exceed this value for the file to be matched. Value must be between 0.0 and 1.0. Increasing this value will decrease files matched and mismatches, decreasing it will logically do the opposite."
 #define TITLE_WEIGHT_KEY "title_weight"
 #define TITLE_WEIGHT_VALUE 100.0
 #define TITLE_WEIGHT_DESCRIPTION ""
@@ -97,7 +91,6 @@ private:
 	bool allow_group_duplicates;
 	bool only_save_complete_albums;
 	bool only_save_if_all_match;
-	bool puid_lookup;
 	double album_weight;
 	double artist_weight;
 	double combine_threshold;
@@ -106,7 +99,6 @@ private:
 	double max_diff_best_score;
 	double metadata_min_score;
 	double mismatch_threshold;
-	double puid_min_score;
 	double title_weight;
 	double tracknumber_weight;
 	std::map<std::string, AlbumComparison> acs;
@@ -117,7 +109,6 @@ private:
 	Comparison *compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack, Track *track = NULL);
 	bool loadAlbum(const std::string &mbid, const std::vector<Metafile *> files);
 	void lookupMBIDs(const std::vector<Metafile *> &files);
-	void lookupPUIDs(const std::vector<Metafile *> &files);
 	void matchFilesToAlbums(const std::vector<Metafile *> &files);
 	void searchMetadata(const std::vector<Metafile *> &files);
 };
