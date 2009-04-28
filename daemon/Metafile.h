@@ -13,6 +13,10 @@
 
 #ifndef METAFILE_H
 #define METAFILE_H
+
+#include <list>
+#include <string>
+
 /* fields */
 #define ALBUM "ALBUM"
 #define ALBUMARTIST "ALBUMARTIST"
@@ -51,23 +55,21 @@
 #define APEDATE "Year"
 #define APEGENRE "Genre"
 
-#include <apetag.h>
-#include <fileref.h>
-#include <flacfile.h>
-#include <id3v1tag.h>
-#include <id3v2tag.h>
-#include <list>
-#include <mpcfile.h>
-#include <mpegfile.h>
-#include <oggflacfile.h>
-#include <sstream>
-#include <string>
-#include <textidentificationframe.h>
-#include <tfile.h>
-#include <tstring.h>
-#include <uniquefileidentifierframe.h>
-#include <vorbisfile.h>
-
+namespace TagLib {
+	namespace APE {
+		class Tag;
+	}
+	namespace Ogg {
+		class XiphComment;
+	}
+	namespace ID3v1 {
+		class Tag;
+	}
+	namespace ID3v2 {
+		class Tag;
+	}
+	class AudioProperties;
+}
 class Track;
 
 class Metafile {

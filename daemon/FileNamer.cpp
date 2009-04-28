@@ -12,7 +12,9 @@
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <ostream>
+#include <stdlib.h>
 #include <string.h>
+#include <tstring.h>
 #include "Database.h"
 #include "Debug.h"
 #include "FileNamer.h"

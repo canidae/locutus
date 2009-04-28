@@ -11,6 +11,23 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <apetag.h>
+#include <fileref.h>
+#include <flacfile.h>
+#include <id3v1tag.h>
+#include <id3v2tag.h>
+#include <mpcfile.h>
+#include <mpegfile.h>
+#include <oggflacfile.h>
+#include <speexfile.h>
+#include <sstream>
+#include <textidentificationframe.h>
+#include <tfile.h>
+#include <trueaudiofile.h>
+#include <tstring.h>
+#include <uniquefileidentifierframe.h>
+#include <vorbisfile.h>
+#include <wavpackfile.h>
 #include "Album.h"
 #include "Debug.h"
 #include "Levenshtein.h"
@@ -175,7 +192,6 @@ bool Metafile::readFromFile() {
 		readXiphComment(file->tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
-	/*
 	} else if (ext == "WV") {
 		WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
 		readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
@@ -188,10 +204,9 @@ bool Metafile::readFromFile() {
 		delete file;
 	} else if (ext == "TTA") {
 		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
-		readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+		readCrapTags(NULL, (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
-	*/
 	} else {
 		Debug::notice() << "Unsupported file format (well, extension): " << filename << endl;
 		return false;
@@ -261,7 +276,6 @@ bool Metafile::saveMetadata() {
 		saveXiphComment(file->tag());
 		ok = file->save();
 		delete file;
-	/*
 	} else if (ext == "WV") {
 		WavPack::File *file = new WavPack::File(filename.c_str(), false);
 		saveAPETag(file->APETag(true));
@@ -274,10 +288,9 @@ bool Metafile::saveMetadata() {
 		delete file;
 	} else if (ext == "TTA") {
 		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), false);
-		saveAPETag(file->APETag(true));
+		saveID3v2Tag(file->ID3v2Tag(true));
 		ok = file->save();
 		delete file;
-	*/
 	} else {
 		Debug::warning() << "Unable to save file '" << filename << "': Unknown filetype" << endl;
 	}
