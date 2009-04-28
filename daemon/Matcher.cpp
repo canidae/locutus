@@ -66,6 +66,9 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 
 	/* if a metadata match score is less than half the metadata_min_score then we won't save the match */
 	mismatch_threshold = metadata_min_score / 2.0;
+
+	/* set acs to NULL */
+	acs = NULL;
 }
 
 Matcher::~Matcher() {
@@ -75,7 +78,7 @@ Matcher::~Matcher() {
 vector<string> Matcher::getLoadedAlbums() {
 	/* return all the albums loaded for this group */
 	vector<string> albums;
-	for (map<string, AlbumComparison>::iterator ac = acs.begin(); ac != acs.end(); ++ac)
+	for (map<string, AlbumComparison>::iterator ac = acs->begin(); ac != acs->end(); ++ac)
 		albums.push_back(ac->first);
 	return albums;
 }
@@ -87,6 +90,7 @@ void Matcher::match(const vector<Metafile *> &files, const string &album) {
 	/* clear data */
 	best_file_comparison.clear();
 	clearAlbumComparison();
+	acs = new map<string, AlbumComparison>();
 	/* if album is set, load only that album */
 	if (album != "") {
 		loadAlbum(album, files);
@@ -104,14 +108,16 @@ void Matcher::match(const vector<Metafile *> &files, const string &album) {
 }
 
 void Matcher::clearAlbumComparison() {
-	for (map<string, AlbumComparison>::iterator ac = acs.begin(); ac != acs.end(); ++ac) {
+	if (acs == NULL)
+		return;
+	for (map<string, AlbumComparison>::iterator ac = acs->begin(); ac != acs->end(); ++ac) {
 		for (map<string, vector<Comparison *> >::iterator tc = ac->second.comparisons.begin(); tc != ac->second.comparisons.end(); ++tc) {
 			for (vector<Comparison *>::iterator c = tc->second.begin(); c != tc->second.end(); ++c)
 				delete *c;
 		}
 		delete ac->second.album;
 	}
-	acs.clear();
+	delete acs;
 }
 
 void Matcher::compareFilesWithAlbum(AlbumComparison *ac, const vector<Metafile *> &files) {
@@ -198,7 +204,8 @@ Comparison *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Meta
 bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
 	if (mbid.size() != 36)
 		return false;
-	if (acs.find(mbid) != acs.end())
+	map<string, AlbumComparison>::iterator ac = acs->find(mbid);
+	if (ac != acs->end())
 		return true; // already loaded
 	Album *album = new Album(mbid);
 	if (!database->loadAlbum(album)) {
@@ -210,9 +217,9 @@ bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
 			return false;
 		}
 	}
-	acs[mbid].album = album;
+	ac->second.album = album;
 	/* when we load an album we'll match the files with it */
-	compareFilesWithAlbum(&acs[mbid], files);
+	compareFilesWithAlbum(&ac->second, files);
 	return true;
 }
 
@@ -248,10 +255,10 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	vector<Comparison *> album_files;
 	vector<Comparison *> best_album_files;
 	/* find best album */
-	for (map<string, AlbumComparison>::iterator actmp = acs.begin(); actmp != acs.end(); ++actmp) {
+	for (map<string, AlbumComparison>::iterator actmp = acs->begin(); actmp != acs->end(); ++actmp) {
 		best_album_files.clear();
 		double best_album_score = -1.0;
-		for (map<string, AlbumComparison>::iterator ac = acs.begin(); ac != acs.end(); ++ac) {
+		for (map<string, AlbumComparison>::iterator ac = acs->begin(); ac != acs->end(); ++ac) {
 			if (used_albums.find(ac->first) != used_albums.end())
 				continue;
 			used_files.clear();

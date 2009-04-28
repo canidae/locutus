@@ -101,7 +101,7 @@ private:
 	double mismatch_threshold;
 	double title_weight;
 	double tracknumber_weight;
-	std::map<std::string, AlbumComparison> acs;
+	std::map<std::string, AlbumComparison> *acs;
 	std::map<std::string, double> best_file_comparison;
 
 	void clearAlbumComparison();
