@@ -17,7 +17,6 @@
 using namespace ost;
 using namespace std;
 
-/* constructors/destructor */
 WebService::WebService() : root(new XMLNode), curnode(root) {
 }
 
@@ -26,7 +25,6 @@ WebService::~WebService() {
 	delete root;
 }
 
-/* protected methods */
 XMLNode *WebService::fetch(const char *url) {
 	char *urle = new char[4096];
 	urle = urlEncode(url, urle, 4096);
@@ -60,7 +58,6 @@ XMLNode *WebService::fetch(const char *url) {
 	return root;
 }
 
-/* private methods */
 void WebService::characters(const unsigned char *text, size_t len) {
 	curnode->value.append(string((char *) text, len));
 }

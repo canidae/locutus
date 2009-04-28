@@ -73,52 +73,52 @@ namespace TagLib {
 class Track;
 
 class Metafile {
-	public:
-		bool duplicate;
-		bool force_save;
-		bool matched;
-		bool meta_lookup;
-		bool metadata_updated;
-		bool pinned;
-		int bitrate;
-		int channels;
-		int duration;
-		int samplerate;
-		std::string album;
-		std::string albumartist;
-		std::string albumartistsort;
-		std::string artist;
-		std::string artistsort;
-		std::string filename;
-		std::string genre;
-		std::string musicbrainz_albumartistid;
-		std::string musicbrainz_albumid;
-		std::string musicbrainz_artistid;
-		std::string musicbrainz_trackid;
-		std::string puid;
-		std::string released;
-		std::string title;
-		std::string tracknumber;
+public:
+	bool duplicate;
+	bool force_save;
+	bool matched;
+	bool meta_lookup;
+	bool metadata_updated;
+	bool pinned;
+	int bitrate;
+	int channels;
+	int duration;
+	int samplerate;
+	std::string album;
+	std::string albumartist;
+	std::string albumartistsort;
+	std::string artist;
+	std::string artistsort;
+	std::string filename;
+	std::string genre;
+	std::string musicbrainz_albumartistid;
+	std::string musicbrainz_albumid;
+	std::string musicbrainz_artistid;
+	std::string musicbrainz_trackid;
+	std::string puid;
+	std::string released;
+	std::string title;
+	std::string tracknumber;
 
-		Metafile(const std::string &filename);
-		~Metafile();
+	Metafile(const std::string &filename);
+	~Metafile();
 
-		void clearValues();
-		std::string getBaseNameWithoutExtension() const;
-		std::string getGroup() const;
-		const std::list<std::string> &getValues(double combine_threshold);
-		bool readFromFile();
-		bool saveMetadata();
-		bool setMetadata(const Track &track);
+	void clearValues();
+	std::string getBaseNameWithoutExtension() const;
+	std::string getGroup() const;
+	const std::list<std::string> &getValues(double combine_threshold);
+	bool readFromFile();
+	bool saveMetadata();
+	bool setMetadata(const Track &track);
 
-	private:
-		std::list<std::string> values;
+private:
+	std::list<std::string> values;
 
-		void readAudioProperties(const TagLib::AudioProperties *ap);
-		void readCrapTags(const TagLib::APE::Tag *ape, const TagLib::ID3v2::Tag *id3v2, const TagLib::ID3v1::Tag *id3v1);
-		void readXiphComment(const TagLib::Ogg::XiphComment *tag);
-		void saveAPETag(TagLib::APE::Tag *tag);
-		void saveID3v2Tag(TagLib::ID3v2::Tag *tag);
-		void saveXiphComment(TagLib::Ogg::XiphComment *tag);
+	void readAudioProperties(const TagLib::AudioProperties *ap);
+	void readCrapTags(const TagLib::APE::Tag *ape, const TagLib::ID3v2::Tag *id3v2, const TagLib::ID3v1::Tag *id3v1);
+	void readXiphComment(const TagLib::Ogg::XiphComment *tag);
+	void saveAPETag(TagLib::APE::Tag *tag);
+	void saveID3v2Tag(TagLib::ID3v2::Tag *tag);
+	void saveXiphComment(TagLib::Ogg::XiphComment *tag);
 };
 #endif

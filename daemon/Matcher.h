@@ -13,6 +13,11 @@
 
 #ifndef MATCHER_H
 #define MATCHER_H
+
+#include <map>
+#include <string>
+#include <vector>
+
 /* settings */
 #define ALBUM_WEIGHT_KEY "album_weight"
 #define ALBUM_WEIGHT_VALUE 100.0
@@ -63,11 +68,6 @@
 #define TRACKNUMBER_WEIGHT_VALUE 100.0
 #define TRACKNUMBER_WEIGHT_DESCRIPTION ""
 
-#include <map>
-#include <sstream>
-#include <string>
-#include <vector>
-
 class Album;
 class Database;
 class Comparison;
@@ -82,43 +82,43 @@ struct AlbumComparison {
 };
 
 class Matcher {
-	public:
-		Matcher(Database *database, MusicBrainz *musicbrainz);
-		~Matcher();
+public:
+	Matcher(Database *database, MusicBrainz *musicbrainz);
+	~Matcher();
 
-		std::vector<std::string> getLoadedAlbums();
-		void match(const std::vector<Metafile *> &files, const std::string &album = "");
+	std::vector<std::string> getLoadedAlbums();
+	void match(const std::vector<Metafile *> &files, const std::string &album = "");
 
-	private:
-		Database *database;
-		MusicBrainz *musicbrainz;
-		bool duration_must_match;
-		bool mbid_lookup;
-		bool allow_group_duplicates;
-		bool only_save_complete_albums;
-		bool only_save_if_all_match;
-		bool puid_lookup;
-		double album_weight;
-		double artist_weight;
-		double combine_threshold;
-		double duration_limit;
-		double duration_weight;
-		double max_diff_best_score;
-		double metadata_min_score;
-		double mismatch_threshold;
-		double puid_min_score;
-		double title_weight;
-		double tracknumber_weight;
-		std::map<std::string, AlbumComparison> acs;
-		std::map<std::string, double> best_file_comparison;
+private:
+	Database *database;
+	MusicBrainz *musicbrainz;
+	bool duration_must_match;
+	bool mbid_lookup;
+	bool allow_group_duplicates;
+	bool only_save_complete_albums;
+	bool only_save_if_all_match;
+	bool puid_lookup;
+	double album_weight;
+	double artist_weight;
+	double combine_threshold;
+	double duration_limit;
+	double duration_weight;
+	double max_diff_best_score;
+	double metadata_min_score;
+	double mismatch_threshold;
+	double puid_min_score;
+	double title_weight;
+	double tracknumber_weight;
+	std::map<std::string, AlbumComparison> acs;
+	std::map<std::string, double> best_file_comparison;
 
-		void clearAlbumComparison();
-		void compareFilesWithAlbum(AlbumComparison *ac, const std::vector<Metafile *> &files);
-		Comparison *compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack, Track *track = NULL);
-		bool loadAlbum(const std::string &mbid, const std::vector<Metafile *> files);
-		void lookupMBIDs(const std::vector<Metafile *> &files);
-		void lookupPUIDs(const std::vector<Metafile *> &files);
-		void matchFilesToAlbums(const std::vector<Metafile *> &files);
-		void searchMetadata(const std::vector<Metafile *> &files);
+	void clearAlbumComparison();
+	void compareFilesWithAlbum(AlbumComparison *ac, const std::vector<Metafile *> &files);
+	Comparison *compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack, Track *track = NULL);
+	bool loadAlbum(const std::string &mbid, const std::vector<Metafile *> files);
+	void lookupMBIDs(const std::vector<Metafile *> &files);
+	void lookupPUIDs(const std::vector<Metafile *> &files);
+	void matchFilesToAlbums(const std::vector<Metafile *> &files);
+	void searchMetadata(const std::vector<Metafile *> &files);
 };
 #endif

@@ -15,12 +15,10 @@
 
 using namespace std;
 
-/* static variables */
 bool Debug::initialized = false;
 string Debug::timestamp;
 ofstream Debug::debugfile;
 
-/* static methods */
 bool Debug::close() {
 	if (!initialized)
 		return true;
@@ -57,7 +55,6 @@ ofstream &Debug::warning() {
 	return debugfile;
 }
 
-/* private static methods */
 string &Debug::printTime() {
 	time_t rawtime;
 	time(&rawtime);

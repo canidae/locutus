@@ -13,10 +13,10 @@
 
 #include "Album.h"
 #include "Artist.h"
+#include "Track.h"
 
 using namespace std;
 
-/* constructors/destructor */
 Album::Album(const string &mbid) : artist(new Artist()), mbid(mbid), released(""), title(""), type("") {
 }
 

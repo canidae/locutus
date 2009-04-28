@@ -13,6 +13,13 @@
 
 #ifndef AUDIOSCROBBLER_H
 #define AUDIOSCROBBLER_H
+
+#include <string>
+#include <sys/time.h>
+#include <time.h>
+#include <vector>
+#include "WebService.h"
+
 /* settings */
 #define AUDIOSCROBBLER_ARTIST_TAG_URL_KEY "audioscrobbler_artist_tag_url"
 #define AUDIOSCROBBLER_ARTIST_TAG_URL_VALUE "http://ws.audioscrobbler.com/1.0/artist/" // Metallica/toptags.xml
@@ -24,32 +31,26 @@
 #define AUDIOSCROBBLER_TRACK_TAG_URL_VALUE "http://ws.audioscrobbler.com/1.0/track/" // Metallica/Enter%20Sandman/toptags.xml
 #define AUDIOSCROBBLER_TRACK_TAG_URL_DESCRIPTION "URL to lookup tags for a track"
 
-#include <string>
-#include <sys/time.h>
-#include <time.h>
-#include <vector>
-#include "WebService.h"
-
 class Database;
 class Metafile;
 
 class Audioscrobbler : public WebService {
-	public:
-		explicit Audioscrobbler(Database *database);
-		~Audioscrobbler();
+public:
+	explicit Audioscrobbler(Database *database);
+	~Audioscrobbler();
 
-		const std::vector<std::string> &getTags(const Metafile &metafile);
+	const std::vector<std::string> &getTags(const Metafile &metafile);
 
-	private:
-		Database *database;
-		std::string artist_tag_url;
-		std::string track_tag_url;
-		std::vector<std::string> tags;
-		double query_interval;
-		struct timeval last_fetch;
+private:
+	Database *database;
+	std::string artist_tag_url;
+	std::string track_tag_url;
+	std::vector<std::string> tags;
+	double query_interval;
+	struct timeval last_fetch;
 
-		std::string escapeString(const std::string &text);
-		XMLNode *lookup(const std::string &url);
-		bool parseXML(XMLNode *root);
+	std::string escapeString(const std::string &text);
+	XMLNode *lookup(const std::string &url);
+	bool parseXML(XMLNode *root);
 };
 #endif

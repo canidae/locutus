@@ -16,37 +16,37 @@
 
 #include <string>
 #include <vector>
-#include "Metafile.h"
 
 class Album;
 class Artist;
 class Comparison;
+class Metafile;
 class Metatrack;
 class Track;
 
 class Database {
-	public:
-		Database();
-		virtual ~Database();
+public:
+	Database();
+	virtual ~Database();
 
-		virtual bool init() = 0;
-		virtual bool loadAlbum(Album *album) = 0;
-		virtual const std::vector<Metafile *> &loadGroup(const std::string &group) = 0;
-		virtual bool loadMetafile(Metafile *metafile) = 0;
-		virtual const std::vector<Metafile *> &loadMetafiles(const std::string &filename_pattern) = 0;
-		virtual bool loadSettingBool(const std::string &key, bool default_value, const std::string &description) = 0;
-		virtual double loadSettingDouble(const std::string &key, double default_value, const std::string &description) = 0;
-		virtual int loadSettingInt(const std::string &key, int default_value, const std::string &description) = 0;
-		virtual const std::string &loadSettingString(const std::string &key, const std::string &default_value, const std::string &description) = 0;
-		virtual bool removeComparisons(const Metafile &metafile) = 0;
-		virtual bool removeGoneFiles() = 0;
-		virtual bool saveAlbum(const Album &album) = 0;
-		virtual bool saveArtist(const Artist &artist) = 0;
-		virtual bool saveComparison(const Comparison &comparison) = 0;
-		virtual bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "") = 0;
-		virtual bool saveTrack(const Track &track) = 0;
-		virtual bool start() = 0;
-		virtual bool stop() = 0;
-		virtual bool updateProgress(double progress) = 0;
+	virtual bool init() = 0;
+	virtual bool loadAlbum(Album *album) = 0;
+	virtual const std::vector<Metafile *> &loadGroup(const std::string &group) = 0;
+	virtual bool loadMetafile(Metafile *metafile) = 0;
+	virtual const std::vector<Metafile *> &loadMetafiles(const std::string &filename_pattern) = 0;
+	virtual bool loadSettingBool(const std::string &key, bool default_value, const std::string &description) = 0;
+	virtual double loadSettingDouble(const std::string &key, double default_value, const std::string &description) = 0;
+	virtual int loadSettingInt(const std::string &key, int default_value, const std::string &description) = 0;
+	virtual const std::string &loadSettingString(const std::string &key, const std::string &default_value, const std::string &description) = 0;
+	virtual bool removeComparisons(const Metafile &metafile) = 0;
+	virtual bool removeGoneFiles() = 0;
+	virtual bool saveAlbum(const Album &album) = 0;
+	virtual bool saveArtist(const Artist &artist) = 0;
+	virtual bool saveComparison(const Comparison &comparison) = 0;
+	virtual bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "") = 0;
+	virtual bool saveTrack(const Track &track) = 0;
+	virtual bool start() = 0;
+	virtual bool stop() = 0;
+	virtual bool updateProgress(double progress) = 0;
 };
 #endif

@@ -79,9 +79,7 @@ will produce an executable file called "locutus". Currently this is not a daemon
 as it will only run once and exit, so for the time being you'll have to run this
 manually.
 The first time you run Locutus it will populate the "setting" table with default
-values. Make sure you don't have any audio files in "/media/music/sorted" or
-"/media/music/unsorted" as this is the default directory and any files there
-will be affected by Locutus.
+values.
 
 Web interface:
 --------------

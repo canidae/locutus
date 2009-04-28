@@ -15,12 +15,10 @@
 
 using namespace std;
 
-/* static variables */
 bool Levenshtein::initialized = false;
 int **Levenshtein::matrix = NULL;
 int Levenshtein::matrix_size = 0;
 
-/* static methods */
 void Levenshtein::clear() {
 	if (!initialized)
 		return;
@@ -77,7 +75,6 @@ double Levenshtein::similarity(const string &source, const string &target) {
 	return 1.0 - (double) matrix[sl][tl] / (double) size;
 }
 
-/* private static methods */
 void Levenshtein::createMatrix(int size) {
 	matrix_size = size;
 	matrix = new int*[matrix_size];

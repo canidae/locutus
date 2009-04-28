@@ -21,17 +21,17 @@ class Album;
 class Artist;
 
 class Track {
-	public:
-		Album *album;
-		Artist *artist;
-		int duration;
-		int tracknumber;
-		std::string mbid;
-		std::string title;
+public:
+	Album *album;
+	Artist *artist;
+	int duration;
+	int tracknumber;
+	std::string mbid;
+	std::string title;
 
-		explicit Track(Album *album);
-		~Track();
+	explicit Track(Album *album);
+	~Track();
 
-		Metatrack getAsMetatrack() const;
+	Metatrack getAsMetatrack() const;
 };
 #endif

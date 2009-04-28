@@ -17,18 +17,18 @@
 #include <string>
 
 class Metatrack {
-	public:
-		int duration;
-		int tracknumber;
-		std::string album_mbid;
-		std::string album_title;
-		std::string artist_mbid;
-		std::string artist_name;
-		std::string puid;
-		std::string track_mbid;
-		std::string track_title;
+public:
+	int duration;
+	int tracknumber;
+	std::string album_mbid;
+	std::string album_title;
+	std::string artist_mbid;
+	std::string artist_name;
+	std::string puid;
+	std::string track_mbid;
+	std::string track_title;
 
-		Metatrack(int duration = 0, int tracknumber = 0, std::string album_mbid = "", std::string album_title = "", std::string artist_mbid = "", std::string artist_name = "", std::string puid = "", std::string track_mbid = "", std::string track_title = "");
-		~Metatrack();
+	Metatrack(int duration = 0, int tracknumber = 0, std::string album_mbid = "", std::string album_title = "", std::string artist_mbid = "", std::string artist_name = "", std::string puid = "", std::string track_mbid = "", std::string track_title = "");
+	~Metatrack();
 };
 #endif

@@ -13,15 +13,16 @@
 
 #include <stdlib.h>
 #include "Album.h"
+#include "Artist.h"
 #include "Database.h"
 #include "Debug.h"
 #include "Metafile.h"
 #include "MusicBrainz.h"
+#include "Track.h"
 
 using namespace ost;
 using namespace std;
 
-/* constructors/destructor */
 MusicBrainz::MusicBrainz(Database *database) : database(database) {
 	metadata_search_url = database->loadSettingString(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = database->loadSettingString(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
@@ -36,7 +37,6 @@ MusicBrainz::MusicBrainz(Database *database) : database(database) {
 MusicBrainz::~MusicBrainz() {
 }
 
-/* methods */
 bool MusicBrainz::lookupAlbum(Album *album) {
 	if (album == NULL || album->mbid.size() != 36 || album->mbid[8] != '-' || album->mbid[13] != '-' || album->mbid[18] != '-' || album->mbid[23] != '-')
 		return false;
@@ -127,7 +127,6 @@ const vector<Metatrack> &MusicBrainz::searchPUID(const string &puid) {
 	return searchMetadata(query);
 }
 
-/* private methods */
 string MusicBrainz::escapeString(const string &text) {
 	/* escape these characters:
 	 * + - || ! ( ) { } [ ] ^ " ~ * : \ */

@@ -13,6 +13,11 @@
 
 #ifndef FILENAMER_H
 #define FILENAMER_H
+
+#include <iconv.h>
+#include <string>
+#include <vector>
+
 #define VARIOUS_ARTISTS_MBID "89ad4ac3-39f7-470e-963a-56509c546377"
 /* settings */
 #define FILENAME_FORMAT_KEY "filename_format"
@@ -54,10 +59,6 @@
 #define TYPE_BYTES_RIGHT 110
 #define TYPE_EXTENSION 111
 
-#include <iconv.h>
-#include <string>
-#include <vector>
-
 struct Field {
 	int type;
 	std::string data;
@@ -68,26 +69,26 @@ class Database;
 class Metafile;
 
 class FileNamer {
-	public:
-		explicit FileNamer(Database *database);
-		~FileNamer();
+public:
+	explicit FileNamer(Database *database);
+	~FileNamer();
 
-		const std::string &getFilename(const Metafile &file);
+	const std::string &getFilename(const Metafile &file);
 
-	private:
-		Database *database;
-		std::string filename;
-		std::string file_format;
-		std::string illegal_characters;
-		std::vector<Field> fields;
-		iconv_t u2w;
-		iconv_t w2u;
+private:
+	Database *database;
+	std::string filename;
+	std::string file_format;
+	std::string illegal_characters;
+	std::vector<Field> fields;
+	iconv_t u2w;
+	iconv_t w2u;
 
-		void convertIllegalCharacters(std::string *text);
-		std::wstring convertUnicodeToWide(const std::string &text);
-		std::string convertWideToUnicode(const std::wstring &text);
-		const std::string parseField(const Metafile &file, const std::vector<Field>::const_iterator field);
-		void removeEscapes(std::string *text);
-		void setupFields(std::string::size_type start, std::string::size_type stop, std::vector<Field> *fields, bool split_on_comma = false);
+	void convertIllegalCharacters(std::string *text);
+	std::wstring convertUnicodeToWide(const std::string &text);
+	std::string convertWideToUnicode(const std::wstring &text);
+	const std::string parseField(const Metafile &file, const std::vector<Field>::const_iterator field);
+	void removeEscapes(std::string *text);
+	void setupFields(std::string::size_type start, std::string::size_type stop, std::vector<Field> *fields, bool split_on_comma = false);
 };
 #endif

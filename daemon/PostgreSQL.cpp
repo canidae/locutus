@@ -17,13 +17,12 @@
 #include "Artist.h"
 #include "Comparison.h"
 #include "Debug.h"
-#include "Metatrack.h"
+#include "Metafile.h"
 #include "PostgreSQL.h"
 #include "Track.h"
 
 using namespace std;
 
-/* constructors/destructor */
 PostgreSQL::PostgreSQL(const string &host, const string &user, const string &pass, const string &name) : Database(), pg_result(NULL), got_result(false) {
 	string connection_url = "host=";
 	connection_url.append(host);
@@ -47,7 +46,6 @@ PostgreSQL::~PostgreSQL() {
 	PQfinish(pg_connection);
 }
 
-/* methods */
 bool PostgreSQL::init() {
 	/* we're gonna keep the database connection while locutus is running,
 	 * but the other classes will be freed and reloaded for each "run".
@@ -599,7 +597,6 @@ bool PostgreSQL::updateProgress(double progress) {
 	return doQuery(query.str());
 }
 
-/* private methods */
 void PostgreSQL::clear() {
 	if (got_result)
 		PQclear(pg_result);

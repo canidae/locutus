@@ -22,7 +22,6 @@ Metafile.o: Metafile.h Metafile.cpp
 Metatrack.o: Metatrack.h Metatrack.cpp
 MusicBrainz.o: MusicBrainz.h MusicBrainz.cpp
 PostgreSQL.o: PostgreSQL.h PostgreSQL.cpp
-#PUIDGenerator.o: PUIDGenerator.h PUIDGenerator.cpp
 Track.o: Track.h Track.cpp
 WebService.o: WebService.h WebService.cpp
 

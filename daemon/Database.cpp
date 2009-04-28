@@ -15,7 +15,6 @@
 
 using namespace std;
 
-/* constructors/destructor */
 Database::Database() {
 }
 

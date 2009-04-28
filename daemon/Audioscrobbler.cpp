@@ -11,7 +11,6 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Artist.h"
 #include "Audioscrobbler.h"
 #include "Database.h"
 #include "Debug.h"
@@ -20,7 +19,6 @@
 using namespace ost;
 using namespace std;
 
-/* constructors/destructor */
 Audioscrobbler::Audioscrobbler(Database *database) : database(database) {
 	artist_tag_url = database->loadSettingString(AUDIOSCROBBLER_ARTIST_TAG_URL_KEY, AUDIOSCROBBLER_ARTIST_TAG_URL_VALUE, AUDIOSCROBBLER_ARTIST_TAG_URL_DESCRIPTION);
 	track_tag_url = database->loadSettingString(AUDIOSCROBBLER_TRACK_TAG_URL_KEY, AUDIOSCROBBLER_TRACK_TAG_URL_VALUE, AUDIOSCROBBLER_TRACK_TAG_URL_DESCRIPTION);
@@ -35,7 +33,6 @@ Audioscrobbler::Audioscrobbler(Database *database) : database(database) {
 Audioscrobbler::~Audioscrobbler() {
 }
 
-/* methods */
 const vector<string> &Audioscrobbler::getTags(const Metafile &metafile) {
 	tags.clear();
 	string artist = escapeString(metafile.artist);
@@ -61,7 +58,6 @@ const vector<string> &Audioscrobbler::getTags(const Metafile &metafile) {
 	return tags;
 }
 
-/* private methods */
 string Audioscrobbler::escapeString(const string &text) {
 	/* escape certain characters that mess up the url:
 	 * "$": %24

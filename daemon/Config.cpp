@@ -17,7 +17,6 @@
 
 using namespace std;
 
-/* constructors/destructor */
 Config::Config() {
 	/* load configuration from locutus.conf */
 	ifstream config;
@@ -38,7 +37,7 @@ Config::Config() {
 			continue; // comment
 		pos = line.find(CONFIG_DELIMITER);
 		if (pos == string::npos || pos < setting_start)
-			continue; // neither a setting, no '=' or it's before setting
+			continue; // not a setting, no '=' or it's before the key
 		string::size_type value_start = line.find_first_not_of(CONFIG_WHITESPACE, pos + 1);
 		if (value_start == string::npos)
 			continue; // no value?

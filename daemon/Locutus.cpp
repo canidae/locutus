@@ -11,6 +11,7 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <vector>
 #include "Audioscrobbler.h"
 #include "Config.h"
 #include "Database.h"
@@ -26,7 +27,6 @@
 
 using namespace std;
 
-/* constructors/destructor */
 Locutus::Locutus(Database *database) : database(database) {
 	audioscrobbler = new Audioscrobbler(database);
 	filenamer = new FileNamer(database);
@@ -55,7 +55,6 @@ Locutus::~Locutus() {
 	delete filenamer;
 }
 
-/* static methods */
 void Locutus::trim(string *text) {
 	if (text == NULL)
 		return;
@@ -69,7 +68,6 @@ void Locutus::trim(string *text) {
 		text->erase();
 }
 
-/* methods */
 long Locutus::run() {
 	/* parse sorted directory */
 	Debug::info() << "Scanning output directory" << endl;
@@ -157,7 +155,6 @@ long Locutus::run() {
 	return 10000;
 }
 
-/* private methods */
 string Locutus::findDuplicateFilename(Metafile *file) {
 	/* find a name for a duplicate */
 	string tmp_filename = input_dir;

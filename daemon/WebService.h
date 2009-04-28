@@ -27,24 +27,24 @@ struct XMLNode {
 };
 
 class WebService : public ost::URLStream, public ost::XMLStream {
-	public:
-		WebService();
-		~WebService();
+public:
+	WebService();
+	~WebService();
 
-	protected:
-		XMLNode *fetch(const char *url);
+protected:
+	XMLNode *fetch(const char *url);
 
-	private:
-		URLStream::Error status;
-		XMLNode *root;
-		XMLNode *curnode;
+private:
+	URLStream::Error status;
+	XMLNode *root;
+	XMLNode *curnode;
 
-		void characters(const unsigned char *text, size_t len);
-		void clearXMLNode(XMLNode *node);
-		void close();
-		void endElement(const unsigned char *);
-		void printXML(XMLNode *startnode, int indent) const;
-		int read(unsigned char *buffer, size_t len);
-		void startElement(const unsigned char *name, const unsigned char **attr);
+	void characters(const unsigned char *text, size_t len);
+	void clearXMLNode(XMLNode *node);
+	void close();
+	void endElement(const unsigned char *);
+	void printXML(XMLNode *startnode, int indent) const;
+	int read(unsigned char *buffer, size_t len);
+	void startElement(const unsigned char *name, const unsigned char **attr);
 };
 #endif

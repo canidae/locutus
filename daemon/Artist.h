@@ -17,12 +17,12 @@
 #include <string>
 
 class Artist {
-	public:
-		std::string mbid;
-		std::string name;
-		std::string sortname;
+public:
+	std::string mbid;
+	std::string name;
+	std::string sortname;
 
-		Artist();
-		~Artist();
+	Artist();
+	~Artist();
 };
 #endif

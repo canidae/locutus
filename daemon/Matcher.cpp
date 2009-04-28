@@ -15,16 +15,15 @@
 #include "Album.h"
 #include "Comparison.h"
 #include "Database.h"
-#include "Debug.h"
 #include "Levenshtein.h"
 #include "Matcher.h"
 #include "Metafile.h"
 #include "Metatrack.h"
 #include "MusicBrainz.h"
+#include "Track.h"
 
 using namespace std;
 
-/* constructors/destructor */
 Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(database), musicbrainz(musicbrainz) {
 	album_weight = database->loadSettingDouble(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
 	if (album_weight < 0.0)
@@ -79,7 +78,6 @@ Matcher::~Matcher() {
 	clearAlbumComparison();
 }
 
-/* methods */
 vector<string> Matcher::getLoadedAlbums() {
 	/* return all the albums loaded for this group */
 	vector<string> albums;
@@ -113,7 +111,6 @@ void Matcher::match(const vector<Metafile *> &files, const string &album) {
 		(*mf)->clearValues();
 }
 
-/* private methods */
 void Matcher::clearAlbumComparison() {
 	for (map<string, AlbumComparison>::iterator ac = acs.begin(); ac != acs.end(); ++ac) {
 		for (map<string, vector<Comparison *> >::iterator tc = ac->second.comparisons.begin(); tc != ac->second.comparisons.end(); ++tc) {

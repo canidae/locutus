@@ -22,7 +22,6 @@
 
 using namespace std;
 
-/* constructors/destructor */
 FileNamer::FileNamer(Database *database) : database(database) {
 	/* set up iconv */
 	u2w = iconv_open("WCHAR_T", "UTF8");
@@ -66,7 +65,6 @@ FileNamer::~FileNamer() {
 	iconv_close(w2u);
 }
 
-/* methods */
 const string &FileNamer::getFilename(const Metafile &file) {
 	filename.clear();
 	for (vector<Field>::const_iterator f = fields.begin(); f != fields.end(); ++f)
@@ -74,7 +72,6 @@ const string &FileNamer::getFilename(const Metafile &file) {
 	return filename;
 }
 
-/* private methods */
 void FileNamer::convertIllegalCharacters(string *text) {
 	string::size_type pos = 0;
 	while ((pos = text->find_first_of(illegal_characters), pos) != string::npos)

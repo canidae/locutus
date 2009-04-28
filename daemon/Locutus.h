@@ -13,6 +13,18 @@
 
 #ifndef LOCUTUS_H
 #define LOCUTUS_H
+
+extern "C" {
+#include <dirent.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+};
+#include <list>
+#include <map>
+#include <string>
+
 /* settings */
 #define MUSIC_OUTPUT_KEY "output_directory"
 #define MUSIC_OUTPUT_VALUE "/media/music/sorted/"
@@ -27,20 +39,8 @@
 #define DRY_RUN_VALUE true
 #define DRY_RUN_DESCRIPTION "Only read files and look them up, don't save and move files. Currently genre won't be looked up during a dry run."
 #define LOOKUP_GENRE_KEY "lookup_genre"
-#define LOOKUP_GENRE_VALUE true
+#define LOOKUP_GENRE_VALUE false
 #define LOOKUP_GENRE_DESCRIPTION "Fetch genre (or tag) from Audioscrobbler before saving a file. If no genre is found then genre is set to an empty string. If this option is set to false, the genre field is left unmodified."
-
-extern "C" {
-#include <dirent.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-};
-#include <list>
-#include <map>
-#include <string>
-#include <vector>
 
 class Audioscrobbler;
 class Database;
@@ -51,36 +51,36 @@ class MusicBrainz;
 //class PUIDGenerator;
 
 class Locutus {
-	public:
-		explicit Locutus(Database *database);
-		~Locutus();
+public:
+	explicit Locutus(Database *database);
+	~Locutus();
 
-		static void trim(std::string *text);
+	static void trim(std::string *text);
 
-		long run();
+	long run();
 
-	private:
-		Audioscrobbler *audioscrobbler;
-		Database *database;
-		FileNamer *filenamer;
-		Matcher *matcher;
-		//PUIDGenerator *puidgen;
-		MusicBrainz *musicbrainz;
-		bool combine_groups;
-		bool dry_run;
-		bool lookup_genre;
-		int total_files;
-		std::list<std::string> dir_queue;
-		std::list<std::string> file_queue;
-		std::map<std::string, int> groups;
-		std::string input_dir;
-		std::string output_dir;
+private:
+	Audioscrobbler *audioscrobbler;
+	Database *database;
+	FileNamer *filenamer;
+	Matcher *matcher;
+	//PUIDGenerator *puidgen;
+	MusicBrainz *musicbrainz;
+	bool combine_groups;
+	bool dry_run;
+	bool lookup_genre;
+	int total_files;
+	std::list<std::string> dir_queue;
+	std::list<std::string> file_queue;
+	std::map<std::string, int> groups;
+	std::string input_dir;
+	std::string output_dir;
 
-		std::string findDuplicateFilename(Metafile *file);
-		bool moveFile(Metafile *file, const std::string &filename);
-		bool parseDirectory();
-		bool parseFile();
-		void saveFile(Metafile *file);
-		void scanFiles(const std::string &directory);
+	std::string findDuplicateFilename(Metafile *file);
+	bool moveFile(Metafile *file, const std::string &filename);
+	bool parseDirectory();
+	bool parseFile();
+	void saveFile(Metafile *file);
+	void scanFiles(const std::string &directory);
 };
 #endif
