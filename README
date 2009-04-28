@@ -47,8 +47,6 @@ Locutus currently supports PostgreSQL version 8.3 or later (not tested on
 earlier version).
 
 1. Become the 'postgres' user:
-     su - postgres
-   Or if you're not root:
      sudo su - postgres
 2. Create a user for locutus:
      createuser -S -D -R -P -E locutus
@@ -71,10 +69,10 @@ earlier version).
 
 Daemon:
 -------
-The daemon r equires GNU Common C++, TagLib (version 1.5 or later) and the
-PostgreSQL C  client library.
-For Debian u sers:
-  aptitude i nstall libpq-dev libtag1-dev libcommoncpp2-dev build-essential
+The daemon requires GNU Common C++, TagLib (version 1.5 or later) and the
+PostgreSQL C client library.
+For Debian users:
+  aptitude install libpq-dev libtag1-dev libcommoncpp2-dev build-essential
 
 To build the daemon, simply enter the "daemon" directory and type "make". This
 will produce an executable file called "locutus". Currently this is not a daemon
