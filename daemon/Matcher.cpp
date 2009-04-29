@@ -217,9 +217,9 @@ bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
 			return false;
 		}
 	}
-	ac->second.album = album;
+	(*acs)[mbid].album = album;
 	/* when we load an album we'll match the files with it */
-	compareFilesWithAlbum(&ac->second, files);
+	compareFilesWithAlbum(&(*acs)[mbid], files);
 	return true;
 }
 
