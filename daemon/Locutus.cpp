@@ -298,6 +298,7 @@ void Locutus::saveFile(Metafile *file) {
 		if (file->filename == (*f)->filename)
 			continue; // it's the exact same file
 		unsigned long old_quality = (*f)->bitrate * (*f)->channels * (*f)->samplerate;
+		Debug::info() << "Duplicate file for " << file->filename << " found in output directory: " << (*f)->filename << " - Quality new / old: " << file_quality << " / " << old_quality << " - Pinned new / old: " << (file->pinned ? "true" : "false") << " / " << ((*f)->pinned ? "true" : "false") << endl;
 		if ((old_quality >= file_quality && !file->pinned) || (*f)->pinned) {
 			/* an existing file is better and new file isn't pinned, or old file is pinned.
 			 * move the new file to duplicates and update its metadata */
@@ -319,6 +320,7 @@ void Locutus::saveFile(Metafile *file) {
 		}
 		/* move the existing file */
 		string tmp_old_filename = (*f)->filename;
+		Debug::info() << "Moving duplicate file " << (*f)->filename << " to " << new_filename << endl;
 		if (!moveFile(*f, new_filename)) {
 			/* hmm, couldn't move the existing file.
 			 * then we can't move new file either */
