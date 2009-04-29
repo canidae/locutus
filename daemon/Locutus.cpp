@@ -220,14 +220,19 @@ bool Locutus::parseDirectory() {
 	if (dir == NULL)
 		return true;
 	dirent *entity;
+	char symlinkbuf[1024];
+	size_t symlinkbufsize = 1024;
 	while ((entity = readdir(dir)) != NULL) {
 		string entityname = entity->d_name;
 		if (entityname == "." || entityname == "..")
-			continue;
+			continue; // ignore directories "." and ".."
 		string ford = directory;
 		if (ford[ford.size() - 1] != '/')
 			ford.append("/");
 		ford.append(entityname);
+		/* check if ford is symlink, we skip symlinks */
+		if (readlink(ford.c_str(), symlinkbuf, symlinkbufsize) != -1)
+			continue; // symlink, ignore it
 		/* why isn't always "entity->d_type == DT_DIR" when the entity is a directory? */
 		DIR *tmpdir = opendir(ford.c_str());
 		if (tmpdir != NULL)
