@@ -85,8 +85,11 @@ long Locutus::run() {
 		/* save files with new metadata */
 		bool do_combine_groups = true;
 		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
-			if (!(*f)->metadata_updated)
-				continue; // file not updated, leave it be
+			if (!(*f)->metadata_updated) {
+				/* file is not updated, but we [may] need to unset "sorted" */
+				database->saveMetafile(**f);
+				continue;
+			}
 			if (dry_run) {
 				/* dry run, don't save, only update database.
 				 * however, set "matched" to true as we would've
@@ -107,10 +110,13 @@ long Locutus::run() {
 		}
 		/* update progress */
 		file_counter += g->second;
-		database->updateProgress((double) file_counter / (double) total_files);
+		database->updateProgress(double(file_counter / (total_files + combine.size() * 21)));
 	}
 	/* relookup combined groups */
 	for (map<string, vector<string> >::iterator c = combine.begin(); c != combine.end(); ++c) {
+		/* update progress */
+		database->updateProgress(double(file_counter / (total_files + combine.size() * 21)));
+		file_counter += 21;
 		if (c->second.size() <= 1)
 			continue; // only one group for this album
 		/* need to cheat here, copy the Metafile objects */
@@ -142,7 +148,6 @@ long Locutus::run() {
 			/* delete metafile */
 			delete (*f);
 		}
-		/* TODO: update progress */
 	}
 	/* just in case files disappeared from the database while we were working */
 	database->updateProgress(1.0);
