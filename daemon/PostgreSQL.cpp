@@ -442,7 +442,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	if (old_filename == "") {
 		e_old_filename = e_filename;
 		query.str("");
-		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, user_changed, track_id, checked, sorted) SELECT";
+		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, user_changed, track_id, checked) SELECT";
 		query << " '" << e_filename << "'";
 		query << ", " << metafile.duration;
 		query << ", " << metafile.channels;
@@ -501,7 +501,6 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	query << ", user_changed = false";
 	query << ", track_id = " << e_track_id;
 	query << ", checked = true";
-	query << ", sorted = " << (metafile.matched ? "true" : "false");
 	query << " WHERE filename = '" << e_old_filename << "'";
 	if (!doQuery(query.str()))
 		return false;
