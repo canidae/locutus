@@ -36,7 +36,7 @@ if (@match_file_track) {
 		$file_id = int($file_id);
 		$track_id = int($track_id);
 		if ($file_id > 0 && $track_id > 0) {
-			my $query = 'UPDATE file SET track_id = ' . $track_id ' WHERE file_id = ' . $file_id;
+			my $query = 'UPDATE file SET track_id = ' . $track_id . ' WHERE file_id = ' . $file_id;
 			$dbh->do($query);
 		}
 	}
