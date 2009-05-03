@@ -41,6 +41,7 @@ CREATE TABLE album (
 --
 
 CREATE SEQUENCE album_album_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -71,6 +72,7 @@ CREATE TABLE artist (
 --
 
 CREATE SEQUENCE artist_artist_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -142,6 +144,7 @@ CREATE TABLE file (
 --
 
 CREATE SEQUENCE file_file_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -185,6 +188,7 @@ CREATE TABLE setting (
 --
 
 CREATE SEQUENCE setting_setting_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -219,6 +223,7 @@ CREATE TABLE track (
 --
 
 CREATE SEQUENCE track_track_id_seq
+    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE

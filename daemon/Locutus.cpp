@@ -32,6 +32,7 @@ Locutus::Locutus(Database *database) : database(database) {
 	musicbrainz = new MusicBrainz(database);
 	matcher = new Matcher(database, musicbrainz);
 
+	max_group_size = database->loadSettingInt(MAX_GROUP_SIZE_KEY, MAX_GROUP_SIZE_VALUE, MAX_GROUP_SIZE_DESCRIPTION);
 	combine_groups = database->loadSettingBool(COMBINE_GROUPS_KEY, COMBINE_GROUPS_VALUE, COMBINE_GROUPS_DESCRIPTION);
 	dry_run = database->loadSettingBool(DRY_RUN_KEY, DRY_RUN_VALUE, DRY_RUN_DESCRIPTION);
 	lookup_genre = database->loadSettingBool(LOOKUP_GENRE_KEY, LOOKUP_GENRE_VALUE, LOOKUP_GENRE_DESCRIPTION);
@@ -79,6 +80,12 @@ long Locutus::run() {
 	/* match files */
 	int file_counter = 0;
 	for (map<string, int>::iterator g = groups.begin(); g != groups.end(); ++g) {
+		if (g->second > max_group_size) {
+			/* too many files in this group, update progress and continue */
+			file_counter += g->second;
+			database->updateProgress(double(file_counter / (total_files + combine.size() * 21)));
+			continue;
+		}
 		/* match files in group */
 		vector<Metafile *> files = database->loadGroup(g->first);
 		matcher->match(files);
