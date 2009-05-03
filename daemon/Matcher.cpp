@@ -275,9 +275,8 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 						continue;
 					/* find best file */
 					for (vector<Comparison *>::iterator c = t->second.begin(); c != t->second.end(); ++c) {
-						if ((*c)->metafile->force_save && (*c)->mbid_match) {
-							/* user demands that this file is saved, even if it means
-							 * that we won't satisfy the settings */
+						if ((*c)->mbid_match) {
+							/* track is already matched */
 							(*c)->metafile->setMetadata(*((*c)->track));
 							/* no "continue" here, or we won't get "complete album" or
 							 * "complete group" which may keep other files from being

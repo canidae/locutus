@@ -143,7 +143,6 @@ vector<Metafile *> &PostgreSQL::loadGroup(const string &group) {
 		metafile->genre = getString(r, 17);
 		metafile->pinned = getBool(r, 18);
 		// r, 19 is groupname, we'll let metafile generate that
-		metafile->force_save = getBool(r, 20);
 		groupfiles.push_back(metafile);
 	}
 	return groupfiles;
@@ -183,7 +182,6 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->genre = getString(0, 17);
 	metafile->pinned = getBool(0, 18);
 	// 0, 19 is groupname, we'll let metafile generate that
-	metafile->force_save = getBool(0, 20);
 	/* set file as "checked" so we won't remove it later */
 	query.str("");
 	query << "UPDATE file SET checked = true";
@@ -222,7 +220,6 @@ vector<Metafile *> &PostgreSQL::loadMetafiles(const string &filename_pattern) {
 		metafile->genre = getString(r, 17);
 		metafile->pinned = getBool(r, 18);
 		// r, 19 is groupname, we'll let metafile generate that
-		metafile->force_save = getBool(r, 20);
 		metafiles.push_back(metafile);
 	}
 	return metafiles;
@@ -445,7 +442,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	if (old_filename == "") {
 		e_old_filename = e_filename;
 		query.str("");
-		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, force_save, user_changed, track_id, checked, sorted) SELECT";
+		query << "INSERT INTO file(filename, duration, channels, bitrate, samplerate, album, albumartist, albumartistsort, artist, artistsort, musicbrainz_albumartistid, musicbrainz_albumid, musicbrainz_artistid, musicbrainz_trackid, title, tracknumber, released, genre, pinned, groupname, duplicate, user_changed, track_id, checked, sorted) SELECT";
 		query << " '" << e_filename << "'";
 		query << ", " << metafile.duration;
 		query << ", " << metafile.channels;
@@ -467,7 +464,6 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		query << ", " << (metafile.pinned ? "true" : "false");
 		query << ", '" << e_group << "'";
 		query << ", " << (metafile.duplicate ? "true" : "false");
-		query << ", " << (metafile.force_save ? "true" : "false");
 		query << ", false";
 		query << ", " << e_track_id;
 		query << ", true";
@@ -502,7 +498,6 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	query << ", pinned = " << (metafile.pinned ? "true" : "false");
 	query << ", groupname = '" << e_group << "'";
 	query << ", duplicate = " << (metafile.duplicate ? "true" : "false");
-	query << ", force_save = " << (metafile.force_save ? "true" : "false");
 	query << ", user_changed = false";
 	query << ", track_id = " << e_track_id;
 	query << ", checked = true";

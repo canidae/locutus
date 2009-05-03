@@ -39,7 +39,7 @@
 using namespace std;
 using namespace TagLib;
 
-Metafile::Metafile(const string &filename) : duplicate(false), force_save(false), matched(false), meta_lookup(true), metadata_updated(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), released(""), title(""), tracknumber(""), values() {
+Metafile::Metafile(const string &filename) : duplicate(false), matched(false), meta_lookup(true), metadata_updated(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), released(""), title(""), tracknumber(""), values() {
 }
 
 Metafile::~Metafile() {

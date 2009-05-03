@@ -41,7 +41,6 @@ CREATE TABLE album (
 --
 
 CREATE SEQUENCE album_album_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -72,7 +71,6 @@ CREATE TABLE artist (
 --
 
 CREATE SEQUENCE artist_artist_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -127,11 +125,9 @@ CREATE TABLE file (
     pinned boolean DEFAULT false NOT NULL,
     groupname character varying DEFAULT ''::character varying NOT NULL,
     duplicate boolean DEFAULT false NOT NULL,
-    force_save boolean DEFAULT false NOT NULL,
     user_changed boolean DEFAULT false NOT NULL,
     track_id integer,
     checked boolean DEFAULT true NOT NULL,
-    sorted boolean DEFAULT false NOT NULL,
     CONSTRAINT file_musicbrainz_albumartistid_check CHECK (((length((musicbrainz_albumartistid)::text) = 0) OR (length((musicbrainz_albumartistid)::text) = 36))),
     CONSTRAINT file_musicbrainz_albumid_check CHECK (((length((musicbrainz_albumid)::text) = 0) OR (length((musicbrainz_albumid)::text) = 36))),
     CONSTRAINT file_musicbrainz_artistid_check CHECK (((length((musicbrainz_artistid)::text) = 0) OR (length((musicbrainz_artistid)::text) = 36))),
@@ -144,7 +140,6 @@ CREATE TABLE file (
 --
 
 CREATE SEQUENCE file_file_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -188,7 +183,6 @@ CREATE TABLE setting (
 --
 
 CREATE SEQUENCE setting_setting_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -223,7 +217,6 @@ CREATE TABLE track (
 --
 
 CREATE SEQUENCE track_track_id_seq
-    START WITH 1
     INCREMENT BY 1
     NO MAXVALUE
     NO MINVALUE
@@ -250,7 +243,7 @@ CREATE VIEW v_daemon_load_album AS
 --
 
 CREATE VIEW v_daemon_load_metafile AS
-    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.groupname, f.force_save FROM ((((file f LEFT JOIN track t ON ((t.track_id = f.track_id))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
+    SELECT f.filename, f.duration, f.channels, f.bitrate, f.samplerate, COALESCE(al.title, f.album) AS album, COALESCE(aa.name, f.albumartist) AS albumartist, COALESCE(aa.sortname, f.albumartistsort) AS albumartistsort, COALESCE(ar.name, f.artist) AS artist, COALESCE(ar.sortname, f.artistsort) AS artistsort, COALESCE(aa.mbid, (f.musicbrainz_albumartistid)::bpchar) AS musicbrainz_albumartistid, COALESCE(al.mbid, (f.musicbrainz_albumid)::bpchar) AS musicbrainz_albumid, COALESCE(ar.mbid, (f.musicbrainz_artistid)::bpchar) AS musicbrainz_artistid, COALESCE(t.mbid, (f.musicbrainz_trackid)::bpchar) AS musicbrainz_trackid, COALESCE(t.title, f.title) AS title, COALESCE((t.tracknumber)::character varying, f.tracknumber) AS tracknumber, COALESCE((al.released)::character varying, f.released) AS released, f.genre, f.pinned, f.groupname FROM ((((file f LEFT JOIN track t ON ((t.track_id = f.track_id))) LEFT JOIN artist ar ON ((ar.artist_id = t.artist_id))) LEFT JOIN album al ON ((al.album_id = t.album_id))) LEFT JOIN artist aa ON ((aa.artist_id = al.artist_id)));
 
 
 --
@@ -258,7 +251,7 @@ CREATE VIEW v_daemon_load_metafile AS
 --
 
 CREATE VIEW v_web_album_list_tracks_and_matching_files AS
-    SELECT al.album_id, al.title AS album, ar.name AS artist, ar.artist_id, t.track_id, t.title, t.tracknumber, t.duration, ta.name AS track_artist, ta.artist_id AS track_artist_id, tmp.mbid_match, tmp.score, tmp.file_id, tmp.filename, tmp.file_duration, tmp.file_album, tmp.file_albumartist, tmp.file_artist, tmp.file_title, tmp.file_tracknumber, tmp.pinned, tmp.groupname, tmp.file_track_id, tmp.duplicate, tmp.force_save, tmp.user_changed FROM ((((album al JOIN artist ar ON ((al.artist_id = ar.artist_id))) JOIN track t ON ((al.album_id = t.album_id))) JOIN artist ta ON ((t.artist_id = ta.artist_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, f.file_id) t.album_id, t.track_id, c.mbid_match, c.score, f.file_id, f.filename, f.duration AS file_duration, f.album AS file_album, f.albumartist AS file_albumartist, f.artist AS file_artist, f.title AS file_title, f.tracknumber AS file_tracknumber, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.force_save, f.user_changed FROM ((comparison c JOIN file f USING (file_id)) JOIN track t ON ((c.track_id = t.track_id))) ORDER BY t.album_id, f.file_id, c.mbid_match DESC, c.score DESC) tmp ON (((t.album_id = tmp.album_id) AND (t.track_id = tmp.track_id))));
+    SELECT al.album_id, al.title AS album, ar.name AS artist, ar.artist_id, t.track_id, t.title, t.tracknumber, t.duration, ta.name AS track_artist, ta.artist_id AS track_artist_id, tmp.mbid_match, tmp.score, tmp.file_id, tmp.filename, tmp.file_duration, tmp.file_album, tmp.file_albumartist, tmp.file_artist, tmp.file_title, tmp.file_tracknumber, tmp.pinned, tmp.groupname, tmp.file_track_id, tmp.duplicate, tmp.user_changed FROM ((((album al JOIN artist ar ON ((al.artist_id = ar.artist_id))) JOIN track t ON ((al.album_id = t.album_id))) JOIN artist ta ON ((t.artist_id = ta.artist_id))) LEFT JOIN (SELECT DISTINCT ON (t.album_id, f.file_id) t.album_id, t.track_id, c.mbid_match, c.score, f.file_id, f.filename, f.duration AS file_duration, f.album AS file_album, f.albumartist AS file_albumartist, f.artist AS file_artist, f.title AS file_title, f.tracknumber AS file_tracknumber, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.user_changed FROM ((comparison c JOIN file f USING (file_id)) JOIN track t ON ((c.track_id = t.track_id))) ORDER BY t.album_id, f.file_id, c.mbid_match DESC, c.score DESC) tmp ON (((t.album_id = tmp.album_id) AND (t.track_id = tmp.track_id))));
 
 
 --
@@ -346,7 +339,7 @@ CREATE VIEW v_web_matching_list_albums AS
 --
 
 CREATE VIEW v_web_track_list_matching_files AS
-    SELECT f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.force_save, f.user_changed, m.track_id, m.mbid_match, m.score FROM (file f JOIN comparison m ON ((f.file_id = m.file_id)));
+    SELECT f.file_id, f.filename, f.last_updated, f.duration, f.channels, f.bitrate, f.samplerate, f.album, f.albumartist, f.albumartistsort, f.artist, f.artistsort, f.musicbrainz_albumartistid, f.musicbrainz_albumid, f.musicbrainz_artistid, f.musicbrainz_trackid, f.title, f.tracknumber, f.released, f.genre, f.pinned, f.groupname, f.track_id AS file_track_id, f.duplicate, f.user_changed, m.track_id, m.mbid_match, m.score FROM (file f JOIN comparison m ON ((f.file_id = m.file_id)));
 
 
 --
@@ -354,7 +347,7 @@ CREATE VIEW v_web_track_list_matching_files AS
 --
 
 CREATE VIEW v_web_uncompared_list_files AS
-    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released, file.genre, file.pinned, file.groupname, file.duplicate, file.force_save, file.user_changed, file.track_id, file.checked FROM file WHERE (NOT (file.file_id IN (SELECT comparison.file_id FROM comparison)));
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released, file.genre, file.pinned, file.groupname, file.duplicate, file.user_changed, file.track_id, file.checked FROM file WHERE (NOT (file.file_id IN (SELECT comparison.file_id FROM comparison)));
 
 
 --
