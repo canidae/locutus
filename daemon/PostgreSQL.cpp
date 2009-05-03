@@ -467,7 +467,6 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 		query << ", false";
 		query << ", " << e_track_id;
 		query << ", true";
-		query << ", " << (metafile.matched ? "true" : "false");
 		query << " WHERE NOT EXISTS";
 		query << " (SELECT true FROM file WHERE filename = '" << e_filename << "')";
 		if (!doQuery(query.str()))
