@@ -74,7 +74,6 @@ public:
 	bool duplicate;
 	bool matched;
 	bool meta_lookup;
-	bool metadata_updated;
 	bool pinned;
 	int bitrate;
 	int channels;

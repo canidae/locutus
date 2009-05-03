@@ -39,7 +39,7 @@
 using namespace std;
 using namespace TagLib;
 
-Metafile::Metafile(const string &filename) : duplicate(false), matched(false), meta_lookup(true), metadata_updated(false), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), released(""), title(""), tracknumber(""), values() {
+Metafile::Metafile(const string &filename) : duplicate(false), matched(false), meta_lookup(true), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), released(""), title(""), tracknumber(""), values() {
 }
 
 Metafile::~Metafile() {
@@ -290,8 +290,6 @@ bool Metafile::saveMetadata() {
 	} else {
 		Debug::warning() << "Unable to save file '" << filename << "': Unknown filetype" << endl;
 	}
-	if (ok)
-		metadata_updated = false;
 	return ok;
 }
 
@@ -310,7 +308,7 @@ bool Metafile::setMetadata(const Track &track) {
 	tracknum << track.tracknumber;
 	tracknumber = tracknum.str();
 	released = track.album->released;
-	metadata_updated = true;
+	matched = true;
 	return true;
 }
 

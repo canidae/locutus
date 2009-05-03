@@ -92,16 +92,13 @@ long Locutus::run() {
 		/* save files with new metadata */
 		bool do_combine_groups = true;
 		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
-			if (!(*f)->metadata_updated) {
-				/* file is not updated, but we [may] need to unset "sorted" */
+			if (!(*f)->matched) {
+				/* file is not matched, but we [may] need to unset "track_id" */
 				database->saveMetafile(**f);
 				continue;
 			}
 			if (dry_run) {
-				/* dry run, don't save, only update database.
-				 * however, set "matched" to true as we would've
-				 * saved this file if it wasn't for dry_run */
-				(*f)->matched = true;
+				/* dry run, don't save, only update database */
 				database->saveMetafile(**f);
 			} else {
 				/* this file (may) be updated, save it */
@@ -140,12 +137,9 @@ long Locutus::run() {
 		matcher->match(files, c->first);
 		/* save files with new metadata */
 		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
-			if ((*f)->metadata_updated) {
+			if ((*f)->matched) {
 				if (dry_run) {
-					/* dry run, don't save, only update database.
-					 * however, set "matched" to true as we would've
-					 * saved this file if it wasn't for dry_run */
-					(*f)->matched = true;
+					/* dry run, don't save, only update database */
 					database->saveMetafile(**f);
 				} else {
 					/* this file (may) be updated, save it */
@@ -293,8 +287,6 @@ void Locutus::saveFile(Metafile *file) {
 		else
 			file->genre = ""; // clear genre if we didn't find a tag
 	}
-	/* set file as "matched" */
-	file->matched = true;
 	/* create new filename */
 	string filename = output_dir;
 	filename.append(filenamer->getFilename(*file));

@@ -143,6 +143,7 @@ vector<Metafile *> &PostgreSQL::loadGroup(const string &group) {
 		metafile->genre = getString(r, 17);
 		metafile->pinned = getBool(r, 18);
 		// r, 19 is groupname, we'll let metafile generate that
+		metafile->matched = getBool(0, 20);
 		groupfiles.push_back(metafile);
 	}
 	return groupfiles;
@@ -182,6 +183,7 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	metafile->genre = getString(0, 17);
 	metafile->pinned = getBool(0, 18);
 	// 0, 19 is groupname, we'll let metafile generate that
+	metafile->matched = getBool(0, 20);
 	/* set file as "checked" so we won't remove it later */
 	query.str("");
 	query << "UPDATE file SET checked = true";
@@ -220,6 +222,7 @@ vector<Metafile *> &PostgreSQL::loadMetafiles(const string &filename_pattern) {
 		metafile->genre = getString(r, 17);
 		metafile->pinned = getBool(r, 18);
 		// r, 19 is groupname, we'll let metafile generate that
+		metafile->matched = getBool(0, 20);
 		metafiles.push_back(metafile);
 	}
 	return metafiles;
