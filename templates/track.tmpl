@@ -3,11 +3,11 @@
 %]
 [% IF track %]
     <h1>[% track.title %]</h1>
-    <h2>Artist: <a href="artist.pl?arid=[% track.artist_id %]">[% track.artist_name %]</a></h2>
-    <h2>Album: <a href="album.pl?alid=[% track.album_id %]">[% track.album_title %]</a></h2>
+    <h2>Artist: <a href="artist.pl?arid=[% track.artist_id %]">[% FILTER html %][% track.artist_name %][% END %]</a></h2>
+    <h2>Album: <a href="album.pl?alid=[% track.album_id %]">[% FILTER html %][% track.album_title %][% END %]</a></h2>
     <h3>Tracknumber: [% track.tracknumber %]</h3>
     <h3>Duration: [% track.duration %]ms</h3>
-    <h3>MusicBrainz Track ID: <a href="http://musicbrainz.org/track/[% track.mbid %].html">[% track.mbid %]</a></h3>
+    <h3>MusicBrainz Track ID: <a href="http://musicbrainz.org/track/[% FILTER html %][% track.mbid %][% END %].html">[% FILTER html %][% track.mbid %][% END %]</a></h3>
   [% IF matches.size() > 0 %]
     <h2>Matching files:</h2>
     <table>
@@ -15,23 +15,23 @@
         <th>Score</th>
         <th>[% track.tracknumber %]</th>
         <th>fixme?</th>
-        <th>[% track.album_title %]</th>
-        <th>[% track.artist_name %]</th>
-        <th><a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a></th>
+        <th>[% FILTER html %][% track.album_title %][% END %]</th>
+        <th>[% FILTER html %][% track.artist_name %][% END %]</th>
+        <th><a href="track.pl?trid=[% track.track_id %]">[% FILTER html %][% track.title %][% END %]</a></th>
         <th>[% track.duration %]</th>
       </tr>
     [% FOREACH match IN matches %]
       <tr>
         <td rowspan="2" style="background: #[% match.color %];">[% match.score %]</td>
         <td>[% match.tracknumber %]</td>
-        <td>[% match.albumartist %]</td>
-        <td>[% match.album %]</td>
-        <td>[% match.artist %]</td>
-        <td>[% match.title %]</td>
+        <td>[% FILTER html %][% match.albumartist %][% END %]</td>
+        <td>[% FILTER html %][% match.album %][% END %]</td>
+        <td>[% FILTER html %][% match.artist %][% END %]</td>
+        <td>[% FILTER html %][% match.title %][% END %]</td>
         <td>[% match.duration %]</td>
       </tr>
       <tr>
-        <td colspan="6"><a href="file.pl?fiid=[% match.file_id %]">[% match.filename %]</a></td>
+        <td colspan="6"><a href="file.pl?fiid=[% match.file_id %]">[% FILTER html %][% match.filename %][% END %]</a></td>
       </tr>
     [% END %]
     </table>

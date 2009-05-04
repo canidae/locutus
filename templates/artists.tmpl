@@ -11,7 +11,7 @@
 [% IF artists.size() > 0 %]
     <ul>
   [% FOREACH artist IN artists %]
-      <li><a href="artist.pl?arid=[% artist.artist_id %]">[% artist.name %], [% artist.albums %] album[% IF artist.albums != 1 %]s[% END %]</a></li>
+      <li><a href="artist.pl?arid=[% artist.artist_id %]">[% FILTER html %][% artist.name %], [% artist.albums %] album[% IF artist.albums != 1 %]s[% END %][% END %]</a></li>
   [% END %]
     </ul>
 [% END %]

@@ -6,18 +6,18 @@
     <table>
   [% FOREACH setting IN settings %]
       <tr>
-        <th colspan="2">[% setting.key %]</th>
+        <th colspan="2">[% FILTER html %][% setting.key %][% END %]</th>
       </tr>
       <tr>
         <th>Default</th>
-        <td>[% setting.default_value %]</td>
+        <td>[% FILTER html %][% setting.default_value %][% END %]</td>
       </tr>
       <tr>
         <th>Value</th>
-        <td><input type="text" value="[% setting.value %]" /></td>
+        <td><input type="text" value="[% FILTER html %][% setting.value %][% END %]" /></td>
       </tr>
       <tr>
-        <td colspan="2">[% setting.description %]</td>
+        <td colspan="2">[% FILTER html %][% setting.description %][% END %]</td>
       </tr>
   [% END %]
     </table>

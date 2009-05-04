@@ -3,13 +3,13 @@
 %]
 [% IF artist %]
     <h1>[% artist.name %]</h1>
-    <h2>Sortname: [% artist.sortname %]</h2>
-    <h3>MusicBrainz Artist ID: <a href="http://musicbrainz.org/artist/[% artist.mbid %].html">[% artist.mbid %]</a></h3>
+    <h2>Sortname: [% FILTER html %][% artist.sortname %][% END %]</h2>
+    <h3>MusicBrainz Artist ID: <a href="http://musicbrainz.org/artist/[% FILTER html %][% artist.mbid %][% END %].html">[% FILTER html %][% artist.mbid %][% END %]</a></h3>
   [% IF albums.size() > 0 %]
     <h2>Albums:</h2>
     <ul>
     [% FOREACH album IN albums %]
-      <li><a href="album.pl?alid=[% album.album_id %]">[% album.title %] ([% album.tracks %] track[% IF album.tracks != 1 %]s[% END %][% IF album.type %], [% album.type %][% END %][% IF album.released %], released [% album.released %][% END %])</a></li>
+      <li><a href="album.pl?alid=[% album.album_id %]">[% FILTER html %][% album.title %] ([% album.tracks %] track[% IF album.tracks != 1 %]s[% END %][% IF album.type %], [% album.type %][% END %][% IF album.released %], released [% album.released %][% END %])[% END %]</a></li>
     [% END %]
     </ul>
   [% END %]

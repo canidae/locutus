@@ -25,7 +25,7 @@
       </tr>
     [% FOREACH album IN albums %]
       <tr>
-        <td><a href="album.pl?alid=[% album.album_id %]">[% album.album %]</a></td>
+        <td><a href="album.pl?alid=[% album.album_id %]">[% FILTER html %][% album.album %][% END %]</a></td>
         <td>[% album.tracks %]</td>
         <td>[% album.tracks_compared %]</td>
         <td>[% album.files_compared %]</td>

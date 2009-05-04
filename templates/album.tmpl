@@ -3,10 +3,10 @@
 %]
 [% IF album %]
     <h1>[% album.title %]</h1>
-    <h2>Artist: <a href="artist.pl?arid=[% album.artist_id %]">[% album.artist_name %]</a></h2>
+    <h2>Artist: <a href="artist.pl?arid=[% album.artist_id %]">[% FILTER html %][% album.artist_name %][% END %]</a></h2>
     <h3>Type: [% album.type %]</h3>
     <h3>Released: [% album.released %]</h3>
-    <h3>MusicBrainz Album ID: <a href="http://musicbrainz.org/release/[% album.mbid %].html">[% album.mbid %]</a></h3>
+    <h3>MusicBrainz Album ID: <a href="http://musicbrainz.org/release/[% FILTER html %][% album.mbid %][% END %].html">[% FILTER html %][% album.mbid %][% END %]</a></h3>
     [% IF tracks.size > 0 %]
     <form action="album.pl?alid=[% album.album_id %]" method="post">
       <div><input type="hidden" name="alid" value="[% album.album_id %]" /></div>
@@ -14,7 +14,7 @@
       <p>This album got files from multiple groups. You can narrow down to one group:</p>
       <ul>
         [% FOREACH group IN groups %]
-        <li><a href="album.pl?alid=[% album.album_id %]&amp;figrid=[% group.value %]">[% group.key %]</a></li>
+        <li><a href="album.pl?alid=[% album.album_id %]&amp;figrid=[% group.value %]">[% FILTER html %][% group.key %][% END %]</a></li>
         [% END %]
       </ul>
       [% END %]
@@ -22,7 +22,7 @@
       <p>There are other albums with the same name from the same artist as this album. Most likely this album was released multiple times with different track count or with rearranged tracks. You should check the other albums, maybe the files match another album better?</p>
       <ul>
         [% FOREACH sa IN similar_albums %]
-        <li><a href="album.pl?alid=[% sa.album_id %]">[% sa.album %] ([% sa.tracks %] tracks)</a></li>
+        <li><a href="album.pl?alid=[% sa.album_id %]">[% FILTER html %][% sa.album %] ([% sa.tracks %] tracks)[% END %]</a></li>
         [% END %]
       </ul>
       [% END %]
@@ -34,7 +34,7 @@
           <th>Track [% track.tracknumber %]</th>
           <th>Score</th>
           <th>[% track.duration %]</th>
-          <th>[% album.artist_name %] - [% album.title %] - [% track.tracknumber %] - [% IF track.track_artist_id != album.artist_id %]<a href="artist.pl?arid=[% track.track_artist_id %]">[% track.track_artist %]</a>[% ELSE %][% track.artist %][% END %] - <a href="track.pl?trid=[% track.track_id %]">[% track.title %]</a></th>
+          <th>[% FILTER html %][% album.artist_name %] - [% album.title %] - [% track.tracknumber %][% END %] - [% IF track.track_artist_id != album.artist_id %]<a href="artist.pl?arid=[% track.track_artist_id %]">[% FILTER html %][% track.track_artist %][% END %]</a>[% ELSE %][% FILTER html %][% track.artist %][% END %][% END %] - <a href="track.pl?trid=[% track.track_id %]">[% FILTER html %][% track.title %][% END %]</a></th>
           <th>Remove</th>
         </tr>
       [% END %]
@@ -50,8 +50,8 @@
           <td style="background: #[% track.color %];">[% track.score %]</td>
           <td style="background: #[% track.duration_color %];">[% track.file_duration %]</td>
           <td>
-            [% track.file_albumartist OR '???' %] - [% track.file_album OR '???' %] - [% track.file_tracknumber OR '???'  %] - [% track.file_artist OR '???' %] - [% track.file_title OR '???' %]<br />
-            <a href="file.pl?fiid=[% track.file_id %]">[% track.filename %]</a>
+            [% FILTER html %][% track.file_albumartist OR '???' %] - [% track.file_album OR '???' %] - [% track.file_tracknumber OR '???'  %] - [% track.file_artist OR '???' %] - [% track.file_title OR '???' %][% END %]<br />
+            <a href="file.pl?fiid=[% track.file_id %]">[% FILTER html %][% track.filename %][% END %]</a>
           </td>
           <td style="text-align: center;"><input type="checkbox" name="remove_file_track" value="[% track.file_id %]@[% track.track_id %]" /></td>
         </tr>
