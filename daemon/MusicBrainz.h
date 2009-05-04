@@ -39,7 +39,6 @@ class Metafile;
 class MusicBrainz : public WebService {
 public:
 	explicit MusicBrainz(Database *database);
-	~MusicBrainz();
 
 	bool lookupAlbum(Album *album);
 	const std::vector<Metatrack> &searchMetadata(const Metafile &metafile);

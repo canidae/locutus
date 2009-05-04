@@ -34,9 +34,6 @@ MusicBrainz::MusicBrainz(Database *database) : database(database) {
 	last_fetch.tv_usec = 0;
 }
 
-MusicBrainz::~MusicBrainz() {
-}
-
 bool MusicBrainz::lookupAlbum(Album *album) {
 	if (album == NULL || album->mbid.size() != 36 || album->mbid[8] != '-' || album->mbid[13] != '-' || album->mbid[18] != '-' || album->mbid[23] != '-')
 		return false;

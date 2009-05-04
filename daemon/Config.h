@@ -24,7 +24,6 @@
 class Config {
 public:
 	Config();
-	~Config();
 
 	std::string getSettingValue(const std::string &setting);
 

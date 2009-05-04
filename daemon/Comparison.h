@@ -26,6 +26,5 @@ public:
 	double total_score;
 
 	Comparison(Metafile *metafile, Track *track, bool mbid_match, double score);
-	~Comparison();
 };
 #endif

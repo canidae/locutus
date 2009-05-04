@@ -17,6 +17,3 @@ using namespace std;
 
 Comparison::Comparison(Metafile *metafile, Track *track, bool mbid_match, double score) : metafile(metafile), track(track), mbid_match(mbid_match), score(score), total_score(score * (mbid_match ? 3 : 1)) {
 }
-
-Comparison::~Comparison() {
-}

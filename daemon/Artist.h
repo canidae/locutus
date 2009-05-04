@@ -23,6 +23,5 @@ public:
 	std::string sortname;
 
 	Artist();
-	~Artist();
 };
 #endif

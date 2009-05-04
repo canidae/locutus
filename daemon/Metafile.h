@@ -95,7 +95,6 @@ public:
 	std::string tracknumber;
 
 	Metafile(const std::string &filename);
-	~Metafile();
 
 	void clearValues();
 	std::string getBaseNameWithoutExtension() const;

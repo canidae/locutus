@@ -17,6 +17,3 @@ using namespace std;
 
 Artist::Artist() : mbid(""), name(""), sortname("") {
 }
-
-Artist::~Artist() {
-}

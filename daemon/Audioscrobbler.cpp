@@ -30,9 +30,6 @@ Audioscrobbler::Audioscrobbler(Database *database) : database(database) {
 	last_fetch.tv_usec = 0;
 }
 
-Audioscrobbler::~Audioscrobbler() {
-}
-
 const vector<string> &Audioscrobbler::getTags(const Metafile &metafile) {
 	tags.clear();
 	string artist = escapeString(metafile.artist);
