@@ -26,6 +26,8 @@ class Track;
 
 class Database {
 public:
+	virtual ~Database() {}
+
 	virtual bool init() = 0;
 	virtual bool loadAlbum(Album *album) = 0;
 	virtual const std::vector<Metafile *> &loadGroup(const std::string &group) = 0;
