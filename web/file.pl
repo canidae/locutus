@@ -30,14 +30,14 @@ my $fiid = int(param('fiid') || -1);
 
 if (defined param('save_metadata') && $fiid >= 0) {
 	# save user modified metadata
-	my $artist = param('artist') || "";
-	my $album = param('album') || "";
-	my $albumartist = param('albumartist') || "";
-	my $title = param('title') || "";
-	my $tracknumber = param('tracknumber') || "";
-	my $musicbrainz_albumid = param('musicbrainz_albumid') || "";
-	my $musicbrainz_trackid = param('musicbrainz_trackid') || "";
-	my $query = 'UPDATE file SET album=' . $dbh->quote($album) . ', albumartist=' . $dbh->quote($albumartist) . ', artist=' . $dbh->quote($artist) . ', musicbrainz_albumid=' . $dbh->quote($musicbrainz_albumid) . ', musicbrainz_trackid=' . $dbh->quote($musicbrainz_trackid) . ', title=' . $dbh->quote($title) . ', tracknumber=' . $dbh->quote($tracknumber) . ', user_changed = true WHERE file_id=' . $fiid;
+	my $artist = $dbh->quote(param('artist')) || "";
+	my $album = $dbh->quote(param('album')) || "";
+	my $albumartist = $dbh->quote(param('albumartist')) || "";
+	my $title = $dbh->quote(param('title')) || "";
+	my $tracknumber = $dbh->quote(param('tracknumber')) || "";
+	my $musicbrainz_albumid = $dbh->quote(param('musicbrainz_albumid')) || "";
+	my $musicbrainz_trackid = $dbh->quote(param('musicbrainz_trackid')) || "";
+	my $query = 'UPDATE file SET album = ' . $album . ', albumartist = ' . $albumartist . ', artist = ' . $artist . ', musicbrainz_albumid = ' . $musicbrainz_albumid . ', musicbrainz_trackid = ' . $musicbrainz_trackid . ', title = ' . $title . ', tracknumber = ' . $tracknumber . ', track_id = NULL, user_changed = true WHERE file_id = ' . $fiid;
 	$dbh->do($query);
 }
 
