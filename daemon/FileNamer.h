@@ -21,7 +21,7 @@
 #define VARIOUS_ARTISTS_MBID "89ad4ac3-39f7-470e-963a-56509c546377"
 /* settings */
 #define FILENAME_FORMAT_KEY "filename_format"
-#define FILENAME_FORMAT_VALUE "%albumartist%/%album%/$num(%tracknumber%,2) - %artist% - %title%.%ext%"
+#define FILENAME_FORMAT_VALUE "%albumartist%/%album% [$right(%musicbrainz_albumid%,4)]/$num(%tracknumber%,2) - %artist% - %title%.%ext%"
 #define FILENAME_FORMAT_DESCRIPTION "Output filename format. Available keys: %album%, %albumartist%, %albumartistsort%, %artist%, %artistsort%, %musicbrainz_albumartistid%, %musicbrainz_albumid%, %musicbrainz_artistid%, %musicbrainz_trackid%, %title%, %tracknumber%, %date%, %custom_artist%, %genre%, %ext%."
 #define FILENAME_ILLEGAL_CHARACTERS_KEY "filename_illegal_characters"
 #define FILENAME_ILLEGAL_CHARACTERS_VALUE "/"
