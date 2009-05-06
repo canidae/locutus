@@ -65,7 +65,8 @@ $metadata_min_score = 0.75 if ($metadata_min_score <= 0 || $metadata_min_score >
 $vars{album} = $dbh->selectrow_hashref('SELECT * FROM v_web_info_album WHERE album_id = ' . $alid);
 $vars{similar_albums} = $dbh->selectall_arrayref('SELECT album_id, title AS album, (SELECT count(*) FROM track t WHERE t.album_id = a.album_id) AS tracks FROM album a WHERE album_id != ' . $alid . ' AND album_id IN (SELECT album_id FROM album WHERE artist_id = (SELECT artist_id FROM album WHERE album_id = ' . $alid . ' AND title = a.title)) ORDER BY tracks, album_id', {Slice => {}});
 $vars{tracks} = $dbh->selectall_arrayref('SELECT * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ' . $alid . ' ORDER BY tracknumber ASC, mbid_match DESC, score DESC', {Slice => {}});
-$vars{cur_group} = $dbh->selectrow_hashref('SELECT groupname FROM file WHERE file_id = ' . $figrid) if ($figrid > -1);
+my $cur_group = $dbh->selectrow_hashref('SELECT groupname FROM file WHERE file_id = ' . $figrid) if ($figrid > -1);
+$vars{cur_group} = $cur_group->{groupname};
 
 foreach my $track (@{$vars{tracks}}) {
 	$vars{groups}->{$track->{groupname}} = $track->{file_id} if ($track->{groupname} ne '');
