@@ -11,6 +11,7 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <csignal>
 #include <vector>
 #include "Audioscrobbler.h"
 #include "Config.h"
@@ -26,7 +27,7 @@
 
 using namespace std;
 
-Locutus::Locutus(Database *database) : database(database) {
+Locutus::Locutus(Database *database) : active(true), database(database) {
 	audioscrobbler = new Audioscrobbler(database);
 	filenamer = new FileNamer(database);
 	musicbrainz = new MusicBrainz(database);
@@ -67,19 +68,23 @@ void Locutus::trim(string *text) {
 }
 
 long Locutus::run() {
+	active = true;
 	/* parse sorted directory */
 	Debug::info() << "Scanning output directory" << endl;
 	scanFiles(output_dir);
 	/* parse unsorted directory */
-	Debug::info() << "Scanning input directory" << endl;
-	scanFiles(input_dir);
+	if (active) {
+		Debug::info() << "Scanning input directory" << endl;
+		scanFiles(input_dir);
+	}
 	/* remove files that don't exist from database */
-	database->removeGoneFiles();
+	if (active)
+		database->removeGoneFiles();
 	/* set up map for combining groups that load same album */
 	map<string, vector<string> > combine;
 	/* match files */
 	int file_counter = 0;
-	for (map<string, int>::iterator g = groups.begin(); g != groups.end(); ++g) {
+	for (map<string, int>::iterator g = groups.begin(); g != groups.end() && active; ++g) {
 		if (g->second > max_group_size) {
 			/* too many files in this group, update progress and continue */
 			file_counter += g->second;
@@ -91,7 +96,7 @@ long Locutus::run() {
 		matcher->match(files);
 		/* save files with new metadata */
 		bool do_combine_groups = true;
-		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
+		for (vector<Metafile *>::iterator f = files.begin(); f != files.end() && active; ++f) {
 			if (!(*f)->matched) {
 				/* file is not matched, but we [may] need to unset "track_id" */
 				database->saveMetafile(**f);
@@ -117,7 +122,7 @@ long Locutus::run() {
 		database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size() * 21.0));
 	}
 	/* relookup combined groups */
-	for (map<string, vector<string> >::iterator c = combine.begin(); c != combine.end(); ++c) {
+	for (map<string, vector<string> >::iterator c = combine.begin(); c != combine.end() && active; ++c) {
 		/* update progress */
 		database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size() * 21.0));
 		file_counter += 21;
@@ -136,7 +141,7 @@ long Locutus::run() {
 		/* match files */
 		matcher->match(files, c->first);
 		/* save files with new metadata */
-		for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
+		for (vector<Metafile *>::iterator f = files.begin(); f != files.end() && active; ++f) {
 			if ((*f)->matched) {
 				if (dry_run) {
 					/* dry run, don't save, only update database */
@@ -356,7 +361,7 @@ void Locutus::saveFile(Metafile *file) {
 
 void Locutus::scanFiles(const string &directory) {
 	dir_queue.push_back(directory);
-	while (dir_queue.size() > 0 || file_queue.size() > 0) {
+	while (active && (dir_queue.size() > 0 || file_queue.size() > 0)) {
 		/* first files */
 		if (parseFile())
 			continue;
@@ -366,11 +371,31 @@ void Locutus::scanFiles(const string &directory) {
 	}
 }
 
-/* main */
+/* main stuff */
+bool active = true;
+Locutus *locutus = NULL;
+
+void abort(int) {
+	Debug::notice() << "SIGINT received, aborting run" << endl;
+	if (locutus != NULL)
+		locutus->active = false;
+}
+
+void quit(int) {
+	Debug::notice() << "SIGTERM received, shutting down" << endl;
+	if (locutus != NULL)
+		locutus->active = false;
+	active = false;
+}
+
 int main() {
 	/* initialize static classes */
 	Debug::open("locutus.log");
 	Levenshtein::initialize();
+
+	/* connect signals */
+	signal(SIGINT, abort);
+	signal(SIGTERM, quit);
 
 	/* get configuration */
 	Config config;
@@ -383,7 +408,7 @@ int main() {
 	Database *database = new PostgreSQL(db_host, db_user, db_pass, db_name);
 
 	//while (true) {
-		Locutus *locutus = new Locutus(database);
+		locutus = new Locutus(database);
 		database->start();
 		database->init();
 		Debug::info() << "Checking files..." << endl;
@@ -391,6 +416,7 @@ int main() {
 		Debug::info() << "Finished checking files" << endl;
 		database->stop();
 		delete locutus;
+		locutus = NULL;
 
 		usleep(sleeptime);
 	//}

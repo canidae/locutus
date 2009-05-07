@@ -54,6 +54,8 @@ class MusicBrainz;
 
 class Locutus {
 public:
+	bool active;
+
 	explicit Locutus(Database *database);
 	~Locutus();
 
