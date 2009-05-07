@@ -83,7 +83,7 @@ long Locutus::run() {
 		if (g->second > max_group_size) {
 			/* too many files in this group, update progress and continue */
 			file_counter += g->second;
-			database->updateProgress(double(file_counter / (total_files + combine.size() * 21)));
+			database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size() * 21.0));
 			continue;
 		}
 		/* match files in group */
@@ -114,12 +114,12 @@ long Locutus::run() {
 		}
 		/* update progress */
 		file_counter += g->second;
-		database->updateProgress(double(file_counter / (total_files + combine.size() * 21)));
+		database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size() * 21.0));
 	}
 	/* relookup combined groups */
 	for (map<string, vector<string> >::iterator c = combine.begin(); c != combine.end(); ++c) {
 		/* update progress */
-		database->updateProgress(double(file_counter / (total_files + combine.size() * 21)));
+		database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size() * 21.0));
 		file_counter += 21;
 		if (c->second.size() <= 1)
 			continue; // only one group for this album
