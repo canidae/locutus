@@ -49,11 +49,16 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 		max_diff_best_score = 0.0;
 	else if (max_diff_best_score > 1.0)
 		max_diff_best_score = 1.0;
-	metadata_min_score = database->loadSettingDouble(METADATA_MIN_SCORE_KEY, METADATA_MIN_SCORE_VALUE, METADATA_MIN_SCORE_DESCRIPTION);
-	if (metadata_min_score < 0.0)
-		metadata_min_score = 0.0;
-	else if (metadata_min_score > 1.0)
-		metadata_min_score = 1.0;
+	match_min_score = database->loadSettingDouble(MATCH_MIN_SCORE_KEY, MATCH_MIN_SCORE_VALUE, MATCH_MIN_SCORE_DESCRIPTION);
+	if (match_min_score < 0.0)
+		match_min_score = 0.0;
+	else if (match_min_score > 1.0)
+		match_min_score = 1.0;
+	compare_relative_score = database->loadSettingDouble(COMPARE_RELATIVE_SCORE_KEY, COMPARE_RELATIVE_SCORE_VALUE, COMPARE_RELATIVE_SCORE_DESCRIPTION);
+	if (compare_relative_score < 0.0)
+		compare_relative_score = 0.0;
+	else if (compare_relative_score > 1.0)
+		compare_relative_score = 1.0;
 	allow_group_duplicates = database->loadSettingBool(ALLOW_GROUP_DUPLICATES_KEY, ALLOW_GROUP_DUPLICATES_VALUE, ALLOW_GROUP_DUPLICATES_DESCRIPTION);
 	only_save_complete_albums = database->loadSettingBool(ONLY_SAVE_COMPLETE_ALBUMS_KEY, ONLY_SAVE_COMPLETE_ALBUMS_VALUE, ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION);
 	only_save_if_all_match = database->loadSettingBool(ONLY_SAVE_IF_ALL_MATCH_KEY, ONLY_SAVE_IF_ALL_MATCH_VALUE, ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION);
@@ -64,8 +69,8 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 	if (tracknumber_weight < 0.0)
 		tracknumber_weight = 0.0;
 
-	/* if a metadata match score is less than half the metadata_min_score then we won't save the match */
-	mismatch_threshold = metadata_min_score / 2.0;
+	/* if a metadata match score is less than half the match_min_score then we won't save the match */
+	mismatch_threshold = match_min_score * compare_relative_score;
 
 	/* set acs to NULL */
 	acs = NULL;
@@ -286,7 +291,7 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 							continue; // file already used
 						else if ((*c)->total_score <= best_comparison_score)
 							continue; // already found a better match
-						else if (!(*c)->mbid_match && (*c)->score < metadata_min_score)
+						else if (!(*c)->mbid_match && (*c)->score < match_min_score)
 							continue; // metadata compare with too low score
 						map<string, double>::iterator bfc = best_file_comparison.find((*c)->metafile->filename);
 						if (!(*c)->mbid_match && bfc != best_file_comparison.end() && bfc->second - (*c)->total_score > max_diff_best_score)

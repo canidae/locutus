@@ -43,12 +43,15 @@
 #define MBID_LOOKUP_KEY "mbid_lookup"
 #define MBID_LOOKUP_VALUE true
 #define MBID_LOOKUP_DESCRIPTION "If a file got MusicBrainz ID's then look up the track using that. This is generally a very good idea, this setting should only be turned off for testing purposes. If a MusicBrainz ID does not exist, Locutus will look up the track using metadata regardless of the value of this setting."
-#define METADATA_MIN_SCORE_KEY "metadata_min_score"
-#define METADATA_MIN_SCORE_VALUE 0.75
-#define METADATA_MIN_SCORE_DESCRIPTION "When comparing a file with a track using metadata only, the score must exceed this value for the file to be matched. Value must be between 0.0 and 1.0. Increasing this value will decrease files matched and mismatches, decreasing it will logically do the opposite."
+#define MATCH_MIN_SCORE_KEY "match_min_score"
+#define MATCH_MIN_SCORE_VALUE 0.75
+#define MATCH_MIN_SCORE_DESCRIPTION "When comparing a file with a track using metadata only, the score must exceed this value for the file to be matched. Value must be between 0.0 and 1.0. Increasing this value will decrease files matched and mismatches, decreasing it will logically do the opposite."
+#define COMPARE_RELATIVE_SCORE_KEY "compare_relative_score"
+#define COMPARE_RELATIVE_SCORE_VALUE 0.8
+#define COMPARE_RELATIVE_SCORE_DESCRIPTION "To reduce the amount of comparisons saved, Locutus only save comparisons where the score exceed \"match_min_score * compare_relative_score\". In other words, with this value set to 1.0 and match_min_score set to 0.75 then Locutus will only save comparisons where score exceed 0.75. If this value is set to 0.5 and match_min_score is set to 0.80 then a comparison score must exceed 0.5 * 0.80 = 0.4 in order to be saved. This setting also affect amount of albums loaded in a similar way, the file we look up must get a score on an album that exceeds \"match_min_score * compare_relative_score\" in order for that album to be loaded. This value must be between 0.0 and 1.0, where a lower value will increase amount of comparisons saved and a higher value will decrease that amount."
 #define ALLOW_GROUP_DUPLICATES_KEY "allow_group_duplicates"
 #define ALLOW_GROUP_DUPLICATES_VALUE false
-#define ALLOW_GROUP_DUPLICATES_DESCRIPTION "If you have none or few duplicate files that will end up in the same group then this option should be disabled. With this option disabled, 'only_save_if_all_match' enabled and 'only_save_complete_albums' enabled you can significantly reduce 'metadata_min_score' without getting mismatched files and at the same time increase amount of matched files. Please see the tuning guide for more information."
+#define ALLOW_GROUP_DUPLICATES_DESCRIPTION "If you have none or few duplicate files that will end up in the same group then this option should be disabled. With this option disabled, 'only_save_if_all_match' enabled and 'only_save_complete_albums' enabled you can significantly reduce 'match_min_score' without getting mismatched files and at the same time increase amount of matched files. Please see the tuning guide for more information."
 #define ONLY_SAVE_COMPLETE_ALBUMS_KEY "only_save_complete_albums"
 #define ONLY_SAVE_COMPLETE_ALBUMS_VALUE true
 #define ONLY_SAVE_COMPLETE_ALBUMS_DESCRIPTION "When this setting is set to true, Locutus will only save albums where we got files matched to every single track on the album. If this setting is 'false' then Locutus will save matched files even if the album(s) they match isn't complete. It will also do a metadata lookup for every file which will significantly slow down the comparison. If your music archive only contains complete albums, it is a very good idea to leave this setting at true."
@@ -97,7 +100,8 @@ private:
 	double duration_limit;
 	double duration_weight;
 	double max_diff_best_score;
-	double metadata_min_score;
+	double match_min_score;
+	double compare_relative_score;
 	double mismatch_threshold;
 	double title_weight;
 	double tracknumber_weight;
