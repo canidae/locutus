@@ -69,7 +69,7 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 	if (tracknumber_weight < 0.0)
 		tracknumber_weight = 0.0;
 
-	/* if a metadata match score is less than half the match_min_score then we won't save the match */
+	/* if a metadata match score is less than match_min_score * compare_relative_score then we won't save the match */
 	mismatch_threshold = match_min_score * compare_relative_score;
 
 	/* set acs to NULL */
