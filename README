@@ -1,6 +1,5 @@
 About
 =====
-
 Locutus is a software that compares audio files with the MusicBrainz database,
 updates the metadata in the files and stores the files in a structured
 directory.
@@ -9,11 +8,8 @@ it won't erase any files. That said, I still haven't lost a single file due to
 Locutus, so the risk is low.
 
 Some of Locutus' features:
-- Capable of handling extremely large music archives. It still has problems with
-  directories that contain a large amount of audio files (>500) that contains no
-  metadata, but as long as the audio files got metadata and/or are splitted
-  across multiple directories there's virtually no limit how large archives
-  Locutus can handle.
+- Capable of handling extremely large music archives with low CPU and memory
+  usage.
 - Clever metadata matching that's extensively configurable. As long as the
   metadata found in audio files are correct Locutus mismatch files very rarily.
   It is however possible to configure Locutus in a way that will cause
@@ -23,8 +19,9 @@ Some of Locutus' features:
   computer. While the daemon compares files, updates metadata and store the
   files, you can manually match the files the daemon was unable to automatically
   match in the web interface.
-- Albums retrieved from Musicbrainz are stored in a local cache, reducing amount
+- Albums retrieved from MusicBrainz are stored in a local cache, reducing amount
   of queries sent, and thus also reducing load generated on MusicBrainz.
+  When manually matching files with tracks no requests are sent to MusicBrainz.
 - Grouping files in assumed albums. To reduce amount of queries sent to
   MusicBrainz the files are placed in groups that are assumed to be albums. This
   makes Locutus look up the first file in a group, fetch the best matching
@@ -38,13 +35,17 @@ Some of Locutus' features:
   per second at most.
 
 
+
 Installation
 ============
+This project is still in an early alpha stage. It's not ready for the public yet
+and the installation prosess requires some knowledge with Linux.
+
 
 Database:
 ---------
 Locutus currently supports PostgreSQL version 8.3 or later (not tested on
-earlier version).
+earlier versions).
 
 1. Become the 'postgres' user:
      sudo su - postgres
@@ -57,7 +58,7 @@ earlier version).
      psql -h localhost -f locutus.sql -U locutus locutus
 5. You'll need to grant locutus access to the database. Edit (most likely)
    "/etc/postgresql/8.3/main/pg_hba.conf" and add the following entry after
-   "# TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD":
+   "#TYPE    DATABASE    USER        CIDR-ADDRESS          METHOD":
      host    locutus     locutus     127.0.0.1/32          md5
    Change the IP if you're running the daemon/web interface on another computer.
 6. By default PostgreSQL only listen on 127.0.0.1. If you're accessing the
@@ -66,6 +67,7 @@ earlier version).
      listen_addresses = '*'
 7. Restart PostgreSQL:
      /etc/init.d/postgresql restart
+
 
 Daemon:
 -------
@@ -78,8 +80,11 @@ To build the daemon, simply enter the "daemon" directory and type "make". This
 will produce an executable file called "locutus". Currently this is not a daemon
 as it will only run once and exit, so for the time being you'll have to run this
 manually.
+Set the connection parameters in the "locutus.conf" file residing in the
+"daemon"-directory.
 The first time you run Locutus it will populate the "setting" table with default
 values.
+
 
 Web interface:
 --------------
@@ -104,13 +109,24 @@ For Debian users:
      </Directory>
 2. Restart Apache:
      /etc/init.d/apache2 restart
-3. The interface should now be up at "http://localhost/locutus/" (or another URL
+3. Set the connection parameters in the "locutus.conf" file residing in the
+   "include"-directory.
+4. The interface should now be up at "http://localhost/locutus/" (or another URL
    if you installed the web interface on another computer). If it isn't, then
    check logs in "/var/log/apache2/" and "/var/log/postgresql/".
 
 
+
 Killer coding ninja monkeys (in order of appearance)
 ====================================================
-
 Vidar Wahlberg, <canidae@exent.net>
   Daemon, database, web interface
+
+
+
+Sidekicks (in order of appearance)
+==================================
+Kristian Klette, <klette@samfundet.no>
+  Web interface
+Per Øyvind Øygard, <peroyo@gmail.com>
+  Web interface
