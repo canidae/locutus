@@ -132,11 +132,14 @@ void Matcher::compareFilesWithAlbum(AlbumComparison *ac, const vector<Metafile *
 			Comparison *c = compareMetafileWithMetatrack(*mf, mt, *t);
 			if (c == NULL)
 				continue;
-			ac->comparisons[(*t)->mbid].push_back(c);
-			if (!c->mbid_match && c->score < mismatch_threshold)
-				continue; // horrible match, don't save it nor prevent a metadata search for this file
+			if (!c->mbid_match && c->score < mismatch_threshold) {
+				/* horrible match, don't save it nor prevent a metadata search for this file */
+				delete c;
+				continue;
+			}
 			/* fair or better match. if we're saving complete albums,
 			 * then don't do a metadata search for this file */
+			ac->comparisons[(*t)->mbid].push_back(c);
 			if (only_save_complete_albums)
 				(*mf)->meta_lookup = false;
 			/* save the match */
