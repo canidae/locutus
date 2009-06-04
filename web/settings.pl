@@ -15,6 +15,7 @@
 use strict;
 use warnings;
 
+use CGI qw(:standard);
 use Data::Dumper;
 
 use lib '../include';
@@ -24,6 +25,11 @@ my $page = 'settings';
 my %vars = ();
 
 my $dbh = Locutus::db_connect();
+
+foreach my $key (param()) {
+	my $query = 'UPDATE setting SET value = ' . $dbh->quote(param($key)) . ' WHERE key = ' . $dbh->quote($key);
+	$dbh->do($query);
+}
 
 $vars{'settings'} = $dbh->selectall_arrayref('SELECT * FROM setting', {Slice => {}});
 

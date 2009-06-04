@@ -3,23 +3,26 @@
 %]
     <h1>Settings</h1>
 [% IF settings.size() > 0 %]
-    <table>
+    <form action="settings.pl" method="post">
+        <table>
   [% FOREACH setting IN settings %]
-      <tr>
-        <th colspan="2">[% FILTER html %][% setting.key %][% END %]</th>
-      </tr>
-      <tr>
-        <th>Default</th>
-        <td>[% FILTER html %][% setting.default_value %][% END %]</td>
-      </tr>
-      <tr>
-        <th>Value</th>
-        <td><input type="text" value="[% FILTER html %][% setting.value %][% END %]" /></td>
-      </tr>
-      <tr>
-        <td colspan="2">[% FILTER html %][% setting.description %][% END %]</td>
-      </tr>
+        <tr>
+          <th colspan="2">[% FILTER html %][% setting.key %][% END %]</th>
+        </tr>
+        <tr>
+          <th>Default</th>
+          <td>[% FILTER html %][% setting.default_value %][% END %]</td>
+        </tr>
+        <tr>
+          <th>Value</th>
+          <td><input type="text" name="[% setting.key %]" value="[% FILTER html %][% setting.value %][% END %]" /></td>
+        </tr>
+        <tr>
+          <td colspan="2">[% FILTER html %][% setting.description %][% END %]</td>
+        </tr>
   [% END %]
-    </table>
+      </table>
+      <p><input type="submit" name="save_settings" value="Save" /></p>
+    </form>
 [% END %]
 [% INCLUDE footer.tmpl %]
