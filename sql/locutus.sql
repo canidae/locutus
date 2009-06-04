@@ -335,6 +335,14 @@ CREATE VIEW v_web_matching_list_albums AS
 
 
 --
+-- Name: v_web_mislength_files; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_web_mislength_files AS
+    SELECT f.file_id, f.filename, abs((f.duration - t.duration)) AS duration_diff FROM (file f JOIN track t USING (track_id));
+
+
+--
 -- Name: v_web_track_list_matching_files; Type: VIEW; Schema: public; Owner: -
 --
 
