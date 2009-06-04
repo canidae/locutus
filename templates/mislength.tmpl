@@ -1,0 +1,27 @@
+[% INCLUDE header.tmpl
+  title = 'Mislength files'
+%]
+    <form action="" method="get" id="search">
+      <p>
+        <label for="filter">Search</label>
+        <input type="text" id="filter" name="filter" />
+      </p>
+    </form>
+    <h2>Mislength files</h2>
+    <p>The files listed on this page is files whose length doesn't match the length of the track it's matched with. This may mean that the track is matched wrong, the file is incomplete (cut off) or that the duration is wrong in MusicBrainz.</p>
+[% IF files.size() > 0 %]
+    <table>
+      <tr>
+        <th>Filename</th>
+        <th>Duration diff</th>
+      </tr>
+  [% FOREACH file IN files %]
+      <tr>
+        <td><a href="file.pl?fiid=[% file.file_id %]">[% FILTER html %][% file.filename %][% END %]</a></td>
+        <td>[% file.duration_diff %]</td>
+      </tr>
+  [% END %]
+    </table>
+[% END %]
+[% INCLUDE pagination.tmpl %]
+[% INCLUDE footer.tmpl %]

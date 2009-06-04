@@ -1,0 +1,20 @@
+[% INCLUDE header.tmpl
+  title = 'Detached files'
+%]
+    <form action="" method="get" id="search">
+      <p>
+        <label for="filter">Search</label>
+        <input type="text" id="filter" name="filter" />
+      </p>
+    </form>
+    <h2>Detached files</h2>
+    <p>This page lists all files found in the output directory that are not connected to a track in MusicBrainz. The most common reason files get detached is that the track the file was connected to was removed from MusicBrainz and Locutus was unable to find an alternative match. If you manually place audio files in the output directory then those files will also be listed as detached unless Locutus manage to connect those files to tracks.</p>
+[% IF files.size() > 0 %]
+    <ul>
+  [% FOREACH file IN files %]
+      <li><a href="file.pl?fiid=[% file.file_id %]">[% FILTER html %][% file.filename %][% END %]</a></li>
+  [% END %]
+    </ul>
+[% END %]
+[% INCLUDE pagination.tmpl %]
+[% INCLUDE footer.tmpl %]
