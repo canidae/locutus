@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+#define TIMEOUT 180
+
 struct XMLNode {
 	XMLNode *parent;
 	std::map<std::string, std::vector<XMLNode *> > children;

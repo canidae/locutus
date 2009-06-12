@@ -51,8 +51,14 @@ XMLNode *WebService::fetch(const char *url) {
 	root->key = "root";
 	root->value = "";
 	curnode = root;
+	/* commoncpp may get stuck in a recvfrom if we get net hiccup.
+	 * to prevent this we set up an alarm() which if we don't get a reply within
+	 * TIMEOOUT then we cancel the current system call.
+	 * see bottom of Locutus.cpp for the handling of SIGALRM */
+	alarm(TIMEOUT);
 	if (!parse())
 		Debug::warning() << "XML is not well formed" << endl;
+	alarm(0); // reset alarm
 	close();
 	//printXML(root, 0);
 	return root;

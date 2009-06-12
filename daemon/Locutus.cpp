@@ -22,8 +22,8 @@
 #include "Locutus.h"
 #include "Matcher.h"
 #include "Metafile.h"
-#include "PostgreSQL.h"
 #include "MusicBrainz.h"
+#include "PostgreSQL.h"
 
 using namespace std;
 
@@ -381,6 +381,13 @@ void abort(int) {
 		locutus->active = false;
 }
 
+void cancel(int) {
+	/* this is purely a hack for WebService.
+	 * commoncpp may get stuck in a recvfrom(), which it never returns from.
+	 * tend to happen if you lose packets */
+	Debug::notice() << "SIGALRM received, cancelling current system call (probably stuck reading from MusicBrainz or Audioscrobbler)" << endl;
+}
+
 void quit(int) {
 	Debug::notice() << "SIGTERM received, shutting down" << endl;
 	if (locutus != NULL)
@@ -396,6 +403,11 @@ int main() {
 	/* connect signals */
 	signal(SIGINT, abort);
 	signal(SIGTERM, quit);
+	struct sigaction sigalrm;
+	sigemptyset(&sigalrm.sa_mask);
+	sigalrm.sa_handler = cancel;
+	sigalrm.sa_flags = 0;
+	sigaction(SIGALRM, &sigalrm, NULL);
 
 	/* get configuration */
 	Config config;
