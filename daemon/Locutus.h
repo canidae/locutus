@@ -28,10 +28,13 @@ extern "C" {
 /* settings */
 #define MUSIC_OUTPUT_KEY "output_directory"
 #define MUSIC_OUTPUT_VALUE "/media/music/sorted/"
-#define MUSIC_OUTPUT_DESCRIPTION "Output directory"
+#define MUSIC_OUTPUT_DESCRIPTION "Output directory. This is the directory Locutus will place files that were matched to tracks in MusicBrainz. Should not be the same directory as, or a subdirectory of 'input_directory' or 'duplicate_directory'."
 #define MUSIC_INPUT_KEY "input_directory"
 #define MUSIC_INPUT_VALUE "/media/music/unsorted/"
-#define MUSIC_INPUT_DESCRIPTION "Input directory"
+#define MUSIC_INPUT_DESCRIPTION "Input directory. The directory that contains files not yet matched by Locutus. Should not be the same directory as, or a subdirectory of 'output_directory' or 'duplicate_directory'."
+#define MUSIC_DUPLICATE_KEY "duplicate_directory"
+#define MUSIC_DUPLICATE_VALUE "/media/music/duplicates/"
+#define MUSIC_DUPLICATE_DESCRIPTION "Duplicate directory. When Locutus finds duplicates they are placed in this directory. Should not be the same directory as, or a subdirectory of 'input_directory' or 'output_directory'."
 #define MAX_GROUP_SIZE_KEY "max_group_size"
 #define MAX_GROUP_SIZE_VALUE 250
 #define MAX_GROUP_SIZE_DESCRIPTION "Max size of a group. Groups with more files than this will be ignored. This is a precaution against directories with lots of files from different albums, but with no metadata. Such directories cause Locutus to use a lot of memory and CPU while significantly slowing Locutus down."
@@ -44,6 +47,10 @@ extern "C" {
 #define LOOKUP_GENRE_KEY "lookup_genre"
 #define LOOKUP_GENRE_VALUE false
 #define LOOKUP_GENRE_DESCRIPTION "Fetch genre (or tag) from Audioscrobbler before saving a file. If no genre is found then genre is set to an empty string. If this option is set to false, the genre field is left unmodified."
+
+/* how often we should check if we're still active and how often we should poll database */
+#define CHECK_ACTIVE_INTERVAL 3
+#define DATABASE_POLL_INTERVAL 300
 
 class Audioscrobbler;
 class Database;
@@ -61,7 +68,7 @@ public:
 
 	static void trim(std::string *text);
 
-	long run();
+	void run();
 
 private:
 	Audioscrobbler *audioscrobbler;
@@ -79,6 +86,7 @@ private:
 	std::map<std::string, int> groups;
 	std::string input_dir;
 	std::string output_dir;
+	std::string duplicate_dir;
 
 	std::string findDuplicateFilename(Metafile *file);
 	bool moveFile(Metafile *file, const std::string &filename);

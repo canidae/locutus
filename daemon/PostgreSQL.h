@@ -20,6 +20,9 @@
 #define METATRACK_CACHE_LIFETIME_KEY "metatrack_cache_lifetime"
 #define METATRACK_CACHE_LIFETIME_VALUE 3
 #define METATRACK_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since metatrack was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
+#define RUN_INTERVAL_KEY "run_interval"
+#define RUN_INTERVAL_VALUE 30
+#define RUN_INTERVAL_DESCRIPTION "Interval between Locutus runs. The value is given in days."
 
 extern "C" {
 #include <libpq-fe.h>
@@ -56,6 +59,7 @@ public:
 	bool saveComparison(const Comparison &comparison);
 	bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "");
 	bool saveTrack(const Track &track);
+	bool shouldRun();
 	bool start();
 	bool stop();
 	bool updateProgress(double progress);
@@ -66,6 +70,7 @@ private:
 	bool got_result;
 	int album_cache_lifetime;
 	int metatrack_cache_lifetime;
+	int run_interval;
 	std::string setting_string;
 	std::vector<Metafile *> groupfiles;
 	std::vector<Metafile *> metafiles;

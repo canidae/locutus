@@ -43,6 +43,9 @@ Locutus::Locutus(Database *database) : active(true), database(database) {
 	output_dir = database->loadSettingString(MUSIC_OUTPUT_KEY, MUSIC_OUTPUT_VALUE, MUSIC_OUTPUT_DESCRIPTION);
 	if (output_dir.size() <= 0 || output_dir[output_dir.size() - 1] != '/')
 		output_dir.push_back('/');
+	duplicate_dir = database->loadSettingString(MUSIC_DUPLICATE_KEY, MUSIC_DUPLICATE_VALUE, MUSIC_DUPLICATE_DESCRIPTION);
+	if (duplicate_dir.size() <= 0 || duplicate_dir[duplicate_dir.size() - 1] != '/')
+		duplicate_dir.push_back('/');
 
 	total_files = 0;
 }
@@ -67,15 +70,20 @@ void Locutus::trim(string *text) {
 		text->erase();
 }
 
-long Locutus::run() {
+void Locutus::run() {
 	active = true;
-	/* parse sorted directory */
+	/* parse output directory */
 	Debug::info() << "Scanning output directory" << endl;
 	scanFiles(output_dir);
-	/* parse unsorted directory */
+	/* parse input directory */
 	if (active) {
 		Debug::info() << "Scanning input directory" << endl;
 		scanFiles(input_dir);
+	}
+	/* parse duplicate directory */
+	if (active) {
+		Debug::info() << "Scanning duplicate directory" << endl;
+		scanFiles(duplicate_dir);
 	}
 	/* remove files that don't exist from database */
 	if (active)
@@ -88,7 +96,7 @@ long Locutus::run() {
 		if (g->second > max_group_size) {
 			/* too many files in this group, update progress and continue */
 			file_counter += g->second;
-			database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size() * 21.0));
+			database->updateProgress(((double)file_counter + (double)combine.size() * 21.0) / (double)total_files);
 			continue;
 		}
 		/* match files in group */
@@ -119,12 +127,12 @@ long Locutus::run() {
 		}
 		/* update progress */
 		file_counter += g->second;
-		database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size() * 21.0));
+		database->updateProgress(((double)file_counter + (double)combine.size() * 21.0) / (double)total_files);
 	}
 	/* relookup combined groups */
 	for (map<string, vector<string> >::iterator c = combine.begin(); c != combine.end() && active; ++c) {
 		/* update progress */
-		database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size() * 21.0));
+		database->updateProgress(((double)file_counter + (double)combine.size() * 21.0) / (double)total_files);
 		file_counter += 21;
 		if (c->second.size() <= 1)
 			continue; // only one group for this album
@@ -157,14 +165,11 @@ long Locutus::run() {
 	}
 	/* just in case files disappeared from the database while we were working */
 	database->updateProgress(1.0);
-	/* return */
-	return 10000;
 }
 
 string Locutus::findDuplicateFilename(Metafile *file) {
 	/* find a name for a duplicate */
-	string tmp_filename = input_dir;
-	tmp_filename.append("duplicates/");
+	string tmp_filename = duplicate_dir;
 	string tmp_gen_filename = filenamer->getFilename(*file);
 	string::size_type pos = tmp_gen_filename.find_last_of('.');
 	string tmp_extension = (pos == string::npos) ? "" : tmp_gen_filename.substr(pos);
@@ -385,7 +390,7 @@ void cancel(int) {
 	/* this is purely a hack for WebService.
 	 * commoncpp may get stuck in a recvfrom(), which it never returns from.
 	 * tend to happen if you lose packets */
-	Debug::notice() << "SIGALRM received, cancelling current system call (probably stuck reading from MusicBrainz or Audioscrobbler)" << endl;
+	Debug::warning() << "SIGALRM received, cancelling current system call (probably stuck reading from MusicBrainz or Audioscrobbler)" << endl;
 }
 
 void quit(int) {
@@ -395,10 +400,49 @@ void quit(int) {
 	active = false;
 }
 
-int main() {
+int main(int argc, const char *argv[]) {
 	/* initialize static classes */
 	Debug::open("locutus.log");
 	Levenshtein::initialize();
+
+	/* check startup parameters */
+	bool show_usage = false;
+	bool daemon = false;
+	if (argc > 1) {
+		for (int a = 1; a < argc; ++a) {
+			if (strlen(argv[a]) < 2) {
+				show_usage = true;
+				continue;
+			}
+
+			if (argv[a][0] == '-') {
+				switch (argv[a][1]) {
+				case 'h':
+					show_usage = true;
+					break;
+
+				case 'd':
+					daemon = true;
+					break;
+
+				default:
+					cout << "Invalid argument " << argv[a] << endl;
+					show_usage = true;
+					break;
+				}
+			} else {
+				cout << "Unknown argument specified." << endl;
+				show_usage = true;
+			}
+		}
+
+		if (show_usage) {
+			cout << "Usage: " << argv[0] << " [-d]" << endl;
+			cout << endl;
+			cout << "\t-d  Daemonize Locutus" << endl;
+			return 1;
+		}
+	}
 
 	/* connect signals */
 	signal(SIGINT, abort);
@@ -418,23 +462,46 @@ int main() {
 
 	/* connect to database */
 	Database *database = new PostgreSQL(db_host, db_user, db_pass, db_name);
+	database->init();
 
-	//while (true) {
+	Debug::info() << "Locutus starting" << endl;
+	while (active) {
+		/* check whether we should run */
+		int counter = DATABASE_POLL_INTERVAL / CHECK_ACTIVE_INTERVAL;
+		while (active && daemon) {
+			if (++counter > DATABASE_POLL_INTERVAL / CHECK_ACTIVE_INTERVAL) {
+				/* query database */
+				database->init();
+				if (database->shouldRun())
+					break;
+				counter = 0;
+			}
+			sleep(CHECK_ACTIVE_INTERVAL);
+		}
+
+		/* need to check "active" again */
+		if (!active)
+			break;
+
+		/* all set, check files */
 		locutus = new Locutus(database);
 		database->start();
-		database->init();
 		Debug::info() << "Checking files..." << endl;
-		long sleeptime = locutus->run();
+		locutus->run();
 		Debug::info() << "Finished checking files" << endl;
 		database->stop();
 		delete locutus;
 		locutus = NULL;
 
-		usleep(sleeptime);
-	//}
+		/* break unless we're running as a daemon */
+		if (!daemon)
+			break;
+	}
 
 	/* disconnect from database */
 	delete database;
+
+	Debug::info() << "Locutus exiting" << endl;
 
 	/* clear static classes */
 	Levenshtein::clear();

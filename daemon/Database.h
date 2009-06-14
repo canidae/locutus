@@ -44,6 +44,7 @@ public:
 	virtual bool saveComparison(const Comparison &comparison) = 0;
 	virtual bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "") = 0;
 	virtual bool saveTrack(const Track &track) = 0;
+	virtual bool shouldRun() = 0;
 	virtual bool start() = 0;
 	virtual bool stop() = 0;
 	virtual bool updateProgress(double progress) = 0;
