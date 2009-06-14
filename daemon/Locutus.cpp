@@ -486,11 +486,11 @@ int main(int argc, const char *argv[]) {
 
 		/* all set, check files */
 		locutus = new Locutus(database);
-		database->start();
 		Debug::info() << "Checking files..." << endl;
+		database->start();
 		locutus->run();
-		Debug::info() << "Finished checking files" << endl;
 		database->stop();
+		Debug::info() << "Finished checking files" << endl;
 		delete locutus;
 		locutus = NULL;
 
