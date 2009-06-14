@@ -59,12 +59,6 @@ bool PostgreSQL::init() {
 	run_interval = loadSettingInt(RUN_INTERVAL_KEY, RUN_INTERVAL_VALUE, RUN_INTERVAL_DESCRIPTION);
 	if (run_interval < 0)
 		run_interval = 0;
-
-	/* we'll also mark files as not "checked", they will be marked as
-	 * "checked" when we load them. basically this just means that the
-	 * file exists, and this is better than stat()'ing all the files
-	 * twice */
-	doQuery("UPDATE file SET checked = false");
 	return true;
 }
 
@@ -561,6 +555,13 @@ bool PostgreSQL::shouldRun() {
 bool PostgreSQL::start() {
 	/* insert if there are no rows in the table */
 	doQuery("INSERT INTO locutus(active) SELECT true WHERE NOT EXISTS (SELECT true FROM locutus)");
+
+	/* we'll also mark files as not "checked", they will be marked as
+	 * "checked" when we load them. basically this just means that the
+	 * file exists, and this is better than stat()'ing all the files
+	 * twice */
+	doQuery("UPDATE file SET checked = false");
+
 	/* then update the row(s) */
 	return doQuery("UPDATE locutus SET active = true, start = now(), progress = 0.0");
 }

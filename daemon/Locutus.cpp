@@ -444,6 +444,8 @@ int main(int argc, const char *argv[]) {
 		}
 	}
 
+	Debug::info() << "Locutus starting" << endl;
+
 	/* connect signals */
 	signal(SIGINT, abort);
 	signal(SIGTERM, quit);
@@ -464,7 +466,6 @@ int main(int argc, const char *argv[]) {
 	Database *database = new PostgreSQL(db_host, db_user, db_pass, db_name);
 	database->init();
 
-	Debug::info() << "Locutus starting" << endl;
 	while (active) {
 		/* check whether we should run */
 		int counter = DATABASE_POLL_INTERVAL / CHECK_ACTIVE_INTERVAL;
