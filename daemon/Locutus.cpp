@@ -96,7 +96,7 @@ void Locutus::run() {
 		if (g->second > max_group_size) {
 			/* too many files in this group, update progress and continue */
 			file_counter += g->second;
-			database->updateProgress(((double)file_counter + (double)combine.size() * 21.0) / (double)total_files);
+			database->updateProgress((double)file_counter / ((double)total_files) + (double)combine.size());
 			continue;
 		}
 		/* match files in group */
@@ -127,13 +127,13 @@ void Locutus::run() {
 		}
 		/* update progress */
 		file_counter += g->second;
-		database->updateProgress(((double)file_counter + (double)combine.size() * 21.0) / (double)total_files);
+		database->updateProgress((double)file_counter / ((double)total_files) + (double)combine.size());
 	}
 	/* relookup combined groups */
 	for (map<string, vector<string> >::iterator c = combine.begin(); c != combine.end() && active; ++c) {
 		/* update progress */
-		database->updateProgress(((double)file_counter + (double)combine.size() * 21.0) / (double)total_files);
-		file_counter += 21;
+		database->updateProgress((double)file_counter / ((double)total_files) + (double)combine.size());
+		++file_counter;
 		if (c->second.size() <= 1)
 			continue; // only one group for this album
 		/* need to cheat here, copy the Metafile objects */
