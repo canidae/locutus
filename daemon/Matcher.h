@@ -21,10 +21,10 @@
 /* settings */
 #define ALBUM_WEIGHT_KEY "album_weight"
 #define ALBUM_WEIGHT_VALUE 100.0
-#define ALBUM_WEIGHT_DESCRIPTION ""
+#define ALBUM_WEIGHT_DESCRIPTION "How much weight should be given on matching album title. This is an advanced setting and you probably should not change it."
 #define ARTIST_WEIGHT_KEY "artist_weight"
 #define ARTIST_WEIGHT_VALUE 100.0
-#define ARTIST_WEIGHT_DESCRIPTION ""
+#define ARTIST_WEIGHT_DESCRIPTION "How much weight should be given on matching artist name. This is an advanced setting and you probably should not change it."
 #define COMBINE_THRESHOLD_KEY "combine_threshold"
 #define COMBINE_THRESHOLD_VALUE 0.80
 #define COMBINE_THRESHOLD_DESCRIPTION "Locutus fetch metadata both from tags in files and using the filename and path. Since filenames sometimes got the same information as the tags it's necessary to avoid using the same information twice as that may affect search results. Filenames may differ slightly from metadata and thus fuzzy matching is needed. This value must be between 0.0 and 1.0. At 1.0 the information in the filenames must be identical to the information found in the tags, and at 0.0 you essentially disable using information found in filenames for searching."
@@ -36,7 +36,7 @@
 #define DURATION_MUST_MATCH_DESCRIPTION "When this value is set to true then track duration must be within duration_limit milliseconds or it'll be considered a different track regardless of how well metadata match. There are several tracks in MusicBrainz with either missing duration or \"wrong\" duration (sometimes artists release the same album where the tracks are lengthened/shortened). It's recommended that you leave this setting to \"false\", it increase the risk of more mismatched files, but the risk is fairly low."
 #define DURATION_WEIGHT_KEY "duration_weight"
 #define DURATION_WEIGHT_VALUE 100.0
-#define DURATION_WEIGHT_DESCRIPTION ""
+#define DURATION_WEIGHT_DESCRIPTION "How much weight should be given on matching duration. This is an advanced setting and you probably should not change it."
 #define MAX_DIFF_BEST_SCORE_KEY "max_diff_best_score"
 #define MAX_DIFF_BEST_SCORE_VALUE 0.05
 #define MAX_DIFF_BEST_SCORE_DESCRIPTION "Locutus tries to group files to the same album, however that means it may match a file to a track that's not the best match. Consider this: File A compares to track 1 with score 0.99 on an album. File B compares to track 2 with score 0.80 on the same album, but it also compares to track 2 on another album with score 0.98 where file A does not compare to any tracks. In this case file B would be matched track 2 on first album if the value of this setting is greater than or equal to 0.18 (0.98 - 0.80, best score for file B minus score achieved on first album for file B), and if the value of the setting is less than 0.18 the files would be matched to the tracks on each their album. If you don't understand what this setting does, don't mess with it :)"
@@ -60,10 +60,10 @@
 #define ONLY_SAVE_IF_ALL_MATCH_DESCRIPTION "Locutus gather files in groups in this order: 'albumartist-album' if both tags are present, 'album' if tag is present or 'full_directory_path' if album tag is not present. If this setting is set to true Locutus will not save the files in such a group unless all files match something. This is generally a good idea for those who don't have a fragmented music archive."
 #define TITLE_WEIGHT_KEY "title_weight"
 #define TITLE_WEIGHT_VALUE 100.0
-#define TITLE_WEIGHT_DESCRIPTION ""
+#define TITLE_WEIGHT_DESCRIPTION "How much weight should be given on matching track title. This is an advanced setting and you probably should not change it."
 #define TRACKNUMBER_WEIGHT_KEY "tracknumber_weight"
 #define TRACKNUMBER_WEIGHT_VALUE 100.0
-#define TRACKNUMBER_WEIGHT_DESCRIPTION ""
+#define TRACKNUMBER_WEIGHT_DESCRIPTION "How much weight should be given on matching tracknumber. This is an advanced setting and you probably should not change it."
 
 class Album;
 class Database;

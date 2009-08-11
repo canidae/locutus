@@ -24,13 +24,13 @@
 /* settings */
 #define METADATA_SEARCH_URL_KEY "metadata_search_url"
 #define METADATA_SEARCH_URL_VALUE "http://musicbrainz.org/ws/1/track/"
-#define METADATA_SEARCH_URL_DESCRIPTION "URL to search after metadata"
+#define METADATA_SEARCH_URL_DESCRIPTION "URL to search after metadata."
 #define MUSICBRAINZ_QUERY_INTERVAL_KEY "musicbrainz_query_interval"
 #define MUSICBRAINZ_QUERY_INTERVAL_VALUE 3.0
-#define MUSICBRAINZ_QUERY_INTERVAL_DESCRIPTION "Amount of seconds between each query to MusicBrainz WebService. Value must be 1.0 or above"
+#define MUSICBRAINZ_QUERY_INTERVAL_DESCRIPTION "Amount of seconds between each query to MusicBrainz WebService. Value must be 1.0 or above."
 #define RELEASE_LOOKUP_URL_KEY "release_url"
 #define RELEASE_LOOKUP_URL_VALUE "http://musicbrainz.org/ws/1/release/"
-#define RELEASE_LOOKUP_URL_DESCRIPTION "URL to lookup a release"
+#define RELEASE_LOOKUP_URL_DESCRIPTION "URL to lookup a release."
 
 class Album;
 class Database;
