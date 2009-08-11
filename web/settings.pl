@@ -31,7 +31,7 @@ foreach my $key (param()) {
 	$dbh->do($query);
 }
 
-$vars{'settings'} = $dbh->selectall_arrayref('SELECT * FROM setting', {Slice => {}});
+$vars{'settings'} = $dbh->selectall_arrayref('SELECT * FROM setting ORDER BY key', {Slice => {}});
 
 #print Dumper(\%vars);
 
