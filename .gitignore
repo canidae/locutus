@@ -1,4 +1,6 @@
-.*
 *.o
-locutus
-locutus.log
+daemon/locutus
+daemon/locutus.log
+gui/nbproject/private
+gui/dist
+gui/build
