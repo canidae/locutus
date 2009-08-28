@@ -30,6 +30,7 @@ public class Matching extends javax.swing.JPanel {
 
 		public MaxAvgMinRenderer() {
 			setOpaque(true);
+			setHorizontalAlignment(RIGHT);
 		}
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
