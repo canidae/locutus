@@ -34,12 +34,16 @@ public class Matching extends javax.swing.JPanel {
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			/* set background color */
-			double v = Double.parseDouble(value.toString());
+			double v = 0.0;
+			if (value != null)
+				v = Double.parseDouble(value.toString());
 			Color bg;
-			if (v > 0.75)
+			if (v >= 0.75)
 				bg = new Color((int) ((1.0 - (v - 0.75) * 4.0) * 255.0), 255, 0);
-			else
+			else if (v >= 0.25)
 				bg = new Color(255, (int) (((v - 0.25) * 2.0) * 255.0), 0);
+			else
+				bg = new Color(255, 0, 0);
 			setBackground(bg);
 
 			/* set text */
