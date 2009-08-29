@@ -28,7 +28,8 @@ public class Database {
 	}
 
 	public static void disconnect() throws SQLException {
-		connection.close();
+		if (connection != null)
+			connection.close();
 	}
 
 	public static ResultSet getMatching() throws SQLException {
@@ -36,6 +37,8 @@ public class Database {
 	}
 
 	public static ResultSet getMatching(String filter) throws SQLException {
+		if (matching == null)
+			return null;
 		matching.setString(1, "%" + filter + "%");
 		ResultSet rs = matching.executeQuery();
 		return rs;

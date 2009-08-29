@@ -58,6 +58,23 @@ public class Matching extends javax.swing.JPanel {
 		return new MaxAvgMinRenderer();
 	}
 
+	public void updateTable() {
+		try {
+			ResultSet rs = Database.getMatching();
+
+			if (rs == null)
+				return;
+
+			DefaultTableModel dtb = (DefaultTableModel) jTable1.getModel();
+			dtb.setRowCount(0);
+			while (rs.next()) {
+				dtb.addRow(new Object[]{rs.getInt("album_id"), rs.getString("album"), rs.getInt("tracks"), rs.getInt("files_compared"), rs.getInt("tracks_compared"), rs.getInt("mbids_matched"), rs.getDouble("max_score"), rs.getDouble("avg_score"), rs.getDouble("min_score")});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/** Creates new form Matching */
 	public Matching() {
 		initComponents();
@@ -151,19 +168,9 @@ public class Matching extends javax.swing.JPanel {
                 );
         }// </editor-fold>//GEN-END:initComponents
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-	    try {
-		    ResultSet rs = Database.getMatching();
-
-		    DefaultTableModel dtb = (DefaultTableModel) jTable1.getModel();
-		    dtb.setRowCount(0);
-		    while (rs.next()) {
-			    dtb.addRow(new Object[]{rs.getInt("album_id"), rs.getString("album"), rs.getInt("tracks"), rs.getInt("files_compared"), rs.getInt("tracks_compared"), rs.getInt("mbids_matched"), rs.getDouble("max_score"), rs.getDouble("avg_score"), rs.getDouble("min_score")});
-		    }
-	    } catch (SQLException e) {
-		    e.printStackTrace();
-	    }
-    }//GEN-LAST:event_formComponentShown
+	private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+		updateTable();
+	}//GEN-LAST:event_formComponentShown
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JScrollPane jScrollPane1;
         private javax.swing.JTable jTable1;
