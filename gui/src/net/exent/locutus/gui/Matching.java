@@ -60,7 +60,7 @@ public class Matching extends javax.swing.JPanel {
 
 	public void updateTable() {
 		try {
-			ResultSet rs = Database.getMatching();
+			ResultSet rs = Database.getMatching(Locutus.getFilter());
 
 			if (rs == null)
 				return;
@@ -126,7 +126,7 @@ public class Matching extends javax.swing.JPanel {
                         }
                 ) {
                         Class[] types = new Class [] {
-                                java.lang.Object.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
                         };
                         boolean[] canEdit = new boolean [] {
                                 false, false, false, false, false, false, false, false, false

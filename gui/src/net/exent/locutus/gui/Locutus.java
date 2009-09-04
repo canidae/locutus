@@ -10,6 +10,8 @@
  */
 package net.exent.locutus.gui;
 
+import java.awt.Component;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import net.exent.locutus.database.Database;
@@ -23,6 +25,11 @@ public class Locutus extends javax.swing.JFrame {
 	/** Creates new form Locutus */
 	public Locutus() {
 		initComponents();
+	}
+
+	public static String getFilter() {
+		String tmp = filterTextField.getText();
+		return (tmp == null ? "" : tmp);
 	}
 
 	/** This method is called from within the constructor to
@@ -49,6 +56,10 @@ public class Locutus extends javax.swing.JFrame {
                 passwordPasswordField = new javax.swing.JPasswordField();
                 jTabbedPane1 = new javax.swing.JTabbedPane();
                 matching = new net.exent.locutus.gui.Matching();
+                detached = new net.exent.locutus.gui.Detached();
+                artists1 = new net.exent.locutus.gui.Artists();
+                filterLabel = new javax.swing.JLabel();
+                filterTextField = new javax.swing.JTextField();
                 menuBar = new javax.swing.JMenuBar();
                 fileMenu = new javax.swing.JMenu();
                 fileConnect = new javax.swing.JMenuItem();
@@ -185,6 +196,16 @@ public class Locutus extends javax.swing.JFrame {
                 setTitle("Locutus");
 
                 jTabbedPane1.addTab("Matching", matching);
+                jTabbedPane1.addTab("Detached", detached);
+                jTabbedPane1.addTab("Artists", artists1);
+
+                filterLabel.setText("Filter:");
+
+                filterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+                        public void keyReleased(java.awt.event.KeyEvent evt) {
+                                filterTextFieldKeyReleased(evt);
+                        }
+                });
 
                 fileMenu.setText("File");
 
@@ -217,11 +238,23 @@ public class Locutus extends javax.swing.JFrame {
                 getContentPane().setLayout(layout);
                 layout.setHorizontalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(filterLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(469, Short.MAX_VALUE))
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE)
                 );
                 layout.setVerticalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(filterLabel)
+                                        .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE))
                 );
 
                 pack();
@@ -296,6 +329,19 @@ public class Locutus extends javax.swing.JFrame {
 		this.dispose();
 	}//GEN-LAST:event_fileExitActionPerformed
 
+	private void filterTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterTextFieldKeyReleased
+		if (evt.getKeyCode() != KeyEvent.VK_ENTER)
+			return;
+
+		Component active = jTabbedPane1.getSelectedComponent();
+		if (active != null) {
+			/* hide & show visible component to trigger formComponentShown().
+			 * TODO: this is a hack, fix it later */
+			active.setVisible(false);
+			active.setVisible(true);
+		}
+	}//GEN-LAST:event_filterTextFieldKeyReleased
+
 	/**
 	 * @param args the command line arguments
 	 */
@@ -308,17 +354,21 @@ public class Locutus extends javax.swing.JFrame {
 		});
 	}
         // Variables declaration - do not modify//GEN-BEGIN:variables
+        private net.exent.locutus.gui.Artists artists1;
         private javax.swing.JButton cancelButton;
         private javax.swing.JButton connectButton;
         private javax.swing.JFrame connectFrame;
         private javax.swing.JLabel databaseLabel;
         private javax.swing.JTextField databaseTextField;
+        private net.exent.locutus.gui.Detached detached;
         private javax.swing.JComboBox driverCombo;
         private javax.swing.JLabel driverLabel;
         private javax.swing.JMenuItem fileConnect;
         private javax.swing.JMenuItem fileExit;
         private javax.swing.JMenu fileMenu;
         private javax.swing.JSeparator fileSeparator1;
+        private javax.swing.JLabel filterLabel;
+        private static javax.swing.JTextField filterTextField;
         private javax.swing.JLabel hostLabel;
         private javax.swing.JTextField hostTextField;
         private javax.swing.JTabbedPane jTabbedPane1;
