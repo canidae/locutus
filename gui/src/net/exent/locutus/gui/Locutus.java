@@ -28,8 +28,7 @@ public class Locutus extends javax.swing.JFrame {
 	}
 
 	public static String getFilter() {
-		String tmp = filterTextField.getText();
-		return (tmp == null ? "" : tmp);
+		return filterTextField.getText();
 	}
 
 	/** This method is called from within the constructor to
