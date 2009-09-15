@@ -46,7 +46,7 @@ extern "C" {
 #define DRY_RUN_DESCRIPTION "Only read files and look them up, don't save and move files. Currently genre won't be looked up during a dry run."
 #define LOOKUP_GENRE_KEY "lookup_genre"
 #define LOOKUP_GENRE_VALUE false
-#define LOOKUP_GENRE_DESCRIPTION "Fetch genre (or tag) from Audioscrobbler before saving a file. If no genre is found then genre is set to an empty string. If this option is set to false, the genre field is left unmodified."
+#define LOOKUP_GENRE_DESCRIPTION "Fetch genre (or tag) from Audioscrobbler before saving a file. If no genre is found then genre is set to an empty string. If this option is set to false, the genre field is left unmodified. Locutus will only look up genre when there's no genre associated with the track or when the file is moved, this is because looking up tag significantly slows down Locutus."
 
 /* how often we should check if we're still active and how often we should poll database */
 #define CHECK_ACTIVE_INTERVAL 3

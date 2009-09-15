@@ -289,14 +289,6 @@ bool Locutus::parseFile() {
 }
 
 void Locutus::saveFile(Metafile *file) {
-	/* genre */
-	if (lookup_genre) {
-		vector<string> tags = audioscrobbler->getTags(*file);
-		if (tags.size() > 0)
-			file->genre = tags[0];
-		else
-			file->genre = ""; // clear genre if we didn't find a tag
-	}
 	/* create new filename */
 	string filename = output_dir;
 	filename.append(filenamer->getFilename(*file));
@@ -346,7 +338,14 @@ void Locutus::saveFile(Metafile *file) {
 		/* update database for the existing file */
 		database->saveMetafile(**f, tmp_old_filename);
 	}
-	Debug::info() << "Moving " << file->filename << " to " << filename << endl;
+	/* genre (only if we want to lookup genre and genre is not set or path/filename has changed) */
+	if (lookup_genre && (file->genre == "" || filename != file->filename)) {
+		vector<string> tags = audioscrobbler->getTags(*file);
+		if (tags.size() > 0)
+			file->genre = tags[0];
+		else
+			file->genre = ""; // clear genre if we didn't find a tag
+	}
 	/* save metadata */
 	if (!file->saveMetadata()) {
 		Debug::warning() << "Unable to save metadata for file " << file->filename << endl;
@@ -355,13 +354,14 @@ void Locutus::saveFile(Metafile *file) {
 	/* move file */
 	string old_filename = file->filename;
 	if (filename != file->filename) {
+		Debug::info() << "Moving " << file->filename << " to " << filename << endl;
 		if (!moveFile(file, filename)) {
 			file->filename = old_filename;
 			Debug::warning() << "Unable to move file " << old_filename << " to " << filename << endl;
 		}
 	}
 	/* update database */
-	database->saveMetafile(*file, old_filename); // metadata may have changed even if path haven't
+	database->saveMetafile(*file, old_filename); // metadata may have changed even if path/filename haven't
 }
 
 void Locutus::scanFiles(const string &directory) {
