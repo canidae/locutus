@@ -184,8 +184,7 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	/* and update groupname in case it's changed */
 	query << ", groupname = '" << escapeString(metafile->getGroup()) << "'";
 	query << " WHERE filename = '" << escapeString(metafile->filename) << "'";
-	doQuery(query.str());
-	return true;
+	return doQuery(query.str());
 }
 
 vector<Metafile *> &PostgreSQL::loadMetafiles(const string &filename_pattern) {
@@ -288,8 +287,7 @@ bool PostgreSQL::removeGoneFiles() {
 	/* remove unchecked files */
 	ostringstream query;
 	query << "DELETE FROM file WHERE checked = false";
-	doQuery(query.str());
-	return true;
+	return doQuery(query.str());
 }
 
 bool PostgreSQL::saveAlbum(const Album &album) {
@@ -372,10 +370,7 @@ bool PostgreSQL::saveArtist(const Artist &artist) {
 	query << " name = '" << e_name << "'";
 	query << ", sortname = '" << e_sortname << "'";
 	query << " WHERE mbid = '" << e_mbid << "'";
-	if (!doQuery(query.str()))
-		return false;
-
-	return true;
+	return doQuery(query.str());
 }
 
 bool PostgreSQL::saveComparison(const Comparison &comparison) {
@@ -404,10 +399,7 @@ bool PostgreSQL::saveComparison(const Comparison &comparison) {
 	query << " mbid_match = " << (comparison.mbid_match ? "true" : "false");
 	query << ", score = " << comparison.score;
 	query << " WHERE file_id = (SELECT file_id FROM file WHERE filename = '" << e_filename << "') AND track_id = (SELECT track_id FROM track WHERE mbid = '" << e_track_mbid << "')";
-	if (!doQuery(query.str()))
-		return false;
-
-	return true;
+	return doQuery(query.str());
 }
 
 bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filename) {
@@ -474,6 +466,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	query.str("");
 	query << "UPDATE file SET";
 	query << " filename = '" << e_filename << "'";
+	query << ", last_updated = now()";
 	query << ", duration = " << metafile.duration;
 	query << ", channels = " << metafile.channels;
 	query << ", bitrate = " << metafile.bitrate;
@@ -498,9 +491,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	query << ", track_id = " << e_track_id;
 	query << ", checked = true";
 	query << " WHERE filename = '" << e_old_filename << "'";
-	if (!doQuery(query.str()))
-		return false;
-	return true;
+	return doQuery(query.str());
 }
 
 bool PostgreSQL::saveTrack(const Track &track) {
@@ -534,10 +525,7 @@ bool PostgreSQL::saveTrack(const Track &track) {
 	query << ", duration = " << track.duration;
 	query << ", tracknumber = " << track.tracknumber;
 	query << " WHERE mbid = '" << e_mbid << "'";
-	if (!doQuery(query.str()))
-		return false;
-
-	return true;
+	return doQuery(query.str());
 }
 
 bool PostgreSQL::shouldRun() {
