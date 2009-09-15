@@ -23,7 +23,7 @@
 
 using namespace std;
 
-PostgreSQL::PostgreSQL(const string &host, const string &user, const string &pass, const string &name) : Database(), pg_result(NULL), got_result(false), album_cache_lifetime(1), metatrack_cache_lifetime(1), run_interval(0) {
+PostgreSQL::PostgreSQL(const string &host, const string &user, const string &pass, const string &name) : Database(), pg_result(NULL), got_result(false), album_cache_lifetime(1), run_interval(0) {
 	string connection_url = "host=";
 	connection_url.append(host);
 	connection_url.append(" user=");
@@ -53,9 +53,6 @@ bool PostgreSQL::init() {
 	album_cache_lifetime = loadSettingInt(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
 	if (album_cache_lifetime <= 0)
 		album_cache_lifetime = 1;
-	metatrack_cache_lifetime = loadSettingInt(METATRACK_CACHE_LIFETIME_KEY, METATRACK_CACHE_LIFETIME_VALUE, METATRACK_CACHE_LIFETIME_DESCRIPTION);
-	if (metatrack_cache_lifetime <= 0)
-		metatrack_cache_lifetime = 1;
 	run_interval = loadSettingInt(RUN_INTERVAL_KEY, RUN_INTERVAL_VALUE, RUN_INTERVAL_DESCRIPTION);
 	if (run_interval < 0)
 		run_interval = 0;

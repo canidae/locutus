@@ -17,6 +17,13 @@
 #include <string>
 #include <vector>
 
+#define ALBUM_CACHE_LIFETIME_KEY "album_cache_lifetime"
+#define ALBUM_CACHE_LIFETIME_VALUE 3
+#define ALBUM_CACHE_LIFETIME_DESCRIPTION "When it's more than this months since album was fetched from MusicBrainz, it'll be fetched from MusicBrainz again."
+#define RUN_INTERVAL_KEY "run_interval"
+#define RUN_INTERVAL_VALUE 30
+#define RUN_INTERVAL_DESCRIPTION "Interval between Locutus runs. The value is given in days."
+
 class Album;
 class Artist;
 class Comparison;
