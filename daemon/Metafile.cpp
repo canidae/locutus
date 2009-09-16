@@ -46,7 +46,7 @@ void Metafile::clearValues() {
 	values.clear();
 }
 
-string Metafile::getBaseNameWithoutExtension() const {
+string Metafile::getBasenameWithoutExtension() const {
 	/* return basename without extension, duh */
 	string::size_type pos = filename.find_last_of('/');
 	if (pos != string::npos && pos > 0) {
@@ -114,7 +114,7 @@ const list<string> &Metafile::getValues(double combine_threshold) {
 		}
 	}
 	/* tokenize basename and add that too */
-	string basename = getBaseNameWithoutExtension();
+	string basename = getBasenameWithoutExtension();
 	/* replace "_" with " " */
 	pos = 0;
 	while ((pos = basename.find('_', pos)) != string::npos)

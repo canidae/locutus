@@ -97,7 +97,7 @@ public:
 	Metafile(const std::string &filename);
 
 	void clearValues();
-	std::string getBaseNameWithoutExtension() const;
+	std::string getBasenameWithoutExtension() const;
 	std::string getGroup() const;
 	const std::list<std::string> &getValues(double combine_threshold);
 	bool readFromFile();

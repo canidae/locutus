@@ -39,8 +39,10 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 		return false;
 	string url = release_lookup_url;
 	url.append(album->mbid);
-	url.append("?type=xml&inc=tracks+artist+release-events+labels+artist-rels+url-rels");
-	XMLNode *root = lookup(url);
+	vector<string> args;
+	args.push_back("type=xml");
+	args.push_back("inc=tracks+artist+release-events+labels+artist-rels+url-rels");
+	XMLNode *root = lookup(url, args);
 	if (root == NULL)
 		return false;
 	/* album data */
@@ -99,8 +101,7 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 
 const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 	ostringstream query;
-	string bnwe = escapeString(metafile.getBaseNameWithoutExtension());
-	query << "limit=25&query=";
+	string bnwe = escapeString(metafile.getBasenameWithoutExtension());
 	query << "tnum:(" << escapeString(metafile.tracknumber) << " " << bnwe << ") ";
 	if (metafile.duration > 0) {
 		int lower = metafile.duration / 1000 - 10;
@@ -112,7 +113,27 @@ const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 	query << "artist:(" << escapeString(metafile.artist) << " " << bnwe << ") ";
 	query << "track:(" << escapeString(metafile.title) << " " << bnwe << " " << ") ";
 	query << "release:(" << escapeString(metafile.album) << " " << bnwe << ") ";
-	return searchMetadata(query.str());
+
+	tracks.clear();
+	if (query.str() == "")
+		return tracks;
+	vector<string> args;
+	args.push_back("type=xml");
+	args.push_back("limit=25");
+	char *c_query = new char[CHAR_BUFFER];
+	urlEncode(query.str().c_str(), c_query, CHAR_BUFFER);
+	query.str("");
+	query << "query=" << c_query;
+	delete [] c_query;
+	args.push_back(query.str());
+	XMLNode *root = lookup(metadata_search_url, args);
+	if (root != NULL && root->children["metadata"].size() > 0 && root->children["metadata"][0]->children["track-list"].size() > 0) {
+		for (vector<XMLNode *>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
+			if (getMetatrack(root->children["metadata"][0]->children["track-list"][0]->children["track"][a]))
+				tracks.push_back(metatrack);
+		}
+	}
+	return tracks;
 }
 
 string MusicBrainz::escapeString(const string &text) {
@@ -121,12 +142,12 @@ string MusicBrainz::escapeString(const string &text) {
 	/* also change "_", "?", ";", "&" and "#" to " " */
 	/* remember these suckers too:
 	 * "$": %24
-         * "+": %2b
-         * ",": %2c
-         * "/": %2f
-         * ":": %3a
-         * "=": %3d
-         * "@": %40 */
+	 * "+": %2b
+	 * ",": %2c
+	 * "/": %2f
+	 * ":": %3a
+	 * "=": %3d
+	 * "@": %40 */
 
 	ostringstream str;
 	for (string::size_type a = 0; a < text.size(); ++a) {
@@ -189,7 +210,7 @@ string MusicBrainz::escapeString(const string &text) {
 			case '&':
 			case '#':
 				str << ' ';
-				break;                                                                                                                 
+				break;
 
 			default:
 				str << c;
@@ -229,7 +250,7 @@ bool MusicBrainz::getMetatrack(XMLNode *track) {
 	return true;
 }
 
-XMLNode *MusicBrainz::lookup(const std::string &url) {
+XMLNode *MusicBrainz::lookup(const string &url, const vector<string> args) {
 	/* usleep if last fetch was less than a second ago */
 	struct timeval tv;
 	if (gettimeofday(&tv, NULL) == 0) {
@@ -250,22 +271,9 @@ XMLNode *MusicBrainz::lookup(const std::string &url) {
 		 * that was unexpected. let's sleep some seconds instead */
 		sleep(3);
 	}
-	return fetch(url.c_str());
-}
-
-const vector<Metatrack> &MusicBrainz::searchMetadata(const string &query) {
-	tracks.clear();
-	if (query == "")
-		return tracks;
-	string url = metadata_search_url;
-	url.append("?type=xml&");
-	url.append(query);
-	XMLNode *root = lookup(url);
-	if (root != NULL && root->children["metadata"].size() > 0 && root->children["metadata"][0]->children["track-list"].size() > 0) {
-		for (vector<XMLNode *>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
-			if (getMetatrack(root->children["metadata"][0]->children["track-list"][0]->children["track"][a]))
-				tracks.push_back(metatrack);
-		}
-	}
-	return tracks;
+	const char *c_args[args.size() + 1];
+	for (int a = 0; a < (int) args.size(); ++a)
+		c_args[a] = args[a].c_str();
+	c_args[args.size()] = NULL;
+	return fetch(url.c_str(), c_args);
 }

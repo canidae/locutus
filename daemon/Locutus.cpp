@@ -210,7 +210,7 @@ bool Locutus::moveFile(Metafile *file, const string &filename) {
 			continue; // directory already exist
 		result = mkdir(dirname.c_str(), mode);
 		if (result == 0)
-			continue;                                                                                                                      
+			continue;
 		/* unable to create directory */
 		Debug::warning() << "Unable to create directory: " << dirname << endl;
 		return false;

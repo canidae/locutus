@@ -54,7 +54,6 @@ private:
 
 	std::string escapeString(const std::string &text);
 	bool getMetatrack(XMLNode *track);
-	XMLNode *lookup(const std::string &url);
-	const std::vector<Metatrack> &searchMetadata(const std::string &query);
+	XMLNode *lookup(const std::string &url, const std::vector<std::string> args);
 };
 #endif

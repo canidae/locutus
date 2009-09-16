@@ -271,8 +271,8 @@ string &PostgreSQL::loadSettingString(const string &key, const string &default_v
 		query << ", '" << e_value << "'";
 		query << ", '" << e_description << "')";  
 		if (!doQuery(query.str()))
-			return setting_string;                                                                                                                   
-	}                                                                                                                                              
+			return setting_string;
+	}
 	return setting_string;
 }
 

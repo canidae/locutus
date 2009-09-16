@@ -131,7 +131,7 @@ XMLNode *Audioscrobbler::lookup(const std::string &url) {
 		 * that was unexpected. let's sleep some seconds instead */
 		sleep(3);
 	}
-	return fetch(url.c_str());
+	return fetch(url.c_str(), NULL);
 }
 
 bool Audioscrobbler::parseXML(XMLNode *root) {

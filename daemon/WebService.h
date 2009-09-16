@@ -20,6 +20,7 @@
 #include <vector>
 
 #define TIMEOUT 180
+#define CHAR_BUFFER 4096
 
 struct XMLNode {
 	XMLNode *parent;
@@ -34,7 +35,7 @@ public:
 	~WebService();
 
 protected:
-	XMLNode *fetch(const char *url);
+	XMLNode *fetch(const char *url, const char **args);
 
 private:
 	URLStream::Error status;

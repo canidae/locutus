@@ -25,19 +25,33 @@ WebService::~WebService() {
 	delete root;
 }
 
-XMLNode *WebService::fetch(const char *url) {
-	char *urle = new char[4096];
-	urle = urlEncode(url, urle, 4096);
-	Debug::info() << urle << endl;
-	status = get(urle);
+XMLNode *WebService::fetch(const char *url, const char **args) {
+	char *urle = new char[CHAR_BUFFER];
+	urle = urlEncode(url, urle, CHAR_BUFFER);
+	if (args == NULL)
+		status = get(urle);
+	else
+		status = submit(urle, args);
 	if (status) {
 		Debug::notice() << "Unable to fetch data. Reason: " << status << endl;
-		close();
 		Debug::notice() << "Trying once more..." << endl;
+		close();
 		sleep(3); // sleep a bit before trying again
-		status = get(urle);
+		if (args == NULL)
+			status = get(urle);
+		else
+			status = submit(urle, args);
 		if (status) {
-			Debug::warning() << "Unable to fetch data. Reason: " << status << endl;
+			ostringstream str;
+			str << "Failed again, giving up. URL: " << urle;
+			if (args != NULL && args[0] != NULL) {
+				str << "?";
+				str << args[0];
+				int a = 0;
+				while (args[++a] != NULL)
+					str << "&" << args[a];
+			}
+			Debug::warning() << str.str() << endl;
 			close();
 			delete [] urle;
 			return NULL;
@@ -53,7 +67,7 @@ XMLNode *WebService::fetch(const char *url) {
 	curnode = root;
 	/* commoncpp may get stuck in a recvfrom if we get net hiccup.
 	 * to prevent this we set up an alarm() which if we don't get a reply within
-	 * TIMEOOUT then we cancel the current system call.
+	 * TIMEOUT then we cancel the current system call.
 	 * see bottom of Locutus.cpp for the handling of SIGALRM */
 	alarm(TIMEOUT);
 	if (!parse())
