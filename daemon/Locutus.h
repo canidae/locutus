@@ -62,6 +62,9 @@ class MusicBrainz;
 class Locutus {
 public:
 	bool active;
+	static std::string input_dir;
+	static std::string output_dir;
+	static std::string duplicate_dir;
 
 	explicit Locutus(Database *database);
 	~Locutus();
@@ -84,9 +87,6 @@ private:
 	std::list<std::string> dir_queue;
 	std::list<std::string> file_queue;
 	std::map<std::string, int> groups;
-	std::string input_dir;
-	std::string output_dir;
-	std::string duplicate_dir;
 
 	std::string findDuplicateFilename(Metafile *file);
 	bool moveFile(Metafile *file, const std::string &filename);

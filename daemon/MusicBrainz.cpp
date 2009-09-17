@@ -15,6 +15,7 @@
 #include "Album.h"
 #include "Artist.h"
 #include "Database.h"
+#include "Locutus.h"
 #include "Metafile.h"
 #include "MusicBrainz.h"
 #include "Track.h"
@@ -99,9 +100,47 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 }
 
 const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
+	/* do a track search */
+	/* first extract useful data from filename */
+	string extra = metafile.filename;
+	/* we don't want our input/output/duplicate directory, that's just noise */
+	if (extra.find(Locutus::input_dir) != string::npos)
+		extra.erase(0, Locutus::input_dir.size());
+	else if (extra.find(Locutus::output_dir) != string::npos)
+		extra.erase(0, Locutus::output_dir.size());
+	else if (extra.find(Locutus::duplicate_dir) != string::npos)
+		extra.erase(0, Locutus::duplicate_dir.size());
+	/* nor do we want the extension, that's also noise */
+	string::size_type pos = extra.find_last_of('.');
+	if (pos != string::npos)
+		extra.erase(pos);
+	/* then replace "/" with " " */
+	while ((pos = extra.find_first_of('/')) != string::npos)
+		extra.replace(pos, 1, " ");
+	/* and finally escape the string */
+	extra = escapeString(extra);
+
+	/* tracknumber and track title are most likely not in a directory name,
+	 * it's more likely that these can be found in the basename */
+	string bwe = metafile.getBasenameWithoutExtension();
+	string tracknum = "";
+	bool last_was_num = false;
+	for (int a = 0; a < (int)bwe.size(); ++a) {
+		if (bwe[a] >= '0' && bwe[a] <= '9') {
+			if (!last_was_num)
+				tracknum.append(1, ' ');
+			tracknum.append(1, bwe[a]);
+			last_was_num = true;
+		} else {
+			last_was_num = false;
+		}
+	}
+	/* escape bwe */
+	bwe = escapeString(bwe);
+
+	/* build the query */
 	ostringstream query;
-	string bnwe = escapeString(metafile.getBasenameWithoutExtension());
-	query << "tnum:(" << escapeString(metafile.tracknumber) << " " << bnwe << ") ";
+	query << "tnum:(" << escapeString(metafile.tracknumber) << tracknum << ") "; // no need for " " before tracknum, it already got a space
 	if (metafile.duration > 0) {
 		int lower = metafile.duration / 1000 - 10;
 		int upper = metafile.duration / 1000 + 10;
@@ -109,9 +148,9 @@ const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 			lower = 0;
 		query << "qdur:[" << lower << " TO " << upper << "] ";
 	}
-	query << "artist:(" << escapeString(metafile.artist) << " " << bnwe << ") ";
-	query << "track:(" << escapeString(metafile.title) << " " << bnwe << " " << ") ";
-	query << "release:(" << escapeString(metafile.album) << " " << bnwe << ") ";
+	query << "artist:(" << escapeString(metafile.artist) << " " << extra << ") ";
+	query << "track:(" << escapeString(metafile.title) << " " << bwe << ") ";
+	query << "release:(" << escapeString(metafile.album) << " " << extra << ")";
 
 	tracks.clear();
 	if (query.str() == "")

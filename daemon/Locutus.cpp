@@ -27,6 +27,10 @@
 
 using namespace std;
 
+string Locutus::input_dir = "";
+string Locutus::output_dir = "";
+string Locutus::duplicate_dir = "";
+
 Locutus::Locutus(Database *database) : active(true), database(database) {
 	audioscrobbler = new Audioscrobbler(database);
 	filenamer = new FileNamer(database);
@@ -232,7 +236,6 @@ bool Locutus::parseDirectory() {
 	if (dir_queue.size() <= 0)
 		return false;
 	string directory(*dir_queue.begin());
-	Debug::info() << directory << endl;
 	dir_queue.pop_front();
 	DIR *dir = opendir(directory.c_str());
 	if (dir == NULL)
