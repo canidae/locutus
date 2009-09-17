@@ -13,7 +13,6 @@
 
 #include "Audioscrobbler.h"
 #include "Database.h"
-#include "Debug.h"
 #include "Metafile.h"
 
 using namespace ost;
@@ -117,10 +116,8 @@ XMLNode *Audioscrobbler::lookup(const std::string &url) {
 		long msec_since_last = (last_fetch.tv_sec - tv.tv_sec) * 1000000;
 		msec_since_last += last_fetch.tv_usec - tv.tv_usec;
 		msec_since_last += query_interval;
-		if (msec_since_last > 0 && msec_since_last < query_interval) {
-			Debug::info() << "Sleeping " << msec_since_last << "µs to avoid hammering Audioscrobbler" << endl;
+		if (msec_since_last > 0 && msec_since_last < query_interval)
 			usleep(msec_since_last);
-		}
 		if (gettimeofday(&last_fetch, NULL) != 0) {
 			/* whaat? */
 			last_fetch.tv_sec = tv.tv_sec + 3;

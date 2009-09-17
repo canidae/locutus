@@ -93,8 +93,10 @@ void Locutus::run() {
 	/* match files */
 	int file_counter = 0;
 	for (map<string, int>::iterator g = groups.begin(); g != groups.end() && active; ++g) {
+		Debug::info() << "Processing group '" << g->first << "', " << g->second << " files" << endl;
 		if (g->second > max_group_size) {
 			/* too many files in this group, update progress and continue */
+			Debug::warning() << "Too many files in this group (limit is " << max_group_size << " files), skipping" << endl;
 			file_counter += g->second;
 			database->updateProgress((double)file_counter / ((double)total_files + (double)combine.size()));
 			continue;
@@ -145,7 +147,7 @@ void Locutus::run() {
 			for (vector<Metafile *>::iterator f = tmpfiles.begin(); f != tmpfiles.end(); ++f)
 				files.push_back(new Metafile(**f));
 		}
-		Debug::info() << "Joining groups that loaded album " << c->first << ":" << groups_joined << endl;
+		Debug::info() << "Joining groups that loaded album " << c->first << " (" << files.size() << " files):" << groups_joined << endl;
 		/* match files */
 		matcher->match(files, c->first);
 		/* save files with new metadata */
@@ -265,10 +267,10 @@ bool Locutus::parseFile() {
 	if (file_queue.size() <= 0)
 		return false;
 	string filename(*file_queue.begin());
-	Debug::info() << filename << endl;
 	file_queue.pop_front();
 	Metafile *mf = new Metafile(filename);
 	if (!database->loadMetafile(mf)) {
+		Debug::info() << "File not found in database: " << filename << endl;
 		if (mf->readFromFile()) {
 			/* save file to cache */
 			database->saveMetafile(*mf);
