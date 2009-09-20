@@ -140,7 +140,10 @@ const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 
 	/* build the query */
 	ostringstream query;
-	query << "tnum:(" << escapeString(metafile.tracknumber) << tracknum << ") "; // no need for " " before tracknum, it already got a space
+	string tnum = escapeString(metafile.tracknumber);
+	tnum.append(tracknum); // no need for " " before tracknum, it already got a space
+	if (tnum.size() > 0)
+		query << "tnum:(" << tnum << ") ";
 	if (metafile.duration > 0) {
 		int lower = metafile.duration / 1000 - 10;
 		int upper = metafile.duration / 1000 + 10;
@@ -148,9 +151,21 @@ const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 			lower = 0;
 		query << "qdur:[" << lower << " TO " << upper << "] ";
 	}
-	query << "artist:(" << escapeString(metafile.artist) << " " << extra << ") ";
-	query << "track:(" << escapeString(metafile.title) << " " << bwe << ") ";
-	query << "release:(" << escapeString(metafile.album) << " " << extra << ")";
+	string artist = escapeString(metafile.artist);
+	artist.append(1, ' ');
+	artist.append(extra);
+	if (artist.size() > 0)
+		query << "artist:(" << artist << ") ";
+	string track = escapeString(metafile.title);
+	track.append(1, ' ');
+	track.append(bwe);
+	if (track.size() > 0)
+		query << "track:(" << track << ") ";
+	string release = escapeString(metafile.album);
+	release.append(1, ' ');
+	release.append(extra);
+	if (release.size() > 0)
+		query << "release:(" << release << ")";
 
 	tracks.clear();
 	if (query.str() == "")
