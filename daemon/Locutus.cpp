@@ -96,8 +96,9 @@ void Locutus::run() {
 	map<string, vector<string> > combine;
 	/* match files */
 	int file_counter = 0;
+	int group_counter = 0;
 	for (map<string, int>::iterator g = groups.begin(); g != groups.end() && active; ++g) {
-		Debug::info() << "Processing group '" << g->first << "', " << g->second << " files" << endl;
+		Debug::info() << "Processing group " << ++group_counter << "/" << groups.size() << ": '" << g->first << "', " << g->second << " file" << (g->second == 1 ? "" : "s") << endl;
 		if (g->second > max_group_size) {
 			/* too many files in this group, update progress and continue */
 			Debug::warning() << "Too many files in this group (limit is " << max_group_size << " files), skipping" << endl;
