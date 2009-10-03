@@ -14,10 +14,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
 import net.exent.locutus.database.Database;
 
 /**
@@ -26,50 +28,177 @@ import net.exent.locutus.database.Database;
  */
 public class Matching extends javax.swing.JPanel {
 
-	private class MaxAvgMinRenderer extends JLabel implements TableCellRenderer {
+	private class AlbumNode {
 
-		public MaxAvgMinRenderer() {
-			setOpaque(true);
-			setHorizontalAlignment(RIGHT);
+		private int album_id;
+		private String title;
+		private int tracks;
+		private int files_compared;
+		private int tracks_compared;
+		private int mbids_matched;
+		private double max_score;
+		private double avg_score;
+		private double min_score;
+
+		public AlbumNode(ResultSet rs) throws SQLException {
+			album_id = rs.getInt("album_id");
+			title = rs.getString("album");
+			tracks = rs.getInt("tracks");
+			files_compared = rs.getInt("files_compared");
+			tracks_compared = rs.getInt("tracks_compared");
+			mbids_matched = rs.getInt("mbids_matched");
+			max_score = rs.getDouble("max_score");
+			avg_score = rs.getDouble("avg_score");
+			min_score = rs.getDouble("min_score");
 		}
 
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			/* set background color */
-			double v = 0.0;
-			if (value != null)
-				v = Double.parseDouble(value.toString());
-			Color bg;
-			if (v >= 0.75)
-				bg = new Color((int) ((1.0 - (v - 0.75) * 4.0) * 255.0), 255, 0);
-			else if (v >= 0.25)
-				bg = new Color(255, (int) (((v - 0.25) * 2.0) * 255.0), 0);
-			else
-				bg = new Color(255, 0, 0);
-			setBackground(bg);
-
-			/* set text */
-			setText(new Double((int) (v * 1000) / 10.0).toString() + "%");
-
-			return this;
+		@Override
+		public String toString() {
+			return title + " (" + tracks + "/" + tracks_compared + "/" + mbids_matched + " tracks/compared/mbids, " + files_compared + " files)";
 		}
 	}
 
-	private MaxAvgMinRenderer getMaxAvgMinRenderer() {
-		return new MaxAvgMinRenderer();
+	private class TrackNode {
+
+		private int track_id;
+		private String title;
+		private String artist;
+		private String album;
+		private String album_artist;
+		private int tracknumber;
+		private int duration;
+		private double score;
+		private boolean got_mbid_match;
+		private boolean got_files;
+
+		public TrackNode(ResultSet rs) throws SQLException {
+			track_id = rs.getInt("track_id");
+			title = rs.getString("title");
+			artist = rs.getString("track_artist");
+			album = rs.getString("album");
+			album_artist = rs.getString("artist");
+			tracknumber = rs.getInt("tracknumber");
+			duration = rs.getInt("duration");
+			score = rs.getDouble("score");
+			got_mbid_match = rs.getBoolean("mbid_match");
+			got_files = (rs.getInt("file_id") > 0 && !rs.wasNull());
+		}
+
+		@Override
+		public String toString() {
+			return (tracknumber > 9 ? tracknumber : "0" + tracknumber) + " - " + duration + " - " + album_artist + " - " + album + " - " + artist + " - " + title;
+		}
 	}
 
-	public void updateTable() {
+	private class FileNode {
+
+		private int file_id;
+		private String filename;
+		private int duration;
+		private String album;
+		private String album_artist;
+		private String artist;
+		private String title;
+		private int tracknumber;
+		private double score;
+		private boolean mbid_match;
+		private int track_id;
+
+		public FileNode(ResultSet rs) throws SQLException {
+			file_id = rs.getInt("file_id");
+			filename = rs.getString("filename");
+			duration = rs.getInt("file_duration");
+			album = rs.getString("file_album");
+			album_artist = rs.getString("file_albumartist");
+			artist = rs.getString("file_artist");
+			title = rs.getString("file_title");
+			try {
+				tracknumber = Integer.parseInt(rs.getString("file_tracknumber"));
+			} catch (NumberFormatException e) {
+				tracknumber = 0;
+			}
+			score = rs.getDouble("score");
+			mbid_match = rs.getBoolean("mbid_match");
+			track_id = rs.getInt("file_track_id");
+		}
+
+		@Override
+		public String toString() {
+			return (tracknumber > 9 ? tracknumber : "0" + tracknumber) + " - " + duration + " - " + album_artist + " - " + album + " - " + artist + " - " + title + " (" + filename + ")";
+		}
+	}
+
+	private class MatchingCellRenderer implements TreeCellRenderer {
+
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+			String icon = "unknown_icon.png";
+			Object node = ((DefaultMutableTreeNode) value).getUserObject();
+			if (node instanceof AlbumNode) {
+				AlbumNode album = (AlbumNode) node;
+				if (album.min_score < 0.4)
+					icon = "album_25.png";
+				else if (album.min_score < 0.55)
+					icon = "album_40.png";
+				else if (album.min_score < 0.7)
+					icon = "album_55.png";
+				else if (album.min_score < 0.85)
+					icon = "album_70.png";
+				else
+					icon = "album_85.png";
+			} else if (node instanceof TrackNode) {
+				TrackNode track = (TrackNode) node;
+				if (track.got_mbid_match)
+					icon = "track_matched.png";
+				else if (!track.got_files)
+					icon = "track_none.png";
+				else if (track.score < 0.4)
+					icon = "track_25.png";
+				else if (track.score < 0.55)
+					icon = "track_40.png";
+				else if (track.score < 0.7)
+					icon = "track_55.png";
+				else if (track.score < 0.85)
+					icon = "track_70.png";
+				else
+					icon = "track_85.png";
+			} else if (node instanceof FileNode) {
+				FileNode file = (FileNode) node;
+				if (file.track_id > 0)
+					icon = "file_matched.png";
+				else if (file.score < 0.4)
+					icon = "file_25.png";
+				else if (file.score < 0.55)
+					icon = "file_40.png";
+				else if (file.score < 0.7)
+					icon = "file_55.png";
+				else if (file.score < 0.85)
+					icon = "file_70.png";
+				else
+					icon = "file_85.png";
+			}
+			JLabel label = new JLabel(value.toString(), new ImageIcon(getClass().getResource("/net/exent/locutus/gui/icons/" + icon)), JLabel.LEFT);
+			if (selected)
+				label.setForeground(Color.BLUE);
+			return label;
+		}
+	}
+
+	public void updateTree() {
 		try {
 			ResultSet rs = Database.getMatching(Locutus.getFilter());
 
 			if (rs == null)
 				return;
 
-			DefaultTableModel dtb = (DefaultTableModel) jTable1.getModel();
-			dtb.setRowCount(0);
+			jTree1.removeAll();
+			DefaultTreeModel tree = (DefaultTreeModel) jTree1.getModel();
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getRoot();
 			while (rs.next()) {
-				dtb.addRow(new Object[]{rs.getInt("album_id"), rs.getString("album"), rs.getInt("tracks"), rs.getInt("files_compared"), rs.getInt("tracks_compared"), rs.getInt("mbids_matched"), rs.getDouble("max_score"), rs.getDouble("avg_score"), rs.getDouble("min_score")});
+				DefaultMutableTreeNode child = new DefaultMutableTreeNode(new AlbumNode(rs));
+				child.add(new DefaultMutableTreeNode("hai!"));
+				root.add(child);
 			}
+			tree.setRoot(root);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -78,6 +207,7 @@ public class Matching extends javax.swing.JPanel {
 	/** Creates new form Matching */
 	public Matching() {
 		initComponents();
+		jTree1.setCellRenderer(new MatchingCellRenderer());
 	}
 
 	/** This method is called from within the constructor to
@@ -89,8 +219,8 @@ public class Matching extends javax.swing.JPanel {
         // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
         private void initComponents() {
 
-                jScrollPane1 = new javax.swing.JScrollPane();
-                jTable1 = new javax.swing.JTable();
+                jScrollPane2 = new javax.swing.JScrollPane();
+                jTree1 = new javax.swing.JTree();
 
                 addComponentListener(new java.awt.event.ComponentAdapter() {
                         public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -98,81 +228,62 @@ public class Matching extends javax.swing.JPanel {
                         }
                 });
 
-                jTable1.setModel(new javax.swing.table.DefaultTableModel(
-                        new Object [][] {
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null},
-                                {null, null, null, null, null, null, null, null, null}
-                        },
-                        new String [] {
-                                "ID", "Album", "Tracks", "Tracks compared", "Files compared", "MBIDs matched", "Max", "Avg", "Min"
+                javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+                jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+                jTree1.setRootVisible(false);
+                jTree1.addTreeWillExpandListener(new javax.swing.event.TreeWillExpandListener() {
+                        public void treeWillCollapse(javax.swing.event.TreeExpansionEvent evt)throws javax.swing.tree.ExpandVetoException {
                         }
-                ) {
-                        Class[] types = new Class [] {
-                                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-                        };
-                        boolean[] canEdit = new boolean [] {
-                                false, false, false, false, false, false, false, false, false
-                        };
-
-                        public Class getColumnClass(int columnIndex) {
-                                return types [columnIndex];
-                        }
-
-                        public boolean isCellEditable(int rowIndex, int columnIndex) {
-                                return canEdit [columnIndex];
+                        public void treeWillExpand(javax.swing.event.TreeExpansionEvent evt)throws javax.swing.tree.ExpandVetoException {
+                                jTree1TreeWillExpand(evt);
                         }
                 });
-                jTable1.getTableHeader().setReorderingAllowed(false);
-                jScrollPane1.setViewportView(jTable1);
-                jTable1.getColumnModel().getColumn(6).setCellRenderer(getMaxAvgMinRenderer());
-                jTable1.getColumnModel().getColumn(7).setCellRenderer(getMaxAvgMinRenderer());
-                jTable1.getColumnModel().getColumn(8).setCellRenderer(getMaxAvgMinRenderer());
+                jScrollPane2.setViewportView(jTree1);
 
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
                 this.setLayout(layout);
                 layout.setHorizontalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 664, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)
-                                        .addContainerGap()))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
                 );
                 layout.setVerticalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 443, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
-                                        .addContainerGap()))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
                 );
         }// </editor-fold>//GEN-END:initComponents
 
 	private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-		updateTable();
+		updateTree();
 	}//GEN-LAST:event_formComponentShown
+
+	private void jTree1TreeWillExpand(javax.swing.event.TreeExpansionEvent evt)throws javax.swing.tree.ExpandVetoException {//GEN-FIRST:event_jTree1TreeWillExpand
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) evt.getPath().getLastPathComponent();
+		if (node.getUserObject() instanceof AlbumNode) {
+			AlbumNode album = (AlbumNode) node.getUserObject();
+			node.removeAllChildren();
+			try {
+				ResultSet rs = Database.getAlbum(album.album_id);
+				int last_tracknum = -1;
+				DefaultMutableTreeNode track = null;
+				while (rs.next()) {
+					int tracknum = rs.getInt("tracknumber");
+					if (tracknum != last_tracknum) {
+						track = new DefaultMutableTreeNode(new TrackNode(rs));
+						last_tracknum = tracknum;
+						node.add(track);
+					}
+					if ((rs.getInt("file_id") > 0) && !rs.wasNull()) {
+						DefaultMutableTreeNode file = new DefaultMutableTreeNode(new FileNode(rs));
+						track.add(file);
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}//GEN-LAST:event_jTree1TreeWillExpand
         // Variables declaration - do not modify//GEN-BEGIN:variables
-        private javax.swing.JScrollPane jScrollPane1;
-        private javax.swing.JTable jTable1;
+        private javax.swing.JScrollPane jScrollPane2;
+        private javax.swing.JTree jTree1;
         // End of variables declaration//GEN-END:variables
 }

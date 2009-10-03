@@ -20,7 +20,7 @@ public class Database {
 	private static PreparedStatement matching;
 	private static PreparedStatement detached;
 	private static PreparedStatement artists;
-	private static PreparedStatement albums;
+	private static PreparedStatement album;
 
 	public static void connectPostgreSQL(String url, String username, String password) throws ClassNotFoundException, SQLException {
 		Class.forName("org.postgresql.Driver");
@@ -30,7 +30,7 @@ public class Database {
 		matching = connection.prepareStatement("SELECT * FROM v_web_matching_list_albums WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
 		detached = connection.prepareStatement("SELECT * FROM file WHERE track_id IS NULL AND filename LIKE (SELECT value FROM setting WHERE key = 'output_directory') || '%' AND filename ILIKE ? ORDER BY filename");
 		artists = connection.prepareStatement("SELECT * FROM artist WHERE name ILIKE ? ORDER BY sortname");
-		albums = connection.prepareStatement("SELECT * FROM album WHERE title ILIKE ? ORDER BY title");
+		album = connection.prepareStatement("SELECT * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ?");
 	}
 
 	public static void disconnect() throws SQLException {
@@ -65,12 +65,10 @@ public class Database {
 		return artists.executeQuery();
 	}
 
-	public static ResultSet getAlbums(String filter) throws SQLException {
-		if (albums == null)
+	public static ResultSet getAlbum(int album_id) throws SQLException {
+		if (album == null)
 			return null;
-		if (filter == null)
-			filter = "";
-		albums.setString(1, "%" + filter + "%");
-		return albums.executeQuery();
+		album.setInt(1, album_id);
+		return album.executeQuery();
 	}
 }

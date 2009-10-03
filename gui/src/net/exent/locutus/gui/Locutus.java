@@ -75,7 +75,7 @@ public class Locutus extends javax.swing.JFrame {
 
                 hostLabel.setText("Host");
 
-                hostTextField.setText("example.com");
+                hostTextField.setText("localhost");
                 hostTextField.addFocusListener(new java.awt.event.FocusAdapter() {
                         public void focusGained(java.awt.event.FocusEvent evt) {
                                 hostTextFieldFocusGained(evt);
@@ -269,7 +269,7 @@ public class Locutus extends javax.swing.JFrame {
 			db += databaseTextField.getText();
 			Database.connectPostgreSQL(db, usernameTextField.getText(), new String(passwordPasswordField.getPassword()));
 			jTabbedPane1.setSelectedComponent(matching);
-			matching.updateTable();
+			matching.updateTree();
 		} catch (ClassNotFoundException e) {
 			JOptionPane.showMessageDialog(this, e);
 			e.printStackTrace();
@@ -326,6 +326,7 @@ public class Locutus extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 		this.dispose();
+		System.exit(0);
 	}//GEN-LAST:event_fileExitActionPerformed
 
 	private void filterTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterTextFieldKeyReleased
