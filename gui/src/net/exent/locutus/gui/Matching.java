@@ -12,14 +12,18 @@ package net.exent.locutus.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
 import net.exent.locutus.database.Database;
 
 /**
@@ -238,6 +242,11 @@ public class Matching extends javax.swing.JPanel {
                                 jTree1TreeWillExpand(evt);
                         }
                 });
+                jTree1.addKeyListener(new java.awt.event.KeyAdapter() {
+                        public void keyPressed(java.awt.event.KeyEvent evt) {
+                                jTree1KeyPressed(evt);
+                        }
+                });
                 jScrollPane2.setViewportView(jTree1);
 
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -280,8 +289,84 @@ public class Matching extends javax.swing.JPanel {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			/* recursively expand all child nodes of this album */
+			List<TreePath> expand = new LinkedList<TreePath>();
+			
+			/*
+			 *     public void expandAll(JTree tree, boolean expand) {
+			TreeNode root = (TreeNode)tree.getModel().getRoot();
+
+			// Traverse tree from root
+			expandAll(tree, new TreePath(root), expand);
+			}
+			private void expandAll(JTree tree, TreePath parent, boolean expand) {
+			// Traverse children
+			TreeNode node = (TreeNode)parent.getLastPathComponent();
+			if (node.getChildCount() >= 0) {
+			for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+			TreeNode n = (TreeNode)e.nextElement();
+			TreePath path = parent.pathByAddingChild(n);
+			expandAll(tree, path, expand);
+			}
+			}
+
+			// Expansion or collapse must be done bottom-up
+			if (expand) {
+			tree.expandPath(parent);
+			} else {
+			tree.collapsePath(parent);
+			}
+			}
+			 */
 		}
 	}//GEN-LAST:event_jTree1TreeWillExpand
+
+	private void jTree1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTree1KeyPressed
+		switch (evt.getKeyCode()) {
+			case KeyEvent.VK_DELETE:
+				/* album selected:
+				 *  - delete all comparisons in album
+				 * track selected:
+				 *  - delete all comparisons for track
+				 * file selected:
+				 *  - delete comparison for file
+				 */
+				break;
+
+			case KeyEvent.VK_SPACE:
+				/* album selected:
+				 *  - mark all files in album as correct
+				 * track selected:
+				 *  - mark all files compared to track as correct
+				 * file selected:
+				 *  - mark file as correct
+				 */
+				break;
+
+			case KeyEvent.VK_ESCAPE:
+				/* album selected:
+				 *  - undo all changes in album
+				 * track selected:
+				 *  - undo all changes for track
+				 * file selected:
+				 *  - undo change for file
+				 */
+				break;
+
+			case KeyEvent.VK_ENTER:
+				/* album selected:
+				 *  - commit changes in album
+				 * track selected:
+				 *  - commit changes for track
+				 * file selected:
+				 *  - commit changes for file
+				 */
+				break;
+
+			default:
+				break;
+		}
+	}//GEN-LAST:event_jTree1KeyPressed
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JScrollPane jScrollPane2;
         private javax.swing.JTree jTree1;

@@ -45,6 +45,7 @@
           </Properties>
           <Events>
             <EventHandler event="treeWillExpand" listener="javax.swing.event.TreeWillExpandListener" parameters="javax.swing.event.TreeExpansionEvent" handler="jTree1TreeWillExpand"/>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTree1KeyPressed"/>
           </Events>
         </Component>
       </SubComponents>
