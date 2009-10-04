@@ -361,25 +361,26 @@ public class Matching extends javax.swing.JPanel {
 		TreePath[] paths = jTree1.getSelectionPaths();
 		DefaultMutableTreeNode active_album = null;
 		List<DefaultMutableTreeNode> filetreenodes = new ArrayList<DefaultMutableTreeNode>();
+		DefaultMutableTreeNode selected = null;
 		for (TreePath path : paths) {
-			DefaultMutableTreeNode last = (DefaultMutableTreeNode) path.getLastPathComponent();
-			Object node = last.getUserObject();
+			selected = (DefaultMutableTreeNode) path.getLastPathComponent();
+			Object node = selected.getUserObject();
 			if (node instanceof AlbumNode) {
-				active_album = last;
-				Enumeration tracks = last.children();
+				active_album = selected;
+				Enumeration tracks = selected.children();
 				while (tracks.hasMoreElements()) {
 					Enumeration files = ((DefaultMutableTreeNode) tracks.nextElement()).children();
 					while (files.hasMoreElements())
 						filetreenodes.add((DefaultMutableTreeNode) files.nextElement());
 				}
 			} else if (node instanceof TrackNode) {
-				active_album = (DefaultMutableTreeNode) last.getParent();
-				Enumeration files = last.children();
+				active_album = (DefaultMutableTreeNode) selected.getParent();
+				Enumeration files = selected.children();
 				while (files.hasMoreElements())
 					filetreenodes.add((DefaultMutableTreeNode) files.nextElement());
 			} else if (node instanceof FileNode) {
-				active_album = (DefaultMutableTreeNode) last.getParent().getParent();
-				filetreenodes.add(last);
+				active_album = (DefaultMutableTreeNode) selected.getParent().getParent();
+				filetreenodes.add(selected);
 			}
 		}
 		switch (evt.getKeyCode()) {
@@ -387,35 +388,128 @@ public class Matching extends javax.swing.JPanel {
 			case KeyEvent.VK_D:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((FileNode) treenode.getUserObject()).status = FileNode.DELETE;
-				/* TODO: next [album/]track/file */
+				if (jTree1.getSelectionCount() == 1)
+					selected = selected.getNextNode();
 				break;
 
 			case KeyEvent.VK_ENTER:
 			case KeyEvent.VK_S:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((FileNode) treenode.getUserObject()).status = FileNode.SAVE;
-				/* TODO: next [album/]track/file */
+				if (jTree1.getSelectionCount() == 1)
+					selected = selected.getNextNode();
 				break;
 
 			case KeyEvent.VK_ESCAPE:
 			case KeyEvent.VK_R:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((FileNode) treenode.getUserObject()).status = FileNode.NONE;
+				if (jTree1.getSelectionCount() == 1)
+					selected = selected.getNextNode();
 				break;
 
 			case KeyEvent.VK_A:
-				/* TODO: next album */
-				/* TODO: shift down = previous album */
+				if (jTree1.getSelectionCount() != 1)
+					break;
+				if (evt.isShiftDown()) {
+					if (selected.getUserObject() instanceof AlbumNode)
+						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) jTree1.getModel().getRoot()).getChildBefore(active_album);
+					else
+						selected = active_album;
+				} else {
+					selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) jTree1.getModel().getRoot()).getChildAfter(active_album);
+				}
 				break;
 
 			case KeyEvent.VK_T:
-				/* TODO: next track */
-				/* TODO: shift down = previous track */
+				if (jTree1.getSelectionCount() != 1)
+					break;
+				if (selected.getUserObject() instanceof AlbumNode) {
+					if (selected.getChildCount() > 0 && !evt.isShiftDown())
+						selected = selected.getNextNode();
+				} else if (selected.getUserObject() instanceof FileNode) {
+					selected = (DefaultMutableTreeNode) selected.getParent();
+					if (!evt.isShiftDown())
+						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildAfter(selected);
+				} else {
+					if (evt.isShiftDown())
+						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildBefore(selected);
+					else
+						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildAfter(selected);
+				}
 				break;
 
 			case KeyEvent.VK_F:
-				/* TODO: next file */
-				/* TODO: shift down = previous file */
+				if (jTree1.getSelectionCount() != 1)
+					break;
+				if (selected.getUserObject() instanceof AlbumNode) {
+					if (evt.isShiftDown())
+						break;
+					Enumeration tracks = selected.children();
+					while (tracks.hasMoreElements()) {
+						Enumeration files = ((DefaultMutableTreeNode) tracks.nextElement()).children();
+						if (files.hasMoreElements()) {
+							selected = (DefaultMutableTreeNode) files.nextElement();
+							break;
+						}
+					}
+				} else if (selected.getUserObject() instanceof TrackNode) {
+					if (evt.isShiftDown()) {
+						DefaultMutableTreeNode next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildBefore(selected);
+						while (next != null) {
+							if (next.getChildCount() > 0) {
+								selected = (DefaultMutableTreeNode) next.getLastChild();
+								break;
+							}
+							next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) next.getParent()).getChildBefore(next);
+						}
+					} else {
+						if (selected.getChildCount() > 0) {
+							selected = selected.getNextNode();
+							break;
+						}
+						DefaultMutableTreeNode next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildAfter(selected);
+						while (next != null) {
+							if (next.getChildCount() > 0) {
+								selected = next.getNextNode();
+								break;
+							}
+							next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) next.getParent()).getChildAfter(next);
+						}
+					}
+				} else {
+					if (evt.isShiftDown()) {
+						DefaultMutableTreeNode next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildBefore(selected);
+						if (next != null) {
+							selected = next;
+							break;
+						}
+						next = (DefaultMutableTreeNode) selected.getParent();
+						next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) next.getParent()).getChildBefore(next);
+						while (next != null) {
+							if (next.getChildCount() > 0) {
+								selected = (DefaultMutableTreeNode) next.getLastChild();
+								break;
+							}
+							next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) next.getParent()).getChildBefore(next);
+						}
+					} else {
+						DefaultMutableTreeNode next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildAfter(selected);
+						if (next != null) {
+							selected = next;
+							break;
+						}
+						next = (DefaultMutableTreeNode) selected.getParent();
+						next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) next.getParent()).getChildAfter(next);
+						while (next != null) {
+							if (next.getChildCount() > 0) {
+								selected = next.getNextNode();
+								break;
+							}
+							next = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) next.getParent()).getChildAfter(next);
+						}
+					}
+				}
 				break;
 
 			case KeyEvent.VK_SPACE:
@@ -429,14 +523,18 @@ public class Matching extends javax.swing.JPanel {
 					/* update files in active album and reload album */
 					saveAlbum(active_album);
 					updateAlbum(active_album);
-					TreePath select = new TreePath(active_album.getPath());
-					jTree1.setSelectionPath(select);
-					jTree1.expandPath(select);
+					selected = active_album;
+					jTree1.expandPath(new TreePath(active_album.getPath()));
 				}
 				break;
 
 			default:
 				return;
+		}
+		if (selected != null) {
+			TreePath path = new TreePath(selected.getPath());
+			jTree1.setSelectionPath(path);
+			jTree1.scrollPathToVisible(path);
 		}
 		jTree1.repaint();
 	}//GEN-LAST:event_jTree1KeyPressed
