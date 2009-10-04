@@ -33,8 +33,6 @@ import net.exent.locutus.database.Database;
  */
 public class Matching extends javax.swing.JPanel {
 
-	private DefaultMutableTreeNode placeholder = new DefaultMutableTreeNode("Placeholder");
-
 	private class AlbumNode {
 
 		private int album_id;
@@ -61,7 +59,7 @@ public class Matching extends javax.swing.JPanel {
 
 		@Override
 		public String toString() {
-			return title + " (" + tracks + "/" + tracks_compared + "/" + mbids_matched + " tracks/compared/mbids, " + files_compared + " files)";
+			return title + " (" + tracks + "/" + tracks_compared + "/" + mbids_matched + " tracks/compared/mbids, " + files_compared + " files not matched)";
 		}
 	}
 
@@ -75,7 +73,7 @@ public class Matching extends javax.swing.JPanel {
 		private int tracknumber;
 		private int duration;
 		private double score;
-		private boolean got_mbid_match;
+		private boolean got_match;
 		private boolean got_files;
 
 		public TrackNode(ResultSet rs) throws SQLException {
@@ -87,7 +85,7 @@ public class Matching extends javax.swing.JPanel {
 			tracknumber = rs.getInt("tracknumber");
 			duration = rs.getInt("duration");
 			score = rs.getDouble("score");
-			got_mbid_match = rs.getBoolean("mbid_match");
+			got_match = (rs.getInt("file_track_id") > 0 && !rs.wasNull());
 			got_files = (rs.getInt("file_id") > 0 && !rs.wasNull());
 		}
 
@@ -100,7 +98,7 @@ public class Matching extends javax.swing.JPanel {
 	private class FileNode {
 
 		private static final int NONE = 0;
-		private static final int ADD = 1;
+		private static final int SAVE = 1;
 		private static final int DELETE = 2;
 		private int file_id;
 		private String filename;
@@ -162,7 +160,7 @@ public class Matching extends javax.swing.JPanel {
 					icon = "album_85.png";
 			} else if (node instanceof TrackNode) {
 				TrackNode track = (TrackNode) node;
-				if (track.got_mbid_match)
+				if (track.got_match)
 					icon = "track_matched.png";
 				else if (!track.got_files)
 					icon = "track_none.png";
@@ -198,7 +196,7 @@ public class Matching extends javax.swing.JPanel {
 				label.setBackground(new Color(200, 200, 255));
 			else
 				label.setBackground(new Color(255, 255, 255));
-			if (status == FileNode.ADD)
+			if (status == FileNode.SAVE)
 				label.setForeground(new Color(0, 150, 0));
 			else if (status == FileNode.DELETE)
 				label.setForeground(new Color(150, 0, 0));
@@ -213,34 +211,38 @@ public class Matching extends javax.swing.JPanel {
 			if (rs == null)
 				return;
 
-			jTree1.removeAll();
-			DefaultTreeModel tree = (DefaultTreeModel) jTree1.getModel();
-			DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getRoot();
+			DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+			List<DefaultMutableTreeNode> remove = new ArrayList<DefaultMutableTreeNode>();
+			Enumeration albums = root.children();
+			while (albums.hasMoreElements())
+				remove.add((DefaultMutableTreeNode) albums.nextElement());
+			for (DefaultMutableTreeNode r : remove)
+				model.removeNodeFromParent(r);
 			while (rs.next()) {
-				DefaultMutableTreeNode child = new DefaultMutableTreeNode(new AlbumNode(rs));
-				tree.insertNodeInto(placeholder, child, 0);
-				tree.insertNodeInto(child, root, tree.getChildCount(root));
+				DefaultMutableTreeNode album = new DefaultMutableTreeNode(new AlbumNode(rs));
+				model.insertNodeInto(new DefaultMutableTreeNode("Placeholder"), album, 0);
+				model.insertNodeInto(album, root, model.getChildCount(root));
 			}
-			tree.setRoot(root);
+			model.setRoot(root);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void updateAlbum(DefaultMutableTreeNode node) {
-		if (node == null || !(node.getUserObject() instanceof AlbumNode))
+	private void updateAlbum(DefaultMutableTreeNode albumnode) {
+		if (albumnode == null || !(albumnode.getUserObject() instanceof AlbumNode))
 			return;
 		DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
-		if (node.getChildCount() > 0) {
-			Enumeration children = node.children();
+		if (albumnode.getChildCount() > 0) {
 			List<DefaultMutableTreeNode> remove = new ArrayList<DefaultMutableTreeNode>();
-			while (children.hasMoreElements())
-				remove.add((DefaultMutableTreeNode) children.nextElement());
-			for (DefaultMutableTreeNode r : remove) {
+			Enumeration tracks = albumnode.children();
+			while (tracks.hasMoreElements())
+				remove.add((DefaultMutableTreeNode) tracks.nextElement());
+			for (DefaultMutableTreeNode r : remove)
 				model.removeNodeFromParent(r);
-			}
 		}
-		AlbumNode album = (AlbumNode) node.getUserObject();
+		AlbumNode album = (AlbumNode) albumnode.getUserObject();
 		try {
 			ResultSet rs = Database.getAlbum(album.album_id);
 			int last_tracknum = -1;
@@ -250,7 +252,7 @@ public class Matching extends javax.swing.JPanel {
 				if (tracknum != last_tracknum) {
 					track = new DefaultMutableTreeNode(new TrackNode(rs));
 					last_tracknum = tracknum;
-					model.insertNodeInto(track, node, model.getChildCount(node));
+					model.insertNodeInto(track, albumnode, model.getChildCount(albumnode));
 				}
 				if ((rs.getInt("file_id") > 0) && !rs.wasNull()) {
 					DefaultMutableTreeNode file = new DefaultMutableTreeNode(new FileNode(rs));
@@ -259,6 +261,28 @@ public class Matching extends javax.swing.JPanel {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void saveAlbum(DefaultMutableTreeNode albumnode) {
+		/* TODO: proper updating of album data (possibly difficult) */
+		AlbumNode album = (AlbumNode) albumnode.getUserObject();
+		if (album != null && !album.title.endsWith((" <needs update>")))
+			album.title += " <needs update>";
+		Enumeration tracks = albumnode.children();
+		while (tracks.hasMoreElements()) {
+			Enumeration files = ((DefaultMutableTreeNode) tracks.nextElement()).children();
+			while (files.hasMoreElements()) {
+				FileNode file = (FileNode) ((DefaultMutableTreeNode) files.nextElement()).getUserObject();
+				try {
+					if (file.status == FileNode.SAVE)
+						Database.matchFile(file.file_id, file.compare_track_id);
+					else if (file.status == FileNode.DELETE)
+						Database.deleteComparison(file.file_id, file.compare_track_id);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -335,81 +359,84 @@ public class Matching extends javax.swing.JPanel {
 		if (jTree1.getSelectionCount() <= 0)
 			return;
 		TreePath[] paths = jTree1.getSelectionPaths();
-		boolean reload_album = false;
-		DefaultMutableTreeNode album = null;
+		DefaultMutableTreeNode active_album = null;
+		List<DefaultMutableTreeNode> filetreenodes = new ArrayList<DefaultMutableTreeNode>();
 		for (TreePath path : paths) {
 			DefaultMutableTreeNode last = (DefaultMutableTreeNode) path.getLastPathComponent();
 			Object node = last.getUserObject();
-			List<DefaultMutableTreeNode> filetreenodes = new ArrayList<DefaultMutableTreeNode>();
 			if (node instanceof AlbumNode) {
-				album = last;
-				if (last.getChildCount() > 0) {
-					Enumeration children = last.children();
-					while (children.hasMoreElements()) {
-						DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
-						if (child.getChildCount() > 0) {
-							Enumeration children2 = child.children();
-							while (children2.hasMoreElements())
-								filetreenodes.add((DefaultMutableTreeNode) children2.nextElement());
-						}
-					}
+				active_album = last;
+				Enumeration tracks = last.children();
+				while (tracks.hasMoreElements()) {
+					Enumeration files = ((DefaultMutableTreeNode) tracks.nextElement()).children();
+					while (files.hasMoreElements())
+						filetreenodes.add((DefaultMutableTreeNode) files.nextElement());
 				}
 			} else if (node instanceof TrackNode) {
-				album = (DefaultMutableTreeNode) last.getParent();
-				if (last.getChildCount() > 0) {
-					Enumeration children = last.children();
-					while (children.hasMoreElements())
-						filetreenodes.add((DefaultMutableTreeNode) children.nextElement());
-				}
+				active_album = (DefaultMutableTreeNode) last.getParent();
+				Enumeration files = last.children();
+				while (files.hasMoreElements())
+					filetreenodes.add((DefaultMutableTreeNode) files.nextElement());
 			} else if (node instanceof FileNode) {
-				album = (DefaultMutableTreeNode) last.getParent().getParent();
+				active_album = (DefaultMutableTreeNode) last.getParent().getParent();
 				filetreenodes.add(last);
 			}
-			switch (evt.getKeyCode()) {
-				case KeyEvent.VK_DELETE:
-				case KeyEvent.VK_D:
-					for (DefaultMutableTreeNode treenode : filetreenodes)
-						((FileNode) treenode.getUserObject()).status = FileNode.DELETE;
-					break;
-
-				case KeyEvent.VK_ENTER:
-				case KeyEvent.VK_A:
-					for (DefaultMutableTreeNode treenode : filetreenodes)
-						((FileNode) treenode.getUserObject()).status = FileNode.ADD;
-					break;
-
-				case KeyEvent.VK_ESCAPE:
-				case KeyEvent.VK_R:
-					for (DefaultMutableTreeNode treenode : filetreenodes)
-						((FileNode) treenode.getUserObject()).status = FileNode.NONE;
-					break;
-
-				case KeyEvent.VK_SPACE:
-					/* TODO: commit all files in entire tree? */
-					reload_album = true;
-					for (DefaultMutableTreeNode treenode : filetreenodes) {
-						FileNode file = (FileNode) treenode.getUserObject();
-						try {
-							if (file.status == FileNode.ADD) {
-								Database.matchFile(file.file_id, file.compare_track_id);
-//								file.file_track_id = file.compare_track_id; // TODO: not needed when we reload album
-							} else if (file.status == FileNode.DELETE) {
-								Database.deleteComparison(file.file_id, file.compare_track_id);
-//								((DefaultTreeModel) jTree1.getModel()).removeNodeFromParent(treenode); // TODO: not needed ^^
-							}
-						} catch (SQLException e) {
-							e.printStackTrace();
-						}
-					}
-					break;
-
-				default:
-					return;
-			}
 		}
-		if (reload_album) {
-			updateAlbum(album);
-			jTree1.setSelectionPaths(paths);
+		switch (evt.getKeyCode()) {
+			case KeyEvent.VK_DELETE:
+			case KeyEvent.VK_D:
+				for (DefaultMutableTreeNode treenode : filetreenodes)
+					((FileNode) treenode.getUserObject()).status = FileNode.DELETE;
+				/* TODO: next [album/]track/file */
+				break;
+
+			case KeyEvent.VK_ENTER:
+			case KeyEvent.VK_S:
+				for (DefaultMutableTreeNode treenode : filetreenodes)
+					((FileNode) treenode.getUserObject()).status = FileNode.SAVE;
+				/* TODO: next [album/]track/file */
+				break;
+
+			case KeyEvent.VK_ESCAPE:
+			case KeyEvent.VK_R:
+				for (DefaultMutableTreeNode treenode : filetreenodes)
+					((FileNode) treenode.getUserObject()).status = FileNode.NONE;
+				break;
+
+			case KeyEvent.VK_A:
+				/* TODO: next album */
+				/* TODO: shift down = previous album */
+				break;
+
+			case KeyEvent.VK_T:
+				/* TODO: next track */
+				/* TODO: shift down = previous track */
+				break;
+
+			case KeyEvent.VK_F:
+				/* TODO: next file */
+				/* TODO: shift down = previous file */
+				break;
+
+			case KeyEvent.VK_SPACE:
+				if (evt.isControlDown()) {
+					/* update all albums and reload tree */
+					Enumeration albums = ((DefaultMutableTreeNode) jTree1.getModel().getRoot()).children();
+					while (albums.hasMoreElements())
+						saveAlbum((DefaultMutableTreeNode) albums.nextElement());
+					updateTree();
+				} else {
+					/* update files in active album and reload album */
+					saveAlbum(active_album);
+					updateAlbum(active_album);
+					TreePath select = new TreePath(active_album.getPath());
+					jTree1.setSelectionPath(select);
+					jTree1.expandPath(select);
+				}
+				break;
+
+			default:
+				return;
 		}
 		jTree1.repaint();
 	}//GEN-LAST:event_jTree1KeyPressed
@@ -418,13 +445,9 @@ public class Matching extends javax.swing.JPanel {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) evt.getPath().getLastPathComponent();
 		if (node.getUserObject() instanceof AlbumNode) {
 			/* expand all child nodes of this album */
-			if (node.getChildCount() > 0) {
-				Enumeration children = node.children();
-				while (children.hasMoreElements()) {
-					DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
-					jTree1.expandPath(new TreePath(child.getPath()));
-				}
-			}
+			Enumeration tracks = node.children();
+			while (tracks.hasMoreElements())
+				jTree1.expandPath(new TreePath(((DefaultMutableTreeNode) tracks.nextElement()).getPath()));
 		}
 	}//GEN-LAST:event_jTree1TreeExpanded
         // Variables declaration - do not modify//GEN-BEGIN:variables

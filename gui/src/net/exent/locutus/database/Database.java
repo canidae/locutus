@@ -22,6 +22,7 @@ public class Database {
 	private static PreparedStatement artists;
 	private static PreparedStatement album;
 	private static PreparedStatement delete_comparison;
+	private static PreparedStatement delete_match;
 	private static PreparedStatement match_file;
 
 	public static void connectPostgreSQL(String url, String username, String password) throws ClassNotFoundException, SQLException {
@@ -32,8 +33,9 @@ public class Database {
 		matching = connection.prepareStatement("SELECT * FROM v_web_matching_list_albums WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
 		detached = connection.prepareStatement("SELECT * FROM file WHERE track_id IS NULL AND filename LIKE (SELECT value FROM setting WHERE key = 'output_directory') || '%' AND filename ILIKE ? ORDER BY filename");
 		artists = connection.prepareStatement("SELECT * FROM artist WHERE name ILIKE ? ORDER BY sortname");
-		album = connection.prepareStatement("SELECT * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ?");
+		album = connection.prepareStatement("SELECT * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ? AND (file_track_id IS NULL OR file_track_id = track_id) ORDER BY tracknumber ASC, mbid_match DESC, score DESC");
 		delete_comparison = connection.prepareStatement("DELETE FROM comparison WHERE file_id = ? AND track_id = ?");
+		delete_match = connection.prepareStatement("UPDATE file SET track_id = NULL WHERE file_id = ?");
 		match_file = connection.prepareStatement("UPDATE file SET track_id = ? WHERE file_id = ?");
 	}
 
@@ -81,7 +83,8 @@ public class Database {
 			return 0;
 		delete_comparison.setInt(1, file_id);
 		delete_comparison.setInt(2, track_id);
-		return delete_comparison.executeUpdate();
+		delete_match.setInt(1, file_id);
+		return delete_comparison.executeUpdate() + delete_match.executeUpdate();
 	}
 
 	public static int matchFile(int file_id, int track_id) throws SQLException {
