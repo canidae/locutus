@@ -14,25 +14,27 @@ Some of Locutus' features:
   metadata found in audio files are correct Locutus mismatch files very rarily.
   It is however possible to configure Locutus in a way that will cause
   mismatched files, use precaution!
-- Locutus is split in 3 parts, the daemon, the database and the web interface.
+- Locutus is split in 3 parts, the daemon, the database and a user interface.
   Each part can run on its own computer, or they can all run on the same
   computer. While the daemon compares files, updates metadata and store the
   files, you can manually match the files the daemon was unable to automatically
-  match in the web interface.
+  match in a user interface (currently there's a web interface and a Java
+  interface).
 - Albums retrieved from MusicBrainz are stored in a local cache, reducing amount
   of queries sent, and thus also reducing load generated on MusicBrainz.
   When manually matching files with tracks no requests are sent to MusicBrainz.
 - Grouping files in assumed albums. To reduce amount of queries sent to
   MusicBrainz the files are placed in groups that are assumed to be albums. This
   makes Locutus look up the first file in a group, fetch the best matching
-  albums for that track and compare the other files in the group with that
-  album. If some of the files have a poor match, those files will be looked up
+  albums for that track and compare the other files in the group with those
+  albums. If some of the files have a poor match, those files will be looked up
   separately and albums returned from those will also be matched with the other
   files in the group.
 - Automatically fetch tags from AudioScrobbler as "genre". Currently it only
   supports storing the most popular tag. Since it needs to look up each file
   this feature significantly slows down Locutus as it may only look up tags once
-  per second at most.
+  per second at most. In an effort to speed this up, only files with no genre
+  set are looked up.
 
 
 
@@ -86,6 +88,12 @@ The first time you run Locutus it will populate the "setting" table with default
 values.
 
 
+Java interface:
+---------------
+Java 1.6 is needed for the Java UI.
+More information will come when it is slightly more usable.
+
+
 Web interface:
 --------------
 Perl, Apache2 and Template::Toolkit are required for the web interface.
@@ -120,7 +128,7 @@ For Debian users:
 Killer coding ninja monkeys (in order of appearance)
 ====================================================
 Vidar Wahlberg, <canidae@exent.net>
-  Daemon, database, web interface
+  Daemon, database, Java interface, web interface
 
 
 

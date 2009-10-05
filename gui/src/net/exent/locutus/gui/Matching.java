@@ -118,6 +118,37 @@ public class Matching extends javax.swing.JPanel {
 		private int file_track_id;
 		private int status;
 
+		/*
+		 * -file_id                   | integer                     | not null
+		 * -filename                  | character varying           | not null
+		 * -duration                  | integer                     | not null
+		 * -channels                  | integer                     | not null
+		 * -bitrate                   | integer                     | not null
+		 * -samplerate                | integer                     | not null
+		 * +album                     | character varying           | not null
+		 * +albumartist               | character varying           | not null
+		 * +albumartistsort           | character varying           | not null
+		 * +artist                    | character varying           | not null
+		 * +artistsort                | character varying           | not null
+		 * +musicbrainz_albumartistid | character varying(36)       | not null
+		 * +musicbrainz_albumid       | character varying(36)       | not null
+		 * +musicbrainz_artistid      | character varying(36)       | not null
+		 * +musicbrainz_trackid       | character varying(36)       | not null
+		 * +title                     | character varying           | not null
+		 * +tracknumber               | character varying           | not null
+		 * +released                  | character varying           | not null
+		 * +genre                     | character varying           | not null
+		 * +pinned                    | boolean                     | not null default false
+		 * -groupname                 | character varying           | not null default ''::character varying
+		 * -duplicate                 | boolean                     | not null default false
+		 * -user_changed              | boolean                     | not null default false
+		 * +track_id                  | integer                     |
+		 *
+		 * - = can't change
+		 * + = can change (track_id should only be possible to set to null)
+		 *
+		 * need to update view "v_web_album_list_tracks_and_matching_files" for this, don't have all the data we need
+		 */
 		public FileNode(ResultSet rs) throws SQLException {
 			file_id = rs.getInt("file_id");
 			filename = rs.getString("filename");
@@ -309,6 +340,8 @@ public class Matching extends javax.swing.JPanel {
 
                 jScrollPane2 = new javax.swing.JScrollPane();
                 jTree1 = new javax.swing.JTree();
+                metadataPanel = new javax.swing.JPanel();
+                filenameLabel = new javax.swing.JLabel();
 
                 addComponentListener(new java.awt.event.ComponentAdapter() {
                         public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -340,15 +373,39 @@ public class Matching extends javax.swing.JPanel {
                 });
                 jScrollPane2.setViewportView(jTree1);
 
+                metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("File metadata"));
+
+                filenameLabel.setText("Filename will go here");
+
+                javax.swing.GroupLayout metadataPanelLayout = new javax.swing.GroupLayout(metadataPanel);
+                metadataPanel.setLayout(metadataPanelLayout);
+                metadataPanelLayout.setHorizontalGroup(
+                        metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(metadataPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(filenameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)
+                                .addContainerGap())
+                );
+                metadataPanelLayout.setVerticalGroup(
+                        metadataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(metadataPanelLayout.createSequentialGroup()
+                                .addComponent(filenameLabel)
+                                .addContainerGap(159, Short.MAX_VALUE))
+                );
+
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
                 this.setLayout(layout);
                 layout.setHorizontalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+                        .addComponent(metadataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 );
                 layout.setVerticalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(metadataPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 );
         }// </editor-fold>//GEN-END:initComponents
 
@@ -523,6 +580,7 @@ public class Matching extends javax.swing.JPanel {
 					break;
 				if (selected != null && selected.getUserObject() instanceof AlbumNode)
 					updateAlbum(selected);
+				jTree1.expandPath(new TreePath(active_album.getPath()));
 				/* expand all child nodes of this album */
 				Enumeration tracks = active_album.children();
 				while (tracks.hasMoreElements())
@@ -587,7 +645,9 @@ public class Matching extends javax.swing.JPanel {
 //		}
 	}//GEN-LAST:event_jTree1TreeExpanded
         // Variables declaration - do not modify//GEN-BEGIN:variables
+        private javax.swing.JLabel filenameLabel;
         private javax.swing.JScrollPane jScrollPane2;
         private javax.swing.JTree jTree1;
+        private javax.swing.JPanel metadataPanel;
         // End of variables declaration//GEN-END:variables
 }
