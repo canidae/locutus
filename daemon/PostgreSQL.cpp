@@ -88,7 +88,7 @@ bool PostgreSQL::loadAlbum(Album *album) {
 	int trackcount = getRows();
 	album->tracks.resize(trackcount);
 	for (int t = 0; t < trackcount; ++t) {
-		int trackindex = getInt(t, 14) - 1;
+		int trackindex = getInt(t, 13) - 1;
 		if (trackindex < 0 || trackindex >= (int) album->tracks.capacity()) {
 			/* this really shouldn't happen.
 			 * seemingly we're missing entries in the track table */
@@ -99,8 +99,8 @@ bool PostgreSQL::loadAlbum(Album *album) {
 		/* track data */
 		album->tracks[trackindex]->mbid = getString(t, 11);
 		album->tracks[trackindex]->title = getString(t, 12);
-		album->tracks[trackindex]->duration = getInt(t, 13);
 		album->tracks[trackindex]->tracknumber = trackindex + 1;
+		album->tracks[trackindex]->duration = getInt(t, 14);
 		/* track artist data */
 		album->tracks[trackindex]->artist->mbid = getString(t, 16);
 		album->tracks[trackindex]->artist->name = getString(t, 17);
