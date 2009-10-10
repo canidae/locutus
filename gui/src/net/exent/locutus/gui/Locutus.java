@@ -32,11 +32,11 @@ public class Locutus extends javax.swing.JFrame {
 		return filterTextField.getText();
 	}
 
-	public static void showMetadata(Metafile[] files) {
+	public static void setMetadata(Metafile[] files) {
 		if (files.length <= 0)
 			return;
 
-		hideMetadata();
+		clearMetadata();
 		if (files.length > 1) {
 			fileFilenameLabel.setText("File: <" + files.length + " files>");
 			fileDuplicate.setSelected(false);
@@ -95,7 +95,7 @@ public class Locutus extends javax.swing.JFrame {
 		}
 	}
 
-	public static void hideMetadata() {
+	public static void clearMetadata() {
 		fileAlbumArtistMBIDValue.setText("");
 		fileAlbumArtistSortValue.setText("");
 		fileAlbumArtistValue.setText("");
@@ -120,6 +120,14 @@ public class Locutus extends javax.swing.JFrame {
 		fileTrackIDValue.setText("");
 		fileTrackMBIDValue.setText("");
 		fileTracknumberValue.setText("");
+	}
+
+	public static void showMetadata() {
+		Locutus.metadataPanel.setVisible(true);
+	}
+
+	public static void hideMetadata() {
+		Locutus.metadataPanel.setVisible(false);
 	}
 
 	/** This method is called from within the constructor to
@@ -203,6 +211,7 @@ public class Locutus extends javax.swing.JFrame {
                 topPanel = new javax.swing.JPanel();
                 filterLabel = new javax.swing.JLabel();
                 filterTextField = new javax.swing.JTextField();
+                updateButton = new javax.swing.JButton();
                 openButton = new javax.swing.JButton();
                 quitButton = new javax.swing.JButton();
 
@@ -408,6 +417,7 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(filePinned, gridBagConstraints);
 
                 fileFileIDValue.setEditable(false);
+                fileFileIDValue.setFocusable(false);
                 fileFileIDValue.setMaximumSize(new java.awt.Dimension(64, 25));
                 fileFileIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
                 fileFileIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
@@ -435,6 +445,7 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(fileFileIDLabel, gridBagConstraints);
 
                 fileGroupValue.setEditable(false);
+                fileGroupValue.setFocusable(false);
                 fileGroupValue.setMaximumSize(new java.awt.Dimension(256, 25));
                 fileGroupValue.setMinimumSize(new java.awt.Dimension(256, 25));
                 fileGroupValue.setPreferredSize(new java.awt.Dimension(256, 25));
@@ -451,6 +462,7 @@ public class Locutus extends javax.swing.JFrame {
 
                 fileModified.setText("Modified");
                 fileModified.setEnabled(false);
+                fileModified.setFocusable(false);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 5;
@@ -463,6 +475,7 @@ public class Locutus extends javax.swing.JFrame {
 
                 fileDuplicate.setText("Duplicate");
                 fileDuplicate.setEnabled(false);
+                fileDuplicate.setFocusable(false);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 5;
@@ -567,6 +580,12 @@ public class Locutus extends javax.swing.JFrame {
 
                 fileSaveButton.setMnemonic('S');
                 fileSaveButton.setText("Save metadata");
+                fileSaveButton.setFocusable(false);
+                fileSaveButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                fileSaveButtonActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 6;
@@ -895,37 +914,65 @@ public class Locutus extends javax.swing.JFrame {
 
                 getContentPane().add(metadataPanel, java.awt.BorderLayout.SOUTH);
 
-                topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                topPanel.setLayout(new java.awt.GridBagLayout());
 
                 filterLabel.setText("Filter:");
-                topPanel.add(filterLabel);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(filterLabel, gridBagConstraints);
 
                 filterTextField.setMinimumSize(new java.awt.Dimension(128, 25));
                 filterTextField.setPreferredSize(new java.awt.Dimension(128, 25));
                 filterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-                        public void keyReleased(java.awt.event.KeyEvent evt) {
-                                filterTextFieldKeyReleased(evt);
+                        public void keyPressed(java.awt.event.KeyEvent evt) {
+                                filterTextFieldKeyPressed(evt);
                         }
                 });
-                topPanel.add(filterTextField);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(filterTextField, gridBagConstraints);
+
+                updateButton.setMnemonic('U');
+                updateButton.setText("Update");
+                updateButton.setFocusable(false);
+                updateButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                updateButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                topPanel.add(updateButton, gridBagConstraints);
 
                 openButton.setMnemonic('C');
                 openButton.setText("Connect");
+                openButton.setFocusable(false);
                 openButton.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 openButtonActionPerformed(evt);
                         }
                 });
-                topPanel.add(openButton);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(openButton, gridBagConstraints);
 
                 quitButton.setMnemonic('Q');
                 quitButton.setText("Quit");
+                quitButton.setFocusable(false);
                 quitButton.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 quitButtonActionPerformed(evt);
                         }
                 });
-                topPanel.add(quitButton);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(quitButton, gridBagConstraints);
 
                 getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
 
@@ -988,19 +1035,6 @@ public class Locutus extends javax.swing.JFrame {
 		passwordPasswordField.select(0, 0);
 	}//GEN-LAST:event_passwordPasswordFieldFocusLost
 
-	private void filterTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterTextFieldKeyReleased
-		if (evt.getKeyCode() != KeyEvent.VK_ENTER)
-			return;
-
-		Component active = tabPane.getSelectedComponent();
-		if (active != null) {
-			/* hide & show visible component to trigger formComponentShown().
-			 * TODO: this is a hack, fix it later */
-			active.setVisible(false);
-			active.setVisible(true);
-		}
-	}//GEN-LAST:event_filterTextFieldKeyReleased
-
 	private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
 		connectFrame.setVisible(true);
 	}//GEN-LAST:event_openButtonActionPerformed
@@ -1014,6 +1048,27 @@ public class Locutus extends javax.swing.JFrame {
 		this.dispose();
 		System.exit(0);
 	}//GEN-LAST:event_quitButtonActionPerformed
+
+	private void fileSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveButtonActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_fileSaveButtonActionPerformed
+
+	private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+		updateButton.setText("Updating...");
+		Component active = tabPane.getSelectedComponent();
+		if (active != null) {
+			/* hide & show visible component to trigger formComponentShown().
+			 * XXX: this is a hack, fix it later */
+			active.setVisible(false);
+			active.setVisible(true);
+		}
+		updateButton.setText("Update");
+	}//GEN-LAST:event_updateButtonActionPerformed
+
+	private void filterTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterTextFieldKeyPressed
+		if (evt.getKeyCode() == KeyEvent.VK_ENTER)
+			updateButton.doClick();
+	}//GEN-LAST:event_filterTextFieldKeyPressed
 
 	/**
 	 * @param args the command line arguments
@@ -1088,7 +1143,7 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JLabel hostLabel;
         private javax.swing.JTextField hostTextField;
         private net.exent.locutus.gui.Matching matching;
-        private javax.swing.JPanel metadataPanel;
+        private static javax.swing.JPanel metadataPanel;
         private javax.swing.JPanel miscPanel;
         private javax.swing.JButton openButton;
         private javax.swing.JLabel passwordLabel;
@@ -1098,6 +1153,7 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JTabbedPane tabPane;
         private javax.swing.JPanel topPanel;
         private javax.swing.JPanel trackPanel;
+        private javax.swing.JButton updateButton;
         private javax.swing.JLabel usernameLabel;
         private javax.swing.JTextField usernameTextField;
         // End of variables declaration//GEN-END:variables

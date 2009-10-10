@@ -87,14 +87,14 @@ public class Matching extends javax.swing.JPanel {
 				status = file.getStatus();
 
 				if (selected)
-					Locutus.showMetadata(new Metafile[]{file});
+					Locutus.setMetadata(new Metafile[]{file});
 			}
 			JLabel label = new JLabel(value.toString(), new ImageIcon(getClass().getResource("/net/exent/locutus/gui/icons/" + icon)), JLabel.LEFT);
 			label.setOpaque(true);
 			if (selected) {
 				label.setBackground(new Color(200, 200, 255));
 				if (!(node instanceof Metafile))
-					Locutus.hideMetadata();
+					Locutus.clearMetadata();
 			} else {
 				label.setBackground(new Color(255, 255, 255));
 			}
@@ -107,29 +107,29 @@ public class Matching extends javax.swing.JPanel {
 	}
 
 	public void updateTree() {
+		DefaultTreeModel model = (DefaultTreeModel) matchingTree.getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+		List<DefaultMutableTreeNode> remove = new ArrayList<DefaultMutableTreeNode>();
+		Enumeration albums = root.children();
+		while (albums.hasMoreElements())
+			remove.add((DefaultMutableTreeNode) albums.nextElement());
+		for (DefaultMutableTreeNode r : remove)
+			model.removeNodeFromParent(r);
+
 		try {
 			ResultSet rs = Database.getMatchingList(Locutus.getFilter());
-
 			if (rs == null)
 				return;
 
-			DefaultTreeModel model = (DefaultTreeModel) matchingTree.getModel();
-			DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
-			List<DefaultMutableTreeNode> remove = new ArrayList<DefaultMutableTreeNode>();
-			Enumeration albums = root.children();
-			while (albums.hasMoreElements())
-				remove.add((DefaultMutableTreeNode) albums.nextElement());
-			for (DefaultMutableTreeNode r : remove)
-				model.removeNodeFromParent(r);
 			while (rs.next()) {
 				DefaultMutableTreeNode album = new DefaultMutableTreeNode(new Album(rs));
 				model.insertNodeInto(new DefaultMutableTreeNode("\u200bPlaceholder"), album, 0);
 				model.insertNodeInto(album, root, model.getChildCount(root));
 			}
-			model.setRoot(root);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		model.setRoot(root);
 	}
 
 	private void updateAlbum(DefaultMutableTreeNode albumnode) {
