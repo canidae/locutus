@@ -72,7 +72,7 @@ public class Matching extends javax.swing.JPanel {
 					icon = "track_85.png";
 			} else if (node instanceof Metafile) {
 				Metafile file = (Metafile) node;
-				if (file.getFileTrackID() > 0)
+				if (file.getTrackID() > 0)
 					icon = "file_matched.png";
 				else if (file.getScore() < 0.4)
 					icon = "file_25.png";
@@ -87,7 +87,7 @@ public class Matching extends javax.swing.JPanel {
 				status = file.getStatus();
 
 				if (selected)
-					Locutus.showMetadata(file);
+					Locutus.showMetadata(new Metafile[]{file});
 			}
 			JLabel label = new JLabel(value.toString(), new ImageIcon(getClass().getResource("/net/exent/locutus/gui/icons/" + icon)), JLabel.LEFT);
 			label.setOpaque(true);

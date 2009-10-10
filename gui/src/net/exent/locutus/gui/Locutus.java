@@ -32,13 +32,67 @@ public class Locutus extends javax.swing.JFrame {
 		return filterTextField.getText();
 	}
 
-	public static void showMetadata(Metafile... files) {
+	public static void showMetadata(Metafile[] files) {
 		if (files.length <= 0)
-			fileFilenameLabel.setText("File: <none>");
-		if (files.length > 1)
+			return;
+
+		hideMetadata();
+		if (files.length > 1) {
 			fileFilenameLabel.setText("File: <" + files.length + " files>");
-		else
+			fileDuplicate.setSelected(false);
+			fileModified.setSelected(false);
+			filePinned.setSelected(false);
+		} else {
 			fileFilenameLabel.setText("File: " + files[0].getFilename());
+			fileDuplicate.setSelected(files[0].isDuplicate());
+			fileModified.setSelected(files[0].isModified());
+			filePinned.setSelected(files[0].isPinned());
+		}
+
+		boolean first = true;
+		for (Metafile file : files) {
+			if (first || fileAlbumArtistMBIDValue.getText().equals(file.getAlbumArtistMBID()))
+				fileAlbumArtistMBIDValue.setText(file.getAlbumArtistMBID());
+			if (first || fileAlbumArtistSortValue.getText().equals(file.getAlbumArtistSortName()))
+				fileAlbumArtistSortValue.setText(file.getAlbumArtistSortName());
+			if (first || fileAlbumArtistValue.getText().equals(file.getAlbumArtist()))
+				fileAlbumArtistValue.setText(file.getAlbumArtist());
+			if (first || fileAlbumMBIDValue.getText().equals(file.getAlbumMBID()))
+				fileAlbumMBIDValue.setText(file.getAlbumMBID());
+			if (first || fileAlbumValue.getText().equals(file.getAlbum()))
+				fileAlbumValue.setText(file.getAlbum());
+			if (first || fileArtistMBIDValue.getText().equals(file.getArtistMBID()))
+				fileArtistMBIDValue.setText(file.getArtistMBID());
+			if (first || fileArtistSortValue.getText().equals(file.getArtistSortName()))
+				fileArtistSortValue.setText(file.getArtistSortName());
+			if (first || fileArtistValue.getText().equals(file.getArtist()))
+				fileArtistValue.setText(file.getArtist());
+			if (first || fileBitrateValue.getText().equals("" + file.getBitrate()))
+				fileBitrateValue.setText("" + file.getBitrate());
+			if (first || fileChannelsValue.getText().equals("" + file.getChannels()))
+				fileChannelsValue.setText("" + file.getChannels());
+			if (first || fileDurationValue.getText().equals("" + file.getDuration()))
+				fileDurationValue.setText("" + file.getDuration());
+			if (first || fileFileIDValue.getText().equals("" + file.getFileID()))
+				fileFileIDValue.setText("" + file.getFileID());
+			if (first || fileGenreValue.getText().equals(file.getGenre()))
+				fileGenreValue.setText(file.getGenre());
+			if (first || fileGroupValue.getText().equals(file.getGroup()))
+				fileGroupValue.setText(file.getGroup());
+			if (first || fileReleasedValue.getText().equals(file.getReleased()))
+				fileReleasedValue.setText(file.getReleased());
+			if (first || fileSamplerateValue.getText().equals("" + file.getSamplerate()))
+				fileSamplerateValue.setText("" + file.getSamplerate());
+			if (first || fileTitleValue.getText().equals(file.getTitle()))
+				fileTitleValue.setText(file.getTitle());
+			if (first || fileTrackIDValue.getText().equals("" + file.getTrackID()))
+				fileTrackIDValue.setText("" + file.getTrackID());
+			if (first || fileTrackMBIDValue.getText().equals(file.getTrackMBID()))
+				fileTrackMBIDValue.setText(file.getTrackMBID());
+			if (first || fileTracknumberValue.getText().equals("" + file.getTracknumber()))
+				fileTracknumberValue.setText("" + file.getTracknumber());
+			first = false;
+		}
 	}
 
 	public static void hideMetadata() {
@@ -55,6 +109,7 @@ public class Locutus extends javax.swing.JFrame {
 		fileDuplicate.setSelected(false);
 		fileDurationValue.setText("");
 		fileFileIDValue.setText("");
+		fileFilenameLabel.setText("File: <none>");
 		fileGenreValue.setText("");
 		fileGroupValue.setText("");
 		fileModified.setSelected(false);
@@ -65,7 +120,6 @@ public class Locutus extends javax.swing.JFrame {
 		fileTrackIDValue.setText("");
 		fileTrackMBIDValue.setText("");
 		fileTracknumberValue.setText("");
-		fileFilenameLabel.setText("File: <none>");
 	}
 
 	/** This method is called from within the constructor to
@@ -91,10 +145,11 @@ public class Locutus extends javax.swing.JFrame {
                 databaseLabel = new javax.swing.JLabel();
                 databaseTextField = new javax.swing.JTextField();
                 passwordPasswordField = new javax.swing.JPasswordField();
-                jTabbedPane1 = new javax.swing.JTabbedPane();
+                tabPane = new javax.swing.JTabbedPane();
                 matching = new net.exent.locutus.gui.Matching();
                 detached = new net.exent.locutus.gui.Detached();
-                artists1 = new net.exent.locutus.gui.Artists();
+                artists = new net.exent.locutus.gui.Artists();
+                settings = new net.exent.locutus.gui.Settings();
                 metadataPanel = new javax.swing.JPanel();
                 fileFilenameLabel = new javax.swing.JLabel();
                 miscPanel = new javax.swing.JPanel();
@@ -284,16 +339,17 @@ public class Locutus extends javax.swing.JFrame {
                 setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
                 setTitle("Locutus");
 
-                jTabbedPane1.addTab("Matching", matching);
-                jTabbedPane1.addTab("Detached", detached);
-                jTabbedPane1.addTab("Artists", artists1);
+                tabPane.addTab("Matching", matching);
+                tabPane.addTab("Detached", detached);
+                tabPane.addTab("Artists", artists);
+                tabPane.addTab("Settings", settings);
 
-                getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+                getContentPane().add(tabPane, java.awt.BorderLayout.CENTER);
 
                 metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata"));
                 metadataPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileFilenameLabel.setText("File:");
+                fileFilenameLabel.setText("File: <none>");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
@@ -667,9 +723,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 trackPanel.add(fileTracknumberValue, gridBagConstraints);
 
@@ -896,7 +950,7 @@ public class Locutus extends javax.swing.JFrame {
 			db += "/";
 			db += databaseTextField.getText();
 			Database.connectPostgreSQL(db, usernameTextField.getText(), new String(passwordPasswordField.getPassword()));
-			jTabbedPane1.setSelectedComponent(matching);
+			tabPane.setSelectedComponent(matching);
 			matching.updateTree();
 		} catch (ClassNotFoundException e) {
 			JOptionPane.showMessageDialog(this, e);
@@ -961,7 +1015,7 @@ public class Locutus extends javax.swing.JFrame {
 		if (evt.getKeyCode() != KeyEvent.VK_ENTER)
 			return;
 
-		Component active = jTabbedPane1.getSelectedComponent();
+		Component active = tabPane.getSelectedComponent();
 		if (active != null) {
 			/* hide & show visible component to trigger formComponentShown().
 			 * TODO: this is a hack, fix it later */
@@ -985,7 +1039,7 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JPanel albumArtistPanel;
         private javax.swing.JPanel albumPanel;
         private javax.swing.JPanel artistPanel;
-        private net.exent.locutus.gui.Artists artists1;
+        private net.exent.locutus.gui.Artists artists;
         private javax.swing.JButton cancelButton;
         private javax.swing.JButton connectButton;
         private javax.swing.JFrame connectFrame;
@@ -1047,13 +1101,14 @@ public class Locutus extends javax.swing.JFrame {
         private static javax.swing.JTextField filterTextField;
         private javax.swing.JLabel hostLabel;
         private javax.swing.JTextField hostTextField;
-        private javax.swing.JTabbedPane jTabbedPane1;
         private net.exent.locutus.gui.Matching matching;
         private javax.swing.JMenuBar menuBar;
         private javax.swing.JPanel metadataPanel;
         private javax.swing.JPanel miscPanel;
         private javax.swing.JLabel passwordLabel;
         private javax.swing.JPasswordField passwordPasswordField;
+        private net.exent.locutus.gui.Settings settings;
+        private javax.swing.JTabbedPane tabPane;
         private javax.swing.JPanel topPanel;
         private javax.swing.JPanel trackPanel;
         private javax.swing.JLabel usernameLabel;
