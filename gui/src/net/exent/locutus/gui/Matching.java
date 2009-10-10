@@ -59,7 +59,7 @@ public class Matching extends javax.swing.JPanel {
 
 		@Override
 		public String toString() {
-			/* FIXME? turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
+			/* XXX: turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
 			 * solution? add \u200b which is a zero width character (ie. invisible) */
 			return "\u200b" + title + " (" + tracks + "/" + tracks_compared + "/" + mbids_matched + " tracks/compared/mbids, " + files_compared + " files not matched)";
 		}
@@ -69,31 +69,31 @@ public class Matching extends javax.swing.JPanel {
 
 		private int track_id;
 		private String title;
+		private int tracknumber;
+		private int duration;
 		private String artist;
 		private String album;
 		private String album_artist;
-		private int tracknumber;
-		private int duration;
 		private double score;
 		private boolean got_match;
 		private boolean got_files;
 
 		public TrackNode(ResultSet rs) throws SQLException {
-			track_id = rs.getInt("track_id");
-			title = rs.getString("title");
-			artist = rs.getString("track_artist");
-			album = rs.getString("album");
-			album_artist = rs.getString("artist");
-			tracknumber = rs.getInt("tracknumber");
-			duration = rs.getInt("duration");
-			score = rs.getDouble("score");
+			track_id = rs.getInt("track_track_id");
+			title = rs.getString("track_title");
+			tracknumber = rs.getInt("track_tracknumber");
+			duration = rs.getInt("track_duration");
+			artist = rs.getString("trackartist_name");
+			album = rs.getString("album_title");
+			album_artist = rs.getString("albumartist_name");
+			score = rs.getDouble("comparison_score");
 			got_match = (rs.getInt("file_track_id") > 0 && !rs.wasNull());
-			got_files = (rs.getInt("file_id") > 0 && !rs.wasNull());
+			got_files = (rs.getInt("file_file_id") > 0 && !rs.wasNull());
 		}
 
 		@Override
 		public String toString() {
-			/* FIXME? turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
+			/* XXX: turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
 			 * solution? add \u200b which is a zero width character (ie. invisible) */
 			return "\u200b" + (tracknumber > 9 ? tracknumber : "0" + tracknumber) + " - " + duration + " - " + album_artist + " - " + album + " - " + artist + " - " + title;
 		}
@@ -106,53 +106,21 @@ public class Matching extends javax.swing.JPanel {
 		private static final int DELETE = 2;
 		private int file_id;
 		private String filename;
-		private int duration;
 		private String album;
 		private String album_artist;
 		private String artist;
 		private String title;
 		private int tracknumber;
+		private int duration;
+		private int file_track_id;
+		private int compare_track_id;
 		private double score;
 		private boolean mbid_match;
-		private int compare_track_id;
-		private int file_track_id;
 		private int status;
 
-		/*
-		 * -file_id                   | integer                     | not null
-		 * -filename                  | character varying           | not null
-		 * -duration                  | integer                     | not null
-		 * -channels                  | integer                     | not null
-		 * -bitrate                   | integer                     | not null
-		 * -samplerate                | integer                     | not null
-		 * +album                     | character varying           | not null
-		 * +albumartist               | character varying           | not null
-		 * +albumartistsort           | character varying           | not null
-		 * +artist                    | character varying           | not null
-		 * +artistsort                | character varying           | not null
-		 * +musicbrainz_albumartistid | character varying(36)       | not null
-		 * +musicbrainz_albumid       | character varying(36)       | not null
-		 * +musicbrainz_artistid      | character varying(36)       | not null
-		 * +musicbrainz_trackid       | character varying(36)       | not null
-		 * +title                     | character varying           | not null
-		 * +tracknumber               | character varying           | not null
-		 * +released                  | character varying           | not null
-		 * +genre                     | character varying           | not null
-		 * +pinned                    | boolean                     | not null default false
-		 * -groupname                 | character varying           | not null default ''::character varying
-		 * -duplicate                 | boolean                     | not null default false
-		 * -user_changed              | boolean                     | not null default false
-		 * +track_id                  | integer                     |
-		 *
-		 * - = can't change
-		 * + = can change (track_id should only be possible to set to null)
-		 *
-		 * need to update view "v_web_album_list_tracks_and_matching_files" for this, don't have all the data we need
-		 */
 		public FileNode(ResultSet rs) throws SQLException {
-			file_id = rs.getInt("file_id");
-			filename = rs.getString("filename");
-			duration = rs.getInt("file_duration");
+			file_id = rs.getInt("file_file_id");
+			filename = rs.getString("file_filename");
 			album = rs.getString("file_album");
 			album_artist = rs.getString("file_albumartist");
 			artist = rs.getString("file_artist");
@@ -162,16 +130,17 @@ public class Matching extends javax.swing.JPanel {
 			} catch (NumberFormatException e) {
 				tracknumber = 0;
 			}
-			score = rs.getDouble("score");
-			mbid_match = rs.getBoolean("mbid_match");
-			compare_track_id = rs.getInt("track_id");
+			duration = rs.getInt("file_duration");
 			file_track_id = rs.getInt("file_track_id");
+			compare_track_id = rs.getInt("track_track_id");
+			score = rs.getDouble("comparison_score");
+			mbid_match = rs.getBoolean("comparison_mbid_match");
 			status = NONE;
 		}
 
 		@Override
 		public String toString() {
-			/* FIXME? turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
+			/* XXX: turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
 			 * solution? add \u200b which is a zero width character (ie. invisible) */
 			return "\u200b" + (tracknumber > 9 ? tracknumber : "0" + tracknumber) + " - " + duration + " - " + album_artist + " - " + album + " - " + artist + " - " + title + " (" + filename + ")";
 		}
@@ -243,7 +212,7 @@ public class Matching extends javax.swing.JPanel {
 
 	public void updateTree() {
 		try {
-			ResultSet rs = Database.getMatching(Locutus.getFilter());
+			ResultSet rs = Database.getMatchingList(Locutus.getFilter());
 
 			if (rs == null)
 				return;
@@ -281,17 +250,17 @@ public class Matching extends javax.swing.JPanel {
 		}
 		AlbumNode album = (AlbumNode) albumnode.getUserObject();
 		try {
-			ResultSet rs = Database.getAlbum(album.album_id);
+			ResultSet rs = Database.getMatchingDetails(album.album_id);
 			int last_tracknum = -1;
 			DefaultMutableTreeNode track = null;
 			while (rs.next()) {
-				int tracknum = rs.getInt("tracknumber");
+				int tracknum = rs.getInt("track_tracknumber");
 				if (tracknum != last_tracknum) {
 					track = new DefaultMutableTreeNode(new TrackNode(rs));
 					last_tracknum = tracknum;
 					model.insertNodeInto(track, albumnode, model.getChildCount(albumnode));
 				}
-				if ((rs.getInt("file_id") > 0) && !rs.wasNull()) {
+				if ((rs.getInt("file_file_id") > 0) && !rs.wasNull()) {
 					DefaultMutableTreeNode file = new DefaultMutableTreeNode(new FileNode(rs));
 					model.insertNodeInto(file, track, model.getChildCount(track));
 				}

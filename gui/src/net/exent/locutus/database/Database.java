@@ -17,10 +17,10 @@ import java.sql.SQLException;
 public class Database {
 
 	private static Connection connection;
-	private static PreparedStatement matching;
+	private static PreparedStatement matching_list;
 	private static PreparedStatement detached;
 	private static PreparedStatement artists;
-	private static PreparedStatement album;
+	private static PreparedStatement matching_details;
 	private static PreparedStatement delete_comparison;
 	private static PreparedStatement delete_match;
 	private static PreparedStatement match_file;
@@ -30,27 +30,18 @@ public class Database {
 		connection = DriverManager.getConnection(url, username, password);
 
 		/* prepared statements */
-		matching = connection.prepareStatement("SELECT * FROM v_web_matching_list_albums WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
 		detached = connection.prepareStatement("SELECT * FROM file WHERE track_id IS NULL AND filename LIKE (SELECT value FROM setting WHERE key = 'output_directory') || '%' AND filename ILIKE ? ORDER BY filename");
 		artists = connection.prepareStatement("SELECT * FROM artist WHERE name ILIKE ? ORDER BY sortname");
-		album = connection.prepareStatement("SELECT * FROM v_web_album_list_tracks_and_matching_files WHERE album_id = ? AND (file_track_id IS NULL OR file_track_id = track_id) ORDER BY tracknumber ASC, mbid_match DESC, score DESC");
 		delete_comparison = connection.prepareStatement("DELETE FROM comparison WHERE file_id = ? AND track_id = ?");
 		delete_match = connection.prepareStatement("UPDATE file SET track_id = NULL WHERE file_id = ?");
 		match_file = connection.prepareStatement("UPDATE file SET track_id = ? WHERE file_id = ?");
+		matching_list = connection.prepareStatement("SELECT * FROM v_ui_matching_list WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
+		matching_details = connection.prepareStatement("SELECT * FROM v_ui_matching_details WHERE album_album_id = ? AND (file_track_id IS NULL OR file_track_id = track_track_id) ORDER BY track_tracknumber ASC, comparison_mbid_match DESC, comparison_score DESC");
 	}
 
 	public static void disconnect() throws SQLException {
 		if (connection != null)
 			connection.close();
-	}
-
-	public static ResultSet getMatching(String filter) throws SQLException {
-		if (matching == null)
-			return null;
-		if (filter == null)
-			filter = "";
-		matching.setString(1, "%" + filter + "%");
-		return matching.executeQuery();
 	}
 
 	public static ResultSet getDetached(String filter) throws SQLException {
@@ -71,11 +62,20 @@ public class Database {
 		return artists.executeQuery();
 	}
 
-	public static ResultSet getAlbum(int album_id) throws SQLException {
-		if (album == null)
+	public static ResultSet getMatchingList(String filter) throws SQLException {
+		if (matching_list == null)
 			return null;
-		album.setInt(1, album_id);
-		return album.executeQuery();
+		if (filter == null)
+			filter = "";
+		matching_list.setString(1, "%" + filter + "%");
+		return matching_list.executeQuery();
+	}
+
+	public static ResultSet getMatchingDetails(int album_id) throws SQLException {
+		if (matching_details == null)
+			return null;
+		matching_details.setInt(1, album_id);
+		return matching_details.executeQuery();
 	}
 
 	public static int deleteComparison(int file_id, int track_id) throws SQLException {
