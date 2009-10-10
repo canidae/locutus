@@ -32,15 +32,41 @@ public class Locutus extends javax.swing.JFrame {
 		return filterTextField.getText();
 	}
 
-
 	public static void showMetadata(Metafile... files) {
-		//filenameLabel.setText("File: " + file.filename);
+		if (files.length <= 0)
+			fileFilenameLabel.setText("File: <none>");
+		if (files.length > 1)
+			fileFilenameLabel.setText("File: <" + files.length + " files>");
+		else
+			fileFilenameLabel.setText("File: " + files[0].getFilename());
 	}
 
 	public static void hideMetadata() {
-		filenameLabel.setText("File:");
+		fileAlbumArtistMBIDValue.setText("");
+		fileAlbumArtistSortValue.setText("");
+		fileAlbumArtistValue.setText("");
+		fileAlbumMBIDValue.setText("");
+		fileAlbumValue.setText("");
+		fileArtistMBIDValue.setText("");
+		fileArtistSortValue.setText("");
+		fileArtistValue.setText("");
+		fileBitrateValue.setText("");
+		fileChannelsValue.setText("");
+		fileDuplicate.setSelected(false);
+		fileDurationValue.setText("");
+		fileFileIDValue.setText("");
+		fileGenreValue.setText("");
+		fileGroupValue.setText("");
+		fileModified.setSelected(false);
+		filePinned.setSelected(false);
+		fileReleasedValue.setText("");
+		fileSamplerateValue.setText("");
+		fileTitleValue.setText("");
+		fileTrackIDValue.setText("");
+		fileTrackMBIDValue.setText("");
+		fileTracknumberValue.setText("");
+		fileFilenameLabel.setText("File: <none>");
 	}
-
 
 	/** This method is called from within the constructor to
 	 * initialize the form.
@@ -70,7 +96,7 @@ public class Locutus extends javax.swing.JFrame {
                 detached = new net.exent.locutus.gui.Detached();
                 artists1 = new net.exent.locutus.gui.Artists();
                 metadataPanel = new javax.swing.JPanel();
-                filenameLabel = new javax.swing.JLabel();
+                fileFilenameLabel = new javax.swing.JLabel();
                 miscPanel = new javax.swing.JPanel();
                 fileTrackIDLabel = new javax.swing.JLabel();
                 fileTrackIDValue = new javax.swing.JTextField();
@@ -267,7 +293,7 @@ public class Locutus extends javax.swing.JFrame {
                 metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata"));
                 metadataPanel.setLayout(new java.awt.GridBagLayout());
 
-                filenameLabel.setText("File:");
+                fileFilenameLabel.setText("File:");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
@@ -276,7 +302,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
-                metadataPanel.add(filenameLabel, gridBagConstraints);
+                metadataPanel.add(fileFilenameLabel, gridBagConstraints);
 
                 miscPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Misc"));
                 miscPanel.setLayout(new java.awt.GridBagLayout());
@@ -995,6 +1021,7 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JMenuItem fileExit;
         private static javax.swing.JLabel fileFileIDLabel;
         private static javax.swing.JTextField fileFileIDValue;
+        private static javax.swing.JLabel fileFilenameLabel;
         private static javax.swing.JLabel fileGenreLabel;
         private static javax.swing.JTextField fileGenreValue;
         private static javax.swing.JLabel fileGroupLabel;
@@ -1016,7 +1043,6 @@ public class Locutus extends javax.swing.JFrame {
         private static javax.swing.JTextField fileTrackMBIDValue;
         private static javax.swing.JLabel fileTracknumberLabel;
         private static javax.swing.JTextField fileTracknumberValue;
-        private static javax.swing.JLabel filenameLabel;
         private javax.swing.JLabel filterLabel;
         private static javax.swing.JTextField filterTextField;
         private javax.swing.JLabel hostLabel;
