@@ -14,6 +14,7 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import net.exent.locutus.data.Metafile;
 import net.exent.locutus.database.Database;
 
 /**
@@ -31,6 +32,16 @@ public class Locutus extends javax.swing.JFrame {
 		return filterTextField.getText();
 	}
 
+
+	public static void showMetadata(Metafile... files) {
+		//filenameLabel.setText("File: " + file.filename);
+	}
+
+	public static void hideMetadata() {
+		filenameLabel.setText("File:");
+	}
+
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -39,6 +50,7 @@ public class Locutus extends javax.swing.JFrame {
 	@SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
         private void initComponents() {
+                java.awt.GridBagConstraints gridBagConstraints;
 
                 connectFrame = new javax.swing.JFrame();
                 driverLabel = new javax.swing.JLabel();
@@ -57,6 +69,58 @@ public class Locutus extends javax.swing.JFrame {
                 matching = new net.exent.locutus.gui.Matching();
                 detached = new net.exent.locutus.gui.Detached();
                 artists1 = new net.exent.locutus.gui.Artists();
+                metadataPanel = new javax.swing.JPanel();
+                filenameLabel = new javax.swing.JLabel();
+                miscPanel = new javax.swing.JPanel();
+                fileTrackIDLabel = new javax.swing.JLabel();
+                fileTrackIDValue = new javax.swing.JTextField();
+                fileGroupLabel = new javax.swing.JLabel();
+                filePinned = new javax.swing.JCheckBox();
+                fileFileIDValue = new javax.swing.JTextField();
+                fileFileIDLabel = new javax.swing.JLabel();
+                fileGroupValue = new javax.swing.JTextField();
+                fileModified = new javax.swing.JCheckBox();
+                fileDuplicate = new javax.swing.JCheckBox();
+                fileDurationLabel = new javax.swing.JLabel();
+                fileDurationValue = new javax.swing.JLabel();
+                fileChannelsLabel = new javax.swing.JLabel();
+                fileChannelsValue = new javax.swing.JLabel();
+                fileBitrateLabel = new javax.swing.JLabel();
+                fileBitrateValue = new javax.swing.JLabel();
+                fileSamplerateLabel = new javax.swing.JLabel();
+                fileSamplerateValue = new javax.swing.JLabel();
+                fileSaveButton = new javax.swing.JButton();
+                artistPanel = new javax.swing.JPanel();
+                fileArtistLabel = new javax.swing.JLabel();
+                fileArtistValue = new javax.swing.JTextField();
+                fileArtistSortLabel = new javax.swing.JLabel();
+                fileArtistSortValue = new javax.swing.JTextField();
+                fileArtistMBIDLabel = new javax.swing.JLabel();
+                fileArtistMBIDValue = new javax.swing.JTextField();
+                trackPanel = new javax.swing.JPanel();
+                fileTrackMBIDValue = new javax.swing.JTextField();
+                fileGenreValue = new javax.swing.JTextField();
+                fileGenreLabel = new javax.swing.JLabel();
+                fileTrackMBIDLabel = new javax.swing.JLabel();
+                fileTitleValue = new javax.swing.JTextField();
+                fileTitleLabel = new javax.swing.JLabel();
+                fileTracknumberValue = new javax.swing.JTextField();
+                fileTracknumberLabel = new javax.swing.JLabel();
+                albumPanel = new javax.swing.JPanel();
+                fileAlbumValue = new javax.swing.JTextField();
+                fileAlbumLabel = new javax.swing.JLabel();
+                fileReleasedValue = new javax.swing.JTextField();
+                fileReleasedLabel = new javax.swing.JLabel();
+                fileAlbumMBIDValue = new javax.swing.JTextField();
+                fileAlbumMBIDLabel = new javax.swing.JLabel();
+                albumArtistPanel = new javax.swing.JPanel();
+                fileAlbumArtistLabel = new javax.swing.JLabel();
+                fileAlbumArtistValue = new javax.swing.JTextField();
+                fileAlbumArtistMBIDLabel = new javax.swing.JLabel();
+                fileAlbumArtistMBIDValue = new javax.swing.JTextField();
+                fileAlbumArtistSortLabel = new javax.swing.JLabel();
+                fileAlbumArtistSortValue = new javax.swing.JTextField();
+                topPanel = new javax.swing.JPanel();
                 filterLabel = new javax.swing.JLabel();
                 filterTextField = new javax.swing.JTextField();
                 menuBar = new javax.swing.JMenuBar();
@@ -198,13 +262,574 @@ public class Locutus extends javax.swing.JFrame {
                 jTabbedPane1.addTab("Detached", detached);
                 jTabbedPane1.addTab("Artists", artists1);
 
-                filterLabel.setText("Filter:");
+                getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
+                metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata"));
+                metadataPanel.setLayout(new java.awt.GridBagLayout());
+
+                filenameLabel.setText("File:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.gridwidth = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                metadataPanel.add(filenameLabel, gridBagConstraints);
+
+                miscPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Misc"));
+                miscPanel.setLayout(new java.awt.GridBagLayout());
+
+                fileTrackIDLabel.setText("Track ID:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileTrackIDLabel, gridBagConstraints);
+
+                fileTrackIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileTrackIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileTrackIDValue, gridBagConstraints);
+
+                fileGroupLabel.setText("Group:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.gridwidth = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileGroupLabel, gridBagConstraints);
+
+                filePinned.setText("Pinned");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 6;
+                gridBagConstraints.gridwidth = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(filePinned, gridBagConstraints);
+
+                fileFileIDValue.setEditable(false);
+                fileFileIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileFileIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileFileIDValue, gridBagConstraints);
+
+                fileFileIDLabel.setText("File ID:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileFileIDLabel, gridBagConstraints);
+
+                fileGroupValue.setEditable(false);
+                fileGroupValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.gridwidth = 4;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileGroupValue, gridBagConstraints);
+
+                fileModified.setText("Modified");
+                fileModified.setEnabled(false);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.gridwidth = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileModified, gridBagConstraints);
+
+                fileDuplicate.setText("Duplicate");
+                fileDuplicate.setEnabled(false);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.gridwidth = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileDuplicate, gridBagConstraints);
+
+                fileDurationLabel.setText("Duration:");
+                fileDurationLabel.setPreferredSize(null);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileDurationLabel, gridBagConstraints);
+
+                fileDurationValue.setMinimumSize(new java.awt.Dimension(64, 17));
+                fileDurationValue.setPreferredSize(new java.awt.Dimension(64, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileDurationValue, gridBagConstraints);
+
+                fileChannelsLabel.setText("Channels:");
+                fileChannelsLabel.setPreferredSize(null);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileChannelsLabel, gridBagConstraints);
+
+                fileChannelsValue.setMinimumSize(new java.awt.Dimension(64, 17));
+                fileChannelsValue.setPreferredSize(new java.awt.Dimension(64, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileChannelsValue, gridBagConstraints);
+
+                fileBitrateLabel.setText("Bitrate:");
+                fileBitrateLabel.setPreferredSize(null);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileBitrateLabel, gridBagConstraints);
+
+                fileBitrateValue.setMinimumSize(new java.awt.Dimension(64, 17));
+                fileBitrateValue.setPreferredSize(new java.awt.Dimension(64, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileBitrateValue, gridBagConstraints);
+
+                fileSamplerateLabel.setText("Samplerate:");
+                fileSamplerateLabel.setPreferredSize(null);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileSamplerateLabel, gridBagConstraints);
+
+                fileSamplerateValue.setMinimumSize(new java.awt.Dimension(64, 17));
+                fileSamplerateValue.setPreferredSize(new java.awt.Dimension(64, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileSamplerateValue, gridBagConstraints);
+
+                fileSaveButton.setMnemonic('S');
+                fileSaveButton.setText("Save metadata");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 6;
+                gridBagConstraints.gridwidth = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                miscPanel.add(fileSaveButton, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.gridheight = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                metadataPanel.add(miscPanel, gridBagConstraints);
+
+                artistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Artist"));
+                artistPanel.setLayout(new java.awt.GridBagLayout());
+
+                fileArtistLabel.setText("Name:");
+                fileArtistLabel.setMaximumSize(new java.awt.Dimension(88, 17));
+                fileArtistLabel.setMinimumSize(new java.awt.Dimension(88, 17));
+                fileArtistLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                artistPanel.add(fileArtistLabel, gridBagConstraints);
+
+                fileArtistValue.setMinimumSize(new java.awt.Dimension(256, 25));
+                fileArtistValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                artistPanel.add(fileArtistValue, gridBagConstraints);
+
+                fileArtistSortLabel.setText("Sort name:");
+                fileArtistSortLabel.setMaximumSize(new java.awt.Dimension(88, 17));
+                fileArtistSortLabel.setMinimumSize(new java.awt.Dimension(88, 17));
+                fileArtistSortLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                artistPanel.add(fileArtistSortLabel, gridBagConstraints);
+
+                fileArtistSortValue.setMinimumSize(new java.awt.Dimension(256, 25));
+                fileArtistSortValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                artistPanel.add(fileArtistSortValue, gridBagConstraints);
+
+                fileArtistMBIDLabel.setText("MBID:");
+                fileArtistMBIDLabel.setMaximumSize(new java.awt.Dimension(88, 17));
+                fileArtistMBIDLabel.setMinimumSize(new java.awt.Dimension(88, 17));
+                fileArtistMBIDLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                artistPanel.add(fileArtistMBIDLabel, gridBagConstraints);
+
+                fileArtistMBIDValue.setMinimumSize(new java.awt.Dimension(256, 25));
+                fileArtistMBIDValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                artistPanel.add(fileArtistMBIDValue, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                metadataPanel.add(artistPanel, gridBagConstraints);
+
+                trackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track"));
+                trackPanel.setLayout(new java.awt.GridBagLayout());
+
+                fileTrackMBIDValue.setMinimumSize(new java.awt.Dimension(256, 25));
+                fileTrackMBIDValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.gridwidth = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(fileTrackMBIDValue, gridBagConstraints);
+
+                fileGenreValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileGenreValue.setPreferredSize(new java.awt.Dimension(64, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(fileGenreValue, gridBagConstraints);
+
+                fileGenreLabel.setText("Genre:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(fileGenreLabel, gridBagConstraints);
+
+                fileTrackMBIDLabel.setText("MBID:");
+                fileTrackMBIDLabel.setMaximumSize(new java.awt.Dimension(88, 17));
+                fileTrackMBIDLabel.setMinimumSize(new java.awt.Dimension(88, 17));
+                fileTrackMBIDLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(fileTrackMBIDLabel, gridBagConstraints);
+
+                fileTitleValue.setMinimumSize(new java.awt.Dimension(256, 25));
+                fileTitleValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.gridwidth = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(fileTitleValue, gridBagConstraints);
+
+                fileTitleLabel.setText("Title:");
+                fileTitleLabel.setMaximumSize(new java.awt.Dimension(88, 17));
+                fileTitleLabel.setMinimumSize(new java.awt.Dimension(88, 17));
+                fileTitleLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(fileTitleLabel, gridBagConstraints);
+
+                fileTracknumberValue.setMaximumSize(new java.awt.Dimension(32, 25));
+                fileTracknumberValue.setMinimumSize(new java.awt.Dimension(32, 25));
+                fileTracknumberValue.setPreferredSize(new java.awt.Dimension(32, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(fileTracknumberValue, gridBagConstraints);
+
+                fileTracknumberLabel.setText("Tracknumber:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(fileTracknumberLabel, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                metadataPanel.add(trackPanel, gridBagConstraints);
+
+                albumPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Album"));
+                albumPanel.setPreferredSize(new java.awt.Dimension(304, 104));
+                albumPanel.setLayout(new java.awt.GridBagLayout());
+
+                fileAlbumValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileAlbumValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumPanel.add(fileAlbumValue, gridBagConstraints);
+
+                fileAlbumLabel.setText("Title:");
+                fileAlbumLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileAlbumLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileAlbumLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumPanel.add(fileAlbumLabel, gridBagConstraints);
+
+                fileReleasedValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileReleasedValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumPanel.add(fileReleasedValue, gridBagConstraints);
+
+                fileReleasedLabel.setText("Released:");
+                fileReleasedLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileReleasedLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileReleasedLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumPanel.add(fileReleasedLabel, gridBagConstraints);
+
+                fileAlbumMBIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileAlbumMBIDValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumPanel.add(fileAlbumMBIDValue, gridBagConstraints);
+
+                fileAlbumMBIDLabel.setText("MBID:");
+                fileAlbumMBIDLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileAlbumMBIDLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileAlbumMBIDLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumPanel.add(fileAlbumMBIDLabel, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                metadataPanel.add(albumPanel, gridBagConstraints);
+
+                albumArtistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Album artist"));
+                albumArtistPanel.setLayout(new java.awt.GridBagLayout());
+
+                fileAlbumArtistLabel.setText("Name:");
+                fileAlbumArtistLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileAlbumArtistLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileAlbumArtistLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumArtistPanel.add(fileAlbumArtistLabel, gridBagConstraints);
+
+                fileAlbumArtistValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileAlbumArtistValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumArtistPanel.add(fileAlbumArtistValue, gridBagConstraints);
+
+                fileAlbumArtistMBIDLabel.setText("MBID:");
+                fileAlbumArtistMBIDLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileAlbumArtistMBIDLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileAlbumArtistMBIDLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumArtistPanel.add(fileAlbumArtistMBIDLabel, gridBagConstraints);
+
+                fileAlbumArtistMBIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileAlbumArtistMBIDValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumArtistPanel.add(fileAlbumArtistMBIDValue, gridBagConstraints);
+
+                fileAlbumArtistSortLabel.setText("Sort name:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumArtistPanel.add(fileAlbumArtistSortLabel, gridBagConstraints);
+
+                fileAlbumArtistSortValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileAlbumArtistSortValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumArtistPanel.add(fileAlbumArtistSortValue, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                metadataPanel.add(albumArtistPanel, gridBagConstraints);
+
+                getContentPane().add(metadataPanel, java.awt.BorderLayout.SOUTH);
+
+                topPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+                filterLabel.setText("Filter:");
+                topPanel.add(filterLabel);
+
+                filterTextField.setMinimumSize(new java.awt.Dimension(128, 25));
+                filterTextField.setPreferredSize(new java.awt.Dimension(128, 25));
                 filterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
                         public void keyReleased(java.awt.event.KeyEvent evt) {
                                 filterTextFieldKeyReleased(evt);
                         }
                 });
+                topPanel.add(filterTextField);
+
+                getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
 
                 fileMenu.setText("File");
 
@@ -232,29 +857,6 @@ public class Locutus extends javax.swing.JFrame {
                 menuBar.add(fileMenu);
 
                 setJMenuBar(menuBar);
-
-                javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-                getContentPane().setLayout(layout);
-                layout.setHorizontalGroup(
-                        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(filterLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(469, Short.MAX_VALUE))
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 686, Short.MAX_VALUE)
-                );
-                layout.setVerticalGroup(
-                        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(filterLabel)
-                                        .addComponent(filterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE))
-                );
 
                 pack();
         }// </editor-fold>//GEN-END:initComponents
@@ -354,6 +956,9 @@ public class Locutus extends javax.swing.JFrame {
 		});
 	}
         // Variables declaration - do not modify//GEN-BEGIN:variables
+        private javax.swing.JPanel albumArtistPanel;
+        private javax.swing.JPanel albumPanel;
+        private javax.swing.JPanel artistPanel;
         private net.exent.locutus.gui.Artists artists1;
         private javax.swing.JButton cancelButton;
         private javax.swing.JButton connectButton;
@@ -363,10 +968,55 @@ public class Locutus extends javax.swing.JFrame {
         private net.exent.locutus.gui.Detached detached;
         private javax.swing.JComboBox driverCombo;
         private javax.swing.JLabel driverLabel;
+        private static javax.swing.JLabel fileAlbumArtistLabel;
+        private static javax.swing.JLabel fileAlbumArtistMBIDLabel;
+        private static javax.swing.JTextField fileAlbumArtistMBIDValue;
+        private static javax.swing.JLabel fileAlbumArtistSortLabel;
+        private static javax.swing.JTextField fileAlbumArtistSortValue;
+        private static javax.swing.JTextField fileAlbumArtistValue;
+        private static javax.swing.JLabel fileAlbumLabel;
+        private static javax.swing.JLabel fileAlbumMBIDLabel;
+        private static javax.swing.JTextField fileAlbumMBIDValue;
+        private static javax.swing.JTextField fileAlbumValue;
+        private static javax.swing.JLabel fileArtistLabel;
+        private static javax.swing.JLabel fileArtistMBIDLabel;
+        private static javax.swing.JTextField fileArtistMBIDValue;
+        private static javax.swing.JLabel fileArtistSortLabel;
+        private static javax.swing.JTextField fileArtistSortValue;
+        private static javax.swing.JTextField fileArtistValue;
+        private static javax.swing.JLabel fileBitrateLabel;
+        private static javax.swing.JLabel fileBitrateValue;
+        private static javax.swing.JLabel fileChannelsLabel;
+        private static javax.swing.JLabel fileChannelsValue;
         private javax.swing.JMenuItem fileConnect;
+        private static javax.swing.JCheckBox fileDuplicate;
+        private static javax.swing.JLabel fileDurationLabel;
+        private static javax.swing.JLabel fileDurationValue;
         private javax.swing.JMenuItem fileExit;
+        private static javax.swing.JLabel fileFileIDLabel;
+        private static javax.swing.JTextField fileFileIDValue;
+        private static javax.swing.JLabel fileGenreLabel;
+        private static javax.swing.JTextField fileGenreValue;
+        private static javax.swing.JLabel fileGroupLabel;
+        private static javax.swing.JTextField fileGroupValue;
         private javax.swing.JMenu fileMenu;
+        private static javax.swing.JCheckBox fileModified;
+        private static javax.swing.JCheckBox filePinned;
+        private static javax.swing.JLabel fileReleasedLabel;
+        private static javax.swing.JTextField fileReleasedValue;
+        private static javax.swing.JLabel fileSamplerateLabel;
+        private static javax.swing.JLabel fileSamplerateValue;
+        private static javax.swing.JButton fileSaveButton;
         private javax.swing.JSeparator fileSeparator1;
+        private static javax.swing.JLabel fileTitleLabel;
+        private static javax.swing.JTextField fileTitleValue;
+        private static javax.swing.JLabel fileTrackIDLabel;
+        private static javax.swing.JTextField fileTrackIDValue;
+        private static javax.swing.JLabel fileTrackMBIDLabel;
+        private static javax.swing.JTextField fileTrackMBIDValue;
+        private static javax.swing.JLabel fileTracknumberLabel;
+        private static javax.swing.JTextField fileTracknumberValue;
+        private static javax.swing.JLabel filenameLabel;
         private javax.swing.JLabel filterLabel;
         private static javax.swing.JTextField filterTextField;
         private javax.swing.JLabel hostLabel;
@@ -374,8 +1024,12 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JTabbedPane jTabbedPane1;
         private net.exent.locutus.gui.Matching matching;
         private javax.swing.JMenuBar menuBar;
+        private javax.swing.JPanel metadataPanel;
+        private javax.swing.JPanel miscPanel;
         private javax.swing.JLabel passwordLabel;
         private javax.swing.JPasswordField passwordPasswordField;
+        private javax.swing.JPanel topPanel;
+        private javax.swing.JPanel trackPanel;
         private javax.swing.JLabel usernameLabel;
         private javax.swing.JTextField usernameTextField;
         // End of variables declaration//GEN-END:variables
