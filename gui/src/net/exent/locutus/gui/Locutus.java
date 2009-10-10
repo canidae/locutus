@@ -148,7 +148,6 @@ public class Locutus extends javax.swing.JFrame {
                 tabPane = new javax.swing.JTabbedPane();
                 matching = new net.exent.locutus.gui.Matching();
                 detached = new net.exent.locutus.gui.Detached();
-                artists = new net.exent.locutus.gui.Artists();
                 settings = new net.exent.locutus.gui.Settings();
                 metadataPanel = new javax.swing.JPanel();
                 fileFilenameLabel = new javax.swing.JLabel();
@@ -204,11 +203,8 @@ public class Locutus extends javax.swing.JFrame {
                 topPanel = new javax.swing.JPanel();
                 filterLabel = new javax.swing.JLabel();
                 filterTextField = new javax.swing.JTextField();
-                menuBar = new javax.swing.JMenuBar();
-                fileMenu = new javax.swing.JMenu();
-                fileConnect = new javax.swing.JMenuItem();
-                fileSeparator1 = new javax.swing.JSeparator();
-                fileExit = new javax.swing.JMenuItem();
+                openButton = new javax.swing.JButton();
+                quitButton = new javax.swing.JButton();
 
                 connectFrame.setTitle("Connect to database");
                 connectFrame.setMinimumSize(new java.awt.Dimension(289, 229));
@@ -341,7 +337,6 @@ public class Locutus extends javax.swing.JFrame {
 
                 tabPane.addTab("Matching", matching);
                 tabPane.addTab("Detached", detached);
-                tabPane.addTab("Artists", artists);
                 tabPane.addTab("Settings", settings);
 
                 getContentPane().add(tabPane, java.awt.BorderLayout.CENTER);
@@ -355,15 +350,19 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.gridy = 0;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
                 metadataPanel.add(fileFilenameLabel, gridBagConstraints);
 
                 miscPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Misc"));
+                miscPanel.setMaximumSize(new java.awt.Dimension(298, 204));
                 miscPanel.setLayout(new java.awt.GridBagLayout());
 
                 fileTrackIDLabel.setText("Track ID:");
+                fileTrackIDLabel.setMaximumSize(new java.awt.Dimension(79, 17));
+                fileTrackIDLabel.setMinimumSize(new java.awt.Dimension(79, 17));
+                fileTrackIDLabel.setPreferredSize(new java.awt.Dimension(79, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 2;
@@ -373,6 +372,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 miscPanel.add(fileTrackIDLabel, gridBagConstraints);
 
+                fileTrackIDValue.setMaximumSize(new java.awt.Dimension(64, 25));
                 fileTrackIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
                 fileTrackIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -408,6 +408,7 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(filePinned, gridBagConstraints);
 
                 fileFileIDValue.setEditable(false);
+                fileFileIDValue.setMaximumSize(new java.awt.Dimension(64, 25));
                 fileFileIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
                 fileFileIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -421,6 +422,9 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(fileFileIDValue, gridBagConstraints);
 
                 fileFileIDLabel.setText("File ID:");
+                fileFileIDLabel.setMaximumSize(new java.awt.Dimension(63, 17));
+                fileFileIDLabel.setMinimumSize(new java.awt.Dimension(63, 17));
+                fileFileIDLabel.setPreferredSize(new java.awt.Dimension(63, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 2;
@@ -431,7 +435,9 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(fileFileIDLabel, gridBagConstraints);
 
                 fileGroupValue.setEditable(false);
-                fileGroupValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                fileGroupValue.setMaximumSize(new java.awt.Dimension(256, 25));
+                fileGroupValue.setMinimumSize(new java.awt.Dimension(256, 25));
+                fileGroupValue.setPreferredSize(new java.awt.Dimension(256, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
@@ -468,7 +474,9 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(fileDuplicate, gridBagConstraints);
 
                 fileDurationLabel.setText("Duration:");
-                fileDurationLabel.setPreferredSize(null);
+                fileDurationLabel.setMaximumSize(new java.awt.Dimension(63, 17));
+                fileDurationLabel.setMinimumSize(new java.awt.Dimension(63, 17));
+                fileDurationLabel.setPreferredSize(new java.awt.Dimension(63, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 3;
@@ -490,7 +498,7 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(fileDurationValue, gridBagConstraints);
 
                 fileChannelsLabel.setText("Channels:");
-                fileChannelsLabel.setPreferredSize(null);
+                fileChannelsLabel.setPreferredSize(new java.awt.Dimension(63, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 4;
@@ -512,7 +520,9 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(fileChannelsValue, gridBagConstraints);
 
                 fileBitrateLabel.setText("Bitrate:");
-                fileBitrateLabel.setPreferredSize(null);
+                fileBitrateLabel.setMaximumSize(new java.awt.Dimension(79, 17));
+                fileBitrateLabel.setMinimumSize(new java.awt.Dimension(79, 17));
+                fileBitrateLabel.setPreferredSize(new java.awt.Dimension(79, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 3;
@@ -534,7 +544,7 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.add(fileBitrateValue, gridBagConstraints);
 
                 fileSamplerateLabel.setText("Samplerate:");
-                fileSamplerateLabel.setPreferredSize(null);
+                fileSamplerateLabel.setPreferredSize(new java.awt.Dimension(79, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 4;
@@ -570,23 +580,22 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.gridheight = 2;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
                 metadataPanel.add(miscPanel, gridBagConstraints);
 
                 artistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Artist"));
                 artistPanel.setLayout(new java.awt.GridBagLayout());
 
                 fileArtistLabel.setText("Name:");
-                fileArtistLabel.setMaximumSize(new java.awt.Dimension(88, 17));
-                fileArtistLabel.setMinimumSize(new java.awt.Dimension(88, 17));
-                fileArtistLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                fileArtistLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileArtistLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileArtistLabel.setPreferredSize(new java.awt.Dimension(72, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 artistPanel.add(fileArtistLabel, gridBagConstraints);
 
-                fileArtistValue.setMinimumSize(new java.awt.Dimension(256, 25));
-                fileArtistValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                fileArtistValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
@@ -597,9 +606,8 @@ public class Locutus extends javax.swing.JFrame {
                 artistPanel.add(fileArtistValue, gridBagConstraints);
 
                 fileArtistSortLabel.setText("Sort name:");
-                fileArtistSortLabel.setMaximumSize(new java.awt.Dimension(88, 17));
-                fileArtistSortLabel.setMinimumSize(new java.awt.Dimension(88, 17));
-                fileArtistSortLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                fileArtistSortLabel.setOpaque(true);
+                fileArtistSortLabel.setPreferredSize(new java.awt.Dimension(72, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
@@ -607,8 +615,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 artistPanel.add(fileArtistSortLabel, gridBagConstraints);
 
-                fileArtistSortValue.setMinimumSize(new java.awt.Dimension(256, 25));
-                fileArtistSortValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                fileArtistSortValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
@@ -619,9 +626,9 @@ public class Locutus extends javax.swing.JFrame {
                 artistPanel.add(fileArtistSortValue, gridBagConstraints);
 
                 fileArtistMBIDLabel.setText("MBID:");
-                fileArtistMBIDLabel.setMaximumSize(new java.awt.Dimension(88, 17));
-                fileArtistMBIDLabel.setMinimumSize(new java.awt.Dimension(88, 17));
-                fileArtistMBIDLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                fileArtistMBIDLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileArtistMBIDLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileArtistMBIDLabel.setPreferredSize(new java.awt.Dimension(72, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 2;
@@ -629,8 +636,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 artistPanel.add(fileArtistMBIDLabel, gridBagConstraints);
 
-                fileArtistMBIDValue.setMinimumSize(new java.awt.Dimension(256, 25));
-                fileArtistMBIDValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                fileArtistMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 2;
@@ -644,14 +650,13 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
                 metadataPanel.add(artistPanel, gridBagConstraints);
 
                 trackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track"));
                 trackPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileTrackMBIDValue.setMinimumSize(new java.awt.Dimension(256, 25));
-                fileTrackMBIDValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                fileTrackMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 2;
@@ -662,7 +667,6 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 trackPanel.add(fileTrackMBIDValue, gridBagConstraints);
 
-                fileGenreValue.setMinimumSize(new java.awt.Dimension(64, 25));
                 fileGenreValue.setPreferredSize(new java.awt.Dimension(64, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 3;
@@ -682,19 +686,17 @@ public class Locutus extends javax.swing.JFrame {
                 trackPanel.add(fileGenreLabel, gridBagConstraints);
 
                 fileTrackMBIDLabel.setText("MBID:");
-                fileTrackMBIDLabel.setMaximumSize(new java.awt.Dimension(88, 17));
-                fileTrackMBIDLabel.setMinimumSize(new java.awt.Dimension(88, 17));
-                fileTrackMBIDLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                fileTrackMBIDLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileTrackMBIDLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileTrackMBIDLabel.setPreferredSize(new java.awt.Dimension(72, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 trackPanel.add(fileTrackMBIDLabel, gridBagConstraints);
 
-                fileTitleValue.setMinimumSize(new java.awt.Dimension(256, 25));
-                fileTitleValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                fileTitleValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
@@ -706,14 +708,13 @@ public class Locutus extends javax.swing.JFrame {
                 trackPanel.add(fileTitleValue, gridBagConstraints);
 
                 fileTitleLabel.setText("Title:");
-                fileTitleLabel.setMaximumSize(new java.awt.Dimension(88, 17));
-                fileTitleLabel.setMinimumSize(new java.awt.Dimension(88, 17));
-                fileTitleLabel.setPreferredSize(new java.awt.Dimension(88, 17));
+                fileTitleLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileTitleLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileTitleLabel.setPreferredSize(new java.awt.Dimension(72, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 trackPanel.add(fileTitleLabel, gridBagConstraints);
 
@@ -727,12 +728,14 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 trackPanel.add(fileTracknumberValue, gridBagConstraints);
 
-                fileTracknumberLabel.setText("Tracknumber:");
+                fileTracknumberLabel.setText("Tracknum:");
+                fileTracknumberLabel.setMaximumSize(new java.awt.Dimension(72, 17));
+                fileTracknumberLabel.setMinimumSize(new java.awt.Dimension(72, 17));
+                fileTracknumberLabel.setPreferredSize(new java.awt.Dimension(72, 17));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 trackPanel.add(fileTracknumberLabel, gridBagConstraints);
 
@@ -740,15 +743,15 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 2;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+                gridBagConstraints.weightx = 1.0;
                 metadataPanel.add(trackPanel, gridBagConstraints);
 
                 albumPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Album"));
                 albumPanel.setPreferredSize(new java.awt.Dimension(304, 104));
                 albumPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileAlbumValue.setMinimumSize(new java.awt.Dimension(64, 25));
-                fileAlbumValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                fileAlbumValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
@@ -769,8 +772,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 albumPanel.add(fileAlbumLabel, gridBagConstraints);
 
-                fileReleasedValue.setMinimumSize(new java.awt.Dimension(64, 25));
-                fileReleasedValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                fileReleasedValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
@@ -791,8 +793,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 albumPanel.add(fileReleasedLabel, gridBagConstraints);
 
-                fileAlbumMBIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
-                fileAlbumMBIDValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                fileAlbumMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 2;
@@ -817,7 +818,8 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.weightx = 2.0;
                 metadataPanel.add(albumPanel, gridBagConstraints);
 
                 albumArtistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Album artist"));
@@ -834,8 +836,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 albumArtistPanel.add(fileAlbumArtistLabel, gridBagConstraints);
 
-                fileAlbumArtistValue.setMinimumSize(new java.awt.Dimension(64, 25));
-                fileAlbumArtistValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                fileAlbumArtistValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
@@ -856,8 +857,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 albumArtistPanel.add(fileAlbumArtistMBIDLabel, gridBagConstraints);
 
-                fileAlbumArtistMBIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
-                fileAlbumArtistMBIDValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                fileAlbumArtistMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 2;
@@ -875,8 +875,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 albumArtistPanel.add(fileAlbumArtistSortLabel, gridBagConstraints);
 
-                fileAlbumArtistSortValue.setMinimumSize(new java.awt.Dimension(64, 25));
-                fileAlbumArtistSortValue.setPreferredSize(new java.awt.Dimension(100, 25));
+                fileAlbumArtistSortValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
@@ -890,7 +889,8 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 2;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+                gridBagConstraints.weightx = 2.0;
                 metadataPanel.add(albumArtistPanel, gridBagConstraints);
 
                 getContentPane().add(metadataPanel, java.awt.BorderLayout.SOUTH);
@@ -909,34 +909,25 @@ public class Locutus extends javax.swing.JFrame {
                 });
                 topPanel.add(filterTextField);
 
+                openButton.setMnemonic('C');
+                openButton.setText("Connect");
+                openButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                openButtonActionPerformed(evt);
+                        }
+                });
+                topPanel.add(openButton);
+
+                quitButton.setMnemonic('Q');
+                quitButton.setText("Quit");
+                quitButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                quitButtonActionPerformed(evt);
+                        }
+                });
+                topPanel.add(quitButton);
+
                 getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
-
-                fileMenu.setText("File");
-
-                fileConnect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-                fileConnect.setMnemonic('C');
-                fileConnect.setText("Connect...");
-                fileConnect.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                fileConnectActionPerformed(evt);
-                        }
-                });
-                fileMenu.add(fileConnect);
-                fileMenu.add(fileSeparator1);
-
-                fileExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
-                fileExit.setMnemonic('x');
-                fileExit.setText("Exit");
-                fileExit.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                fileExitActionPerformed(evt);
-                        }
-                });
-                fileMenu.add(fileExit);
-
-                menuBar.add(fileMenu);
-
-                setJMenuBar(menuBar);
 
                 pack();
         }// </editor-fold>//GEN-END:initComponents
@@ -960,10 +951,6 @@ public class Locutus extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 	}//GEN-LAST:event_connectButtonActionPerformed
-
-	private void fileConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileConnectActionPerformed
-		connectFrame.setVisible(true);
-	}//GEN-LAST:event_fileConnectActionPerformed
 
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
 		connectFrame.setVisible(false);
@@ -1001,16 +988,6 @@ public class Locutus extends javax.swing.JFrame {
 		passwordPasswordField.select(0, 0);
 	}//GEN-LAST:event_passwordPasswordFieldFocusLost
 
-	private void fileExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileExitActionPerformed
-		try {
-			Database.disconnect();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		this.dispose();
-		System.exit(0);
-	}//GEN-LAST:event_fileExitActionPerformed
-
 	private void filterTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterTextFieldKeyReleased
 		if (evt.getKeyCode() != KeyEvent.VK_ENTER)
 			return;
@@ -1023,6 +1000,20 @@ public class Locutus extends javax.swing.JFrame {
 			active.setVisible(true);
 		}
 	}//GEN-LAST:event_filterTextFieldKeyReleased
+
+	private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
+		connectFrame.setVisible(true);
+	}//GEN-LAST:event_openButtonActionPerformed
+
+	private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
+		try {
+			Database.disconnect();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		this.dispose();
+		System.exit(0);
+	}//GEN-LAST:event_quitButtonActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -1039,7 +1030,6 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JPanel albumArtistPanel;
         private javax.swing.JPanel albumPanel;
         private javax.swing.JPanel artistPanel;
-        private net.exent.locutus.gui.Artists artists;
         private javax.swing.JButton cancelButton;
         private javax.swing.JButton connectButton;
         private javax.swing.JFrame connectFrame;
@@ -1068,11 +1058,9 @@ public class Locutus extends javax.swing.JFrame {
         private static javax.swing.JLabel fileBitrateValue;
         private static javax.swing.JLabel fileChannelsLabel;
         private static javax.swing.JLabel fileChannelsValue;
-        private javax.swing.JMenuItem fileConnect;
         private static javax.swing.JCheckBox fileDuplicate;
         private static javax.swing.JLabel fileDurationLabel;
         private static javax.swing.JLabel fileDurationValue;
-        private javax.swing.JMenuItem fileExit;
         private static javax.swing.JLabel fileFileIDLabel;
         private static javax.swing.JTextField fileFileIDValue;
         private static javax.swing.JLabel fileFilenameLabel;
@@ -1080,7 +1068,6 @@ public class Locutus extends javax.swing.JFrame {
         private static javax.swing.JTextField fileGenreValue;
         private static javax.swing.JLabel fileGroupLabel;
         private static javax.swing.JTextField fileGroupValue;
-        private javax.swing.JMenu fileMenu;
         private static javax.swing.JCheckBox fileModified;
         private static javax.swing.JCheckBox filePinned;
         private static javax.swing.JLabel fileReleasedLabel;
@@ -1088,7 +1075,6 @@ public class Locutus extends javax.swing.JFrame {
         private static javax.swing.JLabel fileSamplerateLabel;
         private static javax.swing.JLabel fileSamplerateValue;
         private static javax.swing.JButton fileSaveButton;
-        private javax.swing.JSeparator fileSeparator1;
         private static javax.swing.JLabel fileTitleLabel;
         private static javax.swing.JTextField fileTitleValue;
         private static javax.swing.JLabel fileTrackIDLabel;
@@ -1102,11 +1088,12 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JLabel hostLabel;
         private javax.swing.JTextField hostTextField;
         private net.exent.locutus.gui.Matching matching;
-        private javax.swing.JMenuBar menuBar;
         private javax.swing.JPanel metadataPanel;
         private javax.swing.JPanel miscPanel;
+        private javax.swing.JButton openButton;
         private javax.swing.JLabel passwordLabel;
         private javax.swing.JPasswordField passwordPasswordField;
+        private javax.swing.JButton quitButton;
         private net.exent.locutus.gui.Settings settings;
         private javax.swing.JTabbedPane tabPane;
         private javax.swing.JPanel topPanel;

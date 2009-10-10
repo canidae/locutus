@@ -17,13 +17,12 @@ import java.sql.SQLException;
 public class Database {
 
 	private static Connection connection;
-	private static PreparedStatement matching_list;
 	private static PreparedStatement detached;
-	private static PreparedStatement artists;
-	private static PreparedStatement matching_details;
 	private static PreparedStatement delete_comparison;
 	private static PreparedStatement delete_match;
 	private static PreparedStatement match_file;
+	private static PreparedStatement matching_list;
+	private static PreparedStatement matching_details;
 
 	public static void connectPostgreSQL(String url, String username, String password) throws ClassNotFoundException, SQLException {
 		Class.forName("org.postgresql.Driver");
@@ -31,7 +30,6 @@ public class Database {
 
 		/* prepared statements */
 		detached = connection.prepareStatement("SELECT * FROM file WHERE track_id IS NULL AND filename LIKE (SELECT value FROM setting WHERE key = 'output_directory') || '%' AND filename ILIKE ? ORDER BY filename");
-		artists = connection.prepareStatement("SELECT * FROM artist WHERE name ILIKE ? ORDER BY sortname");
 		delete_comparison = connection.prepareStatement("DELETE FROM comparison WHERE file_id = ? AND track_id = ?");
 		delete_match = connection.prepareStatement("UPDATE file SET track_id = NULL WHERE file_id = ?");
 		match_file = connection.prepareStatement("UPDATE file SET track_id = ? WHERE file_id = ?");
@@ -51,15 +49,6 @@ public class Database {
 			filter = "";
 		detached.setString(1, "%" + filter + "%");
 		return detached.executeQuery();
-	}
-
-	public static ResultSet getArtists(String filter) throws SQLException {
-		if (artists == null)
-			return null;
-		if (filter == null)
-			filter = "";
-		artists.setString(1, "%" + filter + "%");
-		return artists.executeQuery();
 	}
 
 	public static ResultSet getMatchingList(String filter) throws SQLException {
