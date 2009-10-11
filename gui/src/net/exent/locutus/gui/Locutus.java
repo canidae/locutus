@@ -161,7 +161,7 @@ public class Locutus extends javax.swing.JFrame {
                 usernameTextField = new javax.swing.JTextField();
                 passwordLabel = new javax.swing.JLabel();
                 connectButton = new javax.swing.JButton();
-                cancelButton = new javax.swing.JButton();
+                abortButton = new javax.swing.JButton();
                 databaseLabel = new javax.swing.JLabel();
                 databaseTextField = new javax.swing.JTextField();
                 passwordPasswordField = new javax.swing.JPasswordField();
@@ -177,6 +177,7 @@ public class Locutus extends javax.swing.JFrame {
                 matching = new net.exent.locutus.gui.Matching();
                 detached = new net.exent.locutus.gui.Detached();
                 settings = new net.exent.locutus.gui.Settings();
+                help = new net.exent.locutus.gui.Help();
                 metadataPanel = new javax.swing.JPanel();
                 fileFilenameLabel = new javax.swing.JLabel();
                 miscPanel = new javax.swing.JPanel();
@@ -263,6 +264,7 @@ public class Locutus extends javax.swing.JFrame {
 
                 passwordLabel.setText("Password");
 
+                connectButton.setMnemonic('C');
                 connectButton.setText("Connect");
                 connectButton.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -270,10 +272,11 @@ public class Locutus extends javax.swing.JFrame {
                         }
                 });
 
-                cancelButton.setText("Cancel");
-                cancelButton.addActionListener(new java.awt.event.ActionListener() {
+                abortButton.setMnemonic('A');
+                abortButton.setText("Abort");
+                abortButton.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                cancelButtonActionPerformed(evt);
+                                abortButtonActionPerformed(evt);
                         }
                 });
 
@@ -308,7 +311,7 @@ public class Locutus extends javax.swing.JFrame {
                                         .addGroup(connectFrameLayout.createSequentialGroup()
                                                 .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(35, 35, 35)
-                                                .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))
+                                                .addComponent(abortButton, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))
                                         .addGroup(connectFrameLayout.createSequentialGroup()
                                                 .addGroup(connectFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                         .addComponent(passwordLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -351,7 +354,7 @@ public class Locutus extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                                 .addGroup(connectFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(abortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap())
                 );
 
@@ -452,6 +455,7 @@ public class Locutus extends javax.swing.JFrame {
 
                 settings.setMinimumSize(new java.awt.Dimension(400, 200));
                 tabPane.addTab("Settings", settings);
+                tabPane.addTab("Help", help);
 
                 getContentPane().add(tabPane, java.awt.BorderLayout.CENTER);
 
@@ -1026,6 +1030,7 @@ public class Locutus extends javax.swing.JFrame {
 
 	private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
 		try {
+			setProgress(0.0, "Not connected");
 			connectFrame.setVisible(false);
 			Database.disconnect();
 			String db = driverCombo.getSelectedItem().toString();
@@ -1045,9 +1050,9 @@ public class Locutus extends javax.swing.JFrame {
 		}
 	}//GEN-LAST:event_connectButtonActionPerformed
 
-	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+	private void abortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abortButtonActionPerformed
 		connectFrame.setVisible(false);
-	}//GEN-LAST:event_cancelButtonActionPerformed
+	}//GEN-LAST:event_abortButtonActionPerformed
 
 	private void hostTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_hostTextFieldFocusGained
 		hostTextField.selectAll();
@@ -1129,10 +1134,10 @@ public class Locutus extends javax.swing.JFrame {
 		});
 	}
         // Variables declaration - do not modify//GEN-BEGIN:variables
+        private javax.swing.JButton abortButton;
         private javax.swing.JPanel albumArtistPanel;
         private javax.swing.JPanel albumPanel;
         private javax.swing.JPanel artistPanel;
-        private javax.swing.JButton cancelButton;
         private javax.swing.JButton connectButton;
         private javax.swing.JFrame connectFrame;
         private javax.swing.JLabel databaseLabel;
@@ -1187,6 +1192,7 @@ public class Locutus extends javax.swing.JFrame {
         private static javax.swing.JTextField fileTracknumberValue;
         private javax.swing.JLabel filterLabel;
         private static javax.swing.JTextField filterTextField;
+        private net.exent.locutus.gui.Help help;
         private javax.swing.JLabel hostLabel;
         private javax.swing.JTextField hostTextField;
         private net.exent.locutus.gui.Matching matching;
