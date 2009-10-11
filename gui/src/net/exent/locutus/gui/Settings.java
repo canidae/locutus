@@ -52,35 +52,74 @@ public class Settings extends javax.swing.JPanel {
         private void initComponents() {
                 java.awt.GridBagConstraints gridBagConstraints;
 
+                weightPanel = new javax.swing.JPanel();
+                weightArtistLabel = new javax.swing.JLabel();
+                weightArtistSlider = new javax.swing.JSlider();
+                weightArtistValue = new javax.swing.JLabel();
+                weightAlbumLabel = new javax.swing.JLabel();
+                weightAlbumSlider = new javax.swing.JSlider();
+                weightAlbumValue = new javax.swing.JLabel();
+                weightTracknumberLabel = new javax.swing.JLabel();
+                weightTracknumberSlider = new javax.swing.JSlider();
+                weightTracknumberValue = new javax.swing.JLabel();
+                weightTitleLabel = new javax.swing.JLabel();
+                weightTitleSlider = new javax.swing.JSlider();
+                weightTitleValue = new javax.swing.JLabel();
+                weightDurationLabel = new javax.swing.JLabel();
+                weightDurationSlider = new javax.swing.JSlider();
+                weightDurationValue = new javax.swing.JLabel();
                 comparePanel = new javax.swing.JPanel();
-                compareArtistWeightLabel = new javax.swing.JLabel();
-                compareArtistWeightSlider = new javax.swing.JSlider();
-                compareTitleWeightLabel = new javax.swing.JLabel();
-                compareTitleWeightSlider = new javax.swing.JSlider();
-                compareAlbumWeightLabel = new javax.swing.JLabel();
-                compareAlbumWeightSlider = new javax.swing.JSlider();
-                compareTracknumberWeightLabel = new javax.swing.JLabel();
-                compareTracknumberWeightSlider = new javax.swing.JSlider();
-                compareDurationWeightLabel = new javax.swing.JLabel();
-                compareDurationWeightSlider = new javax.swing.JSlider();
                 compareCombineThresholdLabel = new javax.swing.JLabel();
                 compareCombineThresholdSlider = new javax.swing.JSlider();
+                compareCombineThresholdValue = new javax.swing.JLabel();
                 compareMaxDiffBestScoreLabel = new javax.swing.JLabel();
                 compareMaxDiffBestScoreSlider = new javax.swing.JSlider();
-                compareDurationLimitLabel = new javax.swing.JLabel();
-                compareDurationLimitSlider = new javax.swing.JSlider();
-                compareCompareRelativeScoreLabel = new javax.swing.JLabel();
-                compareCompareRelativeScoreSlider = new javax.swing.JSlider();
+                compareMaxDiffBestScoreValue = new javax.swing.JLabel();
                 compareMatchMinScoreLabel = new javax.swing.JLabel();
                 compareMatchMinScoreSlider = new javax.swing.JSlider();
+                compareMatchMinScoreValue = new javax.swing.JLabel();
+                compareCompareRelativeScoreLabel = new javax.swing.JLabel();
+                compareCompareRelativeScoreSlider = new javax.swing.JSlider();
+                compareCompareRelativeScoreValue = new javax.swing.JLabel();
+                compareDurationLimitLabel = new javax.swing.JLabel();
+                compareDurationLimitSlider = new javax.swing.JSlider();
+                compareDurationLimitValue = new javax.swing.JLabel();
+                daemonPanel = new javax.swing.JPanel();
+                daemonMaxGroupSizeLabel = new javax.swing.JLabel();
+                daemonMaxGroupSizeSlider = new javax.swing.JSlider();
+                daemonMaxGroupSizeValue = new javax.swing.JLabel();
+                daemonCacheLifetimeLabel = new javax.swing.JLabel();
+                daemonCacheLifetimeSlider = new javax.swing.JSlider();
+                daemonCacheLifetimeValue = new javax.swing.JLabel();
+                daemonRunIntervalLabel = new javax.swing.JLabel();
+                daemonRunIntervalSlider = new javax.swing.JSlider();
+                daemonRunIntervalValue = new javax.swing.JLabel();
+                daemonMusicBrainzQueryIntervalLabel = new javax.swing.JLabel();
+                daemonMusicBrainzQueryIntervalSlider = new javax.swing.JSlider();
+                daemonMusicBrainzQueryIntervalValue = new javax.swing.JLabel();
+                daemonAudioscrobblerQueryIntervalLabel = new javax.swing.JLabel();
+                daemonAudioscrobblerQueryIntervalSlider = new javax.swing.JSlider();
+                daemonAudioscrobblerQueryIntervalValue = new javax.swing.JLabel();
+                optionPanel = new javax.swing.JPanel();
                 compareDurationMustMatchCheckBox = new javax.swing.JCheckBox();
                 compareOnlySaveIfAllMatchCheckBox = new javax.swing.JCheckBox();
                 compareOnlySaveCompleteAlbumsCheckBox = new javax.swing.JCheckBox();
                 compareAllowGroupDuplicatesCheckBox = new javax.swing.JCheckBox();
                 musicBrainzLookupMBIDCheckBox = new javax.swing.JCheckBox();
+                daemonDryRunCheckBox = new javax.swing.JCheckBox();
+                daemonCombineGroupsCheckBox = new javax.swing.JCheckBox();
+                audioscrobblerLookupGenreCheckBox = new javax.swing.JCheckBox();
                 locationPanel = new javax.swing.JPanel();
                 inputDirectoryLabel = new javax.swing.JLabel();
                 inputDirectoryTextField = new javax.swing.JTextField();
+                musicBrainzSearchURLLabel = new javax.swing.JLabel();
+                musicBrainzSearchURLTextField = new javax.swing.JTextField();
+                musicBrainzReleaseURLLabel = new javax.swing.JLabel();
+                musicBrainzReleaseURLTextField = new javax.swing.JTextField();
+                audioscrobblerArtistURLLabel = new javax.swing.JLabel();
+                audioscrobblerArtistURLTextField = new javax.swing.JTextField();
+                audioscrobblerTrackURLLabel = new javax.swing.JLabel();
+                audioscrobblerTrackURLTextField = new javax.swing.JTextField();
                 outputDirectoryLabel = new javax.swing.JLabel();
                 outputDirectoryTextField = new javax.swing.JTextField();
                 duplicateDirectoryLabel = new javax.swing.JLabel();
@@ -89,29 +128,6 @@ public class Settings extends javax.swing.JPanel {
                 filenameFormatTextField = new javax.swing.JTextField();
                 filenameIllegalCharactersLabel = new javax.swing.JLabel();
                 filenameIllegalCharactersTextField = new javax.swing.JTextField();
-                lookupPanel = new javax.swing.JPanel();
-                musicBrainzSearchURLLabel = new javax.swing.JLabel();
-                musicBrainzSearchURLTextField = new javax.swing.JTextField();
-                musicBrainzReleaseURLLabel = new javax.swing.JLabel();
-                musicBrainzReleaseURLTextField = new javax.swing.JTextField();
-                musicBrainzQueryIntervalLabel = new javax.swing.JLabel();
-                musicBrainzQueryIntervalSlider = new javax.swing.JSlider();
-                audioscrobblerQueryIntervalSlider = new javax.swing.JSlider();
-                audioscrobblerQueryIntervalLabel = new javax.swing.JLabel();
-                audioscrobblerArtistURLLabel = new javax.swing.JLabel();
-                audioscrobblerArtistURLTextField = new javax.swing.JTextField();
-                audioscrobblerTrackURLTextField = new javax.swing.JTextField();
-                audioscrobblerTrackURLLabel = new javax.swing.JLabel();
-                audioscrobblerLookupGenreCheckBox = new javax.swing.JCheckBox();
-                daemonPanel = new javax.swing.JPanel();
-                daemonDryRunCheckBox = new javax.swing.JCheckBox();
-                daemonCombineGroupsCheckBox = new javax.swing.JCheckBox();
-                daemonMaxGroupSizeLabel = new javax.swing.JLabel();
-                daemonMaxGroupSizeSlider = new javax.swing.JSlider();
-                daemonAlbumCacheLifetimeLabel = new javax.swing.JLabel();
-                daemonAlbumCacheLifetimeSlider = new javax.swing.JSlider();
-                daemonRunIntervalLabel = new javax.swing.JLabel();
-                daemonRunIntervalSlider = new javax.swing.JSlider();
                 otherSettingsPanel = new javax.swing.JPanel();
                 otherSettingsScrollPane = new javax.swing.JScrollPane();
                 otherSettingsTable = new javax.swing.JTable();
@@ -128,129 +144,196 @@ public class Settings extends javax.swing.JPanel {
                 });
                 setLayout(new java.awt.GridBagLayout());
 
+                weightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Weight"));
+                weightPanel.setLayout(new java.awt.GridBagLayout());
+
+                weightArtistLabel.setText("Artist:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightArtistLabel, gridBagConstraints);
+
+                weightArtistSlider.setMajorTickSpacing(1);
+                weightArtistSlider.setMaximum(500);
+                weightArtistSlider.setMinimum(1);
+                weightArtistSlider.setSnapToTicks(true);
+                weightArtistSlider.setValue(100);
+                weightArtistSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightArtistSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                weightArtistSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightArtistSlider, gridBagConstraints);
+
+                weightArtistValue.setText("100");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightArtistValue, gridBagConstraints);
+
+                weightAlbumLabel.setText("Album:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightAlbumLabel, gridBagConstraints);
+
+                weightAlbumSlider.setMajorTickSpacing(1);
+                weightAlbumSlider.setMaximum(500);
+                weightAlbumSlider.setMinimum(1);
+                weightAlbumSlider.setSnapToTicks(true);
+                weightAlbumSlider.setValue(100);
+                weightAlbumSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightAlbumSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                weightAlbumSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightAlbumSlider, gridBagConstraints);
+
+                weightAlbumValue.setText("100");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightAlbumValue, gridBagConstraints);
+
+                weightTracknumberLabel.setText("Tracknumber:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightTracknumberLabel, gridBagConstraints);
+
+                weightTracknumberSlider.setMajorTickSpacing(1);
+                weightTracknumberSlider.setMaximum(500);
+                weightTracknumberSlider.setMinimum(1);
+                weightTracknumberSlider.setSnapToTicks(true);
+                weightTracknumberSlider.setValue(100);
+                weightTracknumberSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightTracknumberSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                weightTracknumberSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightTracknumberSlider, gridBagConstraints);
+
+                weightTracknumberValue.setText("100");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightTracknumberValue, gridBagConstraints);
+
+                weightTitleLabel.setText("Title:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightTitleLabel, gridBagConstraints);
+
+                weightTitleSlider.setMajorTickSpacing(1);
+                weightTitleSlider.setMaximum(500);
+                weightTitleSlider.setMinimum(1);
+                weightTitleSlider.setSnapToTicks(true);
+                weightTitleSlider.setValue(100);
+                weightTitleSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightTitleSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                weightTitleSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightTitleSlider, gridBagConstraints);
+
+                weightTitleValue.setText("100");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightTitleValue, gridBagConstraints);
+
+                weightDurationLabel.setText("Duration:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightDurationLabel, gridBagConstraints);
+
+                weightDurationSlider.setMajorTickSpacing(1);
+                weightDurationSlider.setMaximum(500);
+                weightDurationSlider.setMinimum(1);
+                weightDurationSlider.setSnapToTicks(true);
+                weightDurationSlider.setValue(100);
+                weightDurationSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightDurationSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                weightDurationSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightDurationSlider, gridBagConstraints);
+
+                weightDurationValue.setText("100");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                weightPanel.add(weightDurationValue, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                add(weightPanel, gridBagConstraints);
+
                 comparePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Compare"));
                 comparePanel.setLayout(new java.awt.GridBagLayout());
 
-                compareArtistWeightLabel.setText("Artist weight:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareArtistWeightLabel, gridBagConstraints);
-
-                compareArtistWeightSlider.setMajorTickSpacing(1);
-                compareArtistWeightSlider.setMaximum(500);
-                compareArtistWeightSlider.setMinimum(1);
-                compareArtistWeightSlider.setSnapToTicks(true);
-                compareArtistWeightSlider.setValue(100);
-                compareArtistWeightSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareArtistWeightSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareArtistWeightSlider, gridBagConstraints);
-
-                compareTitleWeightLabel.setText("Title weight:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareTitleWeightLabel, gridBagConstraints);
-
-                compareTitleWeightSlider.setMajorTickSpacing(1);
-                compareTitleWeightSlider.setMaximum(500);
-                compareTitleWeightSlider.setMinimum(1);
-                compareTitleWeightSlider.setSnapToTicks(true);
-                compareTitleWeightSlider.setValue(100);
-                compareTitleWeightSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareTitleWeightSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareTitleWeightSlider, gridBagConstraints);
-
-                compareAlbumWeightLabel.setText("Album weight:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareAlbumWeightLabel, gridBagConstraints);
-
-                compareAlbumWeightSlider.setMajorTickSpacing(1);
-                compareAlbumWeightSlider.setMaximum(500);
-                compareAlbumWeightSlider.setMinimum(1);
-                compareAlbumWeightSlider.setSnapToTicks(true);
-                compareAlbumWeightSlider.setValue(100);
-                compareAlbumWeightSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareAlbumWeightSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareAlbumWeightSlider, gridBagConstraints);
-
-                compareTracknumberWeightLabel.setText("Tracknumber weight:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareTracknumberWeightLabel, gridBagConstraints);
-
-                compareTracknumberWeightSlider.setMajorTickSpacing(1);
-                compareTracknumberWeightSlider.setMaximum(500);
-                compareTracknumberWeightSlider.setMinimum(1);
-                compareTracknumberWeightSlider.setSnapToTicks(true);
-                compareTracknumberWeightSlider.setValue(100);
-                compareTracknumberWeightSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareTracknumberWeightSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareTracknumberWeightSlider, gridBagConstraints);
-
-                compareDurationWeightLabel.setText("Duration weight:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareDurationWeightLabel, gridBagConstraints);
-
-                compareDurationWeightSlider.setMajorTickSpacing(1);
-                compareDurationWeightSlider.setMaximum(500);
-                compareDurationWeightSlider.setMinimum(1);
-                compareDurationWeightSlider.setSnapToTicks(true);
-                compareDurationWeightSlider.setValue(100);
-                compareDurationWeightSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareDurationWeightSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareDurationWeightSlider, gridBagConstraints);
-
                 compareCombineThresholdLabel.setText("Combine threshold:");
                 gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareCombineThresholdLabel, gridBagConstraints);
 
@@ -258,18 +341,31 @@ public class Settings extends javax.swing.JPanel {
                 compareCombineThresholdSlider.setSnapToTicks(true);
                 compareCombineThresholdSlider.setMaximumSize(new java.awt.Dimension(200, 42));
                 compareCombineThresholdSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareCombineThresholdSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                compareCombineThresholdSliderStateChanged(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 0;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareCombineThresholdSlider, gridBagConstraints);
 
+                compareCombineThresholdValue.setText("50");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                comparePanel.add(compareCombineThresholdValue, gridBagConstraints);
+
                 compareMaxDiffBestScoreLabel.setText("Max diff best score:");
                 gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareMaxDiffBestScoreLabel, gridBagConstraints);
 
@@ -277,20 +373,101 @@ public class Settings extends javax.swing.JPanel {
                 compareMaxDiffBestScoreSlider.setSnapToTicks(true);
                 compareMaxDiffBestScoreSlider.setMaximumSize(new java.awt.Dimension(200, 42));
                 compareMaxDiffBestScoreSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareMaxDiffBestScoreSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                compareMaxDiffBestScoreSliderStateChanged(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareMaxDiffBestScoreSlider, gridBagConstraints);
 
-                compareDurationLimitLabel.setText("Duration limit:");
+                compareMaxDiffBestScoreValue.setText("50");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                comparePanel.add(compareMaxDiffBestScoreValue, gridBagConstraints);
+
+                compareMatchMinScoreLabel.setText("Match min score:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                comparePanel.add(compareMatchMinScoreLabel, gridBagConstraints);
+
+                compareMatchMinScoreSlider.setMajorTickSpacing(1);
+                compareMatchMinScoreSlider.setSnapToTicks(true);
+                compareMatchMinScoreSlider.setMaximumSize(new java.awt.Dimension(200, 42));
+                compareMatchMinScoreSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareMatchMinScoreSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                compareMatchMinScoreSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                comparePanel.add(compareMatchMinScoreSlider, gridBagConstraints);
+
+                compareMatchMinScoreValue.setText("50");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                comparePanel.add(compareMatchMinScoreValue, gridBagConstraints);
+
+                compareCompareRelativeScoreLabel.setText("Compare relative score:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                comparePanel.add(compareCompareRelativeScoreLabel, gridBagConstraints);
+
+                compareCompareRelativeScoreSlider.setMajorTickSpacing(1);
+                compareCompareRelativeScoreSlider.setSnapToTicks(true);
+                compareCompareRelativeScoreSlider.setMaximumSize(new java.awt.Dimension(200, 42));
+                compareCompareRelativeScoreSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareCompareRelativeScoreSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                compareCompareRelativeScoreSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                comparePanel.add(compareCompareRelativeScoreSlider, gridBagConstraints);
+
+                compareCompareRelativeScoreValue.setText("50");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                comparePanel.add(compareCompareRelativeScoreValue, gridBagConstraints);
+
+                compareDurationLimitLabel.setText("Duration limit:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 4;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareDurationLimitLabel, gridBagConstraints);
 
@@ -300,110 +477,301 @@ public class Settings extends javax.swing.JPanel {
                 compareDurationLimitSlider.setValue(15000);
                 compareDurationLimitSlider.setMaximumSize(new java.awt.Dimension(200, 42));
                 compareDurationLimitSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareDurationLimitSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                compareDurationLimitSliderStateChanged(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 4;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareDurationLimitSlider, gridBagConstraints);
 
-                compareCompareRelativeScoreLabel.setText("Compare relative score:");
+                compareDurationLimitValue.setText("15000");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareCompareRelativeScoreLabel, gridBagConstraints);
-
-                compareCompareRelativeScoreSlider.setMajorTickSpacing(1);
-                compareCompareRelativeScoreSlider.setSnapToTicks(true);
-                compareCompareRelativeScoreSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareCompareRelativeScoreSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 3;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareCompareRelativeScoreSlider, gridBagConstraints);
-
-                compareMatchMinScoreLabel.setText("Match min score:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareMatchMinScoreLabel, gridBagConstraints);
-
-                compareMatchMinScoreSlider.setMajorTickSpacing(1);
-                compareMatchMinScoreSlider.setSnapToTicks(true);
-                compareMatchMinScoreSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareMatchMinScoreSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 3;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareMatchMinScoreSlider, gridBagConstraints);
-
-                compareDurationMustMatchCheckBox.setText("Duration must match");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 4;
-                gridBagConstraints.gridy = 0;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareDurationMustMatchCheckBox, gridBagConstraints);
-
-                compareOnlySaveIfAllMatchCheckBox.setText("Only save if all match");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 4;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareOnlySaveIfAllMatchCheckBox, gridBagConstraints);
-
-                compareOnlySaveCompleteAlbumsCheckBox.setText("Only save complete albums");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 4;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareOnlySaveCompleteAlbumsCheckBox, gridBagConstraints);
-
-                compareAllowGroupDuplicatesCheckBox.setText("Allow group duplicates");
-                compareAllowGroupDuplicatesCheckBox.setMaximumSize(new java.awt.Dimension(200, 21));
-                compareAllowGroupDuplicatesCheckBox.setMinimumSize(new java.awt.Dimension(200, 21));
-                compareAllowGroupDuplicatesCheckBox.setPreferredSize(new java.awt.Dimension(200, 21));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 4;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(compareAllowGroupDuplicatesCheckBox, gridBagConstraints);
-
-                musicBrainzLookupMBIDCheckBox.setText("Lookup MBID");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 4;
                 gridBagConstraints.gridy = 4;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                comparePanel.add(musicBrainzLookupMBIDCheckBox, gridBagConstraints);
+                comparePanel.add(compareDurationLimitValue, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
-                gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 add(comparePanel, gridBagConstraints);
 
-                locationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Locations"));
+                daemonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Daemon"));
+                daemonPanel.setLayout(new java.awt.GridBagLayout());
+
+                daemonMaxGroupSizeLabel.setText("Max group size:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonMaxGroupSizeLabel, gridBagConstraints);
+
+                daemonMaxGroupSizeSlider.setMajorTickSpacing(1);
+                daemonMaxGroupSizeSlider.setMaximum(2000);
+                daemonMaxGroupSizeSlider.setMinimum(1);
+                daemonMaxGroupSizeSlider.setSnapToTicks(true);
+                daemonMaxGroupSizeSlider.setMaximumSize(new java.awt.Dimension(200, 42));
+                daemonMaxGroupSizeSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonMaxGroupSizeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                daemonMaxGroupSizeSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonMaxGroupSizeSlider, gridBagConstraints);
+
+                daemonMaxGroupSizeValue.setText("50");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonMaxGroupSizeValue, gridBagConstraints);
+
+                daemonCacheLifetimeLabel.setText("Cache lifetime:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonCacheLifetimeLabel, gridBagConstraints);
+
+                daemonCacheLifetimeSlider.setMajorTickSpacing(1);
+                daemonCacheLifetimeSlider.setMaximum(12);
+                daemonCacheLifetimeSlider.setMinimum(1);
+                daemonCacheLifetimeSlider.setSnapToTicks(true);
+                daemonCacheLifetimeSlider.setValue(3);
+                daemonCacheLifetimeSlider.setMaximumSize(new java.awt.Dimension(200, 42));
+                daemonCacheLifetimeSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonCacheLifetimeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                daemonCacheLifetimeSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonCacheLifetimeSlider, gridBagConstraints);
+
+                daemonCacheLifetimeValue.setText("3");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonCacheLifetimeValue, gridBagConstraints);
+
+                daemonRunIntervalLabel.setText("Run interval:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonRunIntervalLabel, gridBagConstraints);
+
+                daemonRunIntervalSlider.setMajorTickSpacing(1);
+                daemonRunIntervalSlider.setMaximum(31);
+                daemonRunIntervalSlider.setMinimum(1);
+                daemonRunIntervalSlider.setSnapToTicks(true);
+                daemonRunIntervalSlider.setValue(7);
+                daemonRunIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
+                daemonRunIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonRunIntervalSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                daemonRunIntervalSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonRunIntervalSlider, gridBagConstraints);
+
+                daemonRunIntervalValue.setText("7");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonRunIntervalValue, gridBagConstraints);
+
+                daemonMusicBrainzQueryIntervalLabel.setText("MusicBrainz query interval:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonMusicBrainzQueryIntervalLabel, gridBagConstraints);
+
+                daemonMusicBrainzQueryIntervalSlider.setMajorTickSpacing(1);
+                daemonMusicBrainzQueryIntervalSlider.setMaximum(60);
+                daemonMusicBrainzQueryIntervalSlider.setMinimum(1);
+                daemonMusicBrainzQueryIntervalSlider.setSnapToTicks(true);
+                daemonMusicBrainzQueryIntervalSlider.setValue(3);
+                daemonMusicBrainzQueryIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
+                daemonMusicBrainzQueryIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonMusicBrainzQueryIntervalSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                daemonMusicBrainzQueryIntervalSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonMusicBrainzQueryIntervalSlider, gridBagConstraints);
+
+                daemonMusicBrainzQueryIntervalValue.setText("3");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonMusicBrainzQueryIntervalValue, gridBagConstraints);
+
+                daemonAudioscrobblerQueryIntervalLabel.setText("Audioscrobbler query interval:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonAudioscrobblerQueryIntervalLabel, gridBagConstraints);
+
+                daemonAudioscrobblerQueryIntervalSlider.setMajorTickSpacing(1);
+                daemonAudioscrobblerQueryIntervalSlider.setMaximum(60);
+                daemonAudioscrobblerQueryIntervalSlider.setMinimum(1);
+                daemonAudioscrobblerQueryIntervalSlider.setSnapToTicks(true);
+                daemonAudioscrobblerQueryIntervalSlider.setValue(3);
+                daemonAudioscrobblerQueryIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
+                daemonAudioscrobblerQueryIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonAudioscrobblerQueryIntervalSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+                        public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                                daemonAudioscrobblerQueryIntervalSliderStateChanged(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonAudioscrobblerQueryIntervalSlider, gridBagConstraints);
+
+                daemonAudioscrobblerQueryIntervalValue.setText("3");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                daemonPanel.add(daemonAudioscrobblerQueryIntervalValue, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.weightx = 1.0;
+                add(daemonPanel, gridBagConstraints);
+
+                optionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
+                optionPanel.setLayout(new java.awt.GridBagLayout());
+
+                compareDurationMustMatchCheckBox.setText("Duration must match");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(compareDurationMustMatchCheckBox, gridBagConstraints);
+
+                compareOnlySaveIfAllMatchCheckBox.setText("Only save if all files in group match");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(compareOnlySaveIfAllMatchCheckBox, gridBagConstraints);
+
+                compareOnlySaveCompleteAlbumsCheckBox.setText("Only save complete albums");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(compareOnlySaveCompleteAlbumsCheckBox, gridBagConstraints);
+
+                compareAllowGroupDuplicatesCheckBox.setText("Allow duplicate files in group");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(compareAllowGroupDuplicatesCheckBox, gridBagConstraints);
+
+                musicBrainzLookupMBIDCheckBox.setText("Lookup MBID");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 6;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(musicBrainzLookupMBIDCheckBox, gridBagConstraints);
+
+                daemonDryRunCheckBox.setText("Dry run");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(daemonDryRunCheckBox, gridBagConstraints);
+
+                daemonCombineGroupsCheckBox.setText("Combine groups");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(daemonCombineGroupsCheckBox, gridBagConstraints);
+
+                audioscrobblerLookupGenreCheckBox.setText("Lookup genre");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 7;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(audioscrobblerLookupGenreCheckBox, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                add(optionPanel, gridBagConstraints);
+
+                locationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Locations & formatting"));
                 locationPanel.setLayout(new java.awt.GridBagLayout());
 
                 inputDirectoryLabel.setText("Input directory:");
@@ -416,6 +784,66 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 locationPanel.add(inputDirectoryTextField, gridBagConstraints);
+
+                musicBrainzSearchURLLabel.setText("MusicBrainz search URL:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 7;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                locationPanel.add(musicBrainzSearchURLLabel, gridBagConstraints);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 7;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                locationPanel.add(musicBrainzSearchURLTextField, gridBagConstraints);
+
+                musicBrainzReleaseURLLabel.setText("MusicBrainz release URL:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 8;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                locationPanel.add(musicBrainzReleaseURLLabel, gridBagConstraints);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 8;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                locationPanel.add(musicBrainzReleaseURLTextField, gridBagConstraints);
+
+                audioscrobblerArtistURLLabel.setText("Audioscrobbler artist URL:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 6;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                locationPanel.add(audioscrobblerArtistURLLabel, gridBagConstraints);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 6;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                locationPanel.add(audioscrobblerArtistURLTextField, gridBagConstraints);
+
+                audioscrobblerTrackURLLabel.setText("Audioscrobbler track URL:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                locationPanel.add(audioscrobblerTrackURLLabel, gridBagConstraints);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                locationPanel.add(audioscrobblerTrackURLTextField, gridBagConstraints);
 
                 outputDirectoryLabel.setText("Output directory:");
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -480,231 +908,12 @@ public class Settings extends javax.swing.JPanel {
                 locationPanel.add(filenameIllegalCharactersTextField, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.weightx = 1.0;
-                add(locationPanel, gridBagConstraints);
-
-                lookupPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("MusicBrainz & Audioscrobbler"));
-                lookupPanel.setLayout(new java.awt.GridBagLayout());
-
-                musicBrainzSearchURLLabel.setText("MusicBrainz search URL:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(musicBrainzSearchURLLabel, gridBagConstraints);
-                gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(musicBrainzSearchURLTextField, gridBagConstraints);
-
-                musicBrainzReleaseURLLabel.setText("MusicBrainz release URL:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(musicBrainzReleaseURLLabel, gridBagConstraints);
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(musicBrainzReleaseURLTextField, gridBagConstraints);
-
-                musicBrainzQueryIntervalLabel.setText("MusicBrainz query interval:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(musicBrainzQueryIntervalLabel, gridBagConstraints);
-
-                musicBrainzQueryIntervalSlider.setMajorTickSpacing(1);
-                musicBrainzQueryIntervalSlider.setMaximum(60);
-                musicBrainzQueryIntervalSlider.setMinimum(1);
-                musicBrainzQueryIntervalSlider.setSnapToTicks(true);
-                musicBrainzQueryIntervalSlider.setValue(3);
-                musicBrainzQueryIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                musicBrainzQueryIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(musicBrainzQueryIntervalSlider, gridBagConstraints);
-
-                audioscrobblerQueryIntervalSlider.setMajorTickSpacing(1);
-                audioscrobblerQueryIntervalSlider.setMaximum(60);
-                audioscrobblerQueryIntervalSlider.setMinimum(1);
-                audioscrobblerQueryIntervalSlider.setSnapToTicks(true);
-                audioscrobblerQueryIntervalSlider.setValue(3);
-                audioscrobblerQueryIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                audioscrobblerQueryIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 7;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(audioscrobblerQueryIntervalSlider, gridBagConstraints);
-
-                audioscrobblerQueryIntervalLabel.setText("Audioscrobbler query interval:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 7;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(audioscrobblerQueryIntervalLabel, gridBagConstraints);
-
-                audioscrobblerArtistURLLabel.setText("Audioscrobbler artist URL:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 6;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(audioscrobblerArtistURLLabel, gridBagConstraints);
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 6;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(audioscrobblerArtistURLTextField, gridBagConstraints);
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 5;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(audioscrobblerTrackURLTextField, gridBagConstraints);
-
-                audioscrobblerTrackURLLabel.setText("Audioscrobbler track URL:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 5;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(audioscrobblerTrackURLLabel, gridBagConstraints);
-
-                audioscrobblerLookupGenreCheckBox.setText("Lookup genre");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                lookupPanel.add(audioscrobblerLookupGenreCheckBox, gridBagConstraints);
-
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
                 gridBagConstraints.weightx = 1.0;
-                add(lookupPanel, gridBagConstraints);
-
-                daemonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Daemon"));
-                daemonPanel.setLayout(new java.awt.GridBagLayout());
-
-                daemonDryRunCheckBox.setText("Dry run");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                daemonPanel.add(daemonDryRunCheckBox, gridBagConstraints);
-
-                daemonCombineGroupsCheckBox.setText("Combine groups");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                daemonPanel.add(daemonCombineGroupsCheckBox, gridBagConstraints);
-
-                daemonMaxGroupSizeLabel.setText("Max group size:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                daemonPanel.add(daemonMaxGroupSizeLabel, gridBagConstraints);
-
-                daemonMaxGroupSizeSlider.setMajorTickSpacing(1);
-                daemonMaxGroupSizeSlider.setMaximum(2000);
-                daemonMaxGroupSizeSlider.setMinimum(1);
-                daemonMaxGroupSizeSlider.setSnapToTicks(true);
-                daemonMaxGroupSizeSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                daemonMaxGroupSizeSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                daemonPanel.add(daemonMaxGroupSizeSlider, gridBagConstraints);
-
-                daemonAlbumCacheLifetimeLabel.setText("Album cache lifetime:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                daemonPanel.add(daemonAlbumCacheLifetimeLabel, gridBagConstraints);
-
-                daemonAlbumCacheLifetimeSlider.setMajorTickSpacing(1);
-                daemonAlbumCacheLifetimeSlider.setMaximum(12);
-                daemonAlbumCacheLifetimeSlider.setMinimum(1);
-                daemonAlbumCacheLifetimeSlider.setSnapToTicks(true);
-                daemonAlbumCacheLifetimeSlider.setValue(3);
-                daemonAlbumCacheLifetimeSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                daemonAlbumCacheLifetimeSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                daemonPanel.add(daemonAlbumCacheLifetimeSlider, gridBagConstraints);
-
-                daemonRunIntervalLabel.setText("Run interval:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                daemonPanel.add(daemonRunIntervalLabel, gridBagConstraints);
-
-                daemonRunIntervalSlider.setMajorTickSpacing(1);
-                daemonRunIntervalSlider.setMaximum(31);
-                daemonRunIntervalSlider.setMinimum(1);
-                daemonRunIntervalSlider.setSnapToTicks(true);
-                daemonRunIntervalSlider.setValue(7);
-                daemonRunIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                daemonRunIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                daemonPanel.add(daemonRunIntervalSlider, gridBagConstraints);
-
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.weightx = 1.0;
-                add(daemonPanel, gridBagConstraints);
+                add(locationPanel, gridBagConstraints);
 
                 otherSettingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other settings"));
                 otherSettingsPanel.setLayout(new javax.swing.BoxLayout(otherSettingsPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -731,8 +940,8 @@ public class Settings extends javax.swing.JPanel {
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.gridwidth = 2;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
@@ -747,48 +956,110 @@ public class Settings extends javax.swing.JPanel {
     private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
 	    Locutus.showMetadata();
     }//GEN-LAST:event_formComponentHidden
+
+    private void weightDurationSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_weightDurationSliderStateChanged
+	    weightDurationValue.setText("" + weightDurationSlider.getValue());
+    }//GEN-LAST:event_weightDurationSliderStateChanged
+
+    private void weightTitleSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_weightTitleSliderStateChanged
+	    weightTitleValue.setText("" + weightTitleSlider.getValue());
+    }//GEN-LAST:event_weightTitleSliderStateChanged
+
+    private void weightTracknumberSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_weightTracknumberSliderStateChanged
+	    weightTracknumberValue.setText("" + weightTracknumberSlider.getValue());
+    }//GEN-LAST:event_weightTracknumberSliderStateChanged
+
+    private void weightAlbumSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_weightAlbumSliderStateChanged
+	    weightAlbumValue.setText("" + weightAlbumSlider.getValue());
+    }//GEN-LAST:event_weightAlbumSliderStateChanged
+
+    private void weightArtistSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_weightArtistSliderStateChanged
+	    weightArtistValue.setText("" + weightArtistSlider.getValue());
+    }//GEN-LAST:event_weightArtistSliderStateChanged
+
+    private void compareDurationLimitSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareDurationLimitSliderStateChanged
+	    compareDurationLimitValue.setText("" + compareDurationLimitSlider.getValue());
+    }//GEN-LAST:event_compareDurationLimitSliderStateChanged
+
+    private void compareCompareRelativeScoreSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareCompareRelativeScoreSliderStateChanged
+	    compareCompareRelativeScoreValue.setText("" + compareCompareRelativeScoreSlider.getValue());
+    }//GEN-LAST:event_compareCompareRelativeScoreSliderStateChanged
+
+    private void compareMatchMinScoreSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareMatchMinScoreSliderStateChanged
+	    compareMatchMinScoreValue.setText("" + compareMatchMinScoreSlider.getValue());
+    }//GEN-LAST:event_compareMatchMinScoreSliderStateChanged
+
+    private void compareMaxDiffBestScoreSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareMaxDiffBestScoreSliderStateChanged
+	    compareMaxDiffBestScoreValue.setText("" + compareMaxDiffBestScoreSlider.getValue());
+    }//GEN-LAST:event_compareMaxDiffBestScoreSliderStateChanged
+
+    private void compareCombineThresholdSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareCombineThresholdSliderStateChanged
+	    compareCombineThresholdValue.setText("" + compareCombineThresholdSlider.getValue());
+    }//GEN-LAST:event_compareCombineThresholdSliderStateChanged
+
+    private void daemonAudioscrobblerQueryIntervalSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonAudioscrobblerQueryIntervalSliderStateChanged
+	    daemonAudioscrobblerQueryIntervalValue.setText("" + daemonAudioscrobblerQueryIntervalSlider.getValue());
+    }//GEN-LAST:event_daemonAudioscrobblerQueryIntervalSliderStateChanged
+
+    private void daemonMusicBrainzQueryIntervalSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonMusicBrainzQueryIntervalSliderStateChanged
+	    daemonMusicBrainzQueryIntervalValue.setText("" + daemonMusicBrainzQueryIntervalSlider.getValue());
+    }//GEN-LAST:event_daemonMusicBrainzQueryIntervalSliderStateChanged
+
+    private void daemonRunIntervalSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonRunIntervalSliderStateChanged
+	    daemonRunIntervalValue.setText("" + daemonRunIntervalSlider.getValue());
+    }//GEN-LAST:event_daemonRunIntervalSliderStateChanged
+
+    private void daemonCacheLifetimeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonCacheLifetimeSliderStateChanged
+	    daemonCacheLifetimeValue.setText("" + daemonCacheLifetimeSlider.getValue());
+    }//GEN-LAST:event_daemonCacheLifetimeSliderStateChanged
+
+    private void daemonMaxGroupSizeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonMaxGroupSizeSliderStateChanged
+	    daemonMaxGroupSizeValue.setText("" + daemonMaxGroupSizeSlider.getValue());
+    }//GEN-LAST:event_daemonMaxGroupSizeSliderStateChanged
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel audioscrobblerArtistURLLabel;
         private javax.swing.JTextField audioscrobblerArtistURLTextField;
         private javax.swing.JCheckBox audioscrobblerLookupGenreCheckBox;
-        private javax.swing.JLabel audioscrobblerQueryIntervalLabel;
-        private javax.swing.JSlider audioscrobblerQueryIntervalSlider;
         private javax.swing.JLabel audioscrobblerTrackURLLabel;
         private javax.swing.JTextField audioscrobblerTrackURLTextField;
-        private javax.swing.JLabel compareAlbumWeightLabel;
-        private javax.swing.JSlider compareAlbumWeightSlider;
         private javax.swing.JCheckBox compareAllowGroupDuplicatesCheckBox;
-        private javax.swing.JLabel compareArtistWeightLabel;
-        private javax.swing.JSlider compareArtistWeightSlider;
         private javax.swing.JLabel compareCombineThresholdLabel;
         private javax.swing.JSlider compareCombineThresholdSlider;
+        private javax.swing.JLabel compareCombineThresholdValue;
         private javax.swing.JLabel compareCompareRelativeScoreLabel;
         private javax.swing.JSlider compareCompareRelativeScoreSlider;
+        private javax.swing.JLabel compareCompareRelativeScoreValue;
         private javax.swing.JLabel compareDurationLimitLabel;
         private javax.swing.JSlider compareDurationLimitSlider;
+        private javax.swing.JLabel compareDurationLimitValue;
         private javax.swing.JCheckBox compareDurationMustMatchCheckBox;
-        private javax.swing.JLabel compareDurationWeightLabel;
-        private javax.swing.JSlider compareDurationWeightSlider;
         private javax.swing.JLabel compareMatchMinScoreLabel;
         private javax.swing.JSlider compareMatchMinScoreSlider;
+        private javax.swing.JLabel compareMatchMinScoreValue;
         private javax.swing.JLabel compareMaxDiffBestScoreLabel;
         private javax.swing.JSlider compareMaxDiffBestScoreSlider;
+        private javax.swing.JLabel compareMaxDiffBestScoreValue;
         private javax.swing.JCheckBox compareOnlySaveCompleteAlbumsCheckBox;
         private javax.swing.JCheckBox compareOnlySaveIfAllMatchCheckBox;
         private javax.swing.JPanel comparePanel;
-        private javax.swing.JLabel compareTitleWeightLabel;
-        private javax.swing.JSlider compareTitleWeightSlider;
-        private javax.swing.JLabel compareTracknumberWeightLabel;
-        private javax.swing.JSlider compareTracknumberWeightSlider;
-        private javax.swing.JLabel daemonAlbumCacheLifetimeLabel;
-        private javax.swing.JSlider daemonAlbumCacheLifetimeSlider;
+        private javax.swing.JLabel daemonAudioscrobblerQueryIntervalLabel;
+        private javax.swing.JSlider daemonAudioscrobblerQueryIntervalSlider;
+        private javax.swing.JLabel daemonAudioscrobblerQueryIntervalValue;
+        private javax.swing.JLabel daemonCacheLifetimeLabel;
+        private javax.swing.JSlider daemonCacheLifetimeSlider;
+        private javax.swing.JLabel daemonCacheLifetimeValue;
         private javax.swing.JCheckBox daemonCombineGroupsCheckBox;
         private javax.swing.JCheckBox daemonDryRunCheckBox;
         private javax.swing.JLabel daemonMaxGroupSizeLabel;
         private javax.swing.JSlider daemonMaxGroupSizeSlider;
+        private javax.swing.JLabel daemonMaxGroupSizeValue;
+        private javax.swing.JLabel daemonMusicBrainzQueryIntervalLabel;
+        private javax.swing.JSlider daemonMusicBrainzQueryIntervalSlider;
+        private javax.swing.JLabel daemonMusicBrainzQueryIntervalValue;
         private javax.swing.JPanel daemonPanel;
         private javax.swing.JLabel daemonRunIntervalLabel;
         private javax.swing.JSlider daemonRunIntervalSlider;
+        private javax.swing.JLabel daemonRunIntervalValue;
         private javax.swing.JLabel duplicateDirectoryLabel;
         private javax.swing.JTextField duplicateDirectoryTextField;
         private javax.swing.JLabel filenameFormatLabel;
@@ -798,18 +1069,32 @@ public class Settings extends javax.swing.JPanel {
         private javax.swing.JLabel inputDirectoryLabel;
         private javax.swing.JTextField inputDirectoryTextField;
         private javax.swing.JPanel locationPanel;
-        private javax.swing.JPanel lookupPanel;
         private javax.swing.JCheckBox musicBrainzLookupMBIDCheckBox;
-        private javax.swing.JLabel musicBrainzQueryIntervalLabel;
-        private javax.swing.JSlider musicBrainzQueryIntervalSlider;
         private javax.swing.JLabel musicBrainzReleaseURLLabel;
         private javax.swing.JTextField musicBrainzReleaseURLTextField;
         private javax.swing.JLabel musicBrainzSearchURLLabel;
         private javax.swing.JTextField musicBrainzSearchURLTextField;
+        private javax.swing.JPanel optionPanel;
         private javax.swing.JPanel otherSettingsPanel;
         private javax.swing.JScrollPane otherSettingsScrollPane;
         private javax.swing.JTable otherSettingsTable;
         private javax.swing.JLabel outputDirectoryLabel;
         private javax.swing.JTextField outputDirectoryTextField;
+        private javax.swing.JLabel weightAlbumLabel;
+        private javax.swing.JSlider weightAlbumSlider;
+        private javax.swing.JLabel weightAlbumValue;
+        private javax.swing.JLabel weightArtistLabel;
+        private javax.swing.JSlider weightArtistSlider;
+        private javax.swing.JLabel weightArtistValue;
+        private javax.swing.JLabel weightDurationLabel;
+        private javax.swing.JSlider weightDurationSlider;
+        private javax.swing.JLabel weightDurationValue;
+        private javax.swing.JPanel weightPanel;
+        private javax.swing.JLabel weightTitleLabel;
+        private javax.swing.JSlider weightTitleSlider;
+        private javax.swing.JLabel weightTitleValue;
+        private javax.swing.JLabel weightTracknumberLabel;
+        private javax.swing.JSlider weightTracknumberSlider;
+        private javax.swing.JLabel weightTracknumberValue;
         // End of variables declaration//GEN-END:variables
 }
