@@ -202,7 +202,6 @@ public class Matching extends javax.swing.JPanel {
 	@SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
         private void initComponents() {
-                java.awt.GridBagConstraints gridBagConstraints;
 
                 matchingScrollPane = new javax.swing.JScrollPane();
                 matchingTree = new javax.swing.JTree();

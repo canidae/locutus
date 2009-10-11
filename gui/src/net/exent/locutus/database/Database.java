@@ -24,6 +24,7 @@ public class Database {
 	private static PreparedStatement matchingDetails;
 	private static PreparedStatement matchingList;
 	private static PreparedStatement settingList;
+	private static PreparedStatement status;
 
 	public static void connectPostgreSQL(String url, String username, String password) throws ClassNotFoundException, SQLException {
 		Class.forName("org.postgresql.Driver");
@@ -37,6 +38,7 @@ public class Database {
 		matchingDetails = connection.prepareStatement("SELECT * FROM v_ui_matching_details WHERE album_album_id = ? AND (file_track_id IS NULL OR file_track_id = track_track_id) ORDER BY track_tracknumber ASC, comparison_mbid_match DESC, comparison_score DESC");
 		matchingList = connection.prepareStatement("SELECT * FROM v_ui_matching_list WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
 		settingList = connection.prepareStatement("SELECT * FROM setting");
+		status = connection.prepareStatement("SELECT * FROM locutus");
 	}
 
 	public static int deleteComparison(int file_id, int track_id) throws SQLException {
@@ -82,6 +84,12 @@ public class Database {
 		if (settingList == null)
 			return null;
 		return settingList.executeQuery();
+	}
+
+	public static ResultSet getStatus() throws SQLException {
+		if (status == null)
+			return null;
+		return status.executeQuery();
 	}
 
 	public static int matchFile(int file_id, int track_id) throws SQLException {

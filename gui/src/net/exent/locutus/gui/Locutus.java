@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
 import net.exent.locutus.data.Metafile;
 import net.exent.locutus.database.Database;
+import net.exent.locutus.thread.StatusPoller;
 
 /**
  *
@@ -24,11 +25,19 @@ import net.exent.locutus.database.Database;
  */
 public class Locutus extends javax.swing.JFrame {
 
+	private static StatusPoller statusPoller = new StatusPoller();
+
 	/** Creates new form Locutus */
 	public Locutus() {
 		initComponents();
 		/* make tooltips stay a bit longer */
 		ToolTipManager.sharedInstance().setDismissDelay(90000);
+		statusPoller.start();
+	}
+
+	public static void setProgress(double progress, String status) {
+		progressBar.setValue((int) (progress * 1000));
+		progressLabel.setText(status);
 	}
 
 	public static String getFilter() {
@@ -156,6 +165,14 @@ public class Locutus extends javax.swing.JFrame {
                 databaseLabel = new javax.swing.JLabel();
                 databaseTextField = new javax.swing.JTextField();
                 passwordPasswordField = new javax.swing.JPasswordField();
+                topPanel = new javax.swing.JPanel();
+                filterLabel = new javax.swing.JLabel();
+                filterTextField = new javax.swing.JTextField();
+                updateButton = new javax.swing.JButton();
+                progressBar = new javax.swing.JProgressBar();
+                progressLabel = new javax.swing.JLabel();
+                openButton = new javax.swing.JButton();
+                quitButton = new javax.swing.JButton();
                 tabPane = new javax.swing.JTabbedPane();
                 matching = new net.exent.locutus.gui.Matching();
                 detached = new net.exent.locutus.gui.Detached();
@@ -211,14 +228,6 @@ public class Locutus extends javax.swing.JFrame {
                 fileAlbumArtistMBIDValue = new javax.swing.JTextField();
                 fileAlbumArtistSortLabel = new javax.swing.JLabel();
                 fileAlbumArtistSortValue = new javax.swing.JTextField();
-                topPanel = new javax.swing.JPanel();
-                filterLabel = new javax.swing.JLabel();
-                filterTextField = new javax.swing.JTextField();
-                updateButton = new javax.swing.JButton();
-                openButton = new javax.swing.JButton();
-                quitButton = new javax.swing.JButton();
-                locutusProgressLabel = new javax.swing.JLabel();
-                locutusProgressBar = new javax.swing.JProgressBar();
 
                 connectFrame.setTitle("Connect to database");
                 connectFrame.setMinimumSize(new java.awt.Dimension(289, 229));
@@ -349,8 +358,99 @@ public class Locutus extends javax.swing.JFrame {
                 setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
                 setTitle("Locutus");
 
+                topPanel.setLayout(new java.awt.GridBagLayout());
+
+                filterLabel.setText("Filter:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(filterLabel, gridBagConstraints);
+
+                filterTextField.setMinimumSize(new java.awt.Dimension(128, 25));
+                filterTextField.setPreferredSize(new java.awt.Dimension(128, 25));
+                filterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+                        public void keyPressed(java.awt.event.KeyEvent evt) {
+                                filterTextFieldKeyPressed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(filterTextField, gridBagConstraints);
+
+                updateButton.setMnemonic('U');
+                updateButton.setText("Update");
+                updateButton.setFocusable(false);
+                updateButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                updateButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(updateButton, gridBagConstraints);
+
+                progressBar.setMaximum(1000);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(progressBar, gridBagConstraints);
+
+                progressLabel.setText("Not connected");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 4;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(progressLabel, gridBagConstraints);
+
+                openButton.setMnemonic('C');
+                openButton.setText("Connect");
+                openButton.setFocusable(false);
+                openButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                openButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 5;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(openButton, gridBagConstraints);
+
+                quitButton.setMnemonic('Q');
+                quitButton.setText("Quit");
+                quitButton.setFocusable(false);
+                quitButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                quitButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 6;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                topPanel.add(quitButton, gridBagConstraints);
+
+                getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
+
+                tabPane.setMinimumSize(new java.awt.Dimension(400, 200));
+                tabPane.setPreferredSize(new java.awt.Dimension(400, 200));
                 tabPane.addTab("Matching", matching);
                 tabPane.addTab("Detached", detached);
+
+                settings.setMinimumSize(new java.awt.Dimension(400, 200));
                 tabPane.addTab("Settings", settings);
 
                 getContentPane().add(tabPane, java.awt.BorderLayout.CENTER);
@@ -921,90 +1021,6 @@ public class Locutus extends javax.swing.JFrame {
 
                 getContentPane().add(metadataPanel, java.awt.BorderLayout.SOUTH);
 
-                topPanel.setLayout(new java.awt.GridBagLayout());
-
-                filterLabel.setText("Filter:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-                topPanel.add(filterLabel, gridBagConstraints);
-
-                filterTextField.setMinimumSize(new java.awt.Dimension(128, 25));
-                filterTextField.setPreferredSize(new java.awt.Dimension(128, 25));
-                filterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
-                        public void keyPressed(java.awt.event.KeyEvent evt) {
-                                filterTextFieldKeyPressed(evt);
-                        }
-                });
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-                topPanel.add(filterTextField, gridBagConstraints);
-
-                updateButton.setMnemonic('U');
-                updateButton.setText("Update");
-                updateButton.setFocusable(false);
-                updateButton.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                updateButtonActionPerformed(evt);
-                        }
-                });
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 0;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-                topPanel.add(updateButton, gridBagConstraints);
-
-                openButton.setMnemonic('C');
-                openButton.setText("Connect");
-                openButton.setFocusable(false);
-                openButton.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                openButtonActionPerformed(evt);
-                        }
-                });
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 5;
-                gridBagConstraints.gridy = 0;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-                topPanel.add(openButton, gridBagConstraints);
-
-                quitButton.setMnemonic('Q');
-                quitButton.setText("Quit");
-                quitButton.setFocusable(false);
-                quitButton.addActionListener(new java.awt.event.ActionListener() {
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                quitButtonActionPerformed(evt);
-                        }
-                });
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 6;
-                gridBagConstraints.gridy = 0;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-                topPanel.add(quitButton, gridBagConstraints);
-
-                locutusProgressLabel.setText("Locutus progress:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 3;
-                gridBagConstraints.gridy = 0;
-                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-                topPanel.add(locutusProgressLabel, gridBagConstraints);
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 4;
-                gridBagConstraints.gridy = 0;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-                topPanel.add(locutusProgressBar, gridBagConstraints);
-
-                getContentPane().add(topPanel, java.awt.BorderLayout.NORTH);
-
                 pack();
         }// </editor-fold>//GEN-END:initComponents
 
@@ -1019,6 +1035,7 @@ public class Locutus extends javax.swing.JFrame {
 			Database.connectPostgreSQL(db, usernameTextField.getText(), new String(passwordPasswordField.getPassword()));
 			tabPane.setSelectedComponent(matching);
 			matching.updateTree();
+			statusPoller.checkStatus();
 		} catch (ClassNotFoundException e) {
 			JOptionPane.showMessageDialog(this, e);
 			e.printStackTrace();
@@ -1069,6 +1086,7 @@ public class Locutus extends javax.swing.JFrame {
 	}//GEN-LAST:event_openButtonActionPerformed
 
 	private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
+		statusPoller.exit();
 		try {
 			Database.disconnect();
 		} catch (SQLException e) {
@@ -1171,14 +1189,14 @@ public class Locutus extends javax.swing.JFrame {
         private static javax.swing.JTextField filterTextField;
         private javax.swing.JLabel hostLabel;
         private javax.swing.JTextField hostTextField;
-        private javax.swing.JProgressBar locutusProgressBar;
-        private javax.swing.JLabel locutusProgressLabel;
         private net.exent.locutus.gui.Matching matching;
         private static javax.swing.JPanel metadataPanel;
         private javax.swing.JPanel miscPanel;
         private javax.swing.JButton openButton;
         private javax.swing.JLabel passwordLabel;
         private javax.swing.JPasswordField passwordPasswordField;
+        private static javax.swing.JProgressBar progressBar;
+        private static javax.swing.JLabel progressLabel;
         private javax.swing.JButton quitButton;
         private net.exent.locutus.gui.Settings settings;
         private javax.swing.JTabbedPane tabPane;

@@ -246,8 +246,6 @@ public class Settings extends javax.swing.JPanel {
                 otherSettingsScrollPane = new javax.swing.JScrollPane();
                 otherSettingsTable = new javax.swing.JTable();
 
-                setMinimumSize(new java.awt.Dimension(1000, 700));
-                setPreferredSize(new java.awt.Dimension(1000, 700));
                 addComponentListener(new java.awt.event.ComponentAdapter() {
                         public void componentHidden(java.awt.event.ComponentEvent evt) {
                                 formComponentHidden(evt);
