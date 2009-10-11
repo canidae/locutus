@@ -26,7 +26,7 @@ public class Settings extends javax.swing.JPanel {
 		initComponents();
 	}
 
-	public void updateTable() {
+	public void updateSettings() {
 		DefaultTableModel table = (DefaultTableModel) otherSettingsTable.getModel();
 		table.setRowCount(0);
 		try {
@@ -35,7 +35,87 @@ public class Settings extends javax.swing.JPanel {
 				return;
 
 			while (rs.next()) {
-				table.addRow(new Object[]{rs.getString("key"), rs.getString("value")});
+				String key = rs.getString("key");
+				String valueString = rs.getString("value");
+				int valueInt;
+				try {
+					valueInt = Integer.parseInt(valueString);
+				} catch (NumberFormatException e) {
+					valueInt = 0;
+				}
+				double valueDouble;
+				try {
+					valueDouble = Double.parseDouble(valueString);
+				} catch (NumberFormatException e) {
+					valueDouble = 0.0;
+				}
+				boolean valueBoolean = valueBoolean = Boolean.parseBoolean(valueString);
+				if ("album_cache_lifetime".equals(key))
+					daemonCacheLifetimeSlider.setValue(valueInt);
+				else if ("album_weight".equals(key))
+					weightAlbumSlider.setValue(valueInt);
+				else if ("allow_group_duplicates".equals(key))
+					optionAllowGroupDuplicatesCheckBox.setSelected(valueBoolean);
+				else if ("artist_weight".equals(key))
+					weightArtistSlider.setValue(valueInt);
+				else if ("audioscrobbler_artist_tag_url".equals(key))
+					audioscrobblerArtistURLTextField.setText(valueString);
+				else if ("audioscrobbler_query_interval".equals(key))
+					daemonAudioscrobblerQueryIntervalSlider.setValue(valueInt);
+				else if ("audioscrobbler_track_tag_url".equals(key))
+					audioscrobblerTrackURLTextField.setText(valueString);
+				else if ("combine_groups".equals(key))
+					optionCombineGroupsCheckBox.setSelected(valueBoolean);
+				else if ("combine_threshold".equals(key))
+					compareCombineThresholdSlider.setValue((int) (valueDouble * 100));
+				else if ("compare_relative_score".equals(key))
+					compareCompareRelativeScoreSlider.setValue((int) (valueDouble * 100));
+				else if ("dry_run".equals(key))
+					optionDryRunCheckBox.setSelected(valueBoolean);
+				else if ("duplicate_directory".equals(key))
+					duplicateDirectoryTextField.setText(valueString);
+				else if ("duration_limit".equals(key))
+					compareDurationLimitSlider.setValue(valueInt);
+				else if ("duration_must_match".equals(key))
+					optionDurationMustMatchCheckBox.setSelected(valueBoolean);
+				else if ("duration_weight".equals(key))
+					weightDurationSlider.setValue(valueInt);
+				else if ("filename_format".equals(key))
+					filenameFormatTextField.setText(valueString);
+				else if ("filename_illegal_characters".equals(key))
+					filenameIllegalCharactersTextField.setText(valueString);
+				else if ("input_directory".equals(key))
+					inputDirectoryTextField.setText(valueString);
+				else if ("lookup_genre".equals(key))
+					optionLookupGenreCheckBox.setSelected(valueBoolean);
+				else if ("match_min_score".equals(key))
+					compareMatchMinScoreSlider.setValue((int) (valueDouble * 100));
+				else if ("max_diff_best_score".equals(key))
+					compareMaxDiffBestScoreSlider.setValue((int) (valueDouble * 100));
+				else if ("max_group_size".equals(key))
+					daemonMaxGroupSizeSlider.setValue(valueInt);
+				else if ("mbid_lookup".equals(key))
+					optionLookupMBIDCheckBox.setSelected(valueBoolean);
+				else if ("metadata_search_url".equals(key))
+					musicBrainzSearchURLTextField.setText(valueString);
+				else if ("musicbrainz_query_interval".equals(key))
+					daemonMusicBrainzQueryIntervalSlider.setValue(valueInt);
+				else if ("only_save_complete_albums".equals(key))
+					optionOnlySaveCompleteAlbumsCheckBox.setSelected(valueBoolean);
+				else if ("only_save_if_all_match".equals(key))
+					optionOnlySaveIfAllMatchCheckBox.setSelected(valueBoolean);
+				else if ("output_directory".equals(key))
+					outputDirectoryTextField.setText(valueString);
+				else if ("release_url".equals(key))
+					musicBrainzReleaseURLTextField.setText(valueString);
+				else if ("run_interval".equals(key))
+					daemonRunIntervalSlider.setValue(valueInt);
+				else if ("title_weight".equals(key))
+					weightTitleSlider.setValue(valueInt);
+				else if ("tracknumber_weight".equals(key))
+					weightTracknumberSlider.setValue(valueInt);
+				else
+					table.addRow(new Object[]{rs.getString("key"), rs.getString("value")});
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -101,14 +181,14 @@ public class Settings extends javax.swing.JPanel {
                 daemonAudioscrobblerQueryIntervalSlider = new javax.swing.JSlider();
                 daemonAudioscrobblerQueryIntervalValue = new javax.swing.JLabel();
                 optionPanel = new javax.swing.JPanel();
-                compareDurationMustMatchCheckBox = new javax.swing.JCheckBox();
-                compareOnlySaveIfAllMatchCheckBox = new javax.swing.JCheckBox();
-                compareOnlySaveCompleteAlbumsCheckBox = new javax.swing.JCheckBox();
-                compareAllowGroupDuplicatesCheckBox = new javax.swing.JCheckBox();
-                musicBrainzLookupMBIDCheckBox = new javax.swing.JCheckBox();
-                daemonDryRunCheckBox = new javax.swing.JCheckBox();
-                daemonCombineGroupsCheckBox = new javax.swing.JCheckBox();
-                audioscrobblerLookupGenreCheckBox = new javax.swing.JCheckBox();
+                optionDryRunCheckBox = new javax.swing.JCheckBox();
+                optionDurationMustMatchCheckBox = new javax.swing.JCheckBox();
+                optionCombineGroupsCheckBox = new javax.swing.JCheckBox();
+                optionAllowGroupDuplicatesCheckBox = new javax.swing.JCheckBox();
+                optionOnlySaveCompleteAlbumsCheckBox = new javax.swing.JCheckBox();
+                optionOnlySaveIfAllMatchCheckBox = new javax.swing.JCheckBox();
+                optionLookupMBIDCheckBox = new javax.swing.JCheckBox();
+                optionLookupGenreCheckBox = new javax.swing.JCheckBox();
                 locationPanel = new javax.swing.JPanel();
                 inputDirectoryLabel = new javax.swing.JLabel();
                 inputDirectoryTextField = new javax.swing.JTextField();
@@ -158,7 +238,9 @@ public class Settings extends javax.swing.JPanel {
                 weightArtistSlider.setMinimum(1);
                 weightArtistSlider.setSnapToTicks(true);
                 weightArtistSlider.setValue(100);
-                weightArtistSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightArtistSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                weightArtistSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                weightArtistSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 weightArtistSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 weightArtistSliderStateChanged(evt);
@@ -190,7 +272,9 @@ public class Settings extends javax.swing.JPanel {
                 weightAlbumSlider.setMinimum(1);
                 weightAlbumSlider.setSnapToTicks(true);
                 weightAlbumSlider.setValue(100);
-                weightAlbumSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightAlbumSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                weightAlbumSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                weightAlbumSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 weightAlbumSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 weightAlbumSliderStateChanged(evt);
@@ -226,7 +310,9 @@ public class Settings extends javax.swing.JPanel {
                 weightTracknumberSlider.setMinimum(1);
                 weightTracknumberSlider.setSnapToTicks(true);
                 weightTracknumberSlider.setValue(100);
-                weightTracknumberSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightTracknumberSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                weightTracknumberSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                weightTracknumberSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 weightTracknumberSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 weightTracknumberSliderStateChanged(evt);
@@ -262,7 +348,9 @@ public class Settings extends javax.swing.JPanel {
                 weightTitleSlider.setMinimum(1);
                 weightTitleSlider.setSnapToTicks(true);
                 weightTitleSlider.setValue(100);
-                weightTitleSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightTitleSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                weightTitleSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                weightTitleSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 weightTitleSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 weightTitleSliderStateChanged(evt);
@@ -298,7 +386,9 @@ public class Settings extends javax.swing.JPanel {
                 weightDurationSlider.setMinimum(1);
                 weightDurationSlider.setSnapToTicks(true);
                 weightDurationSlider.setValue(100);
-                weightDurationSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                weightDurationSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                weightDurationSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                weightDurationSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 weightDurationSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 weightDurationSliderStateChanged(evt);
@@ -324,6 +414,8 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.weightx = 1.0;
                 add(weightPanel, gridBagConstraints);
 
                 comparePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Compare"));
@@ -339,8 +431,9 @@ public class Settings extends javax.swing.JPanel {
 
                 compareCombineThresholdSlider.setMajorTickSpacing(1);
                 compareCombineThresholdSlider.setSnapToTicks(true);
-                compareCombineThresholdSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareCombineThresholdSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareCombineThresholdSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                compareCombineThresholdSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                compareCombineThresholdSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 compareCombineThresholdSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 compareCombineThresholdSliderStateChanged(evt);
@@ -371,8 +464,9 @@ public class Settings extends javax.swing.JPanel {
 
                 compareMaxDiffBestScoreSlider.setMajorTickSpacing(1);
                 compareMaxDiffBestScoreSlider.setSnapToTicks(true);
-                compareMaxDiffBestScoreSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareMaxDiffBestScoreSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareMaxDiffBestScoreSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                compareMaxDiffBestScoreSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                compareMaxDiffBestScoreSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 compareMaxDiffBestScoreSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 compareMaxDiffBestScoreSliderStateChanged(evt);
@@ -405,8 +499,9 @@ public class Settings extends javax.swing.JPanel {
 
                 compareMatchMinScoreSlider.setMajorTickSpacing(1);
                 compareMatchMinScoreSlider.setSnapToTicks(true);
-                compareMatchMinScoreSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareMatchMinScoreSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareMatchMinScoreSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                compareMatchMinScoreSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                compareMatchMinScoreSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 compareMatchMinScoreSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 compareMatchMinScoreSliderStateChanged(evt);
@@ -439,8 +534,9 @@ public class Settings extends javax.swing.JPanel {
 
                 compareCompareRelativeScoreSlider.setMajorTickSpacing(1);
                 compareCompareRelativeScoreSlider.setSnapToTicks(true);
-                compareCompareRelativeScoreSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareCompareRelativeScoreSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareCompareRelativeScoreSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                compareCompareRelativeScoreSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                compareCompareRelativeScoreSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 compareCompareRelativeScoreSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 compareCompareRelativeScoreSliderStateChanged(evt);
@@ -475,8 +571,9 @@ public class Settings extends javax.swing.JPanel {
                 compareDurationLimitSlider.setMaximum(60000);
                 compareDurationLimitSlider.setSnapToTicks(true);
                 compareDurationLimitSlider.setValue(15000);
-                compareDurationLimitSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                compareDurationLimitSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                compareDurationLimitSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                compareDurationLimitSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                compareDurationLimitSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 compareDurationLimitSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 compareDurationLimitSliderStateChanged(evt);
@@ -522,8 +619,9 @@ public class Settings extends javax.swing.JPanel {
                 daemonMaxGroupSizeSlider.setMaximum(2000);
                 daemonMaxGroupSizeSlider.setMinimum(1);
                 daemonMaxGroupSizeSlider.setSnapToTicks(true);
-                daemonMaxGroupSizeSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                daemonMaxGroupSizeSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonMaxGroupSizeSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                daemonMaxGroupSizeSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                daemonMaxGroupSizeSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 daemonMaxGroupSizeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 daemonMaxGroupSizeSliderStateChanged(evt);
@@ -557,8 +655,9 @@ public class Settings extends javax.swing.JPanel {
                 daemonCacheLifetimeSlider.setMinimum(1);
                 daemonCacheLifetimeSlider.setSnapToTicks(true);
                 daemonCacheLifetimeSlider.setValue(3);
-                daemonCacheLifetimeSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                daemonCacheLifetimeSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonCacheLifetimeSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                daemonCacheLifetimeSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                daemonCacheLifetimeSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 daemonCacheLifetimeSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 daemonCacheLifetimeSliderStateChanged(evt);
@@ -590,12 +689,13 @@ public class Settings extends javax.swing.JPanel {
                 daemonPanel.add(daemonRunIntervalLabel, gridBagConstraints);
 
                 daemonRunIntervalSlider.setMajorTickSpacing(1);
-                daemonRunIntervalSlider.setMaximum(31);
+                daemonRunIntervalSlider.setMaximum(90);
                 daemonRunIntervalSlider.setMinimum(1);
                 daemonRunIntervalSlider.setSnapToTicks(true);
                 daemonRunIntervalSlider.setValue(7);
-                daemonRunIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                daemonRunIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonRunIntervalSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                daemonRunIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                daemonRunIntervalSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 daemonRunIntervalSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 daemonRunIntervalSliderStateChanged(evt);
@@ -631,8 +731,9 @@ public class Settings extends javax.swing.JPanel {
                 daemonMusicBrainzQueryIntervalSlider.setMinimum(1);
                 daemonMusicBrainzQueryIntervalSlider.setSnapToTicks(true);
                 daemonMusicBrainzQueryIntervalSlider.setValue(3);
-                daemonMusicBrainzQueryIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                daemonMusicBrainzQueryIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonMusicBrainzQueryIntervalSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                daemonMusicBrainzQueryIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                daemonMusicBrainzQueryIntervalSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 daemonMusicBrainzQueryIntervalSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 daemonMusicBrainzQueryIntervalSliderStateChanged(evt);
@@ -667,8 +768,9 @@ public class Settings extends javax.swing.JPanel {
                 daemonAudioscrobblerQueryIntervalSlider.setMinimum(1);
                 daemonAudioscrobblerQueryIntervalSlider.setSnapToTicks(true);
                 daemonAudioscrobblerQueryIntervalSlider.setValue(3);
-                daemonAudioscrobblerQueryIntervalSlider.setMaximumSize(new java.awt.Dimension(200, 42));
-                daemonAudioscrobblerQueryIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 42));
+                daemonAudioscrobblerQueryIntervalSlider.setMaximumSize(new java.awt.Dimension(32767, 17));
+                daemonAudioscrobblerQueryIntervalSlider.setMinimumSize(new java.awt.Dimension(200, 17));
+                daemonAudioscrobblerQueryIntervalSlider.setPreferredSize(new java.awt.Dimension(200, 17));
                 daemonAudioscrobblerQueryIntervalSlider.addChangeListener(new javax.swing.event.ChangeListener() {
                         public void stateChanged(javax.swing.event.ChangeEvent evt) {
                                 daemonAudioscrobblerQueryIntervalSliderStateChanged(evt);
@@ -701,69 +803,77 @@ public class Settings extends javax.swing.JPanel {
                 optionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
                 optionPanel.setLayout(new java.awt.GridBagLayout());
 
-                compareDurationMustMatchCheckBox.setText("Duration must match");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                optionPanel.add(compareDurationMustMatchCheckBox, gridBagConstraints);
-
-                compareOnlySaveIfAllMatchCheckBox.setText("Only save if all files in group match");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 5;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                optionPanel.add(compareOnlySaveIfAllMatchCheckBox, gridBagConstraints);
-
-                compareOnlySaveCompleteAlbumsCheckBox.setText("Only save complete albums");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                optionPanel.add(compareOnlySaveCompleteAlbumsCheckBox, gridBagConstraints);
-
-                compareAllowGroupDuplicatesCheckBox.setText("Allow duplicate files in group");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                optionPanel.add(compareAllowGroupDuplicatesCheckBox, gridBagConstraints);
-
-                musicBrainzLookupMBIDCheckBox.setText("Lookup MBID");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 6;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                optionPanel.add(musicBrainzLookupMBIDCheckBox, gridBagConstraints);
-
-                daemonDryRunCheckBox.setText("Dry run");
+                optionDryRunCheckBox.setText("Dry run");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                optionPanel.add(daemonDryRunCheckBox, gridBagConstraints);
+                optionPanel.add(optionDryRunCheckBox, gridBagConstraints);
 
-                daemonCombineGroupsCheckBox.setText("Combine groups");
+                optionDurationMustMatchCheckBox.setText("Duration must match");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(optionDurationMustMatchCheckBox, gridBagConstraints);
+
+                optionCombineGroupsCheckBox.setText("Combine groups");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                optionPanel.add(daemonCombineGroupsCheckBox, gridBagConstraints);
+                optionPanel.add(optionCombineGroupsCheckBox, gridBagConstraints);
 
-                audioscrobblerLookupGenreCheckBox.setText("Lookup genre");
+                optionAllowGroupDuplicatesCheckBox.setText("Allow duplicate files in group");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(optionAllowGroupDuplicatesCheckBox, gridBagConstraints);
+
+                optionOnlySaveCompleteAlbumsCheckBox.setText("Only save complete albums");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(optionOnlySaveCompleteAlbumsCheckBox, gridBagConstraints);
+
+                optionOnlySaveIfAllMatchCheckBox.setText("Only save if all files in group match");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 5;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(optionOnlySaveIfAllMatchCheckBox, gridBagConstraints);
+
+                optionLookupMBIDCheckBox.setText("Lookup MBID");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 6;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                optionPanel.add(optionLookupMBIDCheckBox, gridBagConstraints);
+
+                optionLookupGenreCheckBox.setText("Lookup genre");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 7;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                optionPanel.add(audioscrobblerLookupGenreCheckBox, gridBagConstraints);
+                optionPanel.add(optionLookupGenreCheckBox, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -950,7 +1060,7 @@ public class Settings extends javax.swing.JPanel {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
 	    Locutus.hideMetadata();
-	    updateTable();
+	    updateSettings();
     }//GEN-LAST:event_formComponentShown
 
     private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
@@ -1019,10 +1129,8 @@ public class Settings extends javax.swing.JPanel {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel audioscrobblerArtistURLLabel;
         private javax.swing.JTextField audioscrobblerArtistURLTextField;
-        private javax.swing.JCheckBox audioscrobblerLookupGenreCheckBox;
         private javax.swing.JLabel audioscrobblerTrackURLLabel;
         private javax.swing.JTextField audioscrobblerTrackURLTextField;
-        private javax.swing.JCheckBox compareAllowGroupDuplicatesCheckBox;
         private javax.swing.JLabel compareCombineThresholdLabel;
         private javax.swing.JSlider compareCombineThresholdSlider;
         private javax.swing.JLabel compareCombineThresholdValue;
@@ -1032,15 +1140,12 @@ public class Settings extends javax.swing.JPanel {
         private javax.swing.JLabel compareDurationLimitLabel;
         private javax.swing.JSlider compareDurationLimitSlider;
         private javax.swing.JLabel compareDurationLimitValue;
-        private javax.swing.JCheckBox compareDurationMustMatchCheckBox;
         private javax.swing.JLabel compareMatchMinScoreLabel;
         private javax.swing.JSlider compareMatchMinScoreSlider;
         private javax.swing.JLabel compareMatchMinScoreValue;
         private javax.swing.JLabel compareMaxDiffBestScoreLabel;
         private javax.swing.JSlider compareMaxDiffBestScoreSlider;
         private javax.swing.JLabel compareMaxDiffBestScoreValue;
-        private javax.swing.JCheckBox compareOnlySaveCompleteAlbumsCheckBox;
-        private javax.swing.JCheckBox compareOnlySaveIfAllMatchCheckBox;
         private javax.swing.JPanel comparePanel;
         private javax.swing.JLabel daemonAudioscrobblerQueryIntervalLabel;
         private javax.swing.JSlider daemonAudioscrobblerQueryIntervalSlider;
@@ -1048,8 +1153,6 @@ public class Settings extends javax.swing.JPanel {
         private javax.swing.JLabel daemonCacheLifetimeLabel;
         private javax.swing.JSlider daemonCacheLifetimeSlider;
         private javax.swing.JLabel daemonCacheLifetimeValue;
-        private javax.swing.JCheckBox daemonCombineGroupsCheckBox;
-        private javax.swing.JCheckBox daemonDryRunCheckBox;
         private javax.swing.JLabel daemonMaxGroupSizeLabel;
         private javax.swing.JSlider daemonMaxGroupSizeSlider;
         private javax.swing.JLabel daemonMaxGroupSizeValue;
@@ -1069,11 +1172,18 @@ public class Settings extends javax.swing.JPanel {
         private javax.swing.JLabel inputDirectoryLabel;
         private javax.swing.JTextField inputDirectoryTextField;
         private javax.swing.JPanel locationPanel;
-        private javax.swing.JCheckBox musicBrainzLookupMBIDCheckBox;
         private javax.swing.JLabel musicBrainzReleaseURLLabel;
         private javax.swing.JTextField musicBrainzReleaseURLTextField;
         private javax.swing.JLabel musicBrainzSearchURLLabel;
         private javax.swing.JTextField musicBrainzSearchURLTextField;
+        private javax.swing.JCheckBox optionAllowGroupDuplicatesCheckBox;
+        private javax.swing.JCheckBox optionCombineGroupsCheckBox;
+        private javax.swing.JCheckBox optionDryRunCheckBox;
+        private javax.swing.JCheckBox optionDurationMustMatchCheckBox;
+        private javax.swing.JCheckBox optionLookupGenreCheckBox;
+        private javax.swing.JCheckBox optionLookupMBIDCheckBox;
+        private javax.swing.JCheckBox optionOnlySaveCompleteAlbumsCheckBox;
+        private javax.swing.JCheckBox optionOnlySaveIfAllMatchCheckBox;
         private javax.swing.JPanel optionPanel;
         private javax.swing.JPanel otherSettingsPanel;
         private javax.swing.JScrollPane otherSettingsScrollPane;
