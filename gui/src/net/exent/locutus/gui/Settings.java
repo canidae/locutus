@@ -50,72 +50,106 @@ public class Settings extends javax.swing.JPanel {
 					valueDouble = 0.0;
 				}
 				boolean valueBoolean = valueBoolean = Boolean.parseBoolean(valueString);
-				if ("album_cache_lifetime".equals(key))
+				String description = "<html>" + rs.getString("description").replace(". ", ".<br />") + "</html>";
+				if ("album_cache_lifetime".equals(key)) {
 					daemonCacheLifetimeSlider.setValue(valueInt);
-				else if ("album_weight".equals(key))
+					daemonCacheLifetimeSlider.setToolTipText(description);
+				} else if ("album_weight".equals(key)) {
 					weightAlbumSlider.setValue(valueInt);
-				else if ("allow_group_duplicates".equals(key))
+					weightAlbumSlider.setToolTipText(description);
+				} else if ("allow_group_duplicates".equals(key)) {
 					optionAllowGroupDuplicatesCheckBox.setSelected(valueBoolean);
-				else if ("artist_weight".equals(key))
+					optionAllowGroupDuplicatesCheckBox.setToolTipText(description);
+				} else if ("artist_weight".equals(key)) {
 					weightArtistSlider.setValue(valueInt);
-				else if ("audioscrobbler_artist_tag_url".equals(key))
+					weightArtistSlider.setToolTipText(description);
+				} else if ("audioscrobbler_artist_tag_url".equals(key)) {
 					audioscrobblerArtistURLTextField.setText(valueString);
-				else if ("audioscrobbler_query_interval".equals(key))
+					audioscrobblerArtistURLTextField.setToolTipText(description);
+				} else if ("audioscrobbler_query_interval".equals(key)) {
 					daemonAudioscrobblerQueryIntervalSlider.setValue(valueInt);
-				else if ("audioscrobbler_track_tag_url".equals(key))
+					daemonAudioscrobblerQueryIntervalSlider.setToolTipText(description);
+				} else if ("audioscrobbler_track_tag_url".equals(key)) {
 					audioscrobblerTrackURLTextField.setText(valueString);
-				else if ("combine_groups".equals(key))
+					audioscrobblerTrackURLTextField.setToolTipText(description);
+				} else if ("combine_groups".equals(key)) {
 					optionCombineGroupsCheckBox.setSelected(valueBoolean);
-				else if ("combine_threshold".equals(key))
+					optionCombineGroupsCheckBox.setToolTipText(description);
+				} else if ("combine_threshold".equals(key)) {
 					compareCombineThresholdSlider.setValue((int) (valueDouble * 100));
-				else if ("compare_relative_score".equals(key))
+					compareCombineThresholdSlider.setToolTipText(description);
+				} else if ("compare_relative_score".equals(key)) {
 					compareCompareRelativeScoreSlider.setValue((int) (valueDouble * 100));
-				else if ("dry_run".equals(key))
+					compareCompareRelativeScoreSlider.setToolTipText(description);
+				} else if ("dry_run".equals(key)) {
 					optionDryRunCheckBox.setSelected(valueBoolean);
-				else if ("duplicate_directory".equals(key))
+					optionDryRunCheckBox.setToolTipText(description);
+				} else if ("duplicate_directory".equals(key)) {
 					duplicateDirectoryTextField.setText(valueString);
-				else if ("duration_limit".equals(key))
+					duplicateDirectoryTextField.setToolTipText(description);
+				} else if ("duration_limit".equals(key)) {
 					compareDurationLimitSlider.setValue(valueInt);
-				else if ("duration_must_match".equals(key))
+					compareDurationLimitSlider.setToolTipText(description);
+				} else if ("duration_must_match".equals(key)) {
 					optionDurationMustMatchCheckBox.setSelected(valueBoolean);
-				else if ("duration_weight".equals(key))
+					optionDurationMustMatchCheckBox.setToolTipText(description);
+				} else if ("duration_weight".equals(key)) {
 					weightDurationSlider.setValue(valueInt);
-				else if ("filename_format".equals(key))
+					weightDurationSlider.setToolTipText(description);
+				} else if ("filename_format".equals(key)) {
 					filenameFormatTextField.setText(valueString);
-				else if ("filename_illegal_characters".equals(key))
+					filenameFormatTextField.setToolTipText(description);
+				} else if ("filename_illegal_characters".equals(key)) {
 					filenameIllegalCharactersTextField.setText(valueString);
-				else if ("input_directory".equals(key))
+					filenameIllegalCharactersTextField.setToolTipText(description);
+				} else if ("input_directory".equals(key)) {
 					inputDirectoryTextField.setText(valueString);
-				else if ("lookup_genre".equals(key))
+					inputDirectoryTextField.setToolTipText(description);
+				} else if ("lookup_genre".equals(key)) {
 					optionLookupGenreCheckBox.setSelected(valueBoolean);
-				else if ("match_min_score".equals(key))
+					optionLookupGenreCheckBox.setToolTipText(description);
+				} else if ("match_min_score".equals(key)) {
 					compareMatchMinScoreSlider.setValue((int) (valueDouble * 100));
-				else if ("max_diff_best_score".equals(key))
+					compareMatchMinScoreSlider.setToolTipText(description);
+				} else if ("max_diff_best_score".equals(key)) {
 					compareMaxDiffBestScoreSlider.setValue((int) (valueDouble * 100));
-				else if ("max_group_size".equals(key))
+					compareMaxDiffBestScoreSlider.setToolTipText(description);
+				} else if ("max_group_size".equals(key)) {
 					daemonMaxGroupSizeSlider.setValue(valueInt);
-				else if ("mbid_lookup".equals(key))
+					daemonMaxGroupSizeSlider.setToolTipText(description);
+				} else if ("mbid_lookup".equals(key)) {
 					optionLookupMBIDCheckBox.setSelected(valueBoolean);
-				else if ("metadata_search_url".equals(key))
+					optionLookupMBIDCheckBox.setToolTipText(description);
+				} else if ("metadata_search_url".equals(key)) {
 					musicBrainzSearchURLTextField.setText(valueString);
-				else if ("musicbrainz_query_interval".equals(key))
+					musicBrainzSearchURLTextField.setToolTipText(description);
+				} else if ("musicbrainz_query_interval".equals(key)) {
 					daemonMusicBrainzQueryIntervalSlider.setValue(valueInt);
-				else if ("only_save_complete_albums".equals(key))
+					daemonMusicBrainzQueryIntervalSlider.setToolTipText(description);
+				} else if ("only_save_complete_albums".equals(key)) {
 					optionOnlySaveCompleteAlbumsCheckBox.setSelected(valueBoolean);
-				else if ("only_save_if_all_match".equals(key))
+					optionOnlySaveCompleteAlbumsCheckBox.setToolTipText(description);
+				} else if ("only_save_if_all_match".equals(key)) {
 					optionOnlySaveIfAllMatchCheckBox.setSelected(valueBoolean);
-				else if ("output_directory".equals(key))
+					optionOnlySaveIfAllMatchCheckBox.setToolTipText(description);
+				} else if ("output_directory".equals(key)) {
 					outputDirectoryTextField.setText(valueString);
-				else if ("release_url".equals(key))
+					outputDirectoryTextField.setToolTipText(description);
+				} else if ("release_url".equals(key)) {
 					musicBrainzReleaseURLTextField.setText(valueString);
-				else if ("run_interval".equals(key))
+					musicBrainzReleaseURLTextField.setToolTipText(description);
+				} else if ("run_interval".equals(key)) {
 					daemonRunIntervalSlider.setValue(valueInt);
-				else if ("title_weight".equals(key))
+					daemonRunIntervalSlider.setToolTipText(description);
+				} else if ("title_weight".equals(key)) {
 					weightTitleSlider.setValue(valueInt);
-				else if ("tracknumber_weight".equals(key))
+					weightTitleSlider.setToolTipText(description);
+				} else if ("tracknumber_weight".equals(key)) {
 					weightTracknumberSlider.setValue(valueInt);
-				else
+					weightTracknumberSlider.setToolTipText(description);
+				} else {
 					table.addRow(new Object[]{rs.getString("key"), rs.getString("value")});
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
