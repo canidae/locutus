@@ -36,7 +36,7 @@ public class Database {
 		matchFile = connection.prepareStatement("UPDATE file SET track_id = ? WHERE file_id = ?");
 		matchingDetails = connection.prepareStatement("SELECT * FROM v_ui_matching_details WHERE album_album_id = ? AND (file_track_id IS NULL OR file_track_id = track_track_id) ORDER BY track_tracknumber ASC, comparison_mbid_match DESC, comparison_score DESC");
 		matchingList = connection.prepareStatement("SELECT * FROM v_ui_matching_list WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
-		settingList = connection.prepareStatement("SELECT * FROM setting WHERE key ILIKE ?");
+		settingList = connection.prepareStatement("SELECT * FROM setting");
 	}
 
 	public static int deleteComparison(int file_id, int track_id) throws SQLException {
@@ -78,12 +78,9 @@ public class Database {
 		return matchingList.executeQuery();
 	}
 
-	public static ResultSet getSettingList(String filter) throws SQLException {
+	public static ResultSet getSettingList() throws SQLException {
 		if (settingList == null)
 			return null;
-		if (filter == null)
-			filter = "";
-		settingList.setString(1, "%" + filter + "%");
 		return settingList.executeQuery();
 	}
 
