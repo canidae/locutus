@@ -245,6 +245,17 @@ public class Settings extends javax.swing.JPanel {
                 otherSettingsPanel = new javax.swing.JPanel();
                 otherSettingsScrollPane = new javax.swing.JScrollPane();
                 otherSettingsTable = new javax.swing.JTable();
+                buttonPanel = new javax.swing.JPanel();
+                saveSettingsButton = new javax.swing.JButton();
+                resetWeightButton = new javax.swing.JButton();
+                resetCompareButton = new javax.swing.JButton();
+                resetDaemonButton = new javax.swing.JButton();
+                resetOptionsButton = new javax.swing.JButton();
+                resetLocationsButton = new javax.swing.JButton();
+                resetOtherSettingsButton = new javax.swing.JButton();
+                resetAllButton = new javax.swing.JButton();
+                buttonSeparator = new javax.swing.JSeparator();
+                restoreLabel = new javax.swing.JLabel();
 
                 addComponentListener(new java.awt.event.ComponentAdapter() {
                         public void componentHidden(java.awt.event.ComponentEvent evt) {
@@ -911,6 +922,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.weightx = 1.0;
                 add(optionPanel, gridBagConstraints);
 
                 locationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Locations & formatting"));
@@ -1088,6 +1100,142 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
                 add(otherSettingsPanel, gridBagConstraints);
+
+                buttonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Save & restore default values"));
+                buttonPanel.setLayout(new java.awt.GridBagLayout());
+
+                saveSettingsButton.setMnemonic('S');
+                saveSettingsButton.setText("Save");
+                saveSettingsButton.setToolTipText("Save local changes to the database");
+                saveSettingsButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                saveSettingsButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                buttonPanel.add(saveSettingsButton, gridBagConstraints);
+
+                resetWeightButton.setText("Weight");
+                resetWeightButton.setToolTipText("Reset the default values for weighting in the database");
+                resetWeightButton.setFocusable(false);
+                resetWeightButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                resetWeightButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 4;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                buttonPanel.add(resetWeightButton, gridBagConstraints);
+
+                resetCompareButton.setText("Compare");
+                resetCompareButton.setToolTipText("Reset the default values for comparing in the database");
+                resetCompareButton.setFocusable(false);
+                resetCompareButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                resetCompareButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 5;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                buttonPanel.add(resetCompareButton, gridBagConstraints);
+
+                resetDaemonButton.setText("Daemon");
+                resetDaemonButton.setToolTipText("Reset the default values for the daemon in the database");
+                resetDaemonButton.setFocusable(false);
+                resetDaemonButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                resetDaemonButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 6;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                buttonPanel.add(resetDaemonButton, gridBagConstraints);
+
+                resetOptionsButton.setText("Options");
+                resetOptionsButton.setToolTipText("Reset the default values for options in the database");
+                resetOptionsButton.setFocusable(false);
+                resetOptionsButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                resetOptionsButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 7;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                buttonPanel.add(resetOptionsButton, gridBagConstraints);
+
+                resetLocationsButton.setText("Locations & formatting");
+                resetLocationsButton.setToolTipText("Reset the default values for locations & formatting in the database");
+                resetLocationsButton.setFocusable(false);
+                resetLocationsButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                resetLocationsButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 8;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                buttonPanel.add(resetLocationsButton, gridBagConstraints);
+
+                resetOtherSettingsButton.setText("Other settings");
+                resetOtherSettingsButton.setToolTipText("Reset the default values for other settings in the database");
+                resetOtherSettingsButton.setFocusable(false);
+                resetOtherSettingsButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                resetOtherSettingsButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 9;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                buttonPanel.add(resetOtherSettingsButton, gridBagConstraints);
+
+                resetAllButton.setText("All");
+                resetAllButton.setToolTipText("Reset all settings to default values in the database");
+                resetAllButton.setFocusable(false);
+                resetAllButton.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                resetAllButtonActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 10;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                buttonPanel.add(resetAllButton, gridBagConstraints);
+
+                buttonSeparator.setOrientation(javax.swing.SwingConstants.VERTICAL);
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+                gridBagConstraints.weightx = 1.0;
+                buttonPanel.add(buttonSeparator, gridBagConstraints);
+
+                restoreLabel.setText("Restore default values:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                buttonPanel.add(restoreLabel, gridBagConstraints);
+
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.gridwidth = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+                gridBagConstraints.weightx = 1.0;
+                add(buttonPanel, gridBagConstraints);
         }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
@@ -1158,11 +1306,163 @@ public class Settings extends javax.swing.JPanel {
     private void daemonMaxGroupSizeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonMaxGroupSizeSliderStateChanged
 	    daemonMaxGroupSizeValue.setText("" + daemonMaxGroupSizeSlider.getValue());
     }//GEN-LAST:event_daemonMaxGroupSizeSliderStateChanged
+
+    private void resetAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetAllButtonActionPerformed
+	    try {
+		    Database.resetAllSettings();
+	    } catch (SQLException e) {
+		    e.printStackTrace();
+	    }
+	    updateSettings();
+    }//GEN-LAST:event_resetAllButtonActionPerformed
+
+    private void resetOtherSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetOtherSettingsButtonActionPerformed
+	    DefaultTableModel table = (DefaultTableModel) otherSettingsTable.getModel();
+	    for (int r = 0; r < table.getRowCount(); ++r) {
+		    String key = (String) table.getValueAt(r, 0);
+		    try {
+			    if (key != null && !key.equals(""))
+				    Database.resetSetting(key);
+		    } catch (SQLException e) {
+			    e.printStackTrace();
+		    }
+	    }
+	    updateSettings();
+    }//GEN-LAST:event_resetOtherSettingsButtonActionPerformed
+
+    private void resetWeightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetWeightButtonActionPerformed
+	    try {
+		    Database.resetSetting("album_weight");
+		    Database.resetSetting("artist_weight");
+		    Database.resetSetting("duration_weight");
+		    Database.resetSetting("title_weight");
+		    Database.resetSetting("tracknumber_weight");
+		    updateSettings();
+	    } catch (SQLException e) {
+		    e.printStackTrace();
+	    }
+    }//GEN-LAST:event_resetWeightButtonActionPerformed
+
+    private void resetCompareButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetCompareButtonActionPerformed
+	    try {
+		    Database.resetSetting("combine_threshold");
+		    Database.resetSetting("max_diff_best_score");
+		    Database.resetSetting("match_min_score");
+		    Database.resetSetting("compare_relative_score");
+		    Database.resetSetting("duration_limit");
+		    updateSettings();
+	    } catch (SQLException e) {
+		    e.printStackTrace();
+	    }
+    }//GEN-LAST:event_resetCompareButtonActionPerformed
+
+    private void resetDaemonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetDaemonButtonActionPerformed
+	    try {
+		    Database.resetSetting("max_group_size");
+		    Database.resetSetting("album_cache_lifetime");
+		    Database.resetSetting("run_interval");
+		    Database.resetSetting("musicbrainz_query_interval");
+		    Database.resetSetting("audioscrobbler_query_interval");
+		    updateSettings();
+	    } catch (SQLException e) {
+		    e.printStackTrace();
+	    }
+    }//GEN-LAST:event_resetDaemonButtonActionPerformed
+
+    private void resetOptionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetOptionsButtonActionPerformed
+	    try {
+		    Database.resetSetting("dry_run");
+		    Database.resetSetting("duration_must_match");
+		    Database.resetSetting("combine_groups");
+		    Database.resetSetting("allow_group_duplicates");
+		    Database.resetSetting("only_save_complete_albums");
+		    Database.resetSetting("only_save_if_all_match");
+		    Database.resetSetting("mbid_lookup");
+		    Database.resetSetting("lookup_genre");
+		    updateSettings();
+	    } catch (SQLException e) {
+		    e.printStackTrace();
+	    }
+    }//GEN-LAST:event_resetOptionsButtonActionPerformed
+
+    private void resetLocationsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetLocationsButtonActionPerformed
+	    try {
+		    Database.resetSetting("input_directory");
+		    Database.resetSetting("output_directory");
+		    Database.resetSetting("duplicate_directory");
+		    Database.resetSetting("filename_format");
+		    Database.resetSetting("filename_illegal_characters");
+		    Database.resetSetting("audioscrobbler_track_tag_url");
+		    Database.resetSetting("audioscrobbler_artist_tag_url");
+		    Database.resetSetting("metadata_search_url");
+		    Database.resetSetting("release_url");
+		    updateSettings();
+	    } catch (SQLException e) {
+		    e.printStackTrace();
+	    }
+    }//GEN-LAST:event_resetLocationsButtonActionPerformed
+
+    private void saveSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSettingsButtonActionPerformed
+	    try {
+		    Database.setSetting("album_cache_lifetime", "" + daemonCacheLifetimeSlider.getValue());
+		    Database.setSetting("album_weight", "" + weightAlbumSlider.getValue());
+		    Database.setSetting("allow_group_duplicates", "" + optionAllowGroupDuplicatesCheckBox.isSelected());
+		    Database.setSetting("artist_weight", "" + weightArtistSlider.getValue());
+		    Database.setSetting("audioscrobbler_artist_tag_url", audioscrobblerArtistURLTextField.getText());
+		    Database.setSetting("audioscrobbler_query_interval", "" + daemonAudioscrobblerQueryIntervalSlider.getValue());
+		    Database.setSetting("audioscrobbler_track_tag_url", audioscrobblerTrackURLTextField.getText());
+		    Database.setSetting("combine_groups", "" + optionCombineGroupsCheckBox.isSelected());
+		    Database.setSetting("combine_threshold", "" + ((double) compareCombineThresholdSlider.getValue() / 100.0));
+		    Database.setSetting("compare_relative_score", "" + ((double) compareCompareRelativeScoreSlider.getValue() / 100.0));
+		    Database.setSetting("dry_run", "" + optionDryRunCheckBox.isSelected());
+		    Database.setSetting("duplicate_directory", duplicateDirectoryTextField.getText());
+		    Database.setSetting("duration_limit", "" + compareDurationLimitSlider.getValue());
+		    Database.setSetting("duration_must_match", "" + optionDurationMustMatchCheckBox.isSelected());
+		    Database.setSetting("duration_weight", "" + weightDurationSlider.getValue());
+		    Database.setSetting("filename_format", filenameFormatTextField.getText());
+		    Database.setSetting("filename_illegal_characters", filenameIllegalCharactersTextField.getText());
+		    Database.setSetting("input_directory", inputDirectoryTextField.getText());
+		    Database.setSetting("lookup_genre", "" + optionLookupGenreCheckBox.isSelected());
+		    Database.setSetting("match_min_score", "" + ((double) compareMatchMinScoreSlider.getValue() / 100.0));
+		    Database.setSetting("max_diff_best_score", "" + ((double) compareMaxDiffBestScoreSlider.getValue() / 100.0));
+		    Database.setSetting("max_group_size", "" + daemonMaxGroupSizeSlider.getValue());
+		    Database.setSetting("mbid_lookup", "" + optionLookupMBIDCheckBox.isSelected());
+		    Database.setSetting("metadata_search_url", musicBrainzSearchURLTextField.getText());
+		    Database.setSetting("musicbrainz_query_interval", "" + daemonMusicBrainzQueryIntervalSlider.getValue());
+		    Database.setSetting("only_save_complete_albums", "" + optionOnlySaveCompleteAlbumsCheckBox.isSelected());
+		    Database.setSetting("only_save_if_all_match", "" + optionOnlySaveIfAllMatchCheckBox.isSelected());
+		    Database.setSetting("output_directory", outputDirectoryTextField.getText());
+		    Database.setSetting("release_url", musicBrainzReleaseURLTextField.getText());
+		    Database.setSetting("run_interval", "" + daemonRunIntervalSlider.getValue());
+		    Database.setSetting("title_weight", "" + weightTitleSlider.getValue());
+		    Database.setSetting("tracknumber_weight", "" + weightTracknumberSlider.getValue());
+
+		    DefaultTableModel table = (DefaultTableModel) otherSettingsTable.getModel();
+		    for (int r = 0; r < table.getRowCount(); ++r) {
+			    String key = (String) table.getValueAt(r, 0);
+			    String value = (String) table.getValueAt(r, 1);
+			    if (value == null)
+				    value = "";
+			    try {
+				    if (key != null && !key.equals(""))
+					    Database.setSetting(key, value);
+			    } catch (SQLException e) {
+				    e.printStackTrace();
+			    }
+		    }
+		    updateSettings();
+	    } catch (SQLException e) {
+		    e.printStackTrace();
+	    }
+    }//GEN-LAST:event_saveSettingsButtonActionPerformed
+
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel audioscrobblerArtistURLLabel;
         private javax.swing.JTextField audioscrobblerArtistURLTextField;
         private javax.swing.JLabel audioscrobblerTrackURLLabel;
         private javax.swing.JTextField audioscrobblerTrackURLTextField;
+        private javax.swing.JPanel buttonPanel;
+        private javax.swing.JSeparator buttonSeparator;
         private javax.swing.JLabel compareCombineThresholdLabel;
         private javax.swing.JSlider compareCombineThresholdSlider;
         private javax.swing.JLabel compareCombineThresholdValue;
@@ -1222,6 +1522,15 @@ public class Settings extends javax.swing.JPanel {
         private javax.swing.JTable otherSettingsTable;
         private javax.swing.JLabel outputDirectoryLabel;
         private javax.swing.JTextField outputDirectoryTextField;
+        private javax.swing.JButton resetAllButton;
+        private javax.swing.JButton resetCompareButton;
+        private javax.swing.JButton resetDaemonButton;
+        private javax.swing.JButton resetLocationsButton;
+        private javax.swing.JButton resetOptionsButton;
+        private javax.swing.JButton resetOtherSettingsButton;
+        private javax.swing.JButton resetWeightButton;
+        private javax.swing.JLabel restoreLabel;
+        private javax.swing.JButton saveSettingsButton;
         private javax.swing.JLabel weightAlbumLabel;
         private javax.swing.JSlider weightAlbumSlider;
         private javax.swing.JLabel weightAlbumValue;

@@ -23,6 +23,9 @@ public class Database {
 	private static PreparedStatement matchFile;
 	private static PreparedStatement matchingDetails;
 	private static PreparedStatement matchingList;
+	private static PreparedStatement resetAllSettings;
+	private static PreparedStatement resetSetting;
+	private static PreparedStatement setSetting;
 	private static PreparedStatement settingList;
 	private static PreparedStatement status;
 
@@ -37,8 +40,11 @@ public class Database {
 		matchFile = connection.prepareStatement("UPDATE file SET track_id = ? WHERE file_id = ?");
 		matchingDetails = connection.prepareStatement("SELECT * FROM v_ui_matching_details WHERE album_album_id = ? AND (file_track_id IS NULL OR file_track_id = track_track_id) ORDER BY track_tracknumber ASC, comparison_mbid_match DESC, comparison_score DESC");
 		matchingList = connection.prepareStatement("SELECT * FROM v_ui_matching_list WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
+		resetAllSettings = connection.prepareStatement("UPDATE setting SET value = default_value");
+		resetSetting = connection.prepareStatement("UPDATE setting SET value = default_value WHERE key = ?");
+		setSetting = connection.prepareStatement("UPDATE setting SET value = ? WHERE key = ?");
 		settingList = connection.prepareStatement("SELECT * FROM setting");
-		status = connection.prepareStatement("SELECT * FROM locutus");
+		status = connection.prepareStatement("SELECT *, EXTRACT(epoch FROM now() - start) AS runtime FROM locutus");
 	}
 
 	public static int deleteComparison(int file_id, int track_id) throws SQLException {
@@ -98,5 +104,20 @@ public class Database {
 		matchFile.setInt(1, track_id);
 		matchFile.setInt(2, file_id);
 		return matchFile.executeUpdate();
+	}
+
+	public static int resetAllSettings() throws SQLException {
+		return resetAllSettings.executeUpdate();
+	}
+
+	public static int resetSetting(String setting) throws SQLException {
+		resetSetting.setString(1, setting);
+		return resetSetting.executeUpdate();
+	}
+
+	public static int setSetting(String key, String value) throws SQLException {
+		setSetting.setString(1, value);
+		setSetting.setString(2, key);
+		return setSetting.executeUpdate();
 	}
 }
