@@ -223,13 +223,6 @@ public class Matching extends javax.swing.JPanel {
                                 matchingTreeTreeWillExpand(evt);
                         }
                 });
-                matchingTree.addTreeExpansionListener(new javax.swing.event.TreeExpansionListener() {
-                        public void treeCollapsed(javax.swing.event.TreeExpansionEvent evt) {
-                        }
-                        public void treeExpanded(javax.swing.event.TreeExpansionEvent evt) {
-                                matchingTreeTreeExpanded(evt);
-                        }
-                });
                 matchingTree.addKeyListener(new java.awt.event.KeyAdapter() {
                         public void keyPressed(java.awt.event.KeyEvent evt) {
                                 matchingTreeKeyPressed(evt);
@@ -255,51 +248,46 @@ public class Matching extends javax.swing.JPanel {
 		TreePath[] paths = matchingTree.getSelectionPaths();
 		DefaultMutableTreeNode active_album = null;
 		List<DefaultMutableTreeNode> filetreenodes = new ArrayList<DefaultMutableTreeNode>();
-		DefaultMutableTreeNode selected = null;
+		DefaultMutableTreeNode selected = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
 		for (TreePath path : paths) {
-			selected = (DefaultMutableTreeNode) path.getLastPathComponent();
-			Object node = selected.getUserObject();
+			DefaultMutableTreeNode current = (DefaultMutableTreeNode) path.getLastPathComponent();
+			Object node = current.getUserObject();
 			if (node instanceof Album) {
-				active_album = selected;
-				Enumeration tracks = selected.children();
+				active_album = current;
+				Enumeration tracks = current.children();
 				while (tracks.hasMoreElements()) {
 					Enumeration files = ((DefaultMutableTreeNode) tracks.nextElement()).children();
 					while (files.hasMoreElements())
 						filetreenodes.add((DefaultMutableTreeNode) files.nextElement());
 				}
 			} else if (node instanceof Track) {
-				active_album = (DefaultMutableTreeNode) selected.getParent();
-				Enumeration files = selected.children();
+				active_album = (DefaultMutableTreeNode) current.getParent();
+				Enumeration files = current.children();
 				while (files.hasMoreElements())
 					filetreenodes.add((DefaultMutableTreeNode) files.nextElement());
 			} else if (node instanceof Metafile) {
-				active_album = (DefaultMutableTreeNode) selected.getParent().getParent();
-				filetreenodes.add(selected);
+				active_album = (DefaultMutableTreeNode) current.getParent().getParent();
+				filetreenodes.add(current);
 			}
 		}
+		System.out.println("Files: " + filetreenodes.size());
 		switch (evt.getKeyCode()) {
 			case KeyEvent.VK_DELETE:
 			case KeyEvent.VK_D:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((Metafile) treenode.getUserObject()).setStatus(Metafile.DELETE);
-				if (matchingTree.getSelectionCount() == 1)
-					selected = selected.getNextNode();
 				break;
 
 			case KeyEvent.VK_ENTER:
 			case KeyEvent.VK_S:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((Metafile) treenode.getUserObject()).setStatus(Metafile.SAVE);
-				if (matchingTree.getSelectionCount() == 1)
-					selected = selected.getNextNode();
 				break;
 
 			case KeyEvent.VK_ESCAPE:
 			case KeyEvent.VK_R:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((Metafile) treenode.getUserObject()).setStatus(Metafile.NONE);
-				if (matchingTree.getSelectionCount() == 1)
-					selected = selected.getNextNode();
 				break;
 
 			case KeyEvent.VK_A:
@@ -319,8 +307,10 @@ public class Matching extends javax.swing.JPanel {
 				if (matchingTree.getSelectionCount() != 1)
 					break;
 				if (selected.getUserObject() instanceof Album) {
-					if (selected.getChildCount() > 0 && !evt.isShiftDown())
-						selected = selected.getNextNode();
+					if (evt.isShiftDown())
+						break;
+					matchingTree.expandPath(new TreePath(selected.getPath()));
+					selected = selected.getNextNode();
 				} else if (selected.getUserObject() instanceof Track) {
 					if (evt.isShiftDown())
 						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildBefore(selected);
@@ -339,6 +329,7 @@ public class Matching extends javax.swing.JPanel {
 				if (selected.getUserObject() instanceof Album) {
 					if (evt.isShiftDown())
 						break;
+					matchingTree.expandPath(new TreePath(selected.getPath()));
 					Enumeration tracks = selected.children();
 					while (tracks.hasMoreElements()) {
 						Enumeration files = ((DefaultMutableTreeNode) tracks.nextElement()).children();
@@ -409,8 +400,6 @@ public class Matching extends javax.swing.JPanel {
 			case KeyEvent.VK_E:
 				if (active_album == null)
 					break;
-				if (selected != null && selected.getUserObject() instanceof Album)
-					updateAlbum(selected);
 				matchingTree.expandPath(new TreePath(active_album.getPath()));
 				/* expand all child nodes of this album */
 				Enumeration tracks = active_album.children();
@@ -440,10 +429,6 @@ public class Matching extends javax.swing.JPanel {
 		}
 		if (selected != null) {
 			TreePath path = new TreePath(selected.getPath());
-			if (matchingTree.isCollapsed(path))
-				matchingTree.expandPath(path);
-			matchingTree.setSelectionPath(path);
-			matchingTree.scrollPathToVisible(path);
 			Enumeration albums = ((DefaultMutableTreeNode) matchingTree.getModel().getRoot()).children();
 			while (albums.hasMoreElements()) {
 				DefaultMutableTreeNode album = (DefaultMutableTreeNode) albums.nextElement();
@@ -462,19 +447,12 @@ public class Matching extends javax.swing.JPanel {
 					}
 				}
 			}
+			matchingTree.expandPath(path);
+			matchingTree.setSelectionPath(path);
+			matchingTree.scrollPathToVisible(path);
 		}
 		matchingTree.repaint();
 	}//GEN-LAST:event_matchingTreeKeyPressed
-
-	private void matchingTreeTreeExpanded(javax.swing.event.TreeExpansionEvent evt) {//GEN-FIRST:event_matchingTreeTreeExpanded
-//		DefaultMutableTreeNode node = (DefaultMutableTreeNode) evt.getPath().getLastPathComponent();
-//		if (node.getUserObject() instanceof Album) {
-//			/* expand all child nodes of this album */
-//			Enumeration tracks = node.children();
-//			while (tracks.hasMoreElements())
-//				jTree1.expandPath(new TreePath(((DefaultMutableTreeNode) tracks.nextElement()).getPath()));
-//		}
-	}//GEN-LAST:event_matchingTreeTreeExpanded
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JScrollPane matchingScrollPane;
         private javax.swing.JTree matchingTree;

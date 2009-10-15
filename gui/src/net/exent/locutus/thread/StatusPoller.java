@@ -43,7 +43,7 @@ public class StatusPoller extends Thread {
 		while (active) {
 			checkStatus();
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

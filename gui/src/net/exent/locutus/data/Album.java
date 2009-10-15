@@ -39,7 +39,7 @@ public class Album {
 	public String toString() {
 		/* XXX: turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
 		 * solution? add \u200b which is a zero width character (ie. invisible) */
-		return "\u200b" + getTitle() + " (" + getTracks() + "/" + getTracksCompared() + "/" + getMBIDsMatched() + " tracks/compared/mbids, " + getFilesCompared() + " files not matched)";
+		return "\u200b" + getTitle() + " [" + getTracksCompared() + "/" + getTracks() + " tracks compared, " + getMBIDsMatched() + " matched using MBID and " + getFilesCompared() + " files compared to album]";
 	}
 
 	/**

@@ -84,7 +84,7 @@ public class Metafile {
 	public String toString() {
 		/* XXX: turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
 		 * solution? add \u200b which is a zero width character (ie. invisible) */
-		return "\u200b" + (getTracknumber() > 9 ? getTracknumber() : "0" + getTracknumber()) + " - " + getDuration() + " - " + getAlbumArtist() + " - " + getAlbum() + " - " + getArtist() + " - " + getTitle();
+		return "\u200b" + (getTracknumber() > 9 ? getTracknumber() : "0" + getTracknumber()) + " - " + getDuration() + " - " + getAlbumArtist() + " - " + getAlbum() + " - " + getArtist() + " - " + getTitle() + " [" + (((int) (1000.0 * score)) / 10.0) + "%]";
 	}
 
 	/**
