@@ -13,6 +13,7 @@ package net.exent.locutus.gui;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
 import net.exent.locutus.data.Metafile;
@@ -44,94 +45,208 @@ public class Locutus extends javax.swing.JFrame {
 		return filterTextField.getText();
 	}
 
-	public static void setMetadata(Metafile[] files) {
-		if (files.length <= 0)
+	public static void setMetadata(List<Metafile> files) {
+		if (files.size() <= 0)
 			return;
 
 		clearMetadata();
-		if (files.length > 1) {
-			fileFilenameLabel.setText("File: <" + files.length + " files>");
-			fileDuplicate.setSelected(false);
-			fileModified.setSelected(false);
-			filePinned.setSelected(false);
-		} else {
-			fileFilenameLabel.setText("File: " + files[0].getFilename());
-			fileDuplicate.setSelected(files[0].isDuplicate());
-			fileModified.setSelected(files[0].isModified());
-			filePinned.setSelected(files[0].isPinned());
-		}
+		if (files.size() > 1)
+			fileFilenameLabel.setText("<" + files.size() + " files selected>");
+		else
+			fileFilenameLabel.setText(files.get(0).getFilename());
 
 		boolean first = true;
 		for (Metafile file : files) {
-			if (first || fileAlbumArtistMBIDValue.getText().equals(file.getAlbumArtistMBID()))
-				fileAlbumArtistMBIDValue.setText(file.getAlbumArtistMBID());
-			if (first || fileAlbumArtistSortValue.getText().equals(file.getAlbumArtistSortName()))
-				fileAlbumArtistSortValue.setText(file.getAlbumArtistSortName());
-			if (first || fileAlbumArtistValue.getText().equals(file.getAlbumArtist()))
-				fileAlbumArtistValue.setText(file.getAlbumArtist());
-			if (first || fileAlbumMBIDValue.getText().equals(file.getAlbumMBID()))
-				fileAlbumMBIDValue.setText(file.getAlbumMBID());
-			if (first || fileAlbumValue.getText().equals(file.getAlbum()))
-				fileAlbumValue.setText(file.getAlbum());
-			if (first || fileArtistMBIDValue.getText().equals(file.getArtistMBID()))
-				fileArtistMBIDValue.setText(file.getArtistMBID());
-			if (first || fileArtistSortValue.getText().equals(file.getArtistSortName()))
-				fileArtistSortValue.setText(file.getArtistSortName());
-			if (first || fileArtistValue.getText().equals(file.getArtist()))
-				fileArtistValue.setText(file.getArtist());
-			if (first || fileBitrateValue.getText().equals("" + file.getBitrate()))
-				fileBitrateValue.setText("" + file.getBitrate());
-			if (first || fileChannelsValue.getText().equals("" + file.getChannels()))
-				fileChannelsValue.setText("" + file.getChannels());
-			if (first || fileDurationValue.getText().equals("" + file.getDuration()))
-				fileDurationValue.setText("" + file.getDuration());
-			if (first || fileFileIDValue.getText().equals("" + file.getFileID()))
-				fileFileIDValue.setText("" + file.getFileID());
-			if (first || fileGenreValue.getText().equals(file.getGenre()))
-				fileGenreValue.setText(file.getGenre());
-			if (first || fileGroupValue.getText().equals(file.getGroup()))
-				fileGroupValue.setText(file.getGroup());
-			if (first || fileReleasedValue.getText().equals(file.getReleased()))
-				fileReleasedValue.setText(file.getReleased());
-			if (first || fileSamplerateValue.getText().equals("" + file.getSamplerate()))
-				fileSamplerateValue.setText("" + file.getSamplerate());
-			if (first || fileTitleValue.getText().equals(file.getTitle()))
-				fileTitleValue.setText(file.getTitle());
-			if (first || fileTrackIDValue.getText().equals("" + file.getTrackID()))
-				fileTrackIDValue.setText("" + file.getTrackID());
-			if (first || fileTrackMBIDValue.getText().equals(file.getTrackMBID()))
-				fileTrackMBIDValue.setText(file.getTrackMBID());
-			if (first || fileTracknumberValue.getText().equals("" + file.getTracknumber()))
-				fileTracknumberValue.setText("" + file.getTracknumber());
+			/* misc panel */
+			if (first || (!"".equals(file.getGroup()) && groupValue.getText().equals(file.getGroup())))
+				groupValue.setText(file.getGroup());
+			else
+				groupValue.setText("");
+			if (file.getFileID() > 0 && (first || (!"".equals("" + file.getFileID()) && fileIDValue.getText().equals("" + file.getFileID()))))
+				fileIDValue.setText("" + file.getFileID());
+			else
+				fileIDValue.setText("");
+			if (file.getTrackID() > 0 && (first || (!"".equals("" + file.getTrackID()) && trackIDValue.getText().equals("" + file.getTrackID()))))
+				trackIDValue.setText("" + file.getTrackID());
+			else
+				trackIDValue.setText("");
+			if (first || (!"".equals("" + file.getDuration()) && durationValue.getText().equals("" + file.getDuration())))
+				durationValue.setText("" + file.getDuration());
+			else
+				durationValue.setText("");
+			if (first || (!"".equals("" + file.getBitrate()) && bitrateValue.getText().equals("" + file.getBitrate())))
+				bitrateValue.setText("" + file.getBitrate());
+			else
+				bitrateValue.setText("");
+			if (first || (!"".equals("" + file.getChannels()) && channelsValue.getText().equals("" + file.getChannels())))
+				channelsValue.setText("" + file.getChannels());
+			else
+				channelsValue.setText("");
+			if (first || (!"".equals("" + file.getSamplerate()) && samplerateValue.getText().equals("" + file.getSamplerate())))
+				samplerateValue.setText("" + file.getSamplerate());
+			else
+				samplerateValue.setText("");
+			if (first || !file.isModified())
+				modifiedCheckBox.setSelected(file.isModified());
+			if (first || !file.isDuplicate())
+				duplicateCheckBox.setSelected(file.isDuplicate());
+			if (first || !file.isPinned())
+				pinnedCheckBox.setSelected(file.isPinned());
+
+			/* artist panel */
+			if (first || (artistCheckBox.isSelected() && artistValue.getText().equals(file.getArtist()))) {
+				artistCheckBox.setSelected(true);
+				artistValue.setEditable(true);
+				artistValue.setText(file.getArtist());
+			} else {
+				artistCheckBox.setSelected(false);
+				artistValue.setEditable(false);
+				artistValue.setText("");
+			}
+			if (first || (artistSortCheckBox.isSelected() && artistSortValue.getText().equals(file.getArtistSortName()))) {
+				artistSortCheckBox.setSelected(true);
+				artistSortValue.setEditable(true);
+				artistSortValue.setText(file.getArtistSortName());
+			} else {
+				artistSortCheckBox.setSelected(false);
+				artistSortValue.setEditable(false);
+				artistSortValue.setText("");
+			}
+			if (first || (albumMBIDCheckBox.isSelected() && artistMBIDValue.getText().equals(file.getArtistMBID()))) {
+				artistMBIDCheckBox.setSelected(true);
+				artistMBIDValue.setEditable(true);
+				artistMBIDValue.setText(file.getArtistMBID());
+			} else {
+				artistMBIDCheckBox.setSelected(false);
+				artistMBIDValue.setEditable(false);
+				artistMBIDValue.setText("");
+			}
+
+			/* track panel */
+			if (first || (titleCheckBox.isSelected() && titleValue.getText().equals(file.getTitle()))) {
+				titleCheckBox.setSelected(true);
+				titleValue.setEditable(true);
+				titleValue.setText(file.getTitle());
+			} else {
+				titleCheckBox.setSelected(false);
+				titleValue.setEditable(false);
+				titleValue.setText("");
+			}
+			if (first || (tracknumberCheckBox.isSelected() && tracknumberValue.getText().equals("" + file.getTracknumber()))) {
+				tracknumberCheckBox.setSelected(true);
+				tracknumberValue.setEditable(true);
+				tracknumberValue.setText("" + file.getTracknumber());
+			} else {
+				tracknumberCheckBox.setSelected(false);
+				tracknumberValue.setEditable(false);
+				tracknumberValue.setText("");
+			}
+			if (first || (genreCheckBox.isSelected() && genreValue.getText().equals(file.getGenre()))) {
+				genreCheckBox.setSelected(true);
+				genreValue.setEditable(true);
+				genreValue.setText(file.getGenre());
+			} else {
+				genreCheckBox.setSelected(false);
+				genreValue.setEditable(false);
+				genreValue.setText("");
+			}
+			if (first || (trackMBIDCheckBox.isSelected() && trackMBIDValue.getText().equals(file.getTrackMBID()))) {
+				trackMBIDCheckBox.setSelected(true);
+				trackMBIDValue.setEditable(true);
+				trackMBIDValue.setText(file.getTrackMBID());
+			} else {
+				trackMBIDCheckBox.setSelected(false);
+				trackMBIDValue.setEditable(false);
+				trackMBIDValue.setText("");
+			}
+
+			/* album panel */
+			if (first || (albumCheckBox.isSelected() && albumValue.getText().equals(file.getAlbum()))) {
+				albumCheckBox.setSelected(true);
+				albumValue.setEditable(true);
+				albumValue.setText(file.getAlbum());
+			} else {
+				albumCheckBox.setSelected(false);
+				albumValue.setEditable(false);
+				albumValue.setText("");
+			}
+			if (first || (releasedCheckBox.isSelected() && releasedValue.getText().equals(file.getReleased()))) {
+				releasedCheckBox.setSelected(true);
+				releasedValue.setEditable(true);
+				releasedValue.setText(file.getReleased());
+			} else {
+				releasedCheckBox.setSelected(false);
+				releasedValue.setEditable(false);
+				releasedValue.setText("");
+			}
+			if (first || (albumMBIDCheckBox.isSelected() && albumMBIDValue.getText().equals(file.getAlbumMBID()))) {
+				albumMBIDCheckBox.setSelected(true);
+				albumMBIDValue.setEditable(true);
+				albumMBIDValue.setText(file.getAlbumMBID());
+			} else {
+				albumMBIDCheckBox.setSelected(false);
+				albumMBIDValue.setEditable(false);
+				albumMBIDValue.setText("");
+			}
+
+			/* album artist panel */
+			if (first || (albumArtistCheckBox.isSelected() && albumArtistValue.getText().equals(file.getAlbumArtist()))) {
+				albumArtistCheckBox.setSelected(true);
+				albumArtistValue.setEditable(true);
+				albumArtistValue.setText(file.getAlbumArtist());
+			} else {
+				albumArtistCheckBox.setSelected(false);
+				albumArtistValue.setEditable(false);
+				albumArtistValue.setText("");
+			}
+			if (first || (albumArtistSortCheckBox.isSelected() && albumArtistSortValue.getText().equals(file.getAlbumArtistSortName()))) {
+				albumArtistSortCheckBox.setSelected(true);
+				albumArtistSortValue.setEditable(true);
+				albumArtistSortValue.setText(file.getAlbumArtistSortName());
+			} else {
+				albumArtistSortCheckBox.setSelected(false);
+				albumArtistSortValue.setEditable(false);
+				albumArtistSortValue.setText("");
+			}
+			if (first || (albumArtistMBIDCheckBox.isSelected() && albumArtistMBIDValue.getText().equals(file.getAlbumArtistMBID()))) {
+				albumArtistMBIDCheckBox.setSelected(true);
+				albumArtistMBIDValue.setEditable(true);
+				albumArtistMBIDValue.setText(file.getAlbumArtistMBID());
+			} else {
+				albumArtistMBIDCheckBox.setSelected(false);
+				albumArtistMBIDValue.setEditable(false);
+				albumArtistMBIDValue.setText("");
+			}
+
 			first = false;
 		}
 	}
 
 	public static void clearMetadata() {
-		fileAlbumArtistMBIDValue.setText("");
-		fileAlbumArtistSortValue.setText("");
-		fileAlbumArtistValue.setText("");
-		fileAlbumMBIDValue.setText("");
-		fileAlbumValue.setText("");
-		fileArtistMBIDValue.setText("");
-		fileArtistSortValue.setText("");
-		fileArtistValue.setText("");
-		fileBitrateValue.setText("");
-		fileChannelsValue.setText("");
-		fileDuplicate.setSelected(false);
-		fileDurationValue.setText("");
-		fileFileIDValue.setText("");
-		fileFilenameLabel.setText("File: <none>");
-		fileGenreValue.setText("");
-		fileGroupValue.setText("");
-		fileModified.setSelected(false);
-		filePinned.setSelected(false);
-		fileReleasedValue.setText("");
-		fileSamplerateValue.setText("");
-		fileTitleValue.setText("");
-		fileTrackIDValue.setText("");
-		fileTrackMBIDValue.setText("");
-		fileTracknumberValue.setText("");
+		albumArtistMBIDValue.setText("");
+		albumArtistSortValue.setText("");
+		albumArtistValue.setText("");
+		albumMBIDValue.setText("");
+		albumValue.setText("");
+		artistMBIDValue.setText("");
+		artistSortValue.setText("");
+		artistValue.setText("");
+		bitrateValue.setText("");
+		channelsValue.setText("");
+		duplicateCheckBox.setSelected(false);
+		durationValue.setText("");
+		fileIDValue.setText("");
+		fileFilenameLabel.setText("<no files selected>");
+		genreValue.setText("");
+		groupValue.setText("");
+		modifiedCheckBox.setSelected(false);
+		pinnedCheckBox.setSelected(false);
+		releasedValue.setText("");
+		samplerateValue.setText("");
+		titleValue.setText("");
+		trackIDValue.setText("");
+		trackMBIDValue.setText("");
+		tracknumberValue.setText("");
 	}
 
 	public static void showMetadata() {
@@ -181,54 +296,54 @@ public class Locutus extends javax.swing.JFrame {
                 metadataPanel = new javax.swing.JPanel();
                 fileFilenameLabel = new javax.swing.JLabel();
                 miscPanel = new javax.swing.JPanel();
-                fileTrackIDLabel = new javax.swing.JLabel();
-                fileTrackIDValue = new javax.swing.JTextField();
-                fileGroupLabel = new javax.swing.JLabel();
-                filePinned = new javax.swing.JCheckBox();
-                fileFileIDValue = new javax.swing.JTextField();
-                fileFileIDLabel = new javax.swing.JLabel();
-                fileGroupValue = new javax.swing.JTextField();
-                fileModified = new javax.swing.JCheckBox();
-                fileDuplicate = new javax.swing.JCheckBox();
-                fileDurationLabel = new javax.swing.JLabel();
-                fileDurationValue = new javax.swing.JLabel();
-                fileChannelsLabel = new javax.swing.JLabel();
-                fileChannelsValue = new javax.swing.JLabel();
-                fileBitrateLabel = new javax.swing.JLabel();
-                fileBitrateValue = new javax.swing.JLabel();
-                fileSamplerateLabel = new javax.swing.JLabel();
-                fileSamplerateValue = new javax.swing.JLabel();
-                fileSaveButton = new javax.swing.JButton();
+                groupLabel = new javax.swing.JLabel();
+                groupValue = new javax.swing.JTextField();
+                fileIDLabel = new javax.swing.JLabel();
+                fileIDValue = new javax.swing.JTextField();
+                trackIDLabel = new javax.swing.JLabel();
+                trackIDValue = new javax.swing.JTextField();
+                durationLabel = new javax.swing.JLabel();
+                durationValue = new javax.swing.JLabel();
+                bitrateLabel = new javax.swing.JLabel();
+                bitrateValue = new javax.swing.JLabel();
+                channelsLabel = new javax.swing.JLabel();
+                channelsValue = new javax.swing.JLabel();
+                samplerateLabel = new javax.swing.JLabel();
+                samplerateValue = new javax.swing.JLabel();
+                modifiedCheckBox = new javax.swing.JCheckBox();
+                duplicateCheckBox = new javax.swing.JCheckBox();
+                pinnedCheckBox = new javax.swing.JCheckBox();
+                saveButton = new javax.swing.JButton();
                 artistPanel = new javax.swing.JPanel();
-                fileArtistLabel = new javax.swing.JLabel();
-                fileArtistValue = new javax.swing.JTextField();
-                fileArtistSortLabel = new javax.swing.JLabel();
-                fileArtistSortValue = new javax.swing.JTextField();
-                fileArtistMBIDLabel = new javax.swing.JLabel();
-                fileArtistMBIDValue = new javax.swing.JTextField();
+                artistCheckBox = new javax.swing.JCheckBox();
+                artistValue = new javax.swing.JTextField();
+                artistSortCheckBox = new javax.swing.JCheckBox();
+                artistSortValue = new javax.swing.JTextField();
+                artistMBIDCheckBox = new javax.swing.JCheckBox();
+                artistMBIDValue = new javax.swing.JTextField();
                 trackPanel = new javax.swing.JPanel();
-                fileTrackMBIDValue = new javax.swing.JTextField();
-                fileGenreValue = new javax.swing.JTextField();
-                fileGenreLabel = new javax.swing.JLabel();
-                fileTrackMBIDLabel = new javax.swing.JLabel();
-                fileTitleValue = new javax.swing.JTextField();
-                fileTitleLabel = new javax.swing.JLabel();
-                fileTracknumberValue = new javax.swing.JTextField();
-                fileTracknumberLabel = new javax.swing.JLabel();
+                titleCheckBox = new javax.swing.JCheckBox();
+                titleValue = new javax.swing.JTextField();
+                tracknumberCheckBox = new javax.swing.JCheckBox();
+                tracknumberValue = new javax.swing.JTextField();
+                genreCheckBox = new javax.swing.JCheckBox();
+                genreValue = new javax.swing.JTextField();
+                trackMBIDCheckBox = new javax.swing.JCheckBox();
+                trackMBIDValue = new javax.swing.JTextField();
                 albumPanel = new javax.swing.JPanel();
-                fileAlbumValue = new javax.swing.JTextField();
-                fileAlbumLabel = new javax.swing.JLabel();
-                fileReleasedValue = new javax.swing.JTextField();
-                fileReleasedLabel = new javax.swing.JLabel();
-                fileAlbumMBIDValue = new javax.swing.JTextField();
-                fileAlbumMBIDLabel = new javax.swing.JLabel();
+                albumCheckBox = new javax.swing.JCheckBox();
+                albumValue = new javax.swing.JTextField();
+                releasedCheckBox = new javax.swing.JCheckBox();
+                releasedValue = new javax.swing.JTextField();
+                albumMBIDCheckBox = new javax.swing.JCheckBox();
+                albumMBIDValue = new javax.swing.JTextField();
                 albumArtistPanel = new javax.swing.JPanel();
-                fileAlbumArtistLabel = new javax.swing.JLabel();
-                fileAlbumArtistValue = new javax.swing.JTextField();
-                fileAlbumArtistMBIDLabel = new javax.swing.JLabel();
-                fileAlbumArtistMBIDValue = new javax.swing.JTextField();
-                fileAlbumArtistSortLabel = new javax.swing.JLabel();
-                fileAlbumArtistSortValue = new javax.swing.JTextField();
+                albumArtistCheckBox = new javax.swing.JCheckBox();
+                albumArtistValue = new javax.swing.JTextField();
+                albumArtistSortCheckBox = new javax.swing.JCheckBox();
+                albumArtistSortValue = new javax.swing.JTextField();
+                albumArtistMBIDCheckBox = new javax.swing.JCheckBox();
+                albumArtistMBIDValue = new javax.swing.JTextField();
 
                 connectFrame.setTitle("Connect to database");
                 connectFrame.setMinimumSize(new java.awt.Dimension(289, 229));
@@ -462,7 +577,7 @@ public class Locutus extends javax.swing.JFrame {
                 metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Metadata"));
                 metadataPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileFilenameLabel.setText("File: <none>");
+                fileFilenameLabel.setText("<no files selected>");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
@@ -477,34 +592,7 @@ public class Locutus extends javax.swing.JFrame {
                 miscPanel.setMaximumSize(new java.awt.Dimension(298, 204));
                 miscPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileTrackIDLabel.setText("Track ID:");
-                fileTrackIDLabel.setMaximumSize(new java.awt.Dimension(79, 17));
-                fileTrackIDLabel.setMinimumSize(new java.awt.Dimension(79, 17));
-                fileTrackIDLabel.setPreferredSize(new java.awt.Dimension(79, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileTrackIDLabel, gridBagConstraints);
-
-                fileTrackIDValue.setToolTipText("<html>The ID of the track this or these files are matched with.<br />\nIf this field is set and you save any changes to the metadata (with the exception of genre) then this field will be cleared as that most likely means the file[s] were mismatched.<br />\nWhile you can, you should not set this field manually unless you know what you're doing.</html>");
-                fileTrackIDValue.setMaximumSize(new java.awt.Dimension(64, 25));
-                fileTrackIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
-                fileTrackIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 3;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileTrackIDValue, gridBagConstraints);
-
-                fileGroupLabel.setText("Group:");
+                groupLabel.setText("Group:");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 0;
@@ -513,54 +601,13 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileGroupLabel, gridBagConstraints);
+                miscPanel.add(groupLabel, gridBagConstraints);
 
-                filePinned.setText("Pinned");
-                filePinned.setToolTipText("<html>A pinned file will have preference above other duplicates regardless of quality.<br />\nFor example, you got an album with MP3-files and then 1 extra file from the same album, but in FLAC format.<br />\nMost likely the FLAC will appear in the output directory while the duplicate MP3 will be placed in the duplicate directory.<br />\nIf you pin the duplicate MP3 then the FLAC will be placed in the duplicate directory and the MP3 in the output directory.<br />\nIf you pin multiple duplicates the behaviour is undefined, it's usually better to delete the duplicate you don't want.</html>");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 6;
-                gridBagConstraints.gridwidth = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(filePinned, gridBagConstraints);
-
-                fileFileIDValue.setEditable(false);
-                fileFileIDValue.setFocusable(false);
-                fileFileIDValue.setMaximumSize(new java.awt.Dimension(64, 25));
-                fileFileIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
-                fileFileIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileFileIDValue, gridBagConstraints);
-
-                fileFileIDLabel.setText("File ID:");
-                fileFileIDLabel.setMaximumSize(new java.awt.Dimension(63, 17));
-                fileFileIDLabel.setMinimumSize(new java.awt.Dimension(63, 17));
-                fileFileIDLabel.setPreferredSize(new java.awt.Dimension(63, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileFileIDLabel, gridBagConstraints);
-
-                fileGroupValue.setEditable(false);
-                fileGroupValue.setToolTipText("<html>The group the file[s] belong to.<br />\nThe value for this field is automatically generated by the daemon using audio format, samplerate, channels and album title or path if album title is not set.<br />\nIf you wish to group files together manually you should write in the same album title for all of them (you still won't be able to do anything about format, samplerate or channels, though).</html>");
-                fileGroupValue.setFocusable(false);
-                fileGroupValue.setMaximumSize(new java.awt.Dimension(256, 25));
-                fileGroupValue.setMinimumSize(new java.awt.Dimension(256, 25));
-                fileGroupValue.setPreferredSize(new java.awt.Dimension(256, 25));
+                groupValue.setEditable(false);
+                groupValue.setToolTipText("<html>The group the file[s] belong to.<br />\nThe value for this field is automatically generated by the daemon using audio format, samplerate, channels and album title or path if album title is not set.<br />\nIf you wish to group files together manually you should write in the same album title for all of them (you still won't be able to do anything about format, samplerate or channels, though).</html>");
+                groupValue.setMaximumSize(new java.awt.Dimension(256, 25));
+                groupValue.setMinimumSize(new java.awt.Dimension(256, 25));
+                groupValue.setPreferredSize(new java.awt.Dimension(256, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
@@ -570,12 +617,156 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileGroupValue, gridBagConstraints);
+                miscPanel.add(groupValue, gridBagConstraints);
 
-                fileModified.setText("Modified");
-                fileModified.setToolTipText("Whether the file[s] are modified by the user since the last time the daemon processed the file[s].");
-                fileModified.setEnabled(false);
-                fileModified.setFocusable(false);
+                fileIDLabel.setText("File ID:");
+                fileIDLabel.setMaximumSize(new java.awt.Dimension(63, 17));
+                fileIDLabel.setMinimumSize(new java.awt.Dimension(63, 17));
+                fileIDLabel.setPreferredSize(new java.awt.Dimension(63, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileIDLabel, gridBagConstraints);
+
+                fileIDValue.setEditable(false);
+                fileIDValue.setMaximumSize(new java.awt.Dimension(64, 25));
+                fileIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                fileIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(fileIDValue, gridBagConstraints);
+
+                trackIDLabel.setText("Track ID:");
+                trackIDLabel.setMaximumSize(new java.awt.Dimension(79, 17));
+                trackIDLabel.setMinimumSize(new java.awt.Dimension(79, 17));
+                trackIDLabel.setPreferredSize(new java.awt.Dimension(79, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(trackIDLabel, gridBagConstraints);
+
+                trackIDValue.setEditable(false);
+                trackIDValue.setMaximumSize(new java.awt.Dimension(64, 25));
+                trackIDValue.setMinimumSize(new java.awt.Dimension(64, 25));
+                trackIDValue.setPreferredSize(new java.awt.Dimension(64, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(trackIDValue, gridBagConstraints);
+
+                durationLabel.setText("Duration:");
+                durationLabel.setMaximumSize(new java.awt.Dimension(63, 17));
+                durationLabel.setMinimumSize(new java.awt.Dimension(63, 17));
+                durationLabel.setPreferredSize(new java.awt.Dimension(63, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(durationLabel, gridBagConstraints);
+
+                durationValue.setMinimumSize(new java.awt.Dimension(64, 17));
+                durationValue.setPreferredSize(new java.awt.Dimension(64, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(durationValue, gridBagConstraints);
+
+                bitrateLabel.setText("Bitrate:");
+                bitrateLabel.setMaximumSize(new java.awt.Dimension(79, 17));
+                bitrateLabel.setMinimumSize(new java.awt.Dimension(79, 17));
+                bitrateLabel.setPreferredSize(new java.awt.Dimension(79, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(bitrateLabel, gridBagConstraints);
+
+                bitrateValue.setMinimumSize(new java.awt.Dimension(64, 17));
+                bitrateValue.setPreferredSize(new java.awt.Dimension(64, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridy = 3;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(bitrateValue, gridBagConstraints);
+
+                channelsLabel.setText("Channels:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(channelsLabel, gridBagConstraints);
+
+                channelsValue.setMinimumSize(new java.awt.Dimension(64, 17));
+                channelsValue.setPreferredSize(new java.awt.Dimension(64, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(channelsValue, gridBagConstraints);
+
+                samplerateLabel.setText("Samplerate:");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(samplerateLabel, gridBagConstraints);
+
+                samplerateValue.setMinimumSize(new java.awt.Dimension(64, 17));
+                samplerateValue.setPreferredSize(new java.awt.Dimension(64, 17));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 3;
+                gridBagConstraints.gridy = 4;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.weighty = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                miscPanel.add(samplerateValue, gridBagConstraints);
+
+                modifiedCheckBox.setText("Modified");
+                modifiedCheckBox.setToolTipText("Whether the file[s] are modified by the user since the last time the daemon processed the file[s].");
+                modifiedCheckBox.setEnabled(false);
+                modifiedCheckBox.setFocusable(false);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 5;
@@ -584,12 +775,12 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileModified, gridBagConstraints);
+                miscPanel.add(modifiedCheckBox, gridBagConstraints);
 
-                fileDuplicate.setText("Duplicate");
-                fileDuplicate.setToolTipText("Whether the file[s] are duplicates.");
-                fileDuplicate.setEnabled(false);
-                fileDuplicate.setFocusable(false);
+                duplicateCheckBox.setText("Duplicate");
+                duplicateCheckBox.setToolTipText("Whether the file[s] are duplicates.");
+                duplicateCheckBox.setEnabled(false);
+                duplicateCheckBox.setFocusable(false);
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 5;
@@ -598,104 +789,26 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileDuplicate, gridBagConstraints);
+                miscPanel.add(duplicateCheckBox, gridBagConstraints);
 
-                fileDurationLabel.setText("Duration:");
-                fileDurationLabel.setMaximumSize(new java.awt.Dimension(63, 17));
-                fileDurationLabel.setMinimumSize(new java.awt.Dimension(63, 17));
-                fileDurationLabel.setPreferredSize(new java.awt.Dimension(63, 17));
+                pinnedCheckBox.setText("Pinned");
+                pinnedCheckBox.setToolTipText("<html>A pinned file will have preference above other duplicates regardless of quality.<br />\nFor example, you got an album with MP3-files and then 1 extra file from the same album, but in FLAC format.<br />\nMost likely the FLAC will appear in the output directory while the duplicate MP3 will be placed in the duplicate directory.<br />\nIf you pin the duplicate MP3 then the FLAC will be placed in the duplicate directory and the MP3 in the output directory.<br />\nIf you pin multiple duplicates the behaviour is undefined, it's usually better to delete the duplicate you don't want.</html>");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 3;
+                gridBagConstraints.gridy = 6;
+                gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileDurationLabel, gridBagConstraints);
+                miscPanel.add(pinnedCheckBox, gridBagConstraints);
 
-                fileDurationValue.setMinimumSize(new java.awt.Dimension(64, 17));
-                fileDurationValue.setPreferredSize(new java.awt.Dimension(64, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileDurationValue, gridBagConstraints);
-
-                fileChannelsLabel.setText("Channels:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileChannelsLabel, gridBagConstraints);
-
-                fileChannelsValue.setMinimumSize(new java.awt.Dimension(64, 17));
-                fileChannelsValue.setPreferredSize(new java.awt.Dimension(64, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileChannelsValue, gridBagConstraints);
-
-                fileBitrateLabel.setText("Bitrate:");
-                fileBitrateLabel.setMaximumSize(new java.awt.Dimension(79, 17));
-                fileBitrateLabel.setMinimumSize(new java.awt.Dimension(79, 17));
-                fileBitrateLabel.setPreferredSize(new java.awt.Dimension(79, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileBitrateLabel, gridBagConstraints);
-
-                fileBitrateValue.setMinimumSize(new java.awt.Dimension(64, 17));
-                fileBitrateValue.setPreferredSize(new java.awt.Dimension(64, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 3;
-                gridBagConstraints.gridy = 3;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileBitrateValue, gridBagConstraints);
-
-                fileSamplerateLabel.setText("Samplerate:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileSamplerateLabel, gridBagConstraints);
-
-                fileSamplerateValue.setMinimumSize(new java.awt.Dimension(64, 17));
-                fileSamplerateValue.setPreferredSize(new java.awt.Dimension(64, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 3;
-                gridBagConstraints.gridy = 4;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.weighty = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                miscPanel.add(fileSamplerateValue, gridBagConstraints);
-
-                fileSaveButton.setMnemonic('S');
-                fileSaveButton.setText("Save metadata");
-                fileSaveButton.setFocusable(false);
-                fileSaveButton.addActionListener(new java.awt.event.ActionListener() {
+                saveButton.setMnemonic('S');
+                saveButton.setText("Save metadata");
+                saveButton.setFocusable(false);
+                saveButton.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                fileSaveButtonActionPerformed(evt);
+                                saveButtonActionPerformed(evt);
                         }
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -704,7 +817,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.weightx = 1.0;
-                miscPanel.add(fileSaveButton, gridBagConstraints);
+                miscPanel.add(saveButton, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -717,16 +830,25 @@ public class Locutus extends javax.swing.JFrame {
                 artistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Artist"));
                 artistPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileArtistLabel.setText("Name:");
-                fileArtistLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileArtistLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileArtistLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                artistCheckBox.setSelected(true);
+                artistCheckBox.setText("Name:");
+                artistCheckBox.setToolTipText("When checked, field will be saved");
+                artistCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                artistCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                artistCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                artistCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                artistCheckBoxActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                artistPanel.add(fileArtistLabel, gridBagConstraints);
+                artistPanel.add(artistCheckBox, gridBagConstraints);
 
-                fileArtistValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                artistValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
@@ -734,18 +856,24 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                artistPanel.add(fileArtistValue, gridBagConstraints);
+                artistPanel.add(artistValue, gridBagConstraints);
 
-                fileArtistSortLabel.setText("Sort name:");
-                fileArtistSortLabel.setOpaque(true);
+                artistSortCheckBox.setSelected(true);
+                artistSortCheckBox.setText("Sort name:");
+                artistSortCheckBox.setToolTipText("When checked, field will be saved");
+                artistSortCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                artistSortCheckBoxActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                artistPanel.add(fileArtistSortLabel, gridBagConstraints);
+                artistPanel.add(artistSortCheckBox, gridBagConstraints);
 
-                fileArtistSortValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                artistSortValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
@@ -753,20 +881,27 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                artistPanel.add(fileArtistSortValue, gridBagConstraints);
+                artistPanel.add(artistSortValue, gridBagConstraints);
 
-                fileArtistMBIDLabel.setText("MBID:");
-                fileArtistMBIDLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileArtistMBIDLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileArtistMBIDLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                artistMBIDCheckBox.setSelected(true);
+                artistMBIDCheckBox.setText("MBID:");
+                artistMBIDCheckBox.setToolTipText("When checked, field will be saved");
+                artistMBIDCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                artistMBIDCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                artistMBIDCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                artistMBIDCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                artistMBIDCheckBoxActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                artistPanel.add(fileArtistMBIDLabel, gridBagConstraints);
+                artistPanel.add(artistMBIDCheckBox, gridBagConstraints);
 
-                fileArtistMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                artistMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 2;
@@ -774,7 +909,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                artistPanel.add(fileArtistMBIDValue, gridBagConstraints);
+                artistPanel.add(artistMBIDValue, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -786,18 +921,77 @@ public class Locutus extends javax.swing.JFrame {
                 trackPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Track"));
                 trackPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileTrackMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                titleCheckBox.setSelected(true);
+                titleCheckBox.setText("Title:");
+                titleCheckBox.setToolTipText("When checked, field will be saved");
+                titleCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                titleCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                titleCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                titleCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                titleCheckBoxActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(titleCheckBox, gridBagConstraints);
+
+                titleValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 2;
+                gridBagConstraints.gridy = 0;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                trackPanel.add(fileTrackMBIDValue, gridBagConstraints);
+                trackPanel.add(titleValue, gridBagConstraints);
 
-                fileGenreValue.setPreferredSize(new java.awt.Dimension(64, 25));
+                tracknumberCheckBox.setSelected(true);
+                tracknumberCheckBox.setText("Tracknum:");
+                tracknumberCheckBox.setToolTipText("When checked, field will be saved");
+                tracknumberCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                tracknumberCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                tracknumberCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                tracknumberCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                tracknumberCheckBoxActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(tracknumberCheckBox, gridBagConstraints);
+
+                tracknumberValue.setMaximumSize(new java.awt.Dimension(32, 25));
+                tracknumberValue.setMinimumSize(new java.awt.Dimension(32, 25));
+                tracknumberValue.setPreferredSize(new java.awt.Dimension(32, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(tracknumberValue, gridBagConstraints);
+
+                genreCheckBox.setSelected(true);
+                genreCheckBox.setText("Genre:");
+                genreCheckBox.setToolTipText("When checked, field will be saved");
+                genreCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                genreCheckBoxActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 1;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                trackPanel.add(genreCheckBox, gridBagConstraints);
+
+                genreValue.setPreferredSize(new java.awt.Dimension(64, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 3;
                 gridBagConstraints.gridy = 1;
@@ -805,69 +999,36 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                trackPanel.add(fileGenreValue, gridBagConstraints);
+                trackPanel.add(genreValue, gridBagConstraints);
 
-                fileGenreLabel.setText("Genre:");
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                trackPanel.add(fileGenreLabel, gridBagConstraints);
-
-                fileTrackMBIDLabel.setText("MBID:");
-                fileTrackMBIDLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileTrackMBIDLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileTrackMBIDLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                trackMBIDCheckBox.setSelected(true);
+                trackMBIDCheckBox.setText("MBID:");
+                trackMBIDCheckBox.setToolTipText("When checked, field will be saved");
+                trackMBIDCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                trackMBIDCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                trackMBIDCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                trackMBIDCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                trackMBIDCheckBoxActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                trackPanel.add(fileTrackMBIDLabel, gridBagConstraints);
+                trackPanel.add(trackMBIDCheckBox, gridBagConstraints);
 
-                fileTitleValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                trackMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 0;
+                gridBagConstraints.gridy = 2;
                 gridBagConstraints.gridwidth = 3;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                trackPanel.add(fileTitleValue, gridBagConstraints);
-
-                fileTitleLabel.setText("Title:");
-                fileTitleLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileTitleLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileTitleLabel.setPreferredSize(new java.awt.Dimension(72, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 0;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                trackPanel.add(fileTitleLabel, gridBagConstraints);
-
-                fileTracknumberValue.setMaximumSize(new java.awt.Dimension(32, 25));
-                fileTracknumberValue.setMinimumSize(new java.awt.Dimension(32, 25));
-                fileTracknumberValue.setPreferredSize(new java.awt.Dimension(32, 25));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                trackPanel.add(fileTracknumberValue, gridBagConstraints);
-
-                fileTracknumberLabel.setText("Tracknum:");
-                fileTracknumberLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileTracknumberLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileTracknumberLabel.setPreferredSize(new java.awt.Dimension(72, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                trackPanel.add(fileTracknumberLabel, gridBagConstraints);
+                trackPanel.add(trackMBIDValue, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
@@ -881,7 +1042,23 @@ public class Locutus extends javax.swing.JFrame {
                 albumPanel.setPreferredSize(new java.awt.Dimension(304, 104));
                 albumPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileAlbumValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                albumCheckBox.setSelected(true);
+                albumCheckBox.setText("Title:");
+                albumCheckBox.setToolTipText("When checked, field will be saved");
+                albumCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                albumCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                albumCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                albumCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                albumCheckBoxActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumPanel.add(albumCheckBox, gridBagConstraints);
+
+                albumValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
@@ -889,20 +1066,27 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumPanel.add(fileAlbumValue, gridBagConstraints);
+                albumPanel.add(albumValue, gridBagConstraints);
 
-                fileAlbumLabel.setText("Title:");
-                fileAlbumLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileAlbumLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileAlbumLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                releasedCheckBox.setSelected(true);
+                releasedCheckBox.setText("Released:");
+                releasedCheckBox.setToolTipText("When checked, field will be saved");
+                releasedCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                releasedCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                releasedCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                releasedCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                releasedCheckBoxActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 0;
+                gridBagConstraints.gridy = 1;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumPanel.add(fileAlbumLabel, gridBagConstraints);
+                albumPanel.add(releasedCheckBox, gridBagConstraints);
 
-                fileReleasedValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                releasedValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
@@ -910,20 +1094,27 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumPanel.add(fileReleasedValue, gridBagConstraints);
+                albumPanel.add(releasedValue, gridBagConstraints);
 
-                fileReleasedLabel.setText("Released:");
-                fileReleasedLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileReleasedLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileReleasedLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                albumMBIDCheckBox.setSelected(true);
+                albumMBIDCheckBox.setText("MBID:");
+                albumMBIDCheckBox.setToolTipText("When checked, field will be saved");
+                albumMBIDCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                albumMBIDCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                albumMBIDCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                albumMBIDCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                albumMBIDCheckBoxActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 1;
+                gridBagConstraints.gridy = 2;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumPanel.add(fileReleasedLabel, gridBagConstraints);
+                albumPanel.add(albumMBIDCheckBox, gridBagConstraints);
 
-                fileAlbumMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                albumMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 2;
@@ -931,18 +1122,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumPanel.add(fileAlbumMBIDValue, gridBagConstraints);
-
-                fileAlbumMBIDLabel.setText("MBID:");
-                fileAlbumMBIDLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileAlbumMBIDLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileAlbumMBIDLabel.setPreferredSize(new java.awt.Dimension(72, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumPanel.add(fileAlbumMBIDLabel, gridBagConstraints);
+                albumPanel.add(albumMBIDValue, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
@@ -955,18 +1135,23 @@ public class Locutus extends javax.swing.JFrame {
                 albumArtistPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Album artist"));
                 albumArtistPanel.setLayout(new java.awt.GridBagLayout());
 
-                fileAlbumArtistLabel.setText("Name:");
-                fileAlbumArtistLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileAlbumArtistLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileAlbumArtistLabel.setPreferredSize(new java.awt.Dimension(72, 17));
+                albumArtistCheckBox.setSelected(true);
+                albumArtistCheckBox.setText("Name:");
+                albumArtistCheckBox.setToolTipText("When checked, field will be saved");
+                albumArtistCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                albumArtistCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                albumArtistCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                albumArtistCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                albumArtistCheckBoxActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 0;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumArtistPanel.add(fileAlbumArtistLabel, gridBagConstraints);
+                albumArtistPanel.add(albumArtistCheckBox, gridBagConstraints);
 
-                fileAlbumArtistValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                albumArtistValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
@@ -974,38 +1159,24 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumArtistPanel.add(fileAlbumArtistValue, gridBagConstraints);
+                albumArtistPanel.add(albumArtistValue, gridBagConstraints);
 
-                fileAlbumArtistMBIDLabel.setText("MBID:");
-                fileAlbumArtistMBIDLabel.setMaximumSize(new java.awt.Dimension(72, 17));
-                fileAlbumArtistMBIDLabel.setMinimumSize(new java.awt.Dimension(72, 17));
-                fileAlbumArtistMBIDLabel.setPreferredSize(new java.awt.Dimension(72, 17));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumArtistPanel.add(fileAlbumArtistMBIDLabel, gridBagConstraints);
-
-                fileAlbumArtistMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
-                gridBagConstraints = new java.awt.GridBagConstraints();
-                gridBagConstraints.gridx = 1;
-                gridBagConstraints.gridy = 2;
-                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-                gridBagConstraints.weightx = 1.0;
-                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumArtistPanel.add(fileAlbumArtistMBIDValue, gridBagConstraints);
-
-                fileAlbumArtistSortLabel.setText("Sort name:");
+                albumArtistSortCheckBox.setSelected(true);
+                albumArtistSortCheckBox.setText("Sort name:");
+                albumArtistSortCheckBox.setToolTipText("When checked, field will be saved");
+                albumArtistSortCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                albumArtistSortCheckBoxActionPerformed(evt);
+                        }
+                });
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
                 gridBagConstraints.gridy = 1;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumArtistPanel.add(fileAlbumArtistSortLabel, gridBagConstraints);
+                albumArtistPanel.add(albumArtistSortCheckBox, gridBagConstraints);
 
-                fileAlbumArtistSortValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                albumArtistSortValue.setPreferredSize(new java.awt.Dimension(245, 25));
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 1;
@@ -1013,7 +1184,35 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-                albumArtistPanel.add(fileAlbumArtistSortValue, gridBagConstraints);
+                albumArtistPanel.add(albumArtistSortValue, gridBagConstraints);
+
+                albumArtistMBIDCheckBox.setSelected(true);
+                albumArtistMBIDCheckBox.setText("MBID:");
+                albumArtistMBIDCheckBox.setToolTipText("When checked, field will be saved");
+                albumArtistMBIDCheckBox.setMaximumSize(new java.awt.Dimension(95, 21));
+                albumArtistMBIDCheckBox.setMinimumSize(new java.awt.Dimension(95, 21));
+                albumArtistMBIDCheckBox.setPreferredSize(new java.awt.Dimension(95, 21));
+                albumArtistMBIDCheckBox.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                albumArtistMBIDCheckBoxActionPerformed(evt);
+                        }
+                });
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumArtistPanel.add(albumArtistMBIDCheckBox, gridBagConstraints);
+
+                albumArtistMBIDValue.setPreferredSize(new java.awt.Dimension(245, 25));
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 1;
+                gridBagConstraints.gridy = 2;
+                gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+                gridBagConstraints.weightx = 1.0;
+                gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+                albumArtistPanel.add(albumArtistMBIDValue, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
@@ -1101,9 +1300,9 @@ public class Locutus extends javax.swing.JFrame {
 		System.exit(0);
 	}//GEN-LAST:event_quitButtonActionPerformed
 
-	private void fileSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveButtonActionPerformed
+	private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
 		// TODO add your handling code here:
-	}//GEN-LAST:event_fileSaveButtonActionPerformed
+	}//GEN-LAST:event_saveButtonActionPerformed
 
 	private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
 		updateButton.setText("Updating...");
@@ -1122,6 +1321,58 @@ public class Locutus extends javax.swing.JFrame {
 			updateButton.doClick();
 	}//GEN-LAST:event_filterTextFieldKeyPressed
 
+	private void artistCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_artistCheckBoxActionPerformed
+		artistValue.setEditable(artistCheckBox.isSelected());
+	}//GEN-LAST:event_artistCheckBoxActionPerformed
+
+	private void artistSortCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_artistSortCheckBoxActionPerformed
+		artistSortValue.setEditable(artistSortCheckBox.isSelected());
+	}//GEN-LAST:event_artistSortCheckBoxActionPerformed
+
+	private void artistMBIDCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_artistMBIDCheckBoxActionPerformed
+		artistMBIDValue.setEditable(artistMBIDCheckBox.isSelected());
+	}//GEN-LAST:event_artistMBIDCheckBoxActionPerformed
+
+	private void titleCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_titleCheckBoxActionPerformed
+		titleValue.setEditable(titleCheckBox.isSelected());
+	}//GEN-LAST:event_titleCheckBoxActionPerformed
+
+	private void tracknumberCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tracknumberCheckBoxActionPerformed
+		tracknumberValue.setEditable(tracknumberCheckBox.isSelected());
+	}//GEN-LAST:event_tracknumberCheckBoxActionPerformed
+
+	private void genreCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_genreCheckBoxActionPerformed
+		genreValue.setEditable(genreCheckBox.isSelected());
+	}//GEN-LAST:event_genreCheckBoxActionPerformed
+
+	private void trackMBIDCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trackMBIDCheckBoxActionPerformed
+		trackMBIDValue.setEditable(trackMBIDCheckBox.isSelected());
+	}//GEN-LAST:event_trackMBIDCheckBoxActionPerformed
+
+	private void albumCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_albumCheckBoxActionPerformed
+		albumValue.setEditable(albumCheckBox.isSelected());
+	}//GEN-LAST:event_albumCheckBoxActionPerformed
+
+	private void releasedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_releasedCheckBoxActionPerformed
+		releasedValue.setEditable(releasedCheckBox.isSelected());
+	}//GEN-LAST:event_releasedCheckBoxActionPerformed
+
+	private void albumMBIDCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_albumMBIDCheckBoxActionPerformed
+		albumMBIDValue.setEditable(albumMBIDCheckBox.isSelected());
+	}//GEN-LAST:event_albumMBIDCheckBoxActionPerformed
+
+	private void albumArtistCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_albumArtistCheckBoxActionPerformed
+		albumArtistValue.setEditable(albumArtistCheckBox.isSelected());
+	}//GEN-LAST:event_albumArtistCheckBoxActionPerformed
+
+	private void albumArtistSortCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_albumArtistSortCheckBoxActionPerformed
+		albumArtistSortValue.setEditable(albumArtistSortCheckBox.isSelected());
+	}//GEN-LAST:event_albumArtistSortCheckBoxActionPerformed
+
+	private void albumArtistMBIDCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_albumArtistMBIDCheckBoxActionPerformed
+		albumArtistMBIDValue.setEditable(albumArtistMBIDCheckBox.isSelected());
+	}//GEN-LAST:event_albumArtistMBIDCheckBoxActionPerformed
+
 	/**
 	 * @param args the command line arguments
 	 */
@@ -1135,9 +1386,29 @@ public class Locutus extends javax.swing.JFrame {
 	}
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JButton abortButton;
+        private static javax.swing.JCheckBox albumArtistCheckBox;
+        private static javax.swing.JCheckBox albumArtistMBIDCheckBox;
+        private static javax.swing.JTextField albumArtistMBIDValue;
         private javax.swing.JPanel albumArtistPanel;
+        private static javax.swing.JCheckBox albumArtistSortCheckBox;
+        private static javax.swing.JTextField albumArtistSortValue;
+        private static javax.swing.JTextField albumArtistValue;
+        private static javax.swing.JCheckBox albumCheckBox;
+        private static javax.swing.JCheckBox albumMBIDCheckBox;
+        private static javax.swing.JTextField albumMBIDValue;
         private javax.swing.JPanel albumPanel;
+        private static javax.swing.JTextField albumValue;
+        private static javax.swing.JCheckBox artistCheckBox;
+        private static javax.swing.JCheckBox artistMBIDCheckBox;
+        private static javax.swing.JTextField artistMBIDValue;
         private javax.swing.JPanel artistPanel;
+        private static javax.swing.JCheckBox artistSortCheckBox;
+        private static javax.swing.JTextField artistSortValue;
+        private static javax.swing.JTextField artistValue;
+        private static javax.swing.JLabel bitrateLabel;
+        private static javax.swing.JLabel bitrateValue;
+        private static javax.swing.JLabel channelsLabel;
+        private static javax.swing.JLabel channelsValue;
         private javax.swing.JButton connectButton;
         private javax.swing.JFrame connectFrame;
         private javax.swing.JLabel databaseLabel;
@@ -1145,69 +1416,49 @@ public class Locutus extends javax.swing.JFrame {
         private net.exent.locutus.gui.Detached detached;
         private javax.swing.JComboBox driverCombo;
         private javax.swing.JLabel driverLabel;
-        private static javax.swing.JLabel fileAlbumArtistLabel;
-        private static javax.swing.JLabel fileAlbumArtistMBIDLabel;
-        private static javax.swing.JTextField fileAlbumArtistMBIDValue;
-        private static javax.swing.JLabel fileAlbumArtistSortLabel;
-        private static javax.swing.JTextField fileAlbumArtistSortValue;
-        private static javax.swing.JTextField fileAlbumArtistValue;
-        private static javax.swing.JLabel fileAlbumLabel;
-        private static javax.swing.JLabel fileAlbumMBIDLabel;
-        private static javax.swing.JTextField fileAlbumMBIDValue;
-        private static javax.swing.JTextField fileAlbumValue;
-        private static javax.swing.JLabel fileArtistLabel;
-        private static javax.swing.JLabel fileArtistMBIDLabel;
-        private static javax.swing.JTextField fileArtistMBIDValue;
-        private static javax.swing.JLabel fileArtistSortLabel;
-        private static javax.swing.JTextField fileArtistSortValue;
-        private static javax.swing.JTextField fileArtistValue;
-        private static javax.swing.JLabel fileBitrateLabel;
-        private static javax.swing.JLabel fileBitrateValue;
-        private static javax.swing.JLabel fileChannelsLabel;
-        private static javax.swing.JLabel fileChannelsValue;
-        private static javax.swing.JCheckBox fileDuplicate;
-        private static javax.swing.JLabel fileDurationLabel;
-        private static javax.swing.JLabel fileDurationValue;
-        private static javax.swing.JLabel fileFileIDLabel;
-        private static javax.swing.JTextField fileFileIDValue;
+        private static javax.swing.JCheckBox duplicateCheckBox;
+        private static javax.swing.JLabel durationLabel;
+        private static javax.swing.JLabel durationValue;
         private static javax.swing.JLabel fileFilenameLabel;
-        private static javax.swing.JLabel fileGenreLabel;
-        private static javax.swing.JTextField fileGenreValue;
-        private static javax.swing.JLabel fileGroupLabel;
-        private static javax.swing.JTextField fileGroupValue;
-        private static javax.swing.JCheckBox fileModified;
-        private static javax.swing.JCheckBox filePinned;
-        private static javax.swing.JLabel fileReleasedLabel;
-        private static javax.swing.JTextField fileReleasedValue;
-        private static javax.swing.JLabel fileSamplerateLabel;
-        private static javax.swing.JLabel fileSamplerateValue;
-        private static javax.swing.JButton fileSaveButton;
-        private static javax.swing.JLabel fileTitleLabel;
-        private static javax.swing.JTextField fileTitleValue;
-        private static javax.swing.JLabel fileTrackIDLabel;
-        private static javax.swing.JTextField fileTrackIDValue;
-        private static javax.swing.JLabel fileTrackMBIDLabel;
-        private static javax.swing.JTextField fileTrackMBIDValue;
-        private static javax.swing.JLabel fileTracknumberLabel;
-        private static javax.swing.JTextField fileTracknumberValue;
+        private static javax.swing.JLabel fileIDLabel;
+        private static javax.swing.JTextField fileIDValue;
         private javax.swing.JLabel filterLabel;
         private static javax.swing.JTextField filterTextField;
+        private static javax.swing.JCheckBox genreCheckBox;
+        private static javax.swing.JTextField genreValue;
+        private static javax.swing.JLabel groupLabel;
+        private static javax.swing.JTextField groupValue;
         private net.exent.locutus.gui.Help help;
         private javax.swing.JLabel hostLabel;
         private javax.swing.JTextField hostTextField;
         private net.exent.locutus.gui.Matching matching;
         private static javax.swing.JPanel metadataPanel;
         private javax.swing.JPanel miscPanel;
+        private static javax.swing.JCheckBox modifiedCheckBox;
         private javax.swing.JButton openButton;
         private javax.swing.JLabel passwordLabel;
         private javax.swing.JPasswordField passwordPasswordField;
+        private static javax.swing.JCheckBox pinnedCheckBox;
         private static javax.swing.JProgressBar progressBar;
         private static javax.swing.JLabel progressLabel;
         private javax.swing.JButton quitButton;
+        private static javax.swing.JCheckBox releasedCheckBox;
+        private static javax.swing.JTextField releasedValue;
+        private static javax.swing.JLabel samplerateLabel;
+        private static javax.swing.JLabel samplerateValue;
+        private static javax.swing.JButton saveButton;
         private net.exent.locutus.gui.Settings settings;
         private javax.swing.JTabbedPane tabPane;
+        private static javax.swing.JCheckBox titleCheckBox;
+        private static javax.swing.JTextField titleValue;
         private javax.swing.JPanel topPanel;
+        private static javax.swing.JLabel trackIDLabel;
+        private static javax.swing.JTextField trackIDValue;
+        private static javax.swing.JCheckBox trackMBIDCheckBox;
+        private static javax.swing.JTextField trackMBIDValue;
         private javax.swing.JPanel trackPanel;
+        private static javax.swing.JCheckBox tracknumberCheckBox;
+        private static javax.swing.JTextField tracknumberValue;
         private javax.swing.JButton updateButton;
         private javax.swing.JLabel usernameLabel;
         private javax.swing.JTextField usernameTextField;

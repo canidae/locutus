@@ -255,7 +255,7 @@ public class Settings extends javax.swing.JPanel {
                 resetOtherSettingsButton = new javax.swing.JButton();
                 resetAllButton = new javax.swing.JButton();
                 buttonSeparator = new javax.swing.JSeparator();
-                restoreLabel = new javax.swing.JLabel();
+                resetLabel = new javax.swing.JLabel();
 
                 addComponentListener(new java.awt.event.ComponentAdapter() {
                         public void componentHidden(java.awt.event.ComponentEvent evt) {
@@ -1101,7 +1101,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.weighty = 1.0;
                 add(otherSettingsPanel, gridBagConstraints);
 
-                buttonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Save & restore default values"));
+                buttonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Save & reset settings"));
                 buttonPanel.setLayout(new java.awt.GridBagLayout());
 
                 saveSettingsButton.setMnemonic('S');
@@ -1223,10 +1223,10 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.weightx = 1.0;
                 buttonPanel.add(buttonSeparator, gridBagConstraints);
 
-                restoreLabel.setText("Restore default values:");
+                resetLabel.setText("Reset:");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-                buttonPanel.add(restoreLabel, gridBagConstraints);
+                buttonPanel.add(resetLabel, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -1524,11 +1524,11 @@ public class Settings extends javax.swing.JPanel {
         private javax.swing.JButton resetAllButton;
         private javax.swing.JButton resetCompareButton;
         private javax.swing.JButton resetDaemonButton;
+        private javax.swing.JLabel resetLabel;
         private javax.swing.JButton resetLocationsButton;
         private javax.swing.JButton resetOptionsButton;
         private javax.swing.JButton resetOtherSettingsButton;
         private javax.swing.JButton resetWeightButton;
-        private javax.swing.JLabel restoreLabel;
         private javax.swing.JButton saveSettingsButton;
         private javax.swing.JLabel weightAlbumLabel;
         private javax.swing.JSlider weightAlbumSlider;

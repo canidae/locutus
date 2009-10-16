@@ -85,16 +85,11 @@ public class Matching extends javax.swing.JPanel {
 				else
 					icon = "file_85.png";
 				status = file.getStatus();
-
-				if (selected)
-					Locutus.setMetadata(new Metafile[]{file});
 			}
 			JLabel label = new JLabel(value.toString(), new ImageIcon(getClass().getResource("/net/exent/locutus/gui/icons/" + icon)), JLabel.LEFT);
 			label.setOpaque(true);
 			if (selected) {
 				label.setBackground(new Color(200, 200, 255));
-				if (!(node instanceof Metafile))
-					Locutus.clearMetadata();
 			} else {
 				label.setBackground(new Color(255, 255, 255));
 			}
@@ -223,6 +218,11 @@ public class Matching extends javax.swing.JPanel {
                                 matchingTreeTreeWillExpand(evt);
                         }
                 });
+                matchingTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+                        public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                                matchingTreeValueChanged(evt);
+                        }
+                });
                 matchingTree.addKeyListener(new java.awt.event.KeyAdapter() {
                         public void keyPressed(java.awt.event.KeyEvent evt) {
                                 matchingTreeKeyPressed(evt);
@@ -270,7 +270,6 @@ public class Matching extends javax.swing.JPanel {
 				filetreenodes.add(current);
 			}
 		}
-		System.out.println("Files: " + filetreenodes.size());
 		switch (evt.getKeyCode()) {
 			case KeyEvent.VK_DELETE:
 			case KeyEvent.VK_D:
@@ -405,7 +404,10 @@ public class Matching extends javax.swing.JPanel {
 				Enumeration tracks = active_album.children();
 				while (tracks.hasMoreElements())
 					matchingTree.expandPath(new TreePath(((DefaultMutableTreeNode) tracks.nextElement()).getPath()));
+				/* set selected to null so we don't attempt to expand nodes after this switch */
 				selected = null;
+				/* also call matchingTreeValueChanged() manually to update metadata */
+				matchingTreeValueChanged(null);
 				break;
 
 			case KeyEvent.VK_SPACE:
@@ -453,6 +455,41 @@ public class Matching extends javax.swing.JPanel {
 		}
 		matchingTree.repaint();
 	}//GEN-LAST:event_matchingTreeKeyPressed
+
+	private void matchingTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_matchingTreeValueChanged
+		TreePath[] paths = matchingTree.getSelectionPaths();
+		if (paths == null) {
+			Locutus.clearMetadata();
+			return;
+		}
+		List<Metafile> metafiles = new ArrayList<Metafile>();
+		for (TreePath path : paths) {
+			DefaultMutableTreeNode node = ((DefaultMutableTreeNode) path.getLastPathComponent());
+			Object object = node.getUserObject();
+			if (object instanceof Album) {
+				Enumeration tracks = node.children();
+				while (tracks.hasMoreElements()) {
+					Enumeration files = ((DefaultMutableTreeNode) tracks.nextElement()).children();
+					while (files.hasMoreElements()) {
+						object = ((DefaultMutableTreeNode) files.nextElement()).getUserObject();
+						if (!metafiles.contains((Metafile) object))
+							metafiles.add((Metafile) object);
+					}
+				}
+			} else if (object instanceof Track) {
+				Enumeration files = node.children();
+				while (files.hasMoreElements()) {
+					object = ((DefaultMutableTreeNode) files.nextElement()).getUserObject();
+					if (!metafiles.contains((Metafile) object))
+						metafiles.add((Metafile) object);
+				}
+			} else if (object instanceof Metafile) {
+				if (!metafiles.contains((Metafile) object))
+					metafiles.add((Metafile) object);
+			}
+		}
+		Locutus.setMetadata(metafiles);
+	}//GEN-LAST:event_matchingTreeValueChanged
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JScrollPane matchingScrollPane;
         private javax.swing.JTree matchingTree;
