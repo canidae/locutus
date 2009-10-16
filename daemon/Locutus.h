@@ -39,7 +39,7 @@ extern "C" {
 #define MAX_GROUP_SIZE_VALUE 250
 #define MAX_GROUP_SIZE_DESCRIPTION "Max size of a group. Groups with more files than this will be ignored. This is a precaution against directories with lots of files from different albums, but with no metadata. Such directories cause Locutus to use a lot of memory and CPU while significantly slowing Locutus down."
 #define COMBINE_GROUPS_KEY "combine_groups"
-#define COMBINE_GROUPS_VALUE false
+#define COMBINE_GROUPS_VALUE true
 #define COMBINE_GROUPS_DESCRIPTION "Temporary combine and relookup groups that loaded the same album. May be useful in archives where the files for the same album end up in different groups for some reason, but it will also slow down Locutus and may increase amount of mismatched files."
 #define DRY_RUN_KEY "dry_run"
 #define DRY_RUN_VALUE true
