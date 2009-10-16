@@ -51,10 +51,7 @@ public class Settings extends javax.swing.JPanel {
 				}
 				boolean valueBoolean = valueBoolean = Boolean.parseBoolean(valueString);
 				String description = "<html>" + rs.getString("description").replace(". ", ".<br />") + "</html>";
-				if ("album_cache_lifetime".equals(key)) {
-					daemonCacheLifetimeSlider.setValue(valueInt);
-					daemonCacheLifetimeSlider.setToolTipText(description);
-				} else if ("album_weight".equals(key)) {
+				if ("album_weight".equals(key)) {
 					weightAlbumSlider.setValue(valueInt);
 					weightAlbumSlider.setToolTipText(description);
 				} else if ("allow_group_duplicates".equals(key)) {
@@ -72,6 +69,9 @@ public class Settings extends javax.swing.JPanel {
 				} else if ("audioscrobbler_track_tag_url".equals(key)) {
 					audioscrobblerTrackURLTextField.setText(valueString);
 					audioscrobblerTrackURLTextField.setToolTipText(description);
+				} else if ("cache_lifetime".equals(key)) {
+					daemonCacheLifetimeSlider.setValue(valueInt);
+					daemonCacheLifetimeSlider.setToolTipText(description);
 				} else if ("combine_groups".equals(key)) {
 					optionCombineGroupsCheckBox.setSelected(valueBoolean);
 					optionCombineGroupsCheckBox.setToolTipText(description);
@@ -108,6 +108,9 @@ public class Settings extends javax.swing.JPanel {
 				} else if ("lookup_genre".equals(key)) {
 					optionLookupGenreCheckBox.setSelected(valueBoolean);
 					optionLookupGenreCheckBox.setToolTipText(description);
+				} else if ("lookup_mbid".equals(key)) {
+					optionLookupMBIDCheckBox.setSelected(valueBoolean);
+					optionLookupMBIDCheckBox.setToolTipText(description);
 				} else if ("match_min_score".equals(key)) {
 					compareMatchMinScoreSlider.setValue((int) (valueDouble * 100));
 					compareMatchMinScoreSlider.setToolTipText(description);
@@ -117,15 +120,15 @@ public class Settings extends javax.swing.JPanel {
 				} else if ("max_group_size".equals(key)) {
 					daemonMaxGroupSizeSlider.setValue(valueInt);
 					daemonMaxGroupSizeSlider.setToolTipText(description);
-				} else if ("mbid_lookup".equals(key)) {
-					optionLookupMBIDCheckBox.setSelected(valueBoolean);
-					optionLookupMBIDCheckBox.setToolTipText(description);
-				} else if ("metadata_search_url".equals(key)) {
-					musicBrainzSearchURLTextField.setText(valueString);
-					musicBrainzSearchURLTextField.setToolTipText(description);
 				} else if ("musicbrainz_query_interval".equals(key)) {
 					daemonMusicBrainzQueryIntervalSlider.setValue(valueInt);
 					daemonMusicBrainzQueryIntervalSlider.setToolTipText(description);
+				} else if ("musicbrainz_release_url".equals(key)) {
+					musicBrainzReleaseURLTextField.setText(valueString);
+					musicBrainzReleaseURLTextField.setToolTipText(description);
+				} else if ("musicbrainz_search_url".equals(key)) {
+					musicBrainzSearchURLTextField.setText(valueString);
+					musicBrainzSearchURLTextField.setToolTipText(description);
 				} else if ("only_save_complete_albums".equals(key)) {
 					optionOnlySaveCompleteAlbumsCheckBox.setSelected(valueBoolean);
 					optionOnlySaveCompleteAlbumsCheckBox.setToolTipText(description);
@@ -135,9 +138,6 @@ public class Settings extends javax.swing.JPanel {
 				} else if ("output_directory".equals(key)) {
 					outputDirectoryTextField.setText(valueString);
 					outputDirectoryTextField.setToolTipText(description);
-				} else if ("release_url".equals(key)) {
-					musicBrainzReleaseURLTextField.setText(valueString);
-					musicBrainzReleaseURLTextField.setToolTipText(description);
 				} else if ("run_interval".equals(key)) {
 					daemonRunIntervalSlider.setValue(valueInt);
 					daemonRunIntervalSlider.setToolTipText(description);
@@ -1359,7 +1359,7 @@ public class Settings extends javax.swing.JPanel {
     private void resetDaemonButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetDaemonButtonActionPerformed
 	    try {
 		    Database.resetSetting("max_group_size");
-		    Database.resetSetting("album_cache_lifetime");
+		    Database.resetSetting("cache_lifetime");
 		    Database.resetSetting("run_interval");
 		    Database.resetSetting("musicbrainz_query_interval");
 		    Database.resetSetting("audioscrobbler_query_interval");
@@ -1377,7 +1377,7 @@ public class Settings extends javax.swing.JPanel {
 		    Database.resetSetting("allow_group_duplicates");
 		    Database.resetSetting("only_save_complete_albums");
 		    Database.resetSetting("only_save_if_all_match");
-		    Database.resetSetting("mbid_lookup");
+		    Database.resetSetting("lookup_mbid");
 		    Database.resetSetting("lookup_genre");
 		    updateSettings();
 	    } catch (SQLException e) {
@@ -1394,8 +1394,8 @@ public class Settings extends javax.swing.JPanel {
 		    Database.resetSetting("filename_illegal_characters");
 		    Database.resetSetting("audioscrobbler_track_tag_url");
 		    Database.resetSetting("audioscrobbler_artist_tag_url");
-		    Database.resetSetting("metadata_search_url");
-		    Database.resetSetting("release_url");
+		    Database.resetSetting("musicbrainz_search_url");
+		    Database.resetSetting("musicbrainz_release_url");
 		    updateSettings();
 	    } catch (SQLException e) {
 		    e.printStackTrace();
@@ -1404,7 +1404,7 @@ public class Settings extends javax.swing.JPanel {
 
     private void saveSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSettingsButtonActionPerformed
 	    try {
-		    Database.setSetting("album_cache_lifetime", "" + daemonCacheLifetimeSlider.getValue());
+		    Database.setSetting("cache_lifetime", "" + daemonCacheLifetimeSlider.getValue());
 		    Database.setSetting("album_weight", "" + weightAlbumSlider.getValue());
 		    Database.setSetting("allow_group_duplicates", "" + optionAllowGroupDuplicatesCheckBox.isSelected());
 		    Database.setSetting("artist_weight", "" + weightArtistSlider.getValue());
@@ -1426,13 +1426,13 @@ public class Settings extends javax.swing.JPanel {
 		    Database.setSetting("match_min_score", "" + ((double) compareMatchMinScoreSlider.getValue() / 100.0));
 		    Database.setSetting("max_diff_best_score", "" + ((double) compareMaxDiffBestScoreSlider.getValue() / 100.0));
 		    Database.setSetting("max_group_size", "" + daemonMaxGroupSizeSlider.getValue());
-		    Database.setSetting("mbid_lookup", "" + optionLookupMBIDCheckBox.isSelected());
-		    Database.setSetting("metadata_search_url", musicBrainzSearchURLTextField.getText());
+		    Database.setSetting("lookup_mbid", "" + optionLookupMBIDCheckBox.isSelected());
+		    Database.setSetting("musicbrainz_search_url", musicBrainzSearchURLTextField.getText());
 		    Database.setSetting("musicbrainz_query_interval", "" + daemonMusicBrainzQueryIntervalSlider.getValue());
 		    Database.setSetting("only_save_complete_albums", "" + optionOnlySaveCompleteAlbumsCheckBox.isSelected());
 		    Database.setSetting("only_save_if_all_match", "" + optionOnlySaveIfAllMatchCheckBox.isSelected());
 		    Database.setSetting("output_directory", outputDirectoryTextField.getText());
-		    Database.setSetting("release_url", musicBrainzReleaseURLTextField.getText());
+		    Database.setSetting("musicbrainz_release_url", musicBrainzReleaseURLTextField.getText());
 		    Database.setSetting("run_interval", "" + daemonRunIntervalSlider.getValue());
 		    Database.setSetting("title_weight", "" + weightTitleSlider.getValue());
 		    Database.setSetting("tracknumber_weight", "" + weightTracknumberSlider.getValue());
@@ -1455,7 +1455,6 @@ public class Settings extends javax.swing.JPanel {
 		    e.printStackTrace();
 	    }
     }//GEN-LAST:event_saveSettingsButtonActionPerformed
-
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JLabel audioscrobblerArtistURLLabel;
         private javax.swing.JTextField audioscrobblerArtistURLTextField;

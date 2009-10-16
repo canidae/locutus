@@ -50,7 +50,7 @@ bool PostgreSQL::init() {
 	/* we're gonna keep the database connection while locutus is running,
 	 * but the other classes will be freed and reloaded for each "run".
 	 * this means we'll have to load the settings here */
-	album_cache_lifetime = loadSettingInt(ALBUM_CACHE_LIFETIME_KEY, ALBUM_CACHE_LIFETIME_VALUE, ALBUM_CACHE_LIFETIME_DESCRIPTION);
+	album_cache_lifetime = loadSettingInt(CACHE_LIFETIME_KEY, CACHE_LIFETIME_VALUE, CACHE_LIFETIME_DESCRIPTION);
 	if (album_cache_lifetime <= 0)
 		album_cache_lifetime = 1;
 	run_interval = loadSettingInt(RUN_INTERVAL_KEY, RUN_INTERVAL_VALUE, RUN_INTERVAL_DESCRIPTION);

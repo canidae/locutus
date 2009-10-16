@@ -24,8 +24,8 @@ using namespace ost;
 using namespace std;
 
 MusicBrainz::MusicBrainz(Database *database) : database(database) {
-	metadata_search_url = database->loadSettingString(METADATA_SEARCH_URL_KEY, METADATA_SEARCH_URL_VALUE, METADATA_SEARCH_URL_DESCRIPTION);
-	release_lookup_url = database->loadSettingString(RELEASE_LOOKUP_URL_KEY, RELEASE_LOOKUP_URL_VALUE, RELEASE_LOOKUP_URL_DESCRIPTION);
+	metadata_search_url = database->loadSettingString(MUSICBRAINZ_SEARCH_URL_KEY, MUSICBRAINZ_SEARCH_URL_VALUE, MUSICBRAINZ_SEARCH_URL_DESCRIPTION);
+	release_lookup_url = database->loadSettingString(MUSICBRAINZ_RELEASE_URL_KEY, MUSICBRAINZ_RELEASE_URL_VALUE, MUSICBRAINZ_RELEASE_URL_DESCRIPTION);
 	query_interval = database->loadSettingDouble(MUSICBRAINZ_QUERY_INTERVAL_KEY, MUSICBRAINZ_QUERY_INTERVAL_VALUE, MUSICBRAINZ_QUERY_INTERVAL_DESCRIPTION);
 	if (query_interval <= 0.0)
 		query_interval = 1.0;

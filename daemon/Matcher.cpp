@@ -43,7 +43,7 @@ Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(databa
 	duration_weight = database->loadSettingDouble(DURATION_WEIGHT_KEY, DURATION_WEIGHT_VALUE, DURATION_WEIGHT_DESCRIPTION);
 	if (duration_weight < 0.0)
 		duration_weight = 0.0;
-	mbid_lookup = database->loadSettingBool(MBID_LOOKUP_KEY, MBID_LOOKUP_VALUE, MBID_LOOKUP_DESCRIPTION);
+	mbid_lookup = database->loadSettingBool(LOOKUP_MBID_KEY, LOOKUP_MBID_VALUE, LOOKUP_MBID_DESCRIPTION);
 	max_diff_best_score = database->loadSettingDouble(MAX_DIFF_BEST_SCORE_KEY, MAX_DIFF_BEST_SCORE_VALUE, MAX_DIFF_BEST_SCORE_DESCRIPTION);
 	if (max_diff_best_score < 0.0)
 		max_diff_best_score = 0.0;

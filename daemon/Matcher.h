@@ -40,9 +40,9 @@
 #define MAX_DIFF_BEST_SCORE_KEY "max_diff_best_score"
 #define MAX_DIFF_BEST_SCORE_VALUE 0.05
 #define MAX_DIFF_BEST_SCORE_DESCRIPTION "Locutus tries to group files to the same album, however that means it may match a file to a track that's not the best match. Consider this: File A compares to track 1 with score 0.99 on an album. File B compares to track 2 with score 0.80 on the same album, but it also compares to track 2 on another album with score 0.98 where file A does not compare to any tracks. In this case file B would be matched track 2 on first album if the value of this setting is greater than or equal to 0.18 (0.98 - 0.80, best score for file B minus score achieved on first album for file B), and if the value of the setting is less than 0.18 the files would be matched to the tracks on each their album. If you don't understand what this setting does, don't mess with it :)"
-#define MBID_LOOKUP_KEY "mbid_lookup"
-#define MBID_LOOKUP_VALUE true
-#define MBID_LOOKUP_DESCRIPTION "If a file got MusicBrainz ID's then look up the track using that. This is generally a very good idea, this setting should only be turned off for testing purposes. If a MusicBrainz ID does not exist, Locutus will look up the track using metadata regardless of the value of this setting."
+#define LOOKUP_MBID_KEY "lookup_mbid"
+#define LOOKUP_MBID_VALUE true
+#define LOOKUP_MBID_DESCRIPTION "If a file got MusicBrainz ID's then look up the track using that. This is generally a very good idea, this setting should only be turned off for testing purposes. If a MusicBrainz ID does not exist, Locutus will look up the track using metadata regardless of the value of this setting."
 #define MATCH_MIN_SCORE_KEY "match_min_score"
 #define MATCH_MIN_SCORE_VALUE 0.75
 #define MATCH_MIN_SCORE_DESCRIPTION "When comparing a file with a track using metadata only, the score must exceed this value for the file to be matched. Value must be between 0.0 and 1.0. Increasing this value will decrease files matched and mismatches, decreasing it will logically do the opposite."
