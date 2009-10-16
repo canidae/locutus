@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import net.exent.locutus.data.Metafile;
 
 /**
  *
@@ -25,6 +26,7 @@ public class Database {
 	private static PreparedStatement matchingList;
 	private static PreparedStatement resetAllSettings;
 	private static PreparedStatement resetSetting;
+	private static PreparedStatement saveMetadata;
 	private static PreparedStatement setSetting;
 	private static PreparedStatement settingList;
 	private static PreparedStatement status;
@@ -35,13 +37,14 @@ public class Database {
 
 		/* prepared statements */
 		deleteComparison = connection.prepareStatement("DELETE FROM comparison WHERE file_id = ? AND track_id = ?");
-		deleteMatch = connection.prepareStatement("UPDATE file SET track_id = NULL WHERE file_id = ?");
+		deleteMatch = connection.prepareStatement("UPDATE file SET track_id = NULL, user_changer = true WHERE file_id = ? AND track_id IS NOT NULL");
 		detached = connection.prepareStatement("SELECT * FROM file WHERE track_id IS NULL AND filename LIKE (SELECT value FROM setting WHERE key = 'output_directory') || '%' AND filename ILIKE ? ORDER BY filename");
-		matchFile = connection.prepareStatement("UPDATE file SET track_id = ? WHERE file_id = ?");
+		matchFile = connection.prepareStatement("UPDATE file SET track_id = ?, user_changed = true WHERE file_id = ?");
 		matchingDetails = connection.prepareStatement("SELECT * FROM v_ui_matching_details WHERE album_album_id = ? AND (file_track_id IS NULL OR file_track_id = track_track_id) ORDER BY track_tracknumber ASC, comparison_mbid_match DESC, comparison_score DESC");
 		matchingList = connection.prepareStatement("SELECT * FROM v_ui_matching_list WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
 		resetAllSettings = connection.prepareStatement("UPDATE setting SET value = default_value");
 		resetSetting = connection.prepareStatement("UPDATE setting SET value = default_value WHERE key = ?");
+		saveMetadata = connection.prepareStatement("UPDATE file SET album = ?, albumartist = ?, albumartistsort = ?, artist = ?, artistsort = ?, musicbrainz_albumartistid = ?, musicbrainz_albumid = ?, musicbrainz_artistid = ?, musicbrainz_trackid = ?, title = ?, tracknumber = ?, released = ?, genre = ?, pinned = ?, user_changed = true WHERE file_id = ?");
 		setSetting = connection.prepareStatement("UPDATE setting SET value = ? WHERE key = ?");
 		settingList = connection.prepareStatement("SELECT * FROM setting");
 		status = connection.prepareStatement("SELECT *, EXTRACT(epoch FROM now() - start) AS runtime FROM locutus");
@@ -113,6 +116,25 @@ public class Database {
 	public static int resetSetting(String setting) throws SQLException {
 		resetSetting.setString(1, setting);
 		return resetSetting.executeUpdate();
+	}
+
+	public static int saveMetadata(Metafile file) throws SQLException {
+		saveMetadata.setString(1, file.getAlbum());
+		saveMetadata.setString(2, file.getAlbumArtist());
+		saveMetadata.setString(3, file.getAlbumArtistSortName());
+		saveMetadata.setString(4, file.getArtist());
+		saveMetadata.setString(5, file.getArtistSortName());
+		saveMetadata.setString(6, file.getAlbumArtistMBID());
+		saveMetadata.setString(7, file.getAlbumMBID());
+		saveMetadata.setString(8, file.getArtistMBID());
+		saveMetadata.setString(9, file.getTrackMBID());
+		saveMetadata.setString(10, file.getTitle());
+		saveMetadata.setInt(11, file.getTracknumber());
+		saveMetadata.setString(12, file.getReleased());
+		saveMetadata.setString(13, file.getGenre());
+		saveMetadata.setBoolean(14, file.isPinned());
+		saveMetadata.setInt(15, file.getFileID());
+		return saveMetadata.executeUpdate();
 	}
 
 	public static int setSetting(String key, String value) throws SQLException {

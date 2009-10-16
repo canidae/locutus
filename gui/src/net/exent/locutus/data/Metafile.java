@@ -16,6 +16,7 @@ public class Metafile {
 	public static final int NONE = 0;
 	public static final int SAVE = 1;
 	public static final int DELETE = 2;
+	public static final int SAVE_METADATA = 3;
 	private int fileID;
 	private String filename;
 	private String album;
@@ -288,5 +289,103 @@ public class Metafile {
 	 */
 	public boolean isPinned() {
 		return pinned;
+	}
+
+	/**
+	 * @param album the album to set
+	 */
+	public void setAlbum(String album) {
+		this.album = album;
+	}
+
+	/**
+	 * @param albumMBID the albumMBID to set
+	 */
+	public void setAlbumMBID(String albumMBID) {
+		this.albumMBID = albumMBID;
+	}
+
+	/**
+	 * @param albumArtist the albumArtist to set
+	 */
+	public void setAlbumArtist(String albumArtist) {
+		this.albumArtist = albumArtist;
+	}
+
+	/**
+	 * @param albumArtistMBID the albumArtistMBID to set
+	 */
+	public void setAlbumArtistMBID(String albumArtistMBID) {
+		this.albumArtistMBID = albumArtistMBID;
+	}
+
+	/**
+	 * @param albumArtistSortName the albumArtistSortName to set
+	 */
+	public void setAlbumArtistSortName(String albumArtistSortName) {
+		this.albumArtistSortName = albumArtistSortName;
+	}
+
+	/**
+	 * @param artist the artist to set
+	 */
+	public void setArtist(String artist) {
+		this.artist = artist;
+	}
+
+	/**
+	 * @param artistMBID the artistMBID to set
+	 */
+	public void setArtistMBID(String artistMBID) {
+		this.artistMBID = artistMBID;
+	}
+
+	/**
+	 * @param artistSortName the artistSortName to set
+	 */
+	public void setArtistSortName(String artistSortName) {
+		this.artistSortName = artistSortName;
+	}
+
+	/**
+	 * @param title the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * @param trackMBID the trackMBID to set
+	 */
+	public void setTrackMBID(String trackMBID) {
+		this.trackMBID = trackMBID;
+	}
+
+	/**
+	 * @param released the released to set
+	 */
+	public void setReleased(String released) {
+		this.released = released;
+	}
+
+	/**
+	 * @param genre the genre to set
+	 */
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	/**
+	 * @param tracknumber the tracknumber to set
+	 */
+	public void setTracknumber(int tracknumber) {
+		this.tracknumber = tracknumber;
+	}
+
+	/**
+	 * @param pinned the pinned to set
+	 */
+	public void setPinned(boolean pinned) {
+		this.pinned = pinned;
 	}
 }

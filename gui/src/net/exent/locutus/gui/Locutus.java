@@ -27,6 +27,7 @@ import net.exent.locutus.thread.StatusPoller;
 public class Locutus extends javax.swing.JFrame {
 
 	private static StatusPoller statusPoller = new StatusPoller();
+	private static List<Metafile> selected_metafiles;
 
 	/** Creates new form Locutus */
 	public Locutus() {
@@ -45,7 +46,8 @@ public class Locutus extends javax.swing.JFrame {
 		return filterTextField.getText();
 	}
 
-	public static void setMetadata(List<Metafile> files) {
+	public static void setSelectedMetadatafiles(List<Metafile> files) {
+		selected_metafiles = files;
 		if (files.size() <= 0)
 			return;
 
@@ -223,30 +225,41 @@ public class Locutus extends javax.swing.JFrame {
 	}
 
 	public static void clearMetadata() {
-		albumArtistMBIDValue.setText("");
-		albumArtistSortValue.setText("");
-		albumArtistValue.setText("");
-		albumMBIDValue.setText("");
-		albumValue.setText("");
-		artistMBIDValue.setText("");
-		artistSortValue.setText("");
-		artistValue.setText("");
+		/* filename */
+		fileFilenameLabel.setText("<no files selected>");
+
+		/* misc panel */
+		groupValue.setText("");
+		fileIDValue.setText("");
+		trackIDValue.setText("");
+		durationValue.setText("");
 		bitrateValue.setText("");
 		channelsValue.setText("");
-		duplicateCheckBox.setSelected(false);
-		durationValue.setText("");
-		fileIDValue.setText("");
-		fileFilenameLabel.setText("<no files selected>");
-		genreValue.setText("");
-		groupValue.setText("");
-		modifiedCheckBox.setSelected(false);
-		pinnedCheckBox.setSelected(false);
-		releasedValue.setText("");
 		samplerateValue.setText("");
+		modifiedCheckBox.setSelected(false);
+		duplicateCheckBox.setSelected(false);
+		pinnedCheckBox.setSelected(false);
+
+		/* artist panel */
+		artistValue.setText("");
+		artistSortValue.setText("");
+		artistMBIDValue.setText("");
+
+		/* track panel */
 		titleValue.setText("");
-		trackIDValue.setText("");
-		trackMBIDValue.setText("");
 		tracknumberValue.setText("");
+		genreValue.setText("");
+		trackMBIDValue.setText("");
+
+		/* album panel */
+		albumValue.setText("");
+		releasedValue.setText("");
+		albumMBIDValue.setText("");
+
+		/* album artist panel */
+		albumArtistValue.setText("");
+		albumArtistSortValue.setText("");
+		albumArtistMBIDValue.setText("");
 	}
 
 	public static void showMetadata() {
@@ -313,7 +326,7 @@ public class Locutus extends javax.swing.JFrame {
                 modifiedCheckBox = new javax.swing.JCheckBox();
                 duplicateCheckBox = new javax.swing.JCheckBox();
                 pinnedCheckBox = new javax.swing.JCheckBox();
-                saveButton = new javax.swing.JButton();
+                setMetadataButton = new javax.swing.JButton();
                 artistPanel = new javax.swing.JPanel();
                 artistCheckBox = new javax.swing.JCheckBox();
                 artistValue = new javax.swing.JTextField();
@@ -803,12 +816,12 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 miscPanel.add(pinnedCheckBox, gridBagConstraints);
 
-                saveButton.setMnemonic('S');
-                saveButton.setText("Save metadata");
-                saveButton.setFocusable(false);
-                saveButton.addActionListener(new java.awt.event.ActionListener() {
+                setMetadataButton.setMnemonic('S');
+                setMetadataButton.setText("Set metadata");
+                setMetadataButton.setFocusable(false);
+                setMetadataButton.addActionListener(new java.awt.event.ActionListener() {
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
-                                saveButtonActionPerformed(evt);
+                                setMetadataButtonActionPerformed(evt);
                         }
                 });
                 gridBagConstraints = new java.awt.GridBagConstraints();
@@ -817,7 +830,7 @@ public class Locutus extends javax.swing.JFrame {
                 gridBagConstraints.gridwidth = 2;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
                 gridBagConstraints.weightx = 1.0;
-                miscPanel.add(saveButton, gridBagConstraints);
+                miscPanel.add(setMetadataButton, gridBagConstraints);
 
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -1300,9 +1313,54 @@ public class Locutus extends javax.swing.JFrame {
 		System.exit(0);
 	}//GEN-LAST:event_quitButtonActionPerformed
 
-	private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_saveButtonActionPerformed
+	private void setMetadataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setMetadataButtonActionPerformed
+		for (Metafile file : selected_metafiles) {
+			/* artist */
+			if (artistCheckBox.isSelected())
+				file.setArtist(artistValue.getText());
+			if (artistSortCheckBox.isSelected())
+				file.setArtistSortName(artistSortValue.getText());
+			if (artistMBIDCheckBox.isSelected())
+				file.setArtistMBID(artistMBIDValue.getText());
+
+			/* track */
+			if (titleCheckBox.isSelected())
+				file.setTitle(titleValue.getText());
+			try {
+				if (tracknumberCheckBox.isSelected())
+					file.setTracknumber(Integer.parseInt(tracknumberValue.getText()));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+			if (genreCheckBox.isSelected())
+				file.setGenre(genreValue.getText());
+			if (trackMBIDCheckBox.isSelected())
+				file.setTrackMBID(trackMBIDValue.getText());
+
+			/* album */
+			if (albumCheckBox.isSelected())
+				file.setAlbum(albumValue.getText());
+			if (releasedCheckBox.isSelected())
+				file.setReleased(releasedValue.getText());
+			if (albumMBIDCheckBox.isSelected())
+				file.setAlbumMBID(albumMBIDValue.getText());
+
+			/* album artist */
+			if (albumArtistCheckBox.isSelected())
+				file.setAlbumArtist(albumArtistValue.getText());
+			if (albumArtistSortCheckBox.isSelected())
+				file.setAlbumArtistSortName(albumArtistSortValue.getText());
+			if (albumArtistMBIDCheckBox.isSelected())
+				file.setAlbumArtistMBID(albumArtistMBIDValue.getText());
+
+			/* pinned */
+			file.setPinned(pinnedCheckBox.isSelected());
+
+			/* set status to SAVE_METADATA */
+			file.setStatus(Metafile.SAVE_METADATA);
+		}
+		matching.repaint();
+	}//GEN-LAST:event_setMetadataButtonActionPerformed
 
 	private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
 		updateButton.setText("Updating...");
@@ -1446,7 +1504,7 @@ public class Locutus extends javax.swing.JFrame {
         private static javax.swing.JTextField releasedValue;
         private static javax.swing.JLabel samplerateLabel;
         private static javax.swing.JLabel samplerateValue;
-        private static javax.swing.JButton saveButton;
+        private static javax.swing.JButton setMetadataButton;
         private net.exent.locutus.gui.Settings settings;
         private javax.swing.JTabbedPane tabPane;
         private static javax.swing.JCheckBox titleCheckBox;

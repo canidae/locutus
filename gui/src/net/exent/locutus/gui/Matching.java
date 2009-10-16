@@ -97,6 +97,8 @@ public class Matching extends javax.swing.JPanel {
 				label.setForeground(new Color(0, 150, 0));
 			else if (status == Metafile.DELETE)
 				label.setForeground(new Color(150, 0, 0));
+			else if (status == Metafile.SAVE_METADATA)
+				label.setForeground(new Color(150, 0, 150));
 			return label;
 		}
 	}
@@ -125,6 +127,9 @@ public class Matching extends javax.swing.JPanel {
 			e.printStackTrace();
 		}
 		model.setRoot(root);
+		matchingTree.requestFocus();
+		if (matchingTree.getRowCount() > 0)
+			matchingTree.setSelectionRow(0);
 	}
 
 	private void updateAlbum(DefaultMutableTreeNode albumnode) {
@@ -176,6 +181,8 @@ public class Matching extends javax.swing.JPanel {
 						Database.matchFile(file.getFileID(), file.getCompareTrackID());
 					else if (file.getStatus() == Metafile.DELETE)
 						Database.deleteComparison(file.getFileID(), file.getCompareTrackID());
+					else if (file.getStatus() == Metafile.SAVE_METADATA)
+						Database.saveMetadata(file);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -239,12 +246,15 @@ public class Matching extends javax.swing.JPanel {
 
 	private void matchingTreeTreeWillExpand(javax.swing.event.TreeExpansionEvent evt)throws javax.swing.tree.ExpandVetoException {//GEN-FIRST:event_matchingTreeTreeWillExpand
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) evt.getPath().getLastPathComponent();
-		updateAlbum(node);
+		if (node.getChildCount() <= 0 || !(((DefaultMutableTreeNode) node.getChildAt(0)).getUserObject() instanceof Track))
+			updateAlbum(node); // need to load this album
 	}//GEN-LAST:event_matchingTreeTreeWillExpand
 
 	private void matchingTreeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_matchingTreeKeyPressed
 		if (matchingTree.getSelectionCount() <= 0)
 			return;
+		if (evt.isAltDown())
+			return; // alt key is used for buttons
 		TreePath[] paths = matchingTree.getSelectionPaths();
 		DefaultMutableTreeNode active_album = null;
 		List<DefaultMutableTreeNode> filetreenodes = new ArrayList<DefaultMutableTreeNode>();
@@ -275,18 +285,21 @@ public class Matching extends javax.swing.JPanel {
 			case KeyEvent.VK_D:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((Metafile) treenode.getUserObject()).setStatus(Metafile.DELETE);
+				selected = null;
 				break;
 
 			case KeyEvent.VK_ENTER:
 			case KeyEvent.VK_S:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((Metafile) treenode.getUserObject()).setStatus(Metafile.SAVE);
+				selected = null;
 				break;
 
 			case KeyEvent.VK_ESCAPE:
 			case KeyEvent.VK_R:
 				for (DefaultMutableTreeNode treenode : filetreenodes)
 					((Metafile) treenode.getUserObject()).setStatus(Metafile.NONE);
+				selected = null;
 				break;
 
 			case KeyEvent.VK_A:
@@ -488,7 +501,7 @@ public class Matching extends javax.swing.JPanel {
 					metafiles.add((Metafile) object);
 			}
 		}
-		Locutus.setMetadata(metafiles);
+		Locutus.setSelectedMetadatafiles(metafiles);
 	}//GEN-LAST:event_matchingTreeValueChanged
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JScrollPane matchingScrollPane;
