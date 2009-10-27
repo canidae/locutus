@@ -32,7 +32,7 @@ public class StatusPoller extends Thread {
 				} else {
 					status += "Estimated time remaining: ";
 					double runtime = rs.getDouble("runtime");
-					if (progress < 0.1 || runtime <= 0.0) {
+					if (progress < 0.001 || runtime <= 0.0) {
 						status += "Unknown";
 					} else {
 						double remaining = runtime / progress - runtime;
