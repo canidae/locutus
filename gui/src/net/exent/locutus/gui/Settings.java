@@ -491,7 +491,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareCombineThresholdSlider, gridBagConstraints);
 
-                compareCombineThresholdValue.setText("50");
+                compareCombineThresholdValue.setText("50%");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
@@ -524,7 +524,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareMaxDiffBestScoreSlider, gridBagConstraints);
 
-                compareMaxDiffBestScoreValue.setText("50");
+                compareMaxDiffBestScoreValue.setText("50%");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 1;
@@ -559,7 +559,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareMatchMinScoreSlider, gridBagConstraints);
 
-                compareMatchMinScoreValue.setText("50");
+                compareMatchMinScoreValue.setText("50%");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 2;
@@ -594,7 +594,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareCompareRelativeScoreSlider, gridBagConstraints);
 
-                compareCompareRelativeScoreValue.setText("50");
+                compareCompareRelativeScoreValue.setText("50%");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 3;
@@ -631,7 +631,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 comparePanel.add(compareDurationLimitSlider, gridBagConstraints);
 
-                compareDurationLimitValue.setText("15000");
+                compareDurationLimitValue.setText("15000ms");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 4;
@@ -715,7 +715,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 daemonPanel.add(daemonCacheLifetimeSlider, gridBagConstraints);
 
-                daemonCacheLifetimeValue.setText("3");
+                daemonCacheLifetimeValue.setText("3 months");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 1;
@@ -753,7 +753,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 daemonPanel.add(daemonRunIntervalSlider, gridBagConstraints);
 
-                daemonRunIntervalValue.setText("7");
+                daemonRunIntervalValue.setText("7 days");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 2;
@@ -790,7 +790,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 daemonPanel.add(daemonMusicBrainzQueryIntervalSlider, gridBagConstraints);
 
-                daemonMusicBrainzQueryIntervalValue.setText("3");
+                daemonMusicBrainzQueryIntervalValue.setText("3 seconds");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 3;
@@ -827,7 +827,7 @@ public class Settings extends javax.swing.JPanel {
                 gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
                 daemonPanel.add(daemonAudioscrobblerQueryIntervalSlider, gridBagConstraints);
 
-                daemonAudioscrobblerQueryIntervalValue.setText("3");
+                daemonAudioscrobblerQueryIntervalValue.setText("3 seconds");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
                 gridBagConstraints.gridy = 4;
@@ -1268,39 +1268,39 @@ public class Settings extends javax.swing.JPanel {
     }//GEN-LAST:event_weightArtistSliderStateChanged
 
     private void compareDurationLimitSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareDurationLimitSliderStateChanged
-	    compareDurationLimitValue.setText("" + compareDurationLimitSlider.getValue());
+	    compareDurationLimitValue.setText(compareDurationLimitSlider.getValue() + "ms");
     }//GEN-LAST:event_compareDurationLimitSliderStateChanged
 
     private void compareCompareRelativeScoreSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareCompareRelativeScoreSliderStateChanged
-	    compareCompareRelativeScoreValue.setText("" + compareCompareRelativeScoreSlider.getValue());
+	    compareCompareRelativeScoreValue.setText(compareCompareRelativeScoreSlider.getValue() + "%");
     }//GEN-LAST:event_compareCompareRelativeScoreSliderStateChanged
 
     private void compareMatchMinScoreSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareMatchMinScoreSliderStateChanged
-	    compareMatchMinScoreValue.setText("" + compareMatchMinScoreSlider.getValue());
+	    compareMatchMinScoreValue.setText(compareMatchMinScoreSlider.getValue() + "%");
     }//GEN-LAST:event_compareMatchMinScoreSliderStateChanged
 
     private void compareMaxDiffBestScoreSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareMaxDiffBestScoreSliderStateChanged
-	    compareMaxDiffBestScoreValue.setText("" + compareMaxDiffBestScoreSlider.getValue());
+	    compareMaxDiffBestScoreValue.setText(compareMaxDiffBestScoreSlider.getValue() + "%");
     }//GEN-LAST:event_compareMaxDiffBestScoreSliderStateChanged
 
     private void compareCombineThresholdSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_compareCombineThresholdSliderStateChanged
-	    compareCombineThresholdValue.setText("" + compareCombineThresholdSlider.getValue());
+	    compareCombineThresholdValue.setText(compareCombineThresholdSlider.getValue() + "%");
     }//GEN-LAST:event_compareCombineThresholdSliderStateChanged
 
     private void daemonAudioscrobblerQueryIntervalSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonAudioscrobblerQueryIntervalSliderStateChanged
-	    daemonAudioscrobblerQueryIntervalValue.setText("" + daemonAudioscrobblerQueryIntervalSlider.getValue());
+	    daemonAudioscrobblerQueryIntervalValue.setText(daemonAudioscrobblerQueryIntervalSlider.getValue() + " second" + (daemonAudioscrobblerQueryIntervalSlider.getValue() > 1 ? "s" : ""));
     }//GEN-LAST:event_daemonAudioscrobblerQueryIntervalSliderStateChanged
 
     private void daemonMusicBrainzQueryIntervalSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonMusicBrainzQueryIntervalSliderStateChanged
-	    daemonMusicBrainzQueryIntervalValue.setText("" + daemonMusicBrainzQueryIntervalSlider.getValue());
+	    daemonMusicBrainzQueryIntervalValue.setText(daemonMusicBrainzQueryIntervalSlider.getValue() + " second" + (daemonMusicBrainzQueryIntervalSlider.getValue() > 1 ? "s" : ""));
     }//GEN-LAST:event_daemonMusicBrainzQueryIntervalSliderStateChanged
 
     private void daemonRunIntervalSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonRunIntervalSliderStateChanged
-	    daemonRunIntervalValue.setText("" + daemonRunIntervalSlider.getValue());
+	    daemonRunIntervalValue.setText(daemonRunIntervalSlider.getValue() + " day" + (daemonRunIntervalSlider.getValue() > 1 ? "s" : ""));
     }//GEN-LAST:event_daemonRunIntervalSliderStateChanged
 
     private void daemonCacheLifetimeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonCacheLifetimeSliderStateChanged
-	    daemonCacheLifetimeValue.setText("" + daemonCacheLifetimeSlider.getValue());
+	    daemonCacheLifetimeValue.setText(daemonCacheLifetimeSlider.getValue() + " month" + (daemonCacheLifetimeSlider.getValue() > 1 ? "s" : ""));
     }//GEN-LAST:event_daemonCacheLifetimeSliderStateChanged
 
     private void daemonMaxGroupSizeSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_daemonMaxGroupSizeSliderStateChanged

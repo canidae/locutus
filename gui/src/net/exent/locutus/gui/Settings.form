@@ -319,7 +319,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="compareCombineThresholdValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="50"/>
+            <Property name="text" type="java.lang.String" value="50%"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -362,7 +362,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="compareMaxDiffBestScoreValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="50"/>
+            <Property name="text" type="java.lang.String" value="50%"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -405,7 +405,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="compareMatchMinScoreValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="50"/>
+            <Property name="text" type="java.lang.String" value="50%"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -448,7 +448,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="compareCompareRelativeScoreValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="50"/>
+            <Property name="text" type="java.lang.String" value="50%"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -493,7 +493,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="compareDurationLimitValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="15000"/>
+            <Property name="text" type="java.lang.String" value="15000ms"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -602,7 +602,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="daemonCacheLifetimeValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="3"/>
+            <Property name="text" type="java.lang.String" value="3 months"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -648,7 +648,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="daemonRunIntervalValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="7"/>
+            <Property name="text" type="java.lang.String" value="7 days"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -694,7 +694,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="daemonMusicBrainzQueryIntervalValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="3"/>
+            <Property name="text" type="java.lang.String" value="3 seconds"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -740,7 +740,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="daemonAudioscrobblerQueryIntervalValue">
           <Properties>
-            <Property name="text" type="java.lang.String" value="3"/>
+            <Property name="text" type="java.lang.String" value="3 seconds"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
