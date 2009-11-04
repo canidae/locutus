@@ -303,7 +303,7 @@ public class Locutus extends javax.swing.JFrame {
                 quitButton = new javax.swing.JButton();
                 tabPane = new javax.swing.JTabbedPane();
                 matching = new net.exent.locutus.gui.Matching();
-                detached = new net.exent.locutus.gui.Detached();
+                uncompared = new net.exent.locutus.gui.Uncompared();
                 settings = new net.exent.locutus.gui.Settings();
                 help = new net.exent.locutus.gui.Help();
                 metadataPanel = new javax.swing.JPanel();
@@ -579,7 +579,7 @@ public class Locutus extends javax.swing.JFrame {
                 tabPane.setMinimumSize(new java.awt.Dimension(400, 200));
                 tabPane.setPreferredSize(new java.awt.Dimension(400, 200));
                 tabPane.addTab("Matching", matching);
-                tabPane.addTab("Detached", detached);
+                tabPane.addTab("Uncompared", uncompared);
 
                 settings.setMinimumSize(new java.awt.Dimension(400, 200));
                 tabPane.addTab("Settings", settings);
@@ -1471,7 +1471,6 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JFrame connectFrame;
         private javax.swing.JLabel databaseLabel;
         private javax.swing.JTextField databaseTextField;
-        private net.exent.locutus.gui.Detached detached;
         private javax.swing.JComboBox driverCombo;
         private javax.swing.JLabel driverLabel;
         private static javax.swing.JCheckBox duplicateCheckBox;
@@ -1517,6 +1516,7 @@ public class Locutus extends javax.swing.JFrame {
         private javax.swing.JPanel trackPanel;
         private static javax.swing.JCheckBox tracknumberCheckBox;
         private static javax.swing.JTextField tracknumberValue;
+        private net.exent.locutus.gui.Uncompared uncompared;
         private javax.swing.JButton updateButton;
         private javax.swing.JLabel usernameLabel;
         private javax.swing.JTextField usernameTextField;

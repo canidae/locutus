@@ -19,10 +19,10 @@ import net.exent.locutus.database.Database;
  *
  * @author canidae
  */
-public class Detached extends javax.swing.JPanel {
+public class Uncompared extends javax.swing.JPanel {
 
 	/** Creates new form Detached */
-	public Detached() {
+	public Uncompared() {
 		initComponents();
 	}
 

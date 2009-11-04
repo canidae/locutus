@@ -332,11 +332,11 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="net.exent.locutus.gui.Detached" name="detached">
+        <Component class="net.exent.locutus.gui.Uncompared" name="uncompared">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Detached">
-                <Property name="tabTitle" type="java.lang.String" value="Detached"/>
+              <JTabbedPaneConstraints tabName="Uncompared">
+                <Property name="tabTitle" type="java.lang.String" value="Uncompared"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
