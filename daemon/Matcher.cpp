@@ -110,6 +110,17 @@ void Matcher::match(const vector<Metafile *> &files, const string &album) {
 	/* and clear the "values" list in the metafiles */
 	for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf)
 		(*mf)->clearValues();
+	/* save comparisons for files that aren't matched */
+	for (map<string, AlbumComparison>::iterator ac = acs->begin(); ac != acs->end(); ++ac) {
+		for (map<string, vector<Comparison *> >::iterator cs = ac->second.comparisons.begin(); cs != ac->second.comparisons.end(); ++cs) {
+			for (vector<Comparison *>::iterator c = cs->second.begin(); c != cs->second.end(); ++c) {
+				if ((*c)->metafile->matched)
+					continue; // file is matched, don't save comparison
+				/* save the match */
+				database->saveComparison(**c);
+			}
+		}
+	}
 }
 
 void Matcher::clearAlbumComparison() {
@@ -142,8 +153,6 @@ void Matcher::compareFilesWithAlbum(AlbumComparison *ac, const vector<Metafile *
 			ac->comparisons[(*t)->mbid].push_back(c);
 			if (only_save_complete_albums)
 				(*mf)->meta_lookup = false;
-			/* save the match */
-			database->saveComparison(*c);
 		}
 	}
 }
