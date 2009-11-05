@@ -10,6 +10,7 @@
  */
 package net.exent.locutus.gui;
 
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Enumeration;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import net.exent.locutus.data.Metafile;
 import net.exent.locutus.database.Database;
 
@@ -89,6 +91,16 @@ public class Uncompared extends javax.swing.JPanel {
                 javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
                 uncomparedTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
                 uncomparedTree.setRootVisible(false);
+                uncomparedTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+                        public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                                uncomparedTreeValueChanged(evt);
+                        }
+                });
+                uncomparedTree.addKeyListener(new java.awt.event.KeyAdapter() {
+                        public void keyPressed(java.awt.event.KeyEvent evt) {
+                                uncomparedTreeKeyPressed(evt);
+                        }
+                });
                 jScrollPane1.setViewportView(uncomparedTree);
 
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -106,6 +118,142 @@ public class Uncompared extends javax.swing.JPanel {
 	private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
 		updateTree();
 	}//GEN-LAST:event_formComponentShown
+
+	private void uncomparedTreeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_uncomparedTreeKeyPressed
+		if (uncomparedTree.getSelectionCount() <= 0)
+			return;
+		if (evt.isAltDown())
+			return; // alt key is used for buttons
+		TreePath[] paths = uncomparedTree.getSelectionPaths();
+		DefaultMutableTreeNode active_group = null;
+		List<DefaultMutableTreeNode> filetreenodes = new ArrayList<DefaultMutableTreeNode>();
+		DefaultMutableTreeNode selected = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
+		for (TreePath path : paths) {
+			DefaultMutableTreeNode current = (DefaultMutableTreeNode) path.getLastPathComponent();
+			Object node = current.getUserObject();
+			if (node instanceof String) {
+				active_group = current;
+				Enumeration files = current.children();
+				while (files.hasMoreElements())
+					filetreenodes.add((DefaultMutableTreeNode) files.nextElement());
+			} else if (node instanceof Metafile) {
+				active_group = (DefaultMutableTreeNode) current.getParent().getParent();
+				filetreenodes.add(current);
+			}
+		}
+		switch (evt.getKeyCode()) {
+			case KeyEvent.VK_ESCAPE:
+			case KeyEvent.VK_R:
+				for (DefaultMutableTreeNode treenode : filetreenodes)
+					((Metafile) treenode.getUserObject()).setStatus(Metafile.NONE);
+				selected = null;
+				break;
+
+			case KeyEvent.VK_G:
+				if (uncomparedTree.getSelectionCount() != 1)
+					break;
+				if (evt.isShiftDown()) {
+					if (selected.getUserObject() instanceof String)
+						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) uncomparedTree.getModel().getRoot()).getChildBefore(active_group);
+					else
+						selected = active_group;
+				} else {
+					selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) uncomparedTree.getModel().getRoot()).getChildAfter(active_group);
+				}
+				break;
+
+			case KeyEvent.VK_F:
+				if (uncomparedTree.getSelectionCount() != 1)
+					break;
+				if (selected.getUserObject() instanceof String) {
+					if (evt.isShiftDown())
+						break;
+					uncomparedTree.expandPath(new TreePath(selected.getPath()));
+					selected = selected.getNextNode();
+				} else if (selected.getUserObject() instanceof Metafile) {
+					if (evt.isShiftDown())
+						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildBefore(selected);
+					else
+						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) selected.getParent()).getChildAfter(selected);
+				}
+				break;
+
+			case KeyEvent.VK_E:
+				if (active_group == null)
+					break;
+				uncomparedTree.expandPath(new TreePath(active_group.getPath()));
+				/* set selected to null so we don't attempt to expand nodes after this switch */
+				selected = null;
+				break;
+
+			case KeyEvent.VK_SPACE:
+				if (evt.isControlDown()) {
+					/* update all groups and reload tree */
+					Enumeration albums = ((DefaultMutableTreeNode) uncomparedTree.getModel().getRoot()).children();
+					while (albums.hasMoreElements())
+						//saveGroup((DefaultMutableTreeNode) albums.nextElement());
+						updateTree();
+				} else {
+					/* update files in active group */
+					//saveGroup(active_group);
+					selected = active_group;
+				}
+				break;
+
+			default:
+				return;
+		}
+		if (selected != null) {
+			TreePath path = new TreePath(selected.getPath());
+			Enumeration albums = ((DefaultMutableTreeNode) uncomparedTree.getModel().getRoot()).children();
+			while (albums.hasMoreElements()) {
+				DefaultMutableTreeNode album = (DefaultMutableTreeNode) albums.nextElement();
+				TreePath albumpath = new TreePath(album.getPath());
+				if (uncomparedTree.isCollapsed(albumpath))
+					continue;
+				if (!albumpath.isDescendant(path)) {
+					uncomparedTree.collapsePath(albumpath);
+				} else {
+					Enumeration tracks = album.children();
+					while (tracks.hasMoreElements()) {
+						DefaultMutableTreeNode track = (DefaultMutableTreeNode) tracks.nextElement();
+						TreePath trackpath = new TreePath(track.getPath());
+						if (uncomparedTree.isExpanded(trackpath) && !trackpath.isDescendant(path))
+							uncomparedTree.collapsePath(trackpath);
+					}
+				}
+			}
+			uncomparedTree.expandPath(path);
+			uncomparedTree.setSelectionPath(path);
+			uncomparedTree.scrollPathToVisible(path);
+		}
+		uncomparedTree.repaint();
+	}//GEN-LAST:event_uncomparedTreeKeyPressed
+
+	private void uncomparedTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_uncomparedTreeValueChanged
+		TreePath[] paths = uncomparedTree.getSelectionPaths();
+		if (paths == null) {
+			Locutus.clearMetadata();
+			return;
+		}
+		List<Metafile> metafiles = new ArrayList<Metafile>();
+		for (TreePath path : paths) {
+			DefaultMutableTreeNode node = ((DefaultMutableTreeNode) path.getLastPathComponent());
+			Object object = node.getUserObject();
+			if (object instanceof String) {
+				Enumeration files = node.children();
+				while (files.hasMoreElements()) {
+					object = ((DefaultMutableTreeNode) files.nextElement()).getUserObject();
+					if (object instanceof Metafile && !metafiles.contains((Metafile) object))
+						metafiles.add((Metafile) object);
+				}
+			} else if (object instanceof Metafile) {
+				if (!metafiles.contains((Metafile) object))
+					metafiles.add((Metafile) object);
+			}
+		}
+		Locutus.setSelectedMetadatafiles(metafiles);
+	}//GEN-LAST:event_uncomparedTreeValueChanged
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JScrollPane jScrollPane1;
         private javax.swing.JTree uncomparedTree;

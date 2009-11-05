@@ -43,6 +43,10 @@
             </Property>
             <Property name="rootVisible" type="boolean" value="false"/>
           </Properties>
+          <Events>
+            <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="uncomparedTreeValueChanged"/>
+            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="uncomparedTreeKeyPressed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

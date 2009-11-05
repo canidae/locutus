@@ -17,7 +17,6 @@ public class Metafile {
 	public static final int SAVE = 1;
 	public static final int DELETE = 2;
 	public static final int SAVE_METADATA = 3;
-	public static final int UNCOMPARED = 4;
 	private int fileID;
 	private String filename;
 	private String album;
@@ -115,14 +114,15 @@ public class Metafile {
 		duplicate = rs.getBoolean("duplicate");
 		modified = rs.getBoolean("user_changed");
 		pinned = rs.getBoolean("pinned");
-		status = UNCOMPARED;
+		status = NONE;
+		score = -1.0;
 	}
 
 	@Override
 	public String toString() {
 		/* XXX: turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
 		 * solution? add \u200b which is a zero width character (ie. invisible) */
-		if (status == UNCOMPARED)
+		if (score < 0.0)
 			return "\u200b" + getFilename();
 		else
 			return "\u200b" + (getTracknumber() > 9 ? getTracknumber() : "0" + getTracknumber()) + " - " + getDuration() + " - " + getAlbumArtist() + " - " + getAlbum() + " - " + getArtist() + " - " + getTitle() + " [" + (((int) (1000.0 * score)) / 10.0) + "%]";
