@@ -12,7 +12,12 @@ package net.exent.locutus.gui;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import net.exent.locutus.data.Metafile;
 import net.exent.locutus.database.Database;
 
 /**
@@ -26,21 +31,41 @@ public class Uncompared extends javax.swing.JPanel {
 		initComponents();
 	}
 
-	public void updateTable() {
-		try {
-			ResultSet rs = Database.getDetached(Locutus.getFilter());
+	public void updateTree() {
+		DefaultTreeModel model = (DefaultTreeModel) uncomparedTree.getModel();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
+		List<DefaultMutableTreeNode> remove = new ArrayList<DefaultMutableTreeNode>();
+		Enumeration groups = root.children();
+		while (groups.hasMoreElements())
+			remove.add((DefaultMutableTreeNode) groups.nextElement());
+		for (DefaultMutableTreeNode r : remove)
+			model.removeNodeFromParent(r);
 
+		try {
+			ResultSet rs = Database.getUncompared(Locutus.getFilter());
 			if (rs == null)
 				return;
 
-			DefaultTableModel dtb = (DefaultTableModel) jTable1.getModel();
-			dtb.setRowCount(0);
+			DefaultMutableTreeNode group = null;
 			while (rs.next()) {
-				dtb.addRow(new Object[]{rs.getInt("file_id"), rs.getString("filename")});
+				Metafile mf = new Metafile();
+				mf.setUncomparedData(rs);
+				if (group == null || !mf.getGroup().equals(group.getUserObject())) {
+					if (group != null)
+						model.insertNodeInto(group, root, model.getChildCount(root));
+					group = new DefaultMutableTreeNode(mf.getGroup());
+				}
+				model.insertNodeInto(new DefaultMutableTreeNode(mf), group, model.getChildCount(group));
 			}
+			if (group != null)
+				model.insertNodeInto(group, root, model.getChildCount(root));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		model.setRoot(root);
+		uncomparedTree.requestFocus();
+		if (uncomparedTree.getRowCount() > 0)
+			uncomparedTree.setSelectionRow(0);
 	}
 
 	/** This method is called from within the constructor to
@@ -53,7 +78,7 @@ public class Uncompared extends javax.swing.JPanel {
         private void initComponents() {
 
                 jScrollPane1 = new javax.swing.JScrollPane();
-                jTable1 = new javax.swing.JTable();
+                uncomparedTree = new javax.swing.JTree();
 
                 addComponentListener(new java.awt.event.ComponentAdapter() {
                         public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -61,50 +86,10 @@ public class Uncompared extends javax.swing.JPanel {
                         }
                 });
 
-                jTable1.setModel(new javax.swing.table.DefaultTableModel(
-                        new Object [][] {
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null},
-                                {null, null}
-                        },
-                        new String [] {
-                                "ID", "File"
-                        }
-                ) {
-                        Class[] types = new Class [] {
-                                java.lang.Integer.class, java.lang.String.class
-                        };
-                        boolean[] canEdit = new boolean [] {
-                                false, false
-                        };
-
-                        public Class getColumnClass(int columnIndex) {
-                                return types [columnIndex];
-                        }
-
-                        public boolean isCellEditable(int rowIndex, int columnIndex) {
-                                return canEdit [columnIndex];
-                        }
-                });
-                jTable1.getTableHeader().setReorderingAllowed(false);
-                jScrollPane1.setViewportView(jTable1);
+                javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+                uncomparedTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+                uncomparedTree.setRootVisible(false);
+                jScrollPane1.setViewportView(uncomparedTree);
 
                 javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
                 this.setLayout(layout);
@@ -114,16 +99,15 @@ public class Uncompared extends javax.swing.JPanel {
                 );
                 layout.setVerticalGroup(
                         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
                 );
         }// </editor-fold>//GEN-END:initComponents
 
 	private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-		updateTable();
+		updateTree();
 	}//GEN-LAST:event_formComponentShown
-
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JScrollPane jScrollPane1;
-        private javax.swing.JTable jTable1;
+        private javax.swing.JTree uncomparedTree;
         // End of variables declaration//GEN-END:variables
 }

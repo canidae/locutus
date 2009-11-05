@@ -20,7 +20,6 @@ public class Database {
 	private static Connection connection;
 	private static PreparedStatement deleteComparison;
 	private static PreparedStatement deleteMatch;
-	private static PreparedStatement detached;
 	private static PreparedStatement matchFile;
 	private static PreparedStatement matchingDetails;
 	private static PreparedStatement matchingList;
@@ -30,6 +29,7 @@ public class Database {
 	private static PreparedStatement setSetting;
 	private static PreparedStatement settingList;
 	private static PreparedStatement status;
+	private static PreparedStatement uncompared;
 
 	public static void connectPostgreSQL(String url, String username, String password) throws ClassNotFoundException, SQLException {
 		Class.forName("org.postgresql.Driver");
@@ -38,7 +38,6 @@ public class Database {
 		/* prepared statements */
 		deleteComparison = connection.prepareStatement("DELETE FROM comparison WHERE file_id = ? AND track_id = ?");
 		deleteMatch = connection.prepareStatement("UPDATE file SET track_id = NULL, user_changer = true WHERE file_id = ? AND track_id IS NOT NULL");
-		detached = connection.prepareStatement("SELECT * FROM file WHERE track_id IS NULL AND filename LIKE (SELECT value FROM setting WHERE key = 'output_directory') || '%' AND filename ILIKE ? ORDER BY filename");
 		matchFile = connection.prepareStatement("UPDATE file SET track_id = ?, user_changed = true WHERE file_id = ?");
 		matchingDetails = connection.prepareStatement("SELECT * FROM v_ui_matching_details WHERE album_album_id = ? AND (file_track_id IS NULL OR file_track_id = track_track_id) ORDER BY track_tracknumber ASC, comparison_mbid_match DESC, comparison_score DESC");
 		matchingList = connection.prepareStatement("SELECT * FROM v_ui_matching_list WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
@@ -48,6 +47,7 @@ public class Database {
 		setSetting = connection.prepareStatement("UPDATE setting SET value = ? WHERE key = ?");
 		settingList = connection.prepareStatement("SELECT * FROM setting");
 		status = connection.prepareStatement("SELECT *, EXTRACT(epoch FROM now() - start) AS runtime FROM locutus");
+		uncompared = connection.prepareStatement("SELECT * FROM v_ui_uncompared_list WHERE filename ILIKE ? ORDER BY groupname, filename");
 	}
 
 	public static int deleteComparison(int file_id, int track_id) throws SQLException {
@@ -62,15 +62,6 @@ public class Database {
 	public static void disconnect() throws SQLException {
 		if (connection != null)
 			connection.close();
-	}
-
-	public static ResultSet getDetached(String filter) throws SQLException {
-		if (detached == null)
-			return null;
-		if (filter == null)
-			filter = "";
-		detached.setString(1, "%" + filter + "%");
-		return detached.executeQuery();
 	}
 
 	public static ResultSet getMatchingDetails(int album_id) throws SQLException {
@@ -99,6 +90,15 @@ public class Database {
 		if (status == null)
 			return null;
 		return status.executeQuery();
+	}
+
+	public static ResultSet getUncompared(String filter) throws SQLException {
+		if (uncompared == null)
+			return null;
+		if (filter == null)
+			filter = "";
+		uncompared.setString(1, "%" + filter + "%");
+		return uncompared.executeQuery();
 	}
 
 	public static int matchFile(int file_id, int track_id) throws SQLException {

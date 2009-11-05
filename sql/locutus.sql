@@ -263,6 +263,14 @@ CREATE VIEW v_ui_matching_list AS
 
 
 --
+-- Name: v_ui_uncompared_list; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW v_ui_uncompared_list AS
+    SELECT file.file_id, file.filename, file.last_updated, file.duration, file.channels, file.bitrate, file.samplerate, file.album, file.albumartist, file.albumartistsort, file.artist, file.artistsort, file.musicbrainz_albumartistid, file.musicbrainz_albumid, file.musicbrainz_artistid, file.musicbrainz_trackid, file.title, file.tracknumber, file.released, file.genre, file.pinned, file.groupname, file.duplicate, file.user_changed, file.track_id, file.checked FROM file WHERE ((file.track_id IS NULL) AND (NOT (file.file_id IN (SELECT comparison.file_id FROM comparison))));
+
+
+--
 -- Name: v_web_album_list_tracks_and_matching_files; Type: VIEW; Schema: public; Owner: -
 --
 

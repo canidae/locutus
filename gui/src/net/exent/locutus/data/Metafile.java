@@ -17,6 +17,7 @@ public class Metafile {
 	public static final int SAVE = 1;
 	public static final int DELETE = 2;
 	public static final int SAVE_METADATA = 3;
+	public static final int UNCOMPARED = 4;
 	private int fileID;
 	private String filename;
 	private String album;
@@ -46,7 +47,10 @@ public class Metafile {
 	private boolean pinned;
 	private int status;
 
-	public Metafile(ResultSet rs) throws SQLException {
+	public Metafile() {
+	}
+
+	public void setMatchingData(ResultSet rs) throws SQLException {
 		fileID = rs.getInt("file_file_id");
 		filename = rs.getString("file_filename");
 		album = rs.getString("file_album");
@@ -81,11 +85,47 @@ public class Metafile {
 		status = NONE;
 	}
 
+	public void setUncomparedData(ResultSet rs) throws SQLException {
+		fileID = rs.getInt("file_id");
+		filename = rs.getString("filename");
+		album = rs.getString("album");
+		albumMBID = rs.getString("musicbrainz_albumid");
+		albumArtist = rs.getString("albumartist");
+		albumArtistMBID = rs.getString("musicbrainz_albumartistid");
+		albumArtistSortName = rs.getString("albumartistsort");
+		artist = rs.getString("artist");
+		artistMBID = rs.getString("musicbrainz_artistid");
+		artistSortName = rs.getString("artistsort");
+		title = rs.getString("title");
+		trackMBID = rs.getString("musicbrainz_trackid");
+		released = rs.getString("released");
+		genre = rs.getString("genre");
+		group = rs.getString("groupname");
+		try {
+			tracknumber = Integer.parseInt(rs.getString("tracknumber"));
+		} catch (NumberFormatException e) {
+			tracknumber = 0;
+		}
+		duration = rs.getInt("duration");
+		bitrate = rs.getInt("bitrate");
+		channels = rs.getInt("channels");
+		samplerate = rs.getInt("samplerate");
+		trackID = rs.getInt("track_id");
+		compareTrackID = rs.getInt("track_id");
+		duplicate = rs.getBoolean("duplicate");
+		modified = rs.getBoolean("user_changed");
+		pinned = rs.getBoolean("pinned");
+		status = UNCOMPARED;
+	}
+
 	@Override
 	public String toString() {
 		/* XXX: turns out to be a bitch getting JTree to *not* go to a node starting with the typed character.
 		 * solution? add \u200b which is a zero width character (ie. invisible) */
-		return "\u200b" + (getTracknumber() > 9 ? getTracknumber() : "0" + getTracknumber()) + " - " + getDuration() + " - " + getAlbumArtist() + " - " + getAlbum() + " - " + getArtist() + " - " + getTitle() + " [" + (((int) (1000.0 * score)) / 10.0) + "%]";
+		if (status == UNCOMPARED)
+			return "\u200b" + getFilename();
+		else
+			return "\u200b" + (getTracknumber() > 9 ? getTracknumber() : "0" + getTracknumber()) + " - " + getDuration() + " - " + getAlbumArtist() + " - " + getAlbum() + " - " + getArtist() + " - " + getTitle() + " [" + (((int) (1000.0 * score)) / 10.0) + "%]";
 	}
 
 	/**

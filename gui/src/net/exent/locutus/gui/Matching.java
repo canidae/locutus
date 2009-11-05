@@ -157,7 +157,9 @@ public class Matching extends javax.swing.JPanel {
 					model.insertNodeInto(track, albumnode, model.getChildCount(albumnode));
 				}
 				if ((rs.getInt("file_file_id") > 0) && !rs.wasNull()) {
-					DefaultMutableTreeNode file = new DefaultMutableTreeNode(new Metafile(rs));
+					Metafile mf = new Metafile();
+					mf.setMatchingData(rs);
+					DefaultMutableTreeNode file = new DefaultMutableTreeNode(mf);
 					model.insertNodeInto(file, track, model.getChildCount(track));
 				}
 			}
