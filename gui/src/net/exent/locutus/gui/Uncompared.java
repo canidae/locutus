@@ -19,6 +19,7 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import net.exent.locutus.data.Group;
 import net.exent.locutus.data.Metafile;
 import net.exent.locutus.database.Database;
 
@@ -52,15 +53,19 @@ public class Uncompared extends javax.swing.JPanel {
 			while (rs.next()) {
 				Metafile mf = new Metafile();
 				mf.setUncomparedData(rs);
-				if (group == null || !mf.getGroup().equals(group.getUserObject())) {
-					if (group != null)
+				if (group == null || !mf.getGroup().equals(((Group) group.getUserObject()).getName())) {
+					if (group != null) {
+						((Group) group.getUserObject()).setFiles(model.getChildCount(group));
 						model.insertNodeInto(group, root, model.getChildCount(root));
-					group = new DefaultMutableTreeNode(mf.getGroup());
+					}
+					group = new DefaultMutableTreeNode(new Group(mf.getGroup()));
 				}
 				model.insertNodeInto(new DefaultMutableTreeNode(mf), group, model.getChildCount(group));
 			}
-			if (group != null)
+			if (group != null) {
+				((Group) group.getUserObject()).setFiles(model.getChildCount(group));
 				model.insertNodeInto(group, root, model.getChildCount(root));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -131,13 +136,13 @@ public class Uncompared extends javax.swing.JPanel {
 		for (TreePath path : paths) {
 			DefaultMutableTreeNode current = (DefaultMutableTreeNode) path.getLastPathComponent();
 			Object node = current.getUserObject();
-			if (node instanceof String) {
+			if (node instanceof Group) {
 				active_group = current;
 				Enumeration files = current.children();
 				while (files.hasMoreElements())
 					filetreenodes.add((DefaultMutableTreeNode) files.nextElement());
 			} else if (node instanceof Metafile) {
-				active_group = (DefaultMutableTreeNode) current.getParent().getParent();
+				active_group = (DefaultMutableTreeNode) current.getParent();
 				filetreenodes.add(current);
 			}
 		}
@@ -153,7 +158,7 @@ public class Uncompared extends javax.swing.JPanel {
 				if (uncomparedTree.getSelectionCount() != 1)
 					break;
 				if (evt.isShiftDown()) {
-					if (selected.getUserObject() instanceof String)
+					if (selected.getUserObject() instanceof Group)
 						selected = (DefaultMutableTreeNode) ((DefaultMutableTreeNode) uncomparedTree.getModel().getRoot()).getChildBefore(active_group);
 					else
 						selected = active_group;
@@ -165,7 +170,7 @@ public class Uncompared extends javax.swing.JPanel {
 			case KeyEvent.VK_F:
 				if (uncomparedTree.getSelectionCount() != 1)
 					break;
-				if (selected.getUserObject() instanceof String) {
+				if (selected.getUserObject() instanceof Group) {
 					if (evt.isShiftDown())
 						break;
 					uncomparedTree.expandPath(new TreePath(selected.getPath()));
@@ -240,7 +245,7 @@ public class Uncompared extends javax.swing.JPanel {
 		for (TreePath path : paths) {
 			DefaultMutableTreeNode node = ((DefaultMutableTreeNode) path.getLastPathComponent());
 			Object object = node.getUserObject();
-			if (object instanceof String) {
+			if (object instanceof Group) {
 				Enumeration files = node.children();
 				while (files.hasMoreElements()) {
 					object = ((DefaultMutableTreeNode) files.nextElement()).getUserObject();

@@ -47,7 +47,7 @@ public class Database {
 		setSetting = connection.prepareStatement("UPDATE setting SET value = ? WHERE key = ?");
 		settingList = connection.prepareStatement("SELECT * FROM setting");
 		status = connection.prepareStatement("SELECT *, EXTRACT(epoch FROM now() - start) AS runtime FROM locutus");
-		uncompared = connection.prepareStatement("SELECT * FROM v_ui_uncompared_list WHERE filename ILIKE ? ORDER BY groupname, filename");
+		uncompared = connection.prepareStatement("SELECT * FROM v_ui_uncompared_list WHERE filename ILIKE ? OR groupname ILIKE ? ORDER BY groupname, filename");
 	}
 
 	public static int deleteComparison(int file_id, int track_id) throws SQLException {
@@ -98,6 +98,7 @@ public class Database {
 		if (filter == null)
 			filter = "";
 		uncompared.setString(1, "%" + filter + "%");
+		uncompared.setString(2, "%" + filter + "%");
 		return uncompared.executeQuery();
 	}
 
