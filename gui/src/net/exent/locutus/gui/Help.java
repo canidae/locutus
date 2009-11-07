@@ -32,6 +32,7 @@ public class Help extends javax.swing.JPanel {
         private void initComponents() {
                 java.awt.GridBagConstraints gridBagConstraints;
 
+                keyboardScrollPane = new javax.swing.JScrollPane();
                 keyboardPanel = new javax.swing.JPanel();
                 keyLabel = new javax.swing.JLabel();
                 descriptionLabel = new javax.swing.JLabel();
@@ -71,7 +72,7 @@ public class Help extends javax.swing.JPanel {
                 keyboardPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Keyboard shortcuts"));
                 keyboardPanel.setLayout(new java.awt.GridBagLayout());
 
-                keyLabel.setFont(new java.awt.Font("Bitstream Vera Sans", 1, 13));
+                keyLabel.setFont(new java.awt.Font("Bitstream Vera Sans", 1, 13)); // NOI18N
                 keyLabel.setText("Key");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
@@ -172,7 +173,7 @@ public class Help extends javax.swing.JPanel {
                 fKeyLabel.setText("F");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 6;
+                gridBagConstraints.gridy = 8;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(fKeyLabel, gridBagConstraints);
@@ -180,7 +181,7 @@ public class Help extends javax.swing.JPanel {
                 fDescriptionLabel.setText("Next file");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 6;
+                gridBagConstraints.gridy = 8;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(fDescriptionLabel, gridBagConstraints);
@@ -188,7 +189,7 @@ public class Help extends javax.swing.JPanel {
                 fShiftKeyLabel.setText("Shift-F");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 7;
+                gridBagConstraints.gridy = 9;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(fShiftKeyLabel, gridBagConstraints);
@@ -196,7 +197,7 @@ public class Help extends javax.swing.JPanel {
                 fShiftDescriptionLabel.setText("Previous file");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 7;
+                gridBagConstraints.gridy = 9;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(fShiftDescriptionLabel, gridBagConstraints);
@@ -302,7 +303,7 @@ public class Help extends javax.swing.JPanel {
                 gKeyLabel.setText("G");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 8;
+                gridBagConstraints.gridy = 6;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(gKeyLabel, gridBagConstraints);
@@ -310,7 +311,7 @@ public class Help extends javax.swing.JPanel {
                 gDescriptionLabel.setText("Next group");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 8;
+                gridBagConstraints.gridy = 6;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(gDescriptionLabel, gridBagConstraints);
@@ -318,7 +319,7 @@ public class Help extends javax.swing.JPanel {
                 gShiftKeyLabel.setText("Shift-G");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 9;
+                gridBagConstraints.gridy = 7;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(gShiftKeyLabel, gridBagConstraints);
@@ -326,12 +327,14 @@ public class Help extends javax.swing.JPanel {
                 gShiftDescriptionLabel.setText("Previous group");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 9;
+                gridBagConstraints.gridy = 7;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(gShiftDescriptionLabel, gridBagConstraints);
 
-                add(keyboardPanel);
+                keyboardScrollPane.setViewportView(keyboardPanel);
+
+                add(keyboardScrollPane);
         }// </editor-fold>//GEN-END:initComponents
 
 
@@ -356,6 +359,7 @@ public class Help extends javax.swing.JPanel {
         private javax.swing.JSeparator horizontalSeparator;
         private javax.swing.JLabel keyLabel;
         private javax.swing.JPanel keyboardPanel;
+        private javax.swing.JScrollPane keyboardScrollPane;
         private javax.swing.JLabel rDescriptionLabel;
         private javax.swing.JLabel rKeyLabel;
         private javax.swing.JLabel sDescriptionLabel;
