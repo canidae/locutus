@@ -1359,7 +1359,11 @@ public class Locutus extends javax.swing.JFrame {
 			/* set status to SAVE_METADATA */
 			file.setStatus(Metafile.SAVE_METADATA);
 		}
-		matching.repaint();
+		if (matching.isVisible())
+			matching.repaint();
+		if (uncompared.isVisible())
+			uncompared.repaint();
+
 	}//GEN-LAST:event_setMetadataButtonActionPerformed
 
 	private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed

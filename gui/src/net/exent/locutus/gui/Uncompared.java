@@ -10,14 +10,20 @@
  */
 package net.exent.locutus.gui;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import net.exent.locutus.data.Group;
 import net.exent.locutus.data.Metafile;
@@ -29,9 +35,29 @@ import net.exent.locutus.database.Database;
  */
 public class Uncompared extends javax.swing.JPanel {
 
-	/** Creates new form Detached */
-	public Uncompared() {
-		initComponents();
+	private class UncomparedCellRenderer implements TreeCellRenderer {
+
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+			String icon = "unknown_icon.png";
+			Object node = ((DefaultMutableTreeNode) value).getUserObject();
+			int status = Metafile.NONE;
+			if (node instanceof Group) {
+				icon = "group.png";
+			} else if (node instanceof Metafile) {
+				icon = "groupfile.png";
+				status = ((Metafile) node).getStatus();
+			}
+			JLabel label = new JLabel(value.toString(), new ImageIcon(getClass().getResource("/net/exent/locutus/gui/icons/" + icon)), JLabel.LEFT);
+			label.setOpaque(true);
+			if (selected) {
+				label.setBackground(new Color(200, 200, 255));
+			} else {
+				label.setBackground(new Color(255, 255, 255));
+			}
+			if (status == Metafile.SAVE_METADATA)
+				label.setForeground(new Color(150, 0, 150));
+			return label;
+		}
 	}
 
 	public void updateTree() {
@@ -73,6 +99,27 @@ public class Uncompared extends javax.swing.JPanel {
 		uncomparedTree.requestFocus();
 		if (uncomparedTree.getRowCount() > 0)
 			uncomparedTree.setSelectionRow(0);
+	}
+
+	private void saveGroup(DefaultMutableTreeNode groupnode) {
+		Enumeration files = groupnode.children();
+		while (files.hasMoreElements()) {
+			Metafile file = (Metafile) ((DefaultMutableTreeNode) files.nextElement()).getUserObject();
+			try {
+				if (file.getStatus() == Metafile.SAVE_METADATA) {
+					Database.saveMetadata(file);
+					file.setStatus(Metafile.NONE);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/** Creates new form Uncompared */
+	public Uncompared() {
+		initComponents();
+		uncomparedTree.setCellRenderer(new UncomparedCellRenderer());
 	}
 
 	/** This method is called from within the constructor to
@@ -196,11 +243,11 @@ public class Uncompared extends javax.swing.JPanel {
 					/* update all groups and reload tree */
 					Enumeration albums = ((DefaultMutableTreeNode) uncomparedTree.getModel().getRoot()).children();
 					while (albums.hasMoreElements())
-						//saveGroup((DefaultMutableTreeNode) albums.nextElement());
-						updateTree();
+						saveGroup((DefaultMutableTreeNode) albums.nextElement());
+					updateTree();
 				} else {
 					/* update files in active group */
-					//saveGroup(active_group);
+					saveGroup(active_group);
 					selected = active_group;
 				}
 				break;

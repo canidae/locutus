@@ -61,6 +61,10 @@ public class Help extends javax.swing.JPanel {
                 spaceDescriptionLabel = new javax.swing.JLabel();
                 spaceCtrlKeyLabel = new javax.swing.JLabel();
                 spaceCtrlDescriptionLabel = new javax.swing.JLabel();
+                gKeyLabel = new javax.swing.JLabel();
+                gDescriptionLabel = new javax.swing.JLabel();
+                gShiftKeyLabel = new javax.swing.JLabel();
+                gShiftDescriptionLabel = new javax.swing.JLabel();
 
                 setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -96,7 +100,7 @@ public class Help extends javax.swing.JPanel {
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 1;
                 gridBagConstraints.gridy = 0;
-                gridBagConstraints.gridheight = 14;
+                gridBagConstraints.gridheight = 16;
                 gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 keyboardPanel.add(verticalSeparator, gridBagConstraints);
@@ -200,7 +204,7 @@ public class Help extends javax.swing.JPanel {
                 dKeyLabel.setText("D/Delete");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 9;
+                gridBagConstraints.gridy = 11;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(dKeyLabel, gridBagConstraints);
@@ -208,7 +212,7 @@ public class Help extends javax.swing.JPanel {
                 dDescriptionLabel.setText("Mark all selected files or files in selected albums/tracks as wrongly identified. This is only necessary when a file was supposed to match another track");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 9;
+                gridBagConstraints.gridy = 11;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(dDescriptionLabel, gridBagConstraints);
@@ -216,7 +220,7 @@ public class Help extends javax.swing.JPanel {
                 sKeyLabel.setText("S/Enter");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 8;
+                gridBagConstraints.gridy = 10;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(sKeyLabel, gridBagConstraints);
@@ -224,7 +228,7 @@ public class Help extends javax.swing.JPanel {
                 sDescriptionLabel.setText("Mark all selected files or files in selected albums/tracks as correctly identified");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 8;
+                gridBagConstraints.gridy = 10;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(sDescriptionLabel, gridBagConstraints);
@@ -232,15 +236,15 @@ public class Help extends javax.swing.JPanel {
                 eKeyLabel.setText("E");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 11;
+                gridBagConstraints.gridy = 13;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(eKeyLabel, gridBagConstraints);
 
-                eDescriptionLabel.setText("Expand all nodes in current album");
+                eDescriptionLabel.setText("Expand all nodes in current album/group");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 11;
+                gridBagConstraints.gridy = 13;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(eDescriptionLabel, gridBagConstraints);
@@ -248,7 +252,7 @@ public class Help extends javax.swing.JPanel {
                 rKeyLabel.setText("R/Escape");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 10;
+                gridBagConstraints.gridy = 12;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(rKeyLabel, gridBagConstraints);
@@ -256,7 +260,7 @@ public class Help extends javax.swing.JPanel {
                 rDescriptionLabel.setText("Unmark all selected files or files in selected albums/tracks");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 10;
+                gridBagConstraints.gridy = 12;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(rDescriptionLabel, gridBagConstraints);
@@ -264,15 +268,15 @@ public class Help extends javax.swing.JPanel {
                 spaceKeyLabel.setText("Space");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 12;
+                gridBagConstraints.gridy = 14;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(spaceKeyLabel, gridBagConstraints);
 
-                spaceDescriptionLabel.setText("Commit changes for files marked as correctly/wrongly identified in active album");
+                spaceDescriptionLabel.setText("Commit changes for marked files in active album/group");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 12;
+                gridBagConstraints.gridy = 14;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(spaceDescriptionLabel, gridBagConstraints);
@@ -280,20 +284,52 @@ public class Help extends javax.swing.JPanel {
                 spaceCtrlKeyLabel.setText("Ctrl-Space");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 0;
-                gridBagConstraints.gridy = 13;
+                gridBagConstraints.gridy = 15;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(spaceCtrlKeyLabel, gridBagConstraints);
 
-                spaceCtrlDescriptionLabel.setText("Commit changes for all files marked as correctly/wrongly identified in all albums");
+                spaceCtrlDescriptionLabel.setText("Commit changes for all marked files in every album/group");
                 gridBagConstraints = new java.awt.GridBagConstraints();
                 gridBagConstraints.gridx = 2;
-                gridBagConstraints.gridy = 13;
+                gridBagConstraints.gridy = 15;
                 gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
                 gridBagConstraints.weightx = 1.0;
                 gridBagConstraints.weighty = 1.0;
                 gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
                 keyboardPanel.add(spaceCtrlDescriptionLabel, gridBagConstraints);
+
+                gKeyLabel.setText("G");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 8;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                keyboardPanel.add(gKeyLabel, gridBagConstraints);
+
+                gDescriptionLabel.setText("Next group");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 8;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                keyboardPanel.add(gDescriptionLabel, gridBagConstraints);
+
+                gShiftKeyLabel.setText("Shift-G");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 9;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                keyboardPanel.add(gShiftKeyLabel, gridBagConstraints);
+
+                gShiftDescriptionLabel.setText("Previous group");
+                gridBagConstraints = new java.awt.GridBagConstraints();
+                gridBagConstraints.gridx = 2;
+                gridBagConstraints.gridy = 9;
+                gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+                gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+                keyboardPanel.add(gShiftDescriptionLabel, gridBagConstraints);
 
                 add(keyboardPanel);
         }// </editor-fold>//GEN-END:initComponents
@@ -313,6 +349,10 @@ public class Help extends javax.swing.JPanel {
         private javax.swing.JLabel fKeyLabel;
         private javax.swing.JLabel fShiftDescriptionLabel;
         private javax.swing.JLabel fShiftKeyLabel;
+        private javax.swing.JLabel gDescriptionLabel;
+        private javax.swing.JLabel gKeyLabel;
+        private javax.swing.JLabel gShiftDescriptionLabel;
+        private javax.swing.JLabel gShiftKeyLabel;
         private javax.swing.JSeparator horizontalSeparator;
         private javax.swing.JLabel keyLabel;
         private javax.swing.JPanel keyboardPanel;
