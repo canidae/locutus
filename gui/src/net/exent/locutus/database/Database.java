@@ -37,7 +37,7 @@ public class Database {
 
 		/* prepared statements */
 		deleteComparison = connection.prepareStatement("DELETE FROM comparison WHERE file_id = ? AND track_id = ?");
-		deleteMatch = connection.prepareStatement("UPDATE file SET track_id = NULL, user_changer = true WHERE file_id = ? AND track_id IS NOT NULL");
+		deleteMatch = connection.prepareStatement("UPDATE file SET track_id = NULL, user_changed = true WHERE file_id = ? AND track_id IS NOT NULL");
 		matchFile = connection.prepareStatement("UPDATE file SET track_id = ?, user_changed = true WHERE file_id = ?");
 		matchingDetails = connection.prepareStatement("SELECT * FROM v_ui_matching_details WHERE album_album_id = ? AND (file_track_id IS NULL OR file_track_id = track_track_id) ORDER BY track_tracknumber ASC, comparison_mbid_match DESC, comparison_score DESC");
 		matchingList = connection.prepareStatement("SELECT * FROM v_ui_matching_list WHERE album ILIKE ? ORDER BY tracks_compared * avg_score DESC");
