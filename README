@@ -51,14 +51,14 @@ earlier versions).
 
 1. Become the 'postgres' user:
      sudo su - postgres
-2. Create a user for locutus:
+2. Create a user for Locutus:
      createuser -S -D -R -P -E locutus
-3. Create a database for locutus
+3. Create a database for Locutus
      createdb -O locutus locutus
-4. Log out the 'postgres' user and goto the "sql" directory of locutus where
+4. Log out the 'postgres' user and goto the "sql" directory of Locutus where
    you issue the following command:
      psql -h localhost -f locutus.sql -U locutus locutus
-5. You'll need to grant locutus access to the database. Edit (most likely)
+5. You'll need to grant Locutus access to the database. Edit (most likely)
    "/etc/postgresql/8.3/main/pg_hba.conf" and add the following entry after
    "#TYPE    DATABASE    USER        CIDR-ADDRESS          METHOD":
      host    locutus     locutus     127.0.0.1/32          md5
@@ -78,14 +78,24 @@ PostgreSQL C client library.
 For Debian users:
   aptitude install libpq-dev libtag1-dev libcommoncpp2-dev build-essential
 
-To build the daemon, simply enter the "daemon" directory and type "make". This
-will produce an executable file called "locutus". Currently this is not a daemon
-as it will only run once and exit, so for the time being you'll have to run this
-manually.
-Set the connection parameters in the "locutus.conf" file residing in the
-"daemon"-directory.
+1. Create a directory for building Locutus and enter the directory:
+     mkdir build
+     cd build
+2. Generate Makefile:
+     cmake ..
+3. Compile Locutus:
+     make
+
+If all goes well, you should now have a "locutus" executable in the "build"
+directory. Before you can run Locutus you'll need to set up a configuration file
+for connecting to PostgreSQL. Copy or symlink the "locutus.conf" file from the
+"conf" directory to the build directory and modify its settings if necessary.
+You should now be able to run Locutus. If you execute Locutus with "-d" then
+Locutus will run as a daemon untill you send a TERM signal to its process.
+
 The first time you run Locutus it will populate the "setting" table with default
-values.
+values. You'll need to set the "dry_run" setting in the database to "false" when
+you want Locutus to actually sort your files.
 
 
 Java interface:
@@ -125,15 +135,26 @@ For Debian users:
 
 
 
-Killer coding ninja monkeys (in order of appearance)
-====================================================
+License
+=======
+The project is MIT licensed, so you're pretty free to use it as you wish.
+If you improve the project then we would greatly appreciate patches, though.
+
+Note:
+The web interface is currently GPLv3 licensed. It is deprecated and will
+eventually be removed or replaced.
+
+
+
+Developers
+==========
 Vidar Wahlberg, <canidae@exent.net>
   Daemon, database, Java interface, web interface
 
 
 
-Sidekicks (in order of appearance)
-==================================
+Contributors
+============
 Kristian Klette, <klette@samfundet.no>
   Web interface
 Per Øyvind Øygard, <peroyo@gmail.com>
