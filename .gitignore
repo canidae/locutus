@@ -1,5 +1,6 @@
 *.o
 *.swp
+daemon/build
 daemon/locutus
 daemon/locutus.log
 gui/nbproject/private
