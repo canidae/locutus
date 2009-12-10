@@ -4,16 +4,21 @@ project(LOCUTUS)
 if (CMAKE_BUILD_TYPE STREQUAL "")
         set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: None, Debug or Release." FORCE)
 endif ()
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 set(CMAKE_CXX_FLAGS_RELEASE "-Os")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+find_package(PostgreSQL)
 find_package(TagLib)
+find_package(CommonCPPGNU)
+find_package(CommonCPPEXT)
 
-include_directories("${TAGLIB_INCLUDE_DIRS}")
-include_directories("${LOCUTUS_SOURCE_DIR}/include")
+include_directories(
+	${LOCUTUS_SOURCE_DIR}/include
+	${TAGLIB_INCLUDE_DIR}
+)
 
 set(HEADER_FILES
 	include/Album.h
@@ -55,4 +60,4 @@ set(SOURCE_FILES
 )
 
 add_executable(locutus ${HEADER_FILES} ${SOURCE_FILES})
-target_link_libraries(locutus ${TAGLIB_LIBRARIES})
+target_link_libraries(locutus ${POSTGRESQL_LIBRARIES} ${TAGLIB_LIBRARIES} ${COMMONCPPGNU_LIBRARIES} ${COMMONCPPEXT_LIBRARIES})

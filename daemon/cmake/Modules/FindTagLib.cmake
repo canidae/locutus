@@ -1,33 +1,27 @@
-# - find TagLib
-# Once done, this will define
-#
-#  TAGLIB_FOUND        - system has TagLib
-#  TAGLIB_INCLUDE_DIRS - the TagLib include directories
-#  TAGLIB_LIBRARIES    - link these to use TagLib
+# Find TagLib include directories & libraries.
+# Once done, this will define:
+# - TAGLIB_FOUND
+# - TAGLIB_INCLUDE_DIR
+# - TAGLIB_LIBRARIES
 
-if(NOT TAGLIB_FOUND)
-	message(STATUS "Looking for TagLib")
-	find_program(TAGLIB_CONFIG_EXECUTABLE NAMES taglib-config)
+find_path(TAGLIB_INCLUDE_DIR NAMES taglib.h PATHS
+	/usr/include/taglib/
+	/usr/local/include/taglib/
+)
 
-	if(TAGLIB_CONFIG_EXECUTABLE)
-		exec_program(${TAGLIB_CONFIG_EXECUTABLE} ARGS --version OUTPUT_VARIABLE TAGLIB_VERSION)
-		if(TAGLIB_VERSION)
-			message(STATUS "Found TagLib version ${TAGLIB_VERSION}")
-			exec_program(${TAGLIB_CONFIG_EXECUTABLE} ARGS --cflags OUTPUT_VARIABLE TAGLIB_INCLUDE_DIRS)
-			if(TAGLIB_INCLUDE_DIRS)
-				string(REPLACE "-I" "" TAGLIB_INCLUDE_DIRS "${TAGLIB_INCLUDE_DIRS}")
-			else(TAGLIB_INCLUDE_DIRS)
-				message(SEND_ERROR "Could not set TagLib include directories")
-			endif(TAGLIB_INCLUDE_DIRS)
-			exec_program(${TAGLIB_CONFIG_EXECUTABLE} ARGS --libs OUTPUT_VARIABLE TAGLIB_LIBRARIES)
-			if(NOT TAGLIB_LIBRARIES)
-				message(SEND_ERROR "Could not set TagLib libraries")
-			endif(NOT TAGLIB_LIBRARIES)
-			set(TAGLIB_FOUND TRUE)
-		else(TAGLIB_VERSION)
-			message(SEND_ERROR "Could not determine version of TagLib")
-		endif(TAGLIB_VERSION)	
-	else(TAGLIB_CONFIG_EXECUTABLE)
-		message(SEND_ERROR "Could not find taglib-config")
-	endif(TAGLIB_CONFIG_EXECUTABLE)
-endif(NOT TAGLIB_FOUND)
+find_library(TAGLIB_LIBRARIES NAMES tag)
+
+if(TAGLIB_INCLUDE_DIR AND TAGLIB_LIBRARIES)
+	set(TAGLIB_FOUND TRUE)
+	if(NOT TagLib_FIND_QUIETLY)
+		message(STATUS "Found TagLib: ${TAGLIB_INCLUDE_DIR}, ${TAGLIB_LIBRARIES}")
+	endif(NOT TagLib_FIND_QUIETLY)
+else(TAGLIB_INCLUDE_DIR AND TAGLIB_LIBRARIES)
+	if(TagLib_FIND_REQUIRED)
+		message(FATAL_ERROR "Could not find TagLib")
+	else(TagLib_FIND_REQUIRED)
+		if(NOT TagLib_FIND_QUIETLY)
+			message(STATUS "Could not find TagLib")
+		endif(NOT TagLib_FIND_QUIETLY)
+	endif(TagLib_FIND_REQUIRED)
+endif(TAGLIB_INCLUDE_DIR AND TAGLIB_LIBRARIES)

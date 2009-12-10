@@ -11,23 +11,23 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <apetag.h>
-#include <fileref.h>
-#include <flacfile.h>
-#include <id3v1tag.h>
-#include <id3v2tag.h>
-#include <mpcfile.h>
-#include <mpegfile.h>
-#include <oggflacfile.h>
-#include <speexfile.h>
 #include <sstream>
-#include <textidentificationframe.h>
-#include <tfile.h>
-#include <trueaudiofile.h>
-#include <tstring.h>
-#include <uniquefileidentifierframe.h>
-#include <vorbisfile.h>
-#include <wavpackfile.h>
+#include <taglib/apetag.h>
+#include <taglib/fileref.h>
+#include <taglib/flacfile.h>
+#include <taglib/id3v1tag.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/mpcfile.h>
+#include <taglib/mpegfile.h>
+#include <taglib/oggflacfile.h>
+#include <taglib/speexfile.h>
+#include <taglib/textidentificationframe.h>
+#include <taglib/tfile.h>
+#include <taglib/trueaudiofile.h>
+#include <taglib/tstring.h>
+#include <taglib/uniquefileidentifierframe.h>
+#include <taglib/vorbisfile.h>
+#include <taglib/wavpackfile.h>
 #include "Album.h"
 #include "Artist.h"
 #include "Debug.h"

@@ -14,7 +14,7 @@
 #include <ostream>
 #include <stdlib.h>
 #include <string.h>
-#include <tstring.h>
+#include <taglib/tstring.h>
 #include "Database.h"
 #include "Debug.h"
 #include "FileNamer.h"
