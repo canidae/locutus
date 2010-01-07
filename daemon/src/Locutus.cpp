@@ -407,7 +407,7 @@ void quit(int) {
 	active = false;
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char** argv) {
 	/* initialize static classes */
 	Debug::open("locutus.log");
 	Levenshtein::initialize();
