@@ -12,6 +12,8 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 
+#include "Locutus.h"
+
 #include <csignal>
 #include <vector>
 #include "Audioscrobbler.h"
@@ -20,11 +22,19 @@
 #include "Debug.h"
 #include "FileNamer.h"
 #include "Levenshtein.h"
-#include "Locutus.h"
 #include "Matcher.h"
 #include "Metafile.h"
 #include "MusicBrainz.h"
 #include "PostgreSQL.h"
+
+extern "C" {
+#include <dirent.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+};
+
 
 using namespace std;
 
