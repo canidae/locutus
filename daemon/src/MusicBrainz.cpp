@@ -24,7 +24,7 @@
 using namespace ost;
 using namespace std;
 
-MusicBrainz::MusicBrainz(Database *database) : database(database) {
+MusicBrainz::MusicBrainz(Database* database) : database(database) {
 	metadata_search_url = database->loadSettingString(MUSICBRAINZ_SEARCH_URL_KEY, MUSICBRAINZ_SEARCH_URL_VALUE, MUSICBRAINZ_SEARCH_URL_DESCRIPTION);
 	release_lookup_url = database->loadSettingString(MUSICBRAINZ_RELEASE_URL_KEY, MUSICBRAINZ_RELEASE_URL_VALUE, MUSICBRAINZ_RELEASE_URL_DESCRIPTION);
 	query_interval = database->loadSettingDouble(MUSICBRAINZ_QUERY_INTERVAL_KEY, MUSICBRAINZ_QUERY_INTERVAL_VALUE, MUSICBRAINZ_QUERY_INTERVAL_DESCRIPTION);
@@ -35,7 +35,7 @@ MusicBrainz::MusicBrainz(Database *database) : database(database) {
 	last_fetch.tv_usec = 0;
 }
 
-bool MusicBrainz::lookupAlbum(Album *album) {
+bool MusicBrainz::lookupAlbum(Album* album) {
 	if (album == NULL || album->mbid.size() != 36 || album->mbid[8] != '-' || album->mbid[13] != '-' || album->mbid[18] != '-' || album->mbid[23] != '-')
 		return false;
 	string url = release_lookup_url;
@@ -43,13 +43,13 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 	vector<string> args;
 	args.push_back("type=xml");
 	args.push_back("inc=tracks+artist+release-events+labels+artist-rels+url-rels");
-	XMLNode *root = lookup(url, args);
+	XMLNode* root = lookup(url, args);
 	if (root == NULL)
 		return false;
 	/* album data */
 	if (root->children["metadata"].size() <= 0 || root->children["metadata"][0]->children["release"].size() <= 0)
 		return false;
-	XMLNode *tmp = root->children["metadata"][0]->children["release"][0];
+	XMLNode* tmp = root->children["metadata"][0]->children["release"][0];
 	album->mbid = (tmp->children["id"].size() > 0) ? tmp->children["id"][0]->value : "";
 	album->type = (tmp->children["type"].size() > 0) ? tmp->children["type"][0]->value : "";
 	album->title = (tmp->children["title"].size() > 0) ? tmp->children["title"][0]->value : "";
@@ -68,7 +68,7 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 	/* artist data */
 	if (tmp->children["artist"].size() <= 0)
 		return false;
-	XMLNode *tmp2 = tmp->children["artist"][0];
+	XMLNode* tmp2 = tmp->children["artist"][0];
 	album->artist->mbid = (tmp2->children["id"].size() > 0) ? tmp2->children["id"][0]->value : "";
 	album->artist->name = (tmp2->children["name"].size() > 0) ? tmp2->children["name"][0]->value : "";
 	album->artist->sortname = (tmp2->children["sort-name"].size() > 0) ? tmp2->children["sort-name"][0]->value : "";
@@ -77,7 +77,7 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 		return false;
 	tmp = tmp->children["track-list"][0];
 	album->tracks.resize(tmp->children["track"].size());
-	for (vector<XMLNode *>::size_type a = 0; a < tmp->children["track"].size(); ++a) {
+	for (vector<XMLNode*>::size_type a = 0; a < tmp->children["track"].size(); ++a) {
 		/* track data */
 		album->tracks[a] = new Track(album);
 		tmp2 = tmp->children["track"][a];
@@ -100,7 +100,7 @@ bool MusicBrainz::lookupAlbum(Album *album) {
 	return true;
 }
 
-const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
+const vector<Metatrack>& MusicBrainz::searchMetadata(const Metafile& metafile) {
 	/* do a track search */
 	/* first extract useful data from filename */
 	string extra = metafile.filename;
@@ -174,15 +174,15 @@ const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 	vector<string> args;
 	args.push_back("type=xml");
 	args.push_back("limit=25");
-	char *c_query = new char[CHAR_BUFFER];
+	char* c_query = new char[CHAR_BUFFER];
 	urlEncode(query.str().c_str(), c_query, CHAR_BUFFER);
 	query.str("");
 	query << "query=" << c_query;
 	delete [] c_query;
 	args.push_back(query.str());
-	XMLNode *root = lookup(metadata_search_url, args);
+	XMLNode* root = lookup(metadata_search_url, args);
 	if (root != NULL && root->children["metadata"].size() > 0 && root->children["metadata"][0]->children["track-list"].size() > 0) {
-		for (vector<XMLNode *>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
+		for (vector<XMLNode*>::size_type a = 0; a < root->children["metadata"][0]->children["track-list"][0]->children["track"].size(); ++a) {
 			if (getMetatrack(root->children["metadata"][0]->children["track-list"][0]->children["track"][a]))
 				tracks.push_back(metatrack);
 		}
@@ -190,7 +190,7 @@ const vector<Metatrack> &MusicBrainz::searchMetadata(const Metafile &metafile) {
 	return tracks;
 }
 
-string MusicBrainz::escapeString(const string &text) {
+string MusicBrainz::escapeString(const string& text) {
 	/* escape these characters:
 	 * + - || ! ( ) { } [ ] ^ " ~ * : \ */
 	/* also change "_", "?", ";", "&" and "#" to " " */
@@ -274,7 +274,7 @@ string MusicBrainz::escapeString(const string &text) {
 	return str.str();
 }
 
-bool MusicBrainz::getMetatrack(XMLNode *track) {
+bool MusicBrainz::getMetatrack(XMLNode* track) {
 	if (track == NULL)
 		return false;
 	metatrack.track_mbid = (track->children["id"].size() > 0) ? track->children["id"][0]->value : "";
@@ -288,7 +288,7 @@ bool MusicBrainz::getMetatrack(XMLNode *track) {
 		metatrack.tracknumber = 0;
 		return false;
 	}
-	XMLNode *tmp = track->children["artist"][0];
+	XMLNode* tmp = track->children["artist"][0];
 	metatrack.artist_mbid = (tmp->children["id"].size() > 0) ? tmp->children["id"][0]->value : "";
 	metatrack.artist_name = (tmp->children["name"].size() > 0) ? tmp->children["name"][0]->value : "";
 	if (track->children["release-list"].size() <= 0 || track->children["release-list"][0]->children["release"].size() <= 0) {
@@ -304,7 +304,7 @@ bool MusicBrainz::getMetatrack(XMLNode *track) {
 	return true;
 }
 
-XMLNode *MusicBrainz::lookup(const string &url, const vector<string> args) {
+XMLNode* MusicBrainz::lookup(const string& url, const vector<string>& args) {
 	/* usleep if last fetch was less than a second ago */
 	struct timeval tv;
 	if (gettimeofday(&tv, NULL) == 0) {
@@ -323,7 +323,7 @@ XMLNode *MusicBrainz::lookup(const string &url, const vector<string> args) {
 		 * that was unexpected. let's sleep some seconds instead */
 		sleep(3);
 	}
-	const char *c_args[args.size() + 1];
+	const char* c_args[args.size() + 1];
 	for (int a = 0; a < (int) args.size(); ++a)
 		c_args[a] = args[a].c_str();
 	c_args[args.size()] = NULL;

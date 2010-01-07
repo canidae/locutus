@@ -95,24 +95,24 @@ public:
 	std::string title;
 	std::string tracknumber;
 
-	Metafile(const std::string &filename);
+	Metafile(const std::string& filename);
 
 	void clearValues();
 	std::string getBasenameWithoutExtension() const;
 	std::string getGroup() const;
-	const std::list<std::string> &getValues(double combine_threshold);
+	const std::list<std::string>& getValues(double combine_threshold);
 	bool readFromFile();
 	bool saveMetadata();
-	bool setMetadata(const Track &track);
+	bool setMetadata(const Track& track);
 
 private:
 	std::list<std::string> values;
 
-	void readAudioProperties(const TagLib::AudioProperties *ap);
-	void readCrapTags(const TagLib::APE::Tag *ape, const TagLib::ID3v2::Tag *id3v2, const TagLib::ID3v1::Tag *id3v1);
-	void readXiphComment(const TagLib::Ogg::XiphComment *tag);
-	void saveAPETag(TagLib::APE::Tag *tag);
-	void saveID3v2Tag(TagLib::ID3v2::Tag *tag);
-	void saveXiphComment(TagLib::Ogg::XiphComment *tag);
+	void readAudioProperties(const TagLib::AudioProperties* ap);
+	void readCrapTags(const TagLib::APE::Tag* ape, const TagLib::ID3v2::Tag* id3v2, const TagLib::ID3v1::Tag* id3v1);
+	void readXiphComment(const TagLib::Ogg::XiphComment* tag);
+	void saveAPETag(TagLib::APE::Tag* tag);
+	void saveID3v2Tag(TagLib::ID3v2::Tag* tag);
+	void saveXiphComment(TagLib::Ogg::XiphComment* tag);
 };
 #endif

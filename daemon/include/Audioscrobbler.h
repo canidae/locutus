@@ -37,20 +37,20 @@ class Metafile;
 
 class Audioscrobbler : public WebService {
 public:
-	explicit Audioscrobbler(Database *database);
+	explicit Audioscrobbler(Database* database);
 
-	const std::vector<std::string> &getTags(const Metafile &metafile);
+	const std::vector<std::string>& getTags(const Metafile& metafile);
 
 private:
-	Database *database;
+	Database* database;
 	std::string artist_tag_url;
 	std::string track_tag_url;
 	std::vector<std::string> tags;
 	double query_interval;
 	struct timeval last_fetch;
 
-	std::string escapeString(const std::string &text);
-	XMLNode *lookup(const std::string &url);
-	bool parseXML(XMLNode *root);
+	std::string escapeString(const std::string& text);
+	XMLNode* lookup(const std::string& url);
+	bool parseXML(XMLNode* root);
 };
 #endif

@@ -24,8 +24,8 @@
 #define CHAR_BUFFER 4096
 
 struct XMLNode {
-	XMLNode *parent;
-	std::map<std::string, std::vector<XMLNode *> > children;
+	XMLNode* parent;
+	std::map<std::string, std::vector<XMLNode*> > children;
 	std::string key;
 	std::string value;
 };
@@ -36,19 +36,19 @@ public:
 	~WebService();
 
 protected:
-	XMLNode *fetch(const char *url, const char **args);
+	XMLNode* fetch(const char* url, const char** args);
 
 private:
 	URLStream::Error status;
-	XMLNode *root;
-	XMLNode *curnode;
+	XMLNode* root;
+	XMLNode* curnode;
 
-	void characters(const unsigned char *text, size_t len);
-	void clearXMLNode(XMLNode *node);
+	void characters(const unsigned char* text, size_t len);
+	void clearXMLNode(XMLNode* node);
 	void close();
-	void endElement(const unsigned char *);
-	void printXML(XMLNode *startnode, int indent) const;
-	int read(unsigned char *buffer, size_t len);
-	void startElement(const unsigned char *name, const unsigned char **attr);
+	void endElement(const unsigned char*);
+	void printXML(XMLNode* startnode, int indent) const;
+	int read(unsigned char* buffer, size_t len);
+	void startElement(const unsigned char* name, const unsigned char** attr);
 };
 #endif

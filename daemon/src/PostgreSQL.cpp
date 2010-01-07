@@ -24,7 +24,7 @@
 
 using namespace std;
 
-PostgreSQL::PostgreSQL(const string &host, const string &user, const string &pass, const string &name) : Database(), pg_result(NULL), got_result(false), album_cache_lifetime(1), run_interval(0) {
+PostgreSQL::PostgreSQL(const string& host, const string& user, const string& pass, const string& name) : Database(), pg_result(NULL), got_result(false), album_cache_lifetime(1), run_interval(0) {
 	string connection_url = "host=";
 	connection_url.append(host);
 	connection_url.append(" user=");
@@ -60,7 +60,7 @@ bool PostgreSQL::init() {
 	return true;
 }
 
-bool PostgreSQL::loadAlbum(Album *album) {
+bool PostgreSQL::loadAlbum(Album* album) {
 	/* fetch album from cache */
 	if (album == NULL) {
 		Debug::notice() << "Unable to load album from cache. No album given" << endl;
@@ -110,7 +110,7 @@ bool PostgreSQL::loadAlbum(Album *album) {
 	return true;
 }
 
-vector<Metafile *> &PostgreSQL::loadGroup(const string &group) {
+vector<Metafile*>& PostgreSQL::loadGroup(const string& group) {
 	string e_group = escapeString(group);
 	deleteFiles(&groupfiles);
 	ostringstream query;
@@ -118,7 +118,7 @@ vector<Metafile *> &PostgreSQL::loadGroup(const string &group) {
 	if (!doQuery(query.str()) || getRows() <= 0)
 		return groupfiles;
 	for (int r = 0; r < getRows(); ++r) {
-		Metafile *metafile = new Metafile(getString(r, 0));
+		Metafile* metafile = new Metafile(getString(r, 0));
 		metafile->duration = getInt(r, 1);
 		metafile->channels = getInt(r, 2);
 		metafile->bitrate = getInt(r, 3);
@@ -144,7 +144,7 @@ vector<Metafile *> &PostgreSQL::loadGroup(const string &group) {
 	return groupfiles;
 }
 
-bool PostgreSQL::loadMetafile(Metafile *metafile) {
+bool PostgreSQL::loadMetafile(Metafile* metafile) {
 	if (metafile == NULL) {
 		Debug::notice() << "Unable to load file from cache. No file given." << endl;
 		return false;
@@ -188,7 +188,7 @@ bool PostgreSQL::loadMetafile(Metafile *metafile) {
 	return doQuery(query.str());
 }
 
-vector<Metafile *> &PostgreSQL::loadMetafiles(const string &filename_pattern) {
+vector<Metafile*>& PostgreSQL::loadMetafiles(const string& filename_pattern) {
 	string e_filename_pattern = escapeString(filename_pattern);
 	deleteFiles(&metafiles);
 	ostringstream query;
@@ -196,7 +196,7 @@ vector<Metafile *> &PostgreSQL::loadMetafiles(const string &filename_pattern) {
 	if (!doQuery(query.str()) || getRows() <= 0)
 		return metafiles;
 	for (int r = 0; r < getRows(); ++r) {
-		Metafile *metafile = new Metafile(getString(r, 0));
+		Metafile* metafile = new Metafile(getString(r, 0));
 		metafile->duration = getInt(r, 1);
 		metafile->channels = getInt(r, 2);
 		metafile->bitrate = getInt(r, 3);
@@ -222,24 +222,24 @@ vector<Metafile *> &PostgreSQL::loadMetafiles(const string &filename_pattern) {
 	return metafiles;
 }
 
-bool PostgreSQL::loadSettingBool(const string &key, bool default_value, const string &description) {
+bool PostgreSQL::loadSettingBool(const string& key, bool default_value, const string& description) {
 	string def_val = (default_value ? "true" : "false");
 	return (loadSettingString(key, def_val, description) == "true");
 }
 
-double PostgreSQL::loadSettingDouble(const string &key, double default_value, const string &description) {
+double PostgreSQL::loadSettingDouble(const string& key, double default_value, const string& description) {
 	ostringstream def_val;
 	def_val << default_value;
 	return atof(loadSettingString(key, def_val.str(), description).c_str());
 }
 
-int PostgreSQL::loadSettingInt(const string &key, int default_value, const string &description) {
+int PostgreSQL::loadSettingInt(const string& key, int default_value, const string& description) {
 	ostringstream def_val;
 	def_val << default_value;
 	return atoi(loadSettingString(key, def_val.str(), description).c_str());
 }
 
-string &PostgreSQL::loadSettingString(const string &key, const string &default_value, const string &description) {
+string& PostgreSQL::loadSettingString(const string& key, const string& default_value, const string& description) {
 	string e_key = escapeString(key);
 	setting_string = default_value;
 	ostringstream query;
@@ -277,7 +277,7 @@ string &PostgreSQL::loadSettingString(const string &key, const string &default_v
 	return setting_string;
 }
 
-bool PostgreSQL::removeComparisons(const Metafile &metafile) {
+bool PostgreSQL::removeComparisons(const Metafile& metafile) {
 	ostringstream query;
 	query << "DELETE FROM comparison WHERE file_id = (SELECT file_id FROM file WHERE filename = '";
 	query << escapeString(metafile.filename) << "')";
@@ -291,7 +291,7 @@ bool PostgreSQL::removeGoneFiles() {
 	return doQuery(query.str());
 }
 
-bool PostgreSQL::saveAlbum(const Album &album) {
+bool PostgreSQL::saveAlbum(const Album& album) {
 	if (album.mbid.size() != 36) {
 		Debug::notice() << "Unable to save album in cache. Illegal MusicBrainz ID: " << album.mbid << endl;
 		return false;
@@ -340,7 +340,7 @@ bool PostgreSQL::saveAlbum(const Album &album) {
 
 	/* save tracks */
 	bool status = true;
-	for (vector<Track *>::const_iterator track = album.tracks.begin(); track != album.tracks.end(); ++track) {
+	for (vector<Track*>::const_iterator track = album.tracks.begin(); track != album.tracks.end(); ++track) {
 		if (!saveTrack(**track))
 			status = false;
 	}
@@ -348,7 +348,7 @@ bool PostgreSQL::saveAlbum(const Album &album) {
 	return status;
 }
 
-bool PostgreSQL::saveArtist(const Artist &artist) {
+bool PostgreSQL::saveArtist(const Artist& artist) {
 	if (artist.mbid.size() != 36) {
 		Debug::notice() << "Unable to save artist in cache. Illegal MusicBrainz ID: " << artist.mbid << endl;
 		return false;
@@ -374,7 +374,7 @@ bool PostgreSQL::saveArtist(const Artist &artist) {
 	return doQuery(query.str());
 }
 
-bool PostgreSQL::saveComparison(const Comparison &comparison) {
+bool PostgreSQL::saveComparison(const Comparison& comparison) {
 	if (comparison.metafile == NULL) {
 		Debug::notice() << "Unable to save comparison. No file in comparison. " << endl;
 		return false;
@@ -403,7 +403,7 @@ bool PostgreSQL::saveComparison(const Comparison &comparison) {
 	return doQuery(query.str());
 }
 
-bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filename) {
+bool PostgreSQL::saveMetafile(const Metafile& metafile, const string& old_filename) {
 	ostringstream query;
 	string e_filename = escapeString(metafile.filename);
 	string e_album = escapeString(metafile.album);
@@ -495,7 +495,7 @@ bool PostgreSQL::saveMetafile(const Metafile &metafile, const string &old_filena
 	return doQuery(query.str());
 }
 
-bool PostgreSQL::saveTrack(const Track &track) {
+bool PostgreSQL::saveTrack(const Track& track) {
 	if (track.mbid.size() != 36) {
 		Debug::notice() << "Unable to save track in cache. Illegal MusicBrainz ID: " << track.mbid << endl;
 		return false;
@@ -572,13 +572,13 @@ void PostgreSQL::clear() {
 	got_result = false;
 }
 
-void PostgreSQL::deleteFiles(vector<Metafile *> *files) {
-	for (vector<Metafile *>::iterator f = files->begin(); f != files->end(); ++f)
+void PostgreSQL::deleteFiles(vector<Metafile*>* files) {
+	for (vector<Metafile*>::iterator f = files->begin(); f != files->end(); ++f)
 		delete (*f);
 	files->clear();
 }
 
-bool PostgreSQL::doQuery(const char *q) {
+bool PostgreSQL::doQuery(const char* q) {
 	clear();
 	got_result = true;
 	pg_result = PQexec(pg_connection, q);
@@ -590,8 +590,8 @@ bool PostgreSQL::doQuery(const char *q) {
 	return false;
 }
 
-string PostgreSQL::escapeString(const string &str) const {
-	char *to = new char[str.size() * 2 + 1];
+string PostgreSQL::escapeString(const string& str) const {
+	char* to = new char[str.size() * 2 + 1];
 	int error = 0;
 	size_t len = PQescapeStringConn(pg_connection, to, str.c_str(), str.size(), &error);
 	string back(to, len);
@@ -623,6 +623,6 @@ bool PostgreSQL::isNull(int row, int col) const {
 	return (PQgetisnull(pg_result, row, col) != 0);
 }
 
-bool PostgreSQL::doQuery(const string &query) {
+bool PostgreSQL::doQuery(const string& query) {
 	return doQuery(query.c_str());
 }

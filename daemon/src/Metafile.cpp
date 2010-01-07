@@ -40,7 +40,7 @@
 using namespace std;
 using namespace TagLib;
 
-Metafile::Metafile(const string &filename) : duplicate(false), matched(false), meta_lookup(true), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), released(""), title(""), tracknumber(""), values() {
+Metafile::Metafile(const string& filename) : duplicate(false), matched(false), meta_lookup(true), pinned(false), bitrate(0), channels(0), duration(0), samplerate(0), album(""), albumartist(""), albumartistsort(""), artist(""), artistsort(""), filename(filename), genre(""), musicbrainz_albumartistid(""), musicbrainz_albumid(""), musicbrainz_artistid(""), musicbrainz_trackid(""), released(""), title(""), tracknumber(""), values() {
 }
 
 void Metafile::clearValues() {
@@ -87,7 +87,7 @@ string Metafile::getGroup() const {
 	return groupname;
 }
 
-const list<string> &Metafile::getValues(double combine_threshold) {
+const list<string>& Metafile::getValues(double combine_threshold) {
 	/* gather all values in a list, suitable for matching with a track */
 	if (values.size() > 0)
 		return values;
@@ -165,43 +165,43 @@ bool Metafile::readFromFile() {
 			ext[a] -= 32;
 	}
 	if (ext == "OGG") {
-		Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
+		Ogg::Vorbis::File* file = new Ogg::Vorbis::File(filename.c_str(), true, AudioProperties::Accurate);
 		readXiphComment(file->tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
 	} else if (ext == "MP3") {
-		MPEG::File *file = new MPEG::File(filename.c_str(), true, AudioProperties::Accurate);
-		readCrapTags(file->APETag(), (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+		MPEG::File* file = new MPEG::File(filename.c_str(), true, AudioProperties::Accurate);
+		readCrapTags(file->APETag(), (ID3v2::Tag*) file->ID3v2Tag(), (ID3v1::Tag*) file->ID3v1Tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
 	} else if (ext == "FLAC") {
-		FLAC::File *file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+		FLAC::File* file = new FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
 		readXiphComment(file->xiphComment());
 		readAudioProperties(file->audioProperties());
 		delete file;
 	} else if (ext == "MPC") {
-		MPC::File *file = new MPC::File(filename.c_str(), true, AudioProperties::Accurate);
-		readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+		MPC::File* file = new MPC::File(filename.c_str(), true, AudioProperties::Accurate);
+		readCrapTags(file->APETag(), NULL, (ID3v1::Tag*) file->ID3v1Tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
 	} else if (ext == "OGA") {
-		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+		Ogg::FLAC::File* file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
 		readXiphComment(file->tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
 	} else if (ext == "WV") {
-		WavPack::File *file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
-		readCrapTags(file->APETag(), NULL, (ID3v1::Tag *) file->ID3v1Tag());
+		WavPack::File* file = new WavPack::File(filename.c_str(), true, AudioProperties::Accurate);
+		readCrapTags(file->APETag(), NULL, (ID3v1::Tag*) file->ID3v1Tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
 	} else if (ext == "SPX") {
-		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
+		Ogg::Speex::File* file = new Ogg::Speex::File(filename.c_str(), true, AudioProperties::Accurate);
 		readXiphComment(file->tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
 	} else if (ext == "TTA") {
-		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
-		readCrapTags(NULL, (ID3v2::Tag *) file->ID3v2Tag(), (ID3v1::Tag *) file->ID3v1Tag());
+		TrueAudio::File* file = new TrueAudio::File(filename.c_str(), true, AudioProperties::Accurate);
+		readCrapTags(NULL, (ID3v2::Tag*) file->ID3v2Tag(), (ID3v1::Tag*) file->ID3v1Tag());
 		readAudioProperties(file->audioProperties());
 		delete file;
 	} else {
@@ -246,42 +246,42 @@ bool Metafile::saveMetadata() {
 	}
 	bool ok = false;
 	if (ext == "OGG") {
-		Ogg::Vorbis::File *file = new Ogg::Vorbis::File(filename.c_str(), false);
+		Ogg::Vorbis::File* file = new Ogg::Vorbis::File(filename.c_str(), false);
 		saveXiphComment(file->tag());
 		ok = file->save();
 		delete file;
 	} else if (ext == "MP3") {
-		MPEG::File *file = new MPEG::File(filename.c_str(), false);
+		MPEG::File* file = new MPEG::File(filename.c_str(), false);
 		saveID3v2Tag(file->ID3v2Tag(true));
 		ok = file->save(MPEG::File::ID3v2);
 		delete file;
 	} else if (ext == "FLAC") {
-		FLAC::File *file = new FLAC::File(filename.c_str(), false);
+		FLAC::File* file = new FLAC::File(filename.c_str(), false);
 		saveXiphComment(file->xiphComment(true));
 		ok = file->save();
 		delete file;
 	} else if (ext == "MPC") {
-		MPC::File *file = new MPC::File(filename.c_str(), false);
+		MPC::File* file = new MPC::File(filename.c_str(), false);
 		saveAPETag(file->APETag(true));
 		ok = file->save();
 		delete file;
 	} else if (ext == "OGA") {
-		Ogg::FLAC::File *file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
+		Ogg::FLAC::File* file = new Ogg::FLAC::File(filename.c_str(), true, AudioProperties::Accurate);
 		saveXiphComment(file->tag());
 		ok = file->save();
 		delete file;
 	} else if (ext == "WV") {
-		WavPack::File *file = new WavPack::File(filename.c_str(), false);
+		WavPack::File* file = new WavPack::File(filename.c_str(), false);
 		saveAPETag(file->APETag(true));
 		ok = file->save();
 		delete file;
 	} else if (ext == "SPX") {
-		Ogg::Speex::File *file = new Ogg::Speex::File(filename.c_str(), false);
+		Ogg::Speex::File* file = new Ogg::Speex::File(filename.c_str(), false);
 		saveXiphComment(file->tag());
 		ok = file->save();
 		delete file;
 	} else if (ext == "TTA") {
-		TrueAudio::File *file = new TrueAudio::File(filename.c_str(), false);
+		TrueAudio::File* file = new TrueAudio::File(filename.c_str(), false);
 		saveID3v2Tag(file->ID3v2Tag(true));
 		ok = file->save();
 		delete file;
@@ -291,7 +291,7 @@ bool Metafile::saveMetadata() {
 	return ok;
 }
 
-bool Metafile::setMetadata(const Track &track) {
+bool Metafile::setMetadata(const Track& track) {
 	album = track.album->title;
 	albumartist = track.album->artist->name;
 	albumartistsort = track.album->artist->sortname;
@@ -310,7 +310,7 @@ bool Metafile::setMetadata(const Track &track) {
 	return true;
 }
 
-void Metafile::readAudioProperties(const AudioProperties *ap) {
+void Metafile::readAudioProperties(const AudioProperties* ap) {
 	if (ap == NULL)
 		return;
 	bitrate = ap->bitrate();
@@ -319,7 +319,7 @@ void Metafile::readAudioProperties(const AudioProperties *ap) {
 	samplerate = ap->sampleRate();
 }
 
-void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const ID3v1::Tag *id3v1) {
+void Metafile::readCrapTags(const APE::Tag* ape, const ID3v2::Tag* id3v2, const ID3v1::Tag* id3v1) {
 	/* first fetch id3v1 */
 	if (id3v1 != NULL) {
 		if (!id3v1->album().isEmpty())
@@ -352,7 +352,7 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 		const ID3v2::FrameListMap map = id3v2->frameListMap();
 		ID3v2::FrameList frames = map["TXXX"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
-			ID3v2::UserTextIdentificationFrame *txxx = (ID3v2::UserTextIdentificationFrame *) frames[a];
+			ID3v2::UserTextIdentificationFrame* txxx = (ID3v2::UserTextIdentificationFrame*) frames[a];
 			if (txxx->fieldList().size() < 2)
 				continue;
 			if (txxx->description().to8Bit(true) == ID3_TXXX_ALBUMARTISTSORT)
@@ -366,7 +366,7 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 		}
 		frames = map["UFID"];
 		for (TagLib::uint a = 0; a < frames.size(); ++a) {
-			ID3v2::UniqueFileIdentifierFrame *ufid = (ID3v2::UniqueFileIdentifierFrame *) frames[a];
+			ID3v2::UniqueFileIdentifierFrame* ufid = (ID3v2::UniqueFileIdentifierFrame*) frames[a];
 			if (ufid->owner() == ID3_UFID_MUSICBRAINZ_TRACKID)
 				musicbrainz_trackid = string(ufid->identifier().data(), ufid->identifier().size());
 		}
@@ -415,7 +415,7 @@ void Metafile::readCrapTags(const APE::Tag *ape, const ID3v2::Tag *id3v2, const 
 	}
 }
 
-void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
+void Metafile::readXiphComment(const Ogg::XiphComment* tag) {
 	if (tag == NULL)
 		return;
 	const Ogg::FieldListMap map = tag->fieldListMap();
@@ -447,7 +447,7 @@ void Metafile::readXiphComment(const Ogg::XiphComment *tag) {
 		genre = map[GENRE].front().to8Bit(true);
 }
 
-void Metafile::saveAPETag(APE::Tag *tag) {
+void Metafile::saveAPETag(APE::Tag* tag) {
 	if (tag == NULL)
 		return;
 	tag->addValue(APEALBUM, String(album, String::UTF8), true);
@@ -465,7 +465,7 @@ void Metafile::saveAPETag(APE::Tag *tag) {
 	tag->addValue(APEGENRE, String(genre, String::UTF8), true);
 }
 
-void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
+void Metafile::saveID3v2Tag(ID3v2::Tag* tag) {
 	if (tag == NULL)
 		return;
 	/* first clear the frames we're gonna use */
@@ -478,32 +478,32 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	/* album */
 	tag->setAlbum(String(album, String::UTF8));
 	/* albumartist */
-	ID3v2::TextIdentificationFrame *tpe2 = new ID3v2::TextIdentificationFrame(ByteVector("TPE2"), String::UTF8);
+	ID3v2::TextIdentificationFrame* tpe2 = new ID3v2::TextIdentificationFrame(ByteVector("TPE2"), String::UTF8);
 	tpe2->setText(String(albumartist, String::UTF8));
 	tag->addFrame(tpe2);
 	/* albumartistsort */
-	ID3v2::UserTextIdentificationFrame *txxxaas = new ID3v2::UserTextIdentificationFrame(String::UTF8);
+	ID3v2::UserTextIdentificationFrame* txxxaas = new ID3v2::UserTextIdentificationFrame(String::UTF8);
 	txxxaas->setDescription(ID3_TXXX_ALBUMARTISTSORT);
 	txxxaas->setText(String(albumartistsort, String::UTF8));
 	tag->addFrame(txxxaas);
 	/* artist */
 	tag->setArtist(String(artist, String::UTF8));
 	/* artistsort */
-	ID3v2::TextIdentificationFrame *tsop = new ID3v2::TextIdentificationFrame(ByteVector("TSOP"), String::UTF8);
+	ID3v2::TextIdentificationFrame* tsop = new ID3v2::TextIdentificationFrame(ByteVector("TSOP"), String::UTF8);
 	tsop->setText(String(artistsort, String::UTF8));
 	tag->addFrame(tsop);
 	/* musicbrainz_albumartistid */
-	ID3v2::UserTextIdentificationFrame *txxxaai = new ID3v2::UserTextIdentificationFrame(String::UTF8);
+	ID3v2::UserTextIdentificationFrame* txxxaai = new ID3v2::UserTextIdentificationFrame(String::UTF8);
 	txxxaai->setDescription(ID3_TXXX_MUSICBRAINZ_ALBUMARTISTID);
 	txxxaai->setText(String(musicbrainz_albumartistid, String::UTF8));
 	tag->addFrame(txxxaai);
 	/* musicbrainz_albumid */
-	ID3v2::UserTextIdentificationFrame *txxxali = new ID3v2::UserTextIdentificationFrame(String::UTF8);
+	ID3v2::UserTextIdentificationFrame* txxxali = new ID3v2::UserTextIdentificationFrame(String::UTF8);
 	txxxali->setDescription(ID3_TXXX_MUSICBRAINZ_ALBUMID);
 	txxxali->setText(String(musicbrainz_albumid, String::UTF8));
 	tag->addFrame(txxxali);
 	/* musicbrainz_artistid */
-	ID3v2::UserTextIdentificationFrame *txxxari = new ID3v2::UserTextIdentificationFrame(String::UTF8);
+	ID3v2::UserTextIdentificationFrame* txxxari = new ID3v2::UserTextIdentificationFrame(String::UTF8);
 	txxxari->setDescription(ID3_TXXX_MUSICBRAINZ_ARTISTID);
 	txxxari->setText(String(musicbrainz_artistid, String::UTF8));
 	tag->addFrame(txxxari);
@@ -514,16 +514,16 @@ void Metafile::saveID3v2Tag(ID3v2::Tag *tag) {
 	/* tracknumber */
 	tag->setTrack(atoi(tracknumber.c_str()));
 	/* date */
-	ID3v2::TextIdentificationFrame *tdrc = new ID3v2::TextIdentificationFrame(ByteVector("TDRC"), String::UTF8);
+	ID3v2::TextIdentificationFrame* tdrc = new ID3v2::TextIdentificationFrame(ByteVector("TDRC"), String::UTF8);
 	tdrc->setText(String(released, String::UTF8));
 	tag->addFrame(tdrc);
 	/* genre */
-	ID3v2::TextIdentificationFrame *tcon = new ID3v2::TextIdentificationFrame(ByteVector("TCON"), String::UTF8);
+	ID3v2::TextIdentificationFrame* tcon = new ID3v2::TextIdentificationFrame(ByteVector("TCON"), String::UTF8);
 	tcon->setText(String(genre, String::UTF8));
 	tag->addFrame(tcon);
 }
 
-void Metafile::saveXiphComment(Ogg::XiphComment *tag) {
+void Metafile::saveXiphComment(Ogg::XiphComment* tag) {
 	if (tag == NULL)
 		return;
 	tag->addField(ALBUM, String(album, String::UTF8), true);

@@ -75,21 +75,21 @@ class MusicBrainz;
 class Track;
 
 struct AlbumComparison {
-	Album *album;
-	std::map<std::string, std::vector<Comparison *> > comparisons;
+	Album* album;
+	std::map<std::string, std::vector<Comparison*> > comparisons;
 };
 
 class Matcher {
 public:
-	Matcher(Database *database, MusicBrainz *musicbrainz);
+	Matcher(Database* database, MusicBrainz* musicbrainz);
 	~Matcher();
 
 	std::vector<std::string> getLoadedAlbums();
-	void match(const std::vector<Metafile *> &files, const std::string &album = "");
+	void match(const std::vector<Metafile*>& files, const std::string& album = "");
 
 private:
-	Database *database;
-	MusicBrainz *musicbrainz;
+	Database* database;
+	MusicBrainz* musicbrainz;
 	bool duration_must_match;
 	bool mbid_lookup;
 	bool allow_group_duplicates;
@@ -106,15 +106,15 @@ private:
 	double mismatch_threshold;
 	double title_weight;
 	double tracknumber_weight;
-	std::map<std::string, AlbumComparison> *acs;
+	std::map<std::string, AlbumComparison>* acs;
 	std::map<std::string, double> best_file_comparison;
 
 	void clearAlbumComparison();
-	void compareFilesWithAlbum(AlbumComparison *ac, const std::vector<Metafile *> &files);
-	Comparison *compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack, Track *track = NULL);
-	bool loadAlbum(const std::string &mbid, const std::vector<Metafile *> files);
-	void lookupMBIDs(const std::vector<Metafile *> &files);
-	void matchFilesToAlbums(const std::vector<Metafile *> &files);
-	void searchMetadata(const std::vector<Metafile *> &files);
+	void compareFilesWithAlbum(AlbumComparison* ac, const std::vector<Metafile*>& files);
+	Comparison* compareMetafileWithMetatrack(Metafile* metafile, const Metatrack& metatrack, Track* track = NULL);
+	bool loadAlbum(const std::string& mbid, const std::vector<Metafile*> files);
+	void lookupMBIDs(const std::vector<Metafile*>& files);
+	void matchFilesToAlbums(const std::vector<Metafile*>& files);
+	void searchMetadata(const std::vector<Metafile*>& files);
 };
 #endif

@@ -39,13 +39,13 @@ class Metafile;
 
 class MusicBrainz : public WebService {
 public:
-	explicit MusicBrainz(Database *database);
+	explicit MusicBrainz(Database* database);
 
-	bool lookupAlbum(Album *album);
-	const std::vector<Metatrack> &searchMetadata(const Metafile &metafile);
+	bool lookupAlbum(Album* album);
+	const std::vector<Metatrack>& searchMetadata(const Metafile& metafile);
 
 private:
-	Database *database;
+	Database* database;
 	Metatrack metatrack;
 	std::string metadata_search_url;
 	std::string release_lookup_url;
@@ -53,8 +53,8 @@ private:
 	double query_interval;
 	struct timeval last_fetch;
 
-	std::string escapeString(const std::string &text);
-	bool getMetatrack(XMLNode *track);
-	XMLNode *lookup(const std::string &url, const std::vector<std::string> args);
+	std::string escapeString(const std::string& text);
+	bool getMetatrack(XMLNode* track);
+	XMLNode* lookup(const std::string& url, const std::vector<std::string>& args);
 };
 #endif

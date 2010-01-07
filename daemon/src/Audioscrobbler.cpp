@@ -19,7 +19,7 @@
 using namespace ost;
 using namespace std;
 
-Audioscrobbler::Audioscrobbler(Database *database) : database(database) {
+Audioscrobbler::Audioscrobbler(Database* database) : database(database) {
 	artist_tag_url = database->loadSettingString(AUDIOSCROBBLER_ARTIST_TAG_URL_KEY, AUDIOSCROBBLER_ARTIST_TAG_URL_VALUE, AUDIOSCROBBLER_ARTIST_TAG_URL_DESCRIPTION);
 	track_tag_url = database->loadSettingString(AUDIOSCROBBLER_TRACK_TAG_URL_KEY, AUDIOSCROBBLER_TRACK_TAG_URL_VALUE, AUDIOSCROBBLER_TRACK_TAG_URL_DESCRIPTION);
 	query_interval = database->loadSettingDouble(AUDIOSCROBBLER_QUERY_INTERVAL_KEY, AUDIOSCROBBLER_QUERY_INTERVAL_VALUE, AUDIOSCROBBLER_QUERY_INTERVAL_DESCRIPTION);
@@ -30,7 +30,7 @@ Audioscrobbler::Audioscrobbler(Database *database) : database(database) {
 	last_fetch.tv_usec = 0;
 }
 
-const vector<string> &Audioscrobbler::getTags(const Metafile &metafile) {
+const vector<string>& Audioscrobbler::getTags(const Metafile& metafile) {
 	tags.clear();
 	string artist = escapeString(metafile.artist);
 	if (artist == "")
@@ -55,7 +55,7 @@ const vector<string> &Audioscrobbler::getTags(const Metafile &metafile) {
 	return tags;
 }
 
-string Audioscrobbler::escapeString(const string &text) {
+string Audioscrobbler::escapeString(const string& text) {
 	/* escape certain characters that mess up the url:
 	 * "$": %24
 	 * "+": %2b
@@ -110,7 +110,7 @@ string Audioscrobbler::escapeString(const string &text) {
 	return str.str();
 }
 
-XMLNode *Audioscrobbler::lookup(const std::string &url) {
+XMLNode* Audioscrobbler::lookup(const std::string& url) {
 	/* usleep if last fetch was less than a second ago */
 	struct timeval tv;
 	if (gettimeofday(&tv, NULL) == 0) {
@@ -132,13 +132,13 @@ XMLNode *Audioscrobbler::lookup(const std::string &url) {
 	return fetch(url.c_str(), NULL);
 }
 
-bool Audioscrobbler::parseXML(XMLNode *root) {
+bool Audioscrobbler::parseXML(XMLNode* root) {
 	if (root == NULL || root->children["toptags"].size() <= 0)
 		return false;
-	XMLNode *cur = root->children["toptags"][0];
+	XMLNode* cur = root->children["toptags"][0];
 	if (cur->children["tag"].size() <= 0)
 		return false;
-	for (vector<XMLNode *>::size_type a = 0; a < cur->children["tag"].size(); ++a) {
+	for (vector<XMLNode*>::size_type a = 0; a < cur->children["tag"].size(); ++a) {
 		if (cur->children["tag"][a]->children["name"].size() > 0)
 			tags.push_back(cur->children["tag"][a]->children["name"][0]->value);
 	}

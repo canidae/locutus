@@ -20,12 +20,12 @@ class Track;
 
 class Comparison {
 public:
-	Metafile *metafile;
-	Track *track;
+	Metafile* metafile;
+	Track* track;
 	bool mbid_match;
 	double score;
 	double total_score;
 
-	Comparison(Metafile *metafile, Track *track, bool mbid_match, double score);
+	Comparison(Metafile* metafile, Track* track, bool mbid_match, double score);
 };
 #endif

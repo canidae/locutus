@@ -70,13 +70,13 @@ class Metafile;
 
 class FileNamer {
 public:
-	explicit FileNamer(Database *database);
+	explicit FileNamer(Database* database);
 	~FileNamer();
 
-	const std::string &getFilename(const Metafile &file);
+	const std::string& getFilename(const Metafile& file);
 
 private:
-	Database *database;
+	Database* database;
 	std::string filename;
 	std::string file_format;
 	std::string illegal_characters;
@@ -84,11 +84,11 @@ private:
 	iconv_t u2w;
 	iconv_t w2u;
 
-	void convertIllegalCharacters(std::string *text);
-	std::wstring convertUnicodeToWide(const std::string &text);
-	std::string convertWideToUnicode(const std::wstring &text);
-	const std::string parseField(const Metafile &file, const std::vector<Field>::const_iterator field);
-	void removeEscapes(std::string *text);
-	void setupFields(std::string::size_type start, std::string::size_type stop, std::vector<Field> *fields, bool split_on_comma = false);
+	void convertIllegalCharacters(std::string* text);
+	std::wstring convertUnicodeToWide(const std::string& text);
+	std::string convertWideToUnicode(const std::wstring& text);
+	const std::string parseField(const Metafile& file, const std::vector<Field>::const_iterator field);
+	void removeEscapes(std::string* text);
+	void setupFields(std::string::size_type start, std::string::size_type stop, std::vector<Field>* fields, bool split_on_comma = false);
 };
 #endif

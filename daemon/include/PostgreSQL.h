@@ -31,50 +31,50 @@ class Track;
 
 class PostgreSQL : public Database {
 public:
-	PostgreSQL(const std::string &host, const std::string &user, const std::string &pass, const std::string &name);
+	PostgreSQL(const std::string& host, const std::string& user, const std::string& pass, const std::string& name);
 	~PostgreSQL();
 
 	bool init();
-	bool loadAlbum(Album *album);
-	std::vector<Metafile *> &loadGroup(const std::string &group);
-	bool loadMetafile(Metafile *metafile);
-	std::vector<Metafile *> &loadMetafiles(const std::string &filename_pattern);
-	bool loadSettingBool(const std::string &key, bool default_value, const std::string &description);
-	double loadSettingDouble(const std::string &key, double default_value, const std::string &description);
-	int loadSettingInt(const std::string &key, int default_value, const std::string &description);
-	std::string &loadSettingString(const std::string &key, const std::string &default_value, const std::string &description);
-	bool removeComparisons(const Metafile &metafile);
+	bool loadAlbum(Album* album);
+	std::vector<Metafile*>& loadGroup(const std::string& group);
+	bool loadMetafile(Metafile* metafile);
+	std::vector<Metafile*>& loadMetafiles(const std::string& filename_pattern);
+	bool loadSettingBool(const std::string& key, bool default_value, const std::string& description);
+	double loadSettingDouble(const std::string& key, double default_value, const std::string& description);
+	int loadSettingInt(const std::string& key, int default_value, const std::string& description);
+	std::string& loadSettingString(const std::string& key, const std::string& default_value, const std::string& description);
+	bool removeComparisons(const Metafile& metafile);
 	bool removeGoneFiles();
-	bool saveAlbum(const Album &album);
-	bool saveArtist(const Artist &artist);
-	bool saveComparison(const Comparison &comparison);
-	bool saveMetafile(const Metafile &metafile, const std::string &old_filename = "");
-	bool saveTrack(const Track &track);
+	bool saveAlbum(const Album& album);
+	bool saveArtist(const Artist& artist);
+	bool saveComparison(const Comparison& comparison);
+	bool saveMetafile(const Metafile& metafile, const std::string& old_filename = "");
+	bool saveTrack(const Track& track);
 	bool shouldRun();
 	bool start();
 	bool stop();
 	bool updateProgress(double progress);
 
 private:
-	PGconn *pg_connection;
-	PGresult *pg_result;
+	PGconn* pg_connection;
+	PGresult* pg_result;
 	bool got_result;
 	int album_cache_lifetime;
 	int run_interval;
 	std::string setting_string;
-	std::vector<Metafile *> groupfiles;
-	std::vector<Metafile *> metafiles;
+	std::vector<Metafile*> groupfiles;
+	std::vector<Metafile*> metafiles;
 
 	void clear();
-	void deleteFiles(std::vector<Metafile *> *files);
-	bool doQuery(const char *q);
-	std::string escapeString(const std::string &str) const;
+	void deleteFiles(std::vector<Metafile*>* files);
+	bool doQuery(const char* q);
+	std::string escapeString(const std::string& str) const;
 	bool getBool(int row, int col) const;
 	double getDouble(int row, int col) const;
 	int getInt(int row, int col) const;
 	int getRows() const;
 	std::string getString(int row, int col) const;
 	bool isNull(int row, int col) const;
-	bool doQuery(const std::string &q);
+	bool doQuery(const std::string& q);
 };
 #endif

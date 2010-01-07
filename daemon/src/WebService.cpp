@@ -26,8 +26,8 @@ WebService::~WebService() {
 	delete root;
 }
 
-XMLNode *WebService::fetch(const char *url, const char **args) {
-	char *urle = new char[CHAR_BUFFER];
+XMLNode* WebService::fetch(const char* url, const char** args) {
+	char* urle = new char[CHAR_BUFFER];
 	urle = urlEncode(url, urle, CHAR_BUFFER);
 	if (args == NULL)
 		status = get(urle);
@@ -79,13 +79,13 @@ XMLNode *WebService::fetch(const char *url, const char **args) {
 	return root;
 }
 
-void WebService::characters(const unsigned char *text, size_t len) {
-	curnode->value.append(string((char *) text, len));
+void WebService::characters(const unsigned char* text, size_t len) {
+	curnode->value.append(string((char*) text, len));
 }
 
-void WebService::clearXMLNode(XMLNode *node) {
-	for (map<string, vector<XMLNode *> >::iterator it = node->children.begin(); it != node->children.end(); ++it) {
-		for (vector<XMLNode *>::size_type a = 0; a < it->second.size(); ++a) {
+void WebService::clearXMLNode(XMLNode* node) {
+	for (map<string, vector<XMLNode*> >::iterator it = node->children.begin(); it != node->children.end(); ++it) {
+		for (vector<XMLNode*>::size_type a = 0; a < it->second.size(); ++a) {
 			clearXMLNode(it->second[a]);
 			delete it->second[a];
 		}
@@ -96,12 +96,12 @@ void WebService::close() {
 	URLStream::close();
 }
 
-void WebService::endElement(const unsigned char *) {
+void WebService::endElement(const unsigned char*) {
 	if (curnode != NULL)
 		curnode = curnode->parent;
 }
 
-void WebService::printXML(XMLNode *startnode, int indent) const {
+void WebService::printXML(XMLNode* startnode, int indent) const {
 	if (startnode == NULL)
 		return;
 	for (int a = 0; a < indent; ++a)
@@ -110,21 +110,21 @@ void WebService::printXML(XMLNode *startnode, int indent) const {
 		cout << startnode->key << ": " << startnode->value << endl;
 	else
 		cout << startnode->key << " @" << startnode << ": " << startnode->value << " (parent: " << startnode->parent->key << " @" << startnode->parent << ")" << endl;
-	for (map<string, vector<XMLNode *> >::iterator it = startnode->children.begin(); it != startnode->children.end(); ++it) {
-		for (vector<XMLNode *>::size_type a = 0; a < it->second.size(); ++a)
+	for (map<string, vector<XMLNode*> >::iterator it = startnode->children.begin(); it != startnode->children.end(); ++it) {
+		for (vector<XMLNode*>::size_type a = 0; a < it->second.size(); ++a)
 			printXML(it->second[a], indent + 1);
 	}
 }
 
-int WebService::read(unsigned char *buffer, size_t len) {
-	URLStream::read((char *) buffer, len);
+int WebService::read(unsigned char* buffer, size_t len) {
+	URLStream::read((char*) buffer, len);
 	return gcount();
 }
 
-void WebService::startElement(const unsigned char *name, const unsigned char **attr) {
-	XMLNode *childnode = new XMLNode;
+void WebService::startElement(const unsigned char* name, const unsigned char** attr) {
+	XMLNode* childnode = new XMLNode;
 	childnode->parent = curnode;
-	childnode->key = (char *) name;
+	childnode->key = (char*) name;
 	childnode->value = "";
 	curnode->children[childnode->key].push_back(childnode);
 	curnode = curnode->children[childnode->key][curnode->children[childnode->key].size() - 1];
@@ -132,8 +132,8 @@ void WebService::startElement(const unsigned char *name, const unsigned char **a
 		while (*attr != NULL) {
 			childnode = new XMLNode;
 			childnode->parent = curnode;
-			childnode->key = (char *) *(attr++);
-			childnode->value = (char *) *(attr++);
+			childnode->key = (char*) *(attr++);
+			childnode->value = (char*) *(attr++);
 			curnode->children[childnode->key].push_back(childnode);
 		}
 	}

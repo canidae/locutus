@@ -18,7 +18,7 @@
 
 using namespace std;
 
-Track::Track(Album *album) : album(album), artist(new Artist()), duration(0), tracknumber(0), mbid(""), title("") {
+Track::Track(Album* album) : album(album), artist(new Artist()), duration(0), tracknumber(0), mbid(""), title("") {
 }
 
 Track::~Track() {

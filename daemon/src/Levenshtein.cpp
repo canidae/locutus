@@ -17,7 +17,7 @@
 using namespace std;
 
 bool Levenshtein::initialized = false;
-int **Levenshtein::matrix = NULL;
+int** Levenshtein::matrix = NULL;
 int Levenshtein::matrix_size = 0;
 
 void Levenshtein::clear() {
@@ -34,7 +34,7 @@ void Levenshtein::initialize() {
 	createMatrix(MATRIX_SIZE);
 }
 
-double Levenshtein::similarity(const string &source, const string &target) {
+double Levenshtein::similarity(const string& source, const string& target) {
 	if (!initialized)
 		initialize();
 	int sl = source.length();

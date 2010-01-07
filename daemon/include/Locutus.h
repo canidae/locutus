@@ -67,19 +67,19 @@ public:
 	static std::string output_dir;
 	static std::string duplicate_dir;
 
-	explicit Locutus(Database *database);
+	explicit Locutus(Database* database);
 	~Locutus();
 
-	static void trim(std::string *text);
+	static void trim(std::string* text);
 
 	void run();
 
 private:
-	Audioscrobbler *audioscrobbler;
-	Database *database;
-	FileNamer *filenamer;
-	Matcher *matcher;
-	MusicBrainz *musicbrainz;
+	Audioscrobbler* audioscrobbler;
+	Database* database;
+	FileNamer* filenamer;
+	Matcher* matcher;
+	MusicBrainz* musicbrainz;
 	bool combine_groups;
 	bool dry_run;
 	bool lookup_genre;
@@ -89,11 +89,11 @@ private:
 	std::list<std::string> file_queue;
 	std::map<std::string, int> groups;
 
-	std::string findDuplicateFilename(Metafile *file);
-	bool moveFile(Metafile *file, const std::string &filename);
+	std::string findDuplicateFilename(Metafile* file);
+	bool moveFile(Metafile* file, const std::string& filename);
 	bool parseDirectory();
 	bool parseFile();
-	void saveFile(Metafile *file);
-	void scanFiles(const std::string &directory);
+	void saveFile(Metafile* file);
+	void scanFiles(const std::string& directory);
 };
 #endif

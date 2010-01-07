@@ -32,7 +32,7 @@ string Locutus::input_dir = "";
 string Locutus::output_dir = "";
 string Locutus::duplicate_dir = "";
 
-Locutus::Locutus(Database *database) : active(true), database(database) {
+Locutus::Locutus(Database* database) : active(true), database(database) {
 	audioscrobbler = new Audioscrobbler(database);
 	filenamer = new FileNamer(database);
 	musicbrainz = new MusicBrainz(database);
@@ -62,7 +62,7 @@ Locutus::~Locutus() {
 	delete filenamer;
 }
 
-void Locutus::trim(string *text) {
+void Locutus::trim(string* text) {
 	if (text == NULL)
 		return;
 	string::size_type pos = text->find_last_not_of(" \t\n");
@@ -108,11 +108,11 @@ void Locutus::run() {
 			continue;
 		}
 		/* match files in group */
-		vector<Metafile *> files = database->loadGroup(g->first);
+		vector<Metafile*> files = database->loadGroup(g->first);
 		matcher->match(files);
 		/* save files with new metadata */
 		bool do_combine_groups = true;
-		for (vector<Metafile *>::iterator f = files.begin(); f != files.end() && active; ++f) {
+		for (vector<Metafile*>::iterator f = files.begin(); f != files.end() && active; ++f) {
 			if (!(*f)->matched) {
 				/* file is not matched, but we [may] need to unset "track_id" */
 				database->saveMetafile(**f);
@@ -146,18 +146,18 @@ void Locutus::run() {
 			continue; // only one group for this album
 		/* need to cheat here, copy the Metafile objects */
 		string groups_joined = "";
-		vector<Metafile *> files;
+		vector<Metafile*> files;
 		for (vector<string>::iterator g = c->second.begin(); g != c->second.end(); ++g) {
 			groups_joined.append(" \"").append(*g).append("\"");
-			vector<Metafile *> tmpfiles = database->loadGroup(*g);
-			for (vector<Metafile *>::iterator f = tmpfiles.begin(); f != tmpfiles.end(); ++f)
+			vector<Metafile*> tmpfiles = database->loadGroup(*g);
+			for (vector<Metafile*>::iterator f = tmpfiles.begin(); f != tmpfiles.end(); ++f)
 				files.push_back(new Metafile(**f));
 		}
 		Debug::info() << "Joining groups that loaded album " << c->first << " (" << files.size() << " files):" << groups_joined << endl;
 		/* match files */
 		matcher->match(files, c->first);
 		/* save files with new metadata */
-		for (vector<Metafile *>::iterator f = files.begin(); f != files.end() && active; ++f) {
+		for (vector<Metafile*>::iterator f = files.begin(); f != files.end() && active; ++f) {
 			if ((*f)->matched) {
 				if (dry_run) {
 					/* dry run, don't save, only update database */
@@ -175,7 +175,7 @@ void Locutus::run() {
 	database->updateProgress(1.0);
 }
 
-string Locutus::findDuplicateFilename(Metafile *file) {
+string Locutus::findDuplicateFilename(Metafile* file) {
 	/* find a name for a duplicate */
 	string tmp_filename = duplicate_dir;
 	string tmp_gen_filename = filenamer->getFilename(*file);
@@ -205,7 +205,7 @@ string Locutus::findDuplicateFilename(Metafile *file) {
 	return file->filename;
 }
 
-bool Locutus::moveFile(Metafile *file, const string &filename) {
+bool Locutus::moveFile(Metafile* file, const string& filename) {
 	string::size_type start = 0;
 	string dirname;
 	mode_t mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IXOTH;
@@ -239,10 +239,10 @@ bool Locutus::parseDirectory() {
 		return false;
 	string directory(*dir_queue.begin());
 	dir_queue.pop_front();
-	DIR *dir = opendir(directory.c_str());
+	DIR* dir = opendir(directory.c_str());
 	if (dir == NULL)
 		return true;
-	dirent *entity;
+	dirent* entity;
 	char symlinkbuf[1024];
 	size_t symlinkbufsize = 1024;
 	while ((entity = readdir(dir)) != NULL) {
@@ -257,7 +257,7 @@ bool Locutus::parseDirectory() {
 		if (readlink(ford.c_str(), symlinkbuf, symlinkbufsize) != -1)
 			continue; // symlink, ignore it
 		/* why isn't always "entity->d_type == DT_DIR" when the entity is a directory? */
-		DIR *tmpdir = opendir(ford.c_str());
+		DIR* tmpdir = opendir(ford.c_str());
 		if (tmpdir != NULL)
 			dir_queue.push_back(ford);
 		else
@@ -273,7 +273,7 @@ bool Locutus::parseFile() {
 		return false;
 	string filename(*file_queue.begin());
 	file_queue.pop_front();
-	Metafile *mf = new Metafile(filename);
+	Metafile* mf = new Metafile(filename);
 	if (!database->loadMetafile(mf)) {
 		Debug::info() << "File not found in database: " << filename << endl;
 		if (mf->readFromFile()) {
@@ -295,15 +295,15 @@ bool Locutus::parseFile() {
 	return true;
 }
 
-void Locutus::saveFile(Metafile *file) {
+void Locutus::saveFile(Metafile* file) {
 	/* create new filename */
 	string filename = output_dir;
 	filename.append(filenamer->getFilename(*file));
 	/* check if file (possibly with different extension) already exist */
 	string filename_without_extension = filename.substr(0, filename.find_last_of('.'));
-	vector<Metafile *> files = database->loadMetafiles(filename_without_extension);
+	vector<Metafile*> files = database->loadMetafiles(filename_without_extension);
 	unsigned long file_quality = file->bitrate * file->channels * file->samplerate;
-	for (vector<Metafile *>::iterator f = files.begin(); f != files.end(); ++f) {
+	for (vector<Metafile*>::iterator f = files.begin(); f != files.end(); ++f) {
 		/* it is possible that loadMetafiles() return other tracks which happen
 		 * to match current filename (we're searching for 'blabla%' which would
 		 * match 'blablabla'), so we need to check that musicbrainz_trackid match */
@@ -371,7 +371,7 @@ void Locutus::saveFile(Metafile *file) {
 	database->saveMetafile(*file, old_filename); // metadata may have changed even if path/filename haven't
 }
 
-void Locutus::scanFiles(const string &directory) {
+void Locutus::scanFiles(const string& directory) {
 	dir_queue.push_back(directory);
 	while (active && (dir_queue.size() > 0 || file_queue.size() > 0)) {
 		/* first files */
@@ -385,7 +385,7 @@ void Locutus::scanFiles(const string &directory) {
 
 /* main stuff */
 bool active = true;
-Locutus *locutus = NULL;
+Locutus* locutus = NULL;
 
 void abort(int) {
 	Debug::notice() << "SIGINT received, aborting run" << endl;
@@ -407,7 +407,7 @@ void quit(int) {
 	active = false;
 }
 
-int main(int argc, const char *argv[]) {
+int main(int argc, const char* argv[]) {
 	/* initialize static classes */
 	Debug::open("locutus.log");
 	Levenshtein::initialize();
@@ -470,7 +470,7 @@ int main(int argc, const char *argv[]) {
 	string db_name = config.getSettingValue("database_name");
 
 	/* connect to database */
-	Database *database = new PostgreSQL(db_host, db_user, db_pass, db_name);
+	Database* database = new PostgreSQL(db_host, db_user, db_pass, db_name);
 	database->init();
 
 	while (active) {

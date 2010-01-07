@@ -23,7 +23,7 @@
 
 using namespace std;
 
-FileNamer::FileNamer(Database *database) : database(database) {
+FileNamer::FileNamer(Database* database) : database(database) {
 	/* set up iconv */
 	u2w = iconv_open("WCHAR_T", "UTF8");
 	w2u = iconv_open("UTF8", "WCHAR_T");
@@ -66,27 +66,27 @@ FileNamer::~FileNamer() {
 	iconv_close(w2u);
 }
 
-const string &FileNamer::getFilename(const Metafile &file) {
+const string& FileNamer::getFilename(const Metafile& file) {
 	filename.clear();
 	for (vector<Field>::const_iterator f = fields.begin(); f != fields.end(); ++f)
 		filename.append(parseField(file, f));
 	return filename;
 }
 
-void FileNamer::convertIllegalCharacters(string *text) {
+void FileNamer::convertIllegalCharacters(string* text) {
 	string::size_type pos = 0;
 	while ((pos = text->find_first_of(illegal_characters), pos) != string::npos)
 		text->replace(pos, 1, "_");
 }
 
-wstring FileNamer::convertUnicodeToWide(const string &text) {
+wstring FileNamer::convertUnicodeToWide(const string& text) {
 	if (text.size() <= 0)
 		return wstring(L"");
 	char src[text.size()];
-	char *src_ptr = (char *) src;
+	char* src_ptr = (char*) src;
 	size_t src_size = sizeof (src);
 	wchar_t dest[text.size()];
-	char *dest_ptr = (char *) dest;
+	char* dest_ptr = (char*) dest;
 	size_t dest_size = sizeof (dest);
 	for (string::size_type a = 0; a < text.size(); ++a)
 		src[a] = text[a];
@@ -95,14 +95,14 @@ wstring FileNamer::convertUnicodeToWide(const string &text) {
 	return wstring(dest, (sizeof (dest) - dest_size) / sizeof (wchar_t));
 }
 
-string FileNamer::convertWideToUnicode(const wstring &text) {
+string FileNamer::convertWideToUnicode(const wstring& text) {
 	if (text.size() <= 0)
 		return string("");
 	wchar_t src[text.size()];
-	char *src_ptr = (char *) src;
+	char* src_ptr = (char*) src;
 	size_t src_size = sizeof (src);
 	char dest[text.size() * sizeof (wchar_t)];
-	char *dest_ptr = (char *) dest;
+	char* dest_ptr = (char*) dest;
 	size_t dest_size = sizeof (dest);
 	for (wstring::size_type a = 0; a < text.size(); ++a)
 		src[a] = text[a];
@@ -111,7 +111,7 @@ string FileNamer::convertWideToUnicode(const wstring &text) {
 	return string(dest, (sizeof (dest) - dest_size));
 }
 
-const std::string FileNamer::parseField(const Metafile &file, const vector<Field>::const_iterator field) {
+const std::string FileNamer::parseField(const Metafile& file, const vector<Field>::const_iterator field) {
 	string tmp_field("");
 	string::size_type pos;
 	switch (field->type) {
@@ -445,7 +445,7 @@ const std::string FileNamer::parseField(const Metafile &file, const vector<Field
 	return tmp_field;
 }
 
-void FileNamer::removeEscapes(string *text) {
+void FileNamer::removeEscapes(string* text) {
 	/* remove backslashes properly */
 	if (text == NULL || text->size() <= 0)
 		return;
@@ -454,7 +454,7 @@ void FileNamer::removeEscapes(string *text) {
 		text->erase(pos, 1);
 }
 
-void FileNamer::setupFields(string::size_type start, string::size_type stop, vector<Field> *fields, bool split_on_comma) {
+void FileNamer::setupFields(string::size_type start, string::size_type stop, vector<Field>* fields, bool split_on_comma) {
 	/* setup fields for filename pattern */
 	string::size_type pos = start - 1;
 	string::size_type prev = start;

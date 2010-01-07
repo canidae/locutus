@@ -28,22 +28,22 @@ bool Debug::close() {
 	return true;
 }
 
-ofstream &Debug::error() {
+ofstream& Debug::error() {
 	debugfile << "[" << printTime() << "] [ERROR  ] ";
 	return debugfile;
 }
 
-ofstream &Debug::info() {
+ofstream& Debug::info() {
 	debugfile << "[" << printTime() << "] [INFO   ] ";
 	return debugfile;
 }
 
-ofstream &Debug::notice() {
+ofstream& Debug::notice() {
 	debugfile << "[" << printTime() << "] [NOTICE ] ";
 	return debugfile;
 }
 
-bool Debug::open(const string &file) {
+bool Debug::open(const string& file) {
 	if (initialized)
 		close();
 	initialized = true;
@@ -51,12 +51,12 @@ bool Debug::open(const string &file) {
 	return true;
 }
 
-ofstream &Debug::warning() {
+ofstream& Debug::warning() {
 	debugfile << "[" << printTime() << "] [WARNING] ";
 	return debugfile;
 }
 
-string &Debug::printTime() {
+string& Debug::printTime() {
 	time_t rawtime;
 	time(&rawtime);
 	timestamp = asctime(localtime(&rawtime));

@@ -25,7 +25,7 @@
 
 using namespace std;
 
-Matcher::Matcher(Database *database, MusicBrainz *musicbrainz) : database(database), musicbrainz(musicbrainz) {
+Matcher::Matcher(Database* database, MusicBrainz* musicbrainz) : database(database), musicbrainz(musicbrainz) {
 	album_weight = database->loadSettingDouble(ALBUM_WEIGHT_KEY, ALBUM_WEIGHT_VALUE, ALBUM_WEIGHT_DESCRIPTION);
 	if (album_weight < 0.0)
 		album_weight = 0.0;
@@ -89,9 +89,9 @@ vector<string> Matcher::getLoadedAlbums() {
 	return albums;
 }
 
-void Matcher::match(const vector<Metafile *> &files, const string &album) {
+void Matcher::match(const vector<Metafile*>& files, const string& album) {
 	/* remove matches from database */
-	for (vector<Metafile *>::const_iterator f = files.begin(); f != files.end(); ++f)
+	for (vector<Metafile*>::const_iterator f = files.begin(); f != files.end(); ++f)
 		database->removeComparisons(**f);
 	/* clear data */
 	best_file_comparison.clear();
@@ -109,12 +109,12 @@ void Matcher::match(const vector<Metafile *> &files, const string &album) {
 	/* and then match the files to albums */
 	matchFilesToAlbums(files);
 	/* and clear the "values" list in the metafiles */
-	for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf)
+	for (vector<Metafile*>::const_iterator mf = files.begin(); mf != files.end(); ++mf)
 		(*mf)->clearValues();
 	/* save comparisons for files that aren't matched */
 	for (map<string, AlbumComparison>::iterator ac = acs->begin(); ac != acs->end(); ++ac) {
-		for (map<string, vector<Comparison *> >::iterator cs = ac->second.comparisons.begin(); cs != ac->second.comparisons.end(); ++cs) {
-			for (vector<Comparison *>::iterator c = cs->second.begin(); c != cs->second.end(); ++c) {
+		for (map<string, vector<Comparison*> >::iterator cs = ac->second.comparisons.begin(); cs != ac->second.comparisons.end(); ++cs) {
+			for (vector<Comparison*>::iterator c = cs->second.begin(); c != cs->second.end(); ++c) {
 				if ((*c)->metafile->matched)
 					continue; // file is matched, don't save comparison
 				/* save the match */
@@ -128,8 +128,8 @@ void Matcher::clearAlbumComparison() {
 	if (acs == NULL)
 		return;
 	for (map<string, AlbumComparison>::iterator ac = acs->begin(); ac != acs->end(); ++ac) {
-		for (map<string, vector<Comparison *> >::iterator tc = ac->second.comparisons.begin(); tc != ac->second.comparisons.end(); ++tc) {
-			for (vector<Comparison *>::iterator c = tc->second.begin(); c != tc->second.end(); ++c)
+		for (map<string, vector<Comparison*> >::iterator tc = ac->second.comparisons.begin(); tc != ac->second.comparisons.end(); ++tc) {
+			for (vector<Comparison*>::iterator c = tc->second.begin(); c != tc->second.end(); ++c)
 				delete *c;
 		}
 		delete ac->second.album;
@@ -137,11 +137,11 @@ void Matcher::clearAlbumComparison() {
 	delete acs;
 }
 
-void Matcher::compareFilesWithAlbum(AlbumComparison *ac, const vector<Metafile *> &files) {
-	for (vector<Track *>::iterator t = ac->album->tracks.begin(); t != ac->album->tracks.end(); ++t) {
+void Matcher::compareFilesWithAlbum(AlbumComparison* ac, const vector<Metafile*>& files) {
+	for (vector<Track*>::iterator t = ac->album->tracks.begin(); t != ac->album->tracks.end(); ++t) {
 		Metatrack mt = (*t)->getAsMetatrack();
-		for (vector<Metafile *>::const_iterator mf = files.begin(); mf != files.end(); ++mf) {
-			Comparison *c = compareMetafileWithMetatrack(*mf, mt, *t);
+		for (vector<Metafile*>::const_iterator mf = files.begin(); mf != files.end(); ++mf) {
+			Comparison* c = compareMetafileWithMetatrack(*mf, mt, *t);
 			if (c == NULL)
 				continue;
 			if (!c->mbid_match && c->score < mismatch_threshold) {
@@ -158,7 +158,7 @@ void Matcher::compareFilesWithAlbum(AlbumComparison *ac, const vector<Metafile *
 	}
 }
 
-Comparison *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Metatrack &metatrack, Track *track) {
+Comparison* Matcher::compareMetafileWithMetatrack(Metafile* metafile, const Metatrack& metatrack, Track* track) {
 	if (duration_must_match && abs(metafile->duration - metatrack.duration) > duration_limit)
 		return NULL;
 	list<string> values = metafile->getValues(combine_threshold);
@@ -212,20 +212,20 @@ Comparison *Matcher::compareMetafileWithMetatrack(Metafile *metafile, const Meta
 	if (durationdiff < duration_limit)
 		score += (1.0 - durationdiff / duration_limit) * duration_weight;
 	score /= album_weight + artist_weight + title_weight + tracknumber_weight + duration_weight;
-	Comparison *comparison = new Comparison(metafile, track, (metafile->musicbrainz_trackid != "" && metafile->musicbrainz_trackid == metatrack.track_mbid), score);
+	Comparison* comparison = new Comparison(metafile, track, (metafile->musicbrainz_trackid != "" && metafile->musicbrainz_trackid == metatrack.track_mbid), score);
 	map<string, double>::iterator bfm = best_file_comparison.find(metafile->filename);
 	if (bfm == best_file_comparison.end() || bfm->second < comparison->total_score)
 		best_file_comparison[metafile->filename] = comparison->total_score;
 	return comparison;
 }
 
-bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
+bool Matcher::loadAlbum(const string& mbid, const vector<Metafile*> files) {
 	if (mbid.size() != 36)
 		return false;
 	map<string, AlbumComparison>::iterator ac = acs->find(mbid);
 	if (ac != acs->end())
 		return true; // already loaded
-	Album *album = new Album(mbid);
+	Album* album = new Album(mbid);
 	if (!database->loadAlbum(album)) {
 		if (musicbrainz->lookupAlbum(album)) {
 			database->saveAlbum(*album);
@@ -241,16 +241,16 @@ bool Matcher::loadAlbum(const string &mbid, const vector<Metafile *> files) {
 	return true;
 }
 
-void Matcher::lookupMBIDs(const vector<Metafile *> &files) {
-	for (vector<Metafile *>::const_iterator file = files.begin(); file != files.end(); ++file) {
-		Metafile *mf = *file;
+void Matcher::lookupMBIDs(const vector<Metafile*>& files) {
+	for (vector<Metafile*>::const_iterator file = files.begin(); file != files.end(); ++file) {
+		Metafile* mf = *file;
 		if (!mbid_lookup || mf->musicbrainz_albumid.size() != 36)
 			continue;
 		loadAlbum(mf->musicbrainz_albumid, files);
 	}
 }
 
-void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
+void Matcher::matchFilesToAlbums(const vector<Metafile*>& files) {
 	/* well, this method is a total mess :(
 	 *
 	 * this is what it's supposed to do:
@@ -266,12 +266,12 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 	 *   * best album must be complete, it's not enough with any album being complete.
 	 *     this because there often are singles with same tracks as an album
 	 */
-	map<string, Comparison *> save_files;
+	map<string, Comparison*> save_files;
 	map<string, bool> used_albums;
 	map<string, bool> used_files;
 	map<string, bool> used_tracks;
-	vector<Comparison *> album_files;
-	vector<Comparison *> best_album_files;
+	vector<Comparison*> album_files;
+	vector<Comparison*> best_album_files;
 	/* find best album */
 	for (map<string, AlbumComparison>::iterator actmp = acs->begin(); actmp != acs->end(); ++actmp) {
 		best_album_files.clear();
@@ -286,13 +286,13 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 			album_files.clear();
 			/* find best track */
 			while (true) {
-				Comparison *best_comparison = NULL;
+				Comparison* best_comparison = NULL;
 				double best_comparison_score = -1.0;
-				for (map<string, vector<Comparison *> >::iterator t = ac->second.comparisons.begin(); t != ac->second.comparisons.end(); ++t) {
+				for (map<string, vector<Comparison*> >::iterator t = ac->second.comparisons.begin(); t != ac->second.comparisons.end(); ++t) {
 					if (!allow_group_duplicates && used_tracks.find(t->first) != used_tracks.end())
 						continue;
 					/* find best file */
-					for (vector<Comparison *>::iterator c = t->second.begin(); c != t->second.end(); ++c) {
+					for (vector<Comparison* >::iterator c = t->second.begin(); c != t->second.end(); ++c) {
 						if ((*c)->metafile->matched && (*c)->mbid_match) {
 							/* track is already matched, set/update metadata */
 							(*c)->metafile->setMetadata(*((*c)->track));
@@ -334,25 +334,25 @@ void Matcher::matchFilesToAlbums(const vector<Metafile *> &files) {
 		}
 		if (best_album_files.size() <= 0)
 			continue;
-		for (vector<Comparison *>::iterator save = best_album_files.begin(); save != best_album_files.end(); ++save)
+		for (vector<Comparison*>::iterator save = best_album_files.begin(); save != best_album_files.end(); ++save)
 			save_files[(*save)->metafile->filename] = *save;
 	}
 	if (save_files.size() <= 0 || (only_save_if_all_match && (int) save_files.size() != (int) files.size()))
 		return;
 	/* set new metadata */
-	for (map<string, Comparison *>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf)
+	for (map<string, Comparison*>::iterator sf = save_files.begin(); sf != save_files.end(); ++sf)
 		sf->second->metafile->setMetadata(*(sf->second->track));
 }
 
-void Matcher::searchMetadata(const vector<Metafile *> &files) {
-	for (vector<Metafile *>::const_iterator file = files.begin(); file != files.end(); ++file) {
-		Metafile *mf = *file;
+void Matcher::searchMetadata(const vector<Metafile*>& files) {
+	for (vector<Metafile*>::const_iterator file = files.begin(); file != files.end(); ++file) {
+		Metafile* mf = *file;
 		if (!mf->meta_lookup)
 			continue;
 		vector<Metatrack> tracks = musicbrainz->searchMetadata(*mf);
 		string load_album_title = "";
 		for (vector<Metatrack>::iterator mt = tracks.begin(); mt != tracks.end(); ++mt) {
-			Comparison *c = compareMetafileWithMetatrack(mf, *mt);
+			Comparison* c = compareMetafileWithMetatrack(mf, *mt);
 			if (c == NULL)
 				continue;
 			/* check that score is high enough for us to load this album

@@ -23,11 +23,11 @@ class Levenshtein {
 public:
 	static void clear();
 	static void initialize();
-	static double similarity(const std::string &source, const std::string &target);
+	static double similarity(const std::string& source, const std::string& target);
 
 private:
 	static bool initialized;
-	static int **matrix;
+	static int** matrix;
 	static int matrix_size;
 
 	static void createMatrix(int size);

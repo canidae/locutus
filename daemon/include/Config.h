@@ -26,7 +26,7 @@ class Config {
 public:
 	Config();
 
-	std::string getSettingValue(const std::string &setting);
+	std::string getSettingValue(const std::string& setting);
 
 private:
 	std::map<std::string, std::string> settings;
