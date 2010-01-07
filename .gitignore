@@ -1,8 +1,16 @@
 *.o
 *.swp
+.*
 daemon/build
 daemon/locutus
 daemon/locutus.log
+daemon/.dep.inc
+daemon/CMakeCache.txt
+daemon/CMakeFiles/
+daemon/Makefile
+daemon/Makefile-daemon.mk
+daemon/cmake_install.cmake
+daemon/nbproject/
 gui/nbproject/private
 gui/dist
 gui/build
