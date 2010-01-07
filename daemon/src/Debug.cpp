@@ -20,12 +20,12 @@ bool Debug::initialized = false;
 string Debug::timestamp;
 ofstream Debug::debugfile;
 
-bool Debug::close() {
+void Debug::close() {
 	if (!initialized)
-		return true;
+		return;
 	debugfile.close();
 	initialized = false;
-	return true;
+	return;
 }
 
 ofstream& Debug::error() {
@@ -43,12 +43,11 @@ ofstream& Debug::notice() {
 	return debugfile;
 }
 
-bool Debug::open(const string& file) {
+void Debug::open(const string& file) {
 	if (initialized)
 		close();
 	initialized = true;
 	debugfile.open(file.c_str(), ios_base::app);
-	return true;
 }
 
 ofstream& Debug::warning() {

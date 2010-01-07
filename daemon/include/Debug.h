@@ -26,10 +26,10 @@ class Debug {
 public:
 	static std::ofstream debugfile;
 
-	static bool close();
+	static void close();
 	static std::ofstream& error();
 	static std::ofstream& info();
-	static bool open(const std::string& file);
+	static void open(const std::string& file);
 	static std::ofstream& notice();
 	static std::ofstream& warning();
 
