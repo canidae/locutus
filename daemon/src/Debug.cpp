@@ -29,17 +29,17 @@ void Debug::close() {
 }
 
 ofstream& Debug::error() {
-	debugfile << "[" << printTime() << "] [ERROR  ] ";
+	debugfile << "[" << getTime() << "] [ERROR  ] ";
 	return debugfile;
 }
 
 ofstream& Debug::info() {
-	debugfile << "[" << printTime() << "] [INFO   ] ";
+	debugfile << "[" << getTime() << "] [INFO   ] ";
 	return debugfile;
 }
 
 ofstream& Debug::notice() {
-	debugfile << "[" << printTime() << "] [NOTICE ] ";
+	debugfile << "[" << getTime() << "] [NOTICE ] ";
 	return debugfile;
 }
 
@@ -51,11 +51,11 @@ void Debug::open(const string& file) {
 }
 
 ofstream& Debug::warning() {
-	debugfile << "[" << printTime() << "] [WARNING] ";
+	debugfile << "[" << getTime() << "] [WARNING] ";
 	return debugfile;
 }
 
-string& Debug::printTime() {
+string& Debug::getTime() {
 	time_t rawtime;
 	time(&rawtime);
 	timestamp = asctime(localtime(&rawtime));

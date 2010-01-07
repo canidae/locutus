@@ -37,6 +37,6 @@ private:
 	static bool initialized;
 	static std::string timestamp;
 
-	static std::string& printTime();
+	static std::string& getTime();
 };
 #endif
