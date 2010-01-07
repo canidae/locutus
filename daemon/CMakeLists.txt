@@ -10,6 +10,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-Os")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+find_package(SQLite)
 find_package(PostgreSQL)
 find_package(TagLib)
 find_package(CommonCPPGNU)
