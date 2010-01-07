@@ -14,6 +14,10 @@
 
 #include "Debug.h"
 
+extern "C" {
+#include <sys/stat.h>
+}
+
 using namespace std;
 
 bool Debug::initialized = false;

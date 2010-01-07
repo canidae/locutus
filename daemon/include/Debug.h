@@ -15,11 +15,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-extern "C" {
-#include <sys/stat.h>
-}
 #include <fstream>
-#include <iostream>
 #include <string>
 
 class Debug {
