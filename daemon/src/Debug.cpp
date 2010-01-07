@@ -20,17 +20,19 @@ bool Debug::initialized = false;
 string Debug::timestamp;
 ofstream Debug::debugfile;
 
+void Debug::open(const string& file) {
+	if (initialized)
+		close();
+	initialized = true;
+	debugfile.open(file.c_str(), ios_base::app);
+}
+
 void Debug::close() {
 	if (!initialized)
 		return;
 	debugfile.close();
 	initialized = false;
 	return;
-}
-
-ofstream& Debug::error() {
-	debugfile << "[" << getTime() << "] [ERROR  ] ";
-	return debugfile;
 }
 
 ofstream& Debug::info() {
@@ -43,15 +45,13 @@ ofstream& Debug::notice() {
 	return debugfile;
 }
 
-void Debug::open(const string& file) {
-	if (initialized)
-		close();
-	initialized = true;
-	debugfile.open(file.c_str(), ios_base::app);
-}
-
 ofstream& Debug::warning() {
 	debugfile << "[" << getTime() << "] [WARNING] ";
+	return debugfile;
+}
+
+ofstream& Debug::error() {
+	debugfile << "[" << getTime() << "] [ERROR  ] ";
 	return debugfile;
 }
 

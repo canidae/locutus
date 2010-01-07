@@ -24,18 +24,17 @@ extern "C" {
 
 class Debug {
 public:
-	static std::ofstream debugfile;
-
-	static void close();
-	static std::ofstream& error();
-	static std::ofstream& info();
 	static void open(const std::string& file);
+	static void close();
+	static std::ofstream& info();
 	static std::ofstream& notice();
 	static std::ofstream& warning();
+	static std::ofstream& error();
 
 private:
 	static bool initialized;
 	static std::string timestamp;
+	static std::ofstream debugfile;
 
 	static std::string& getTime();
 };
