@@ -1,20 +1,24 @@
 cmake_minimum_required(VERSION 2.6)
 project(LOCUTUS)
 
-if (CMAKE_BUILD_TYPE STREQUAL "")
-        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build, options are: None, Debug or Release." FORCE)
-endif ()
+if(CMAKE_BUILD_TYPE STREQUAL "")
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None, Debug or Release." FORCE)
+endif()
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-Os")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -s")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+find_package(TagLib REQUIRED)
+find_package(CommonCPPGNU REQUIRED)
+find_package(CommonCPPEXT REQUIRED)
 find_package(SQLite)
 find_package(PostgreSQL)
-find_package(TagLib)
-find_package(CommonCPPGNU)
-find_package(CommonCPPEXT)
+
+if(NOT SQLITE_FOUND AND NOT POSTGRESQL_FOUND)
+	message(FATAL_ERROR "Need header files & libraries for at least one database system")
+endif()
 
 include_directories(
 	${LOCUTUS_SOURCE_DIR}/include
@@ -36,7 +40,6 @@ set(HEADER_FILES
 	include/Metafile.h
 	include/Metatrack.h
 	include/MusicBrainz.h
-	include/PostgreSQL.h
 	include/Track.h
 	include/WebService.h
 )
@@ -55,10 +58,28 @@ set(SOURCE_FILES
 	src/Metafile.cpp
 	src/Metatrack.cpp
 	src/MusicBrainz.cpp
-	src/PostgreSQL.cpp
 	src/Track.cpp
 	src/WebService.cpp
 )
 
+set(LIBRARIES
+	${TAGLIB_LIBRARIES}
+	${COMMONCPPGNU_LIBRARIES}
+	${COMMONCPPEXT_LIBRARIES}
+)
+
+if(SQLITE_FOUND)
+	add_definitions("-DSQLITE_ENABLED")
+	set(HEADER_FILES ${HEADER_FILES} include/SQLite.h)
+	set(SOURCE_FILES ${SOURCE_FILES} src/SQLite.cpp)
+	set(LIBRARIES ${LIBRARIES} ${SQLITE_LIBRARIES})
+endif()
+if(POSTGRESQL_FOUND)
+	add_definitions("-DPOSTGRESQL_ENABLED")
+	set(HEADER_FILES ${HEADER_FILES} include/PostgreSQL.h)
+	set(SOURCE_FILES ${SOURCE_FILES} src/PostgreSQL.cpp)
+	set(LIBRARIES ${LIBRARIES} ${POSTGRESQL_LIBRARIES})
+endif()
+
 add_executable(locutus ${HEADER_FILES} ${SOURCE_FILES})
-target_link_libraries(locutus ${POSTGRESQL_LIBRARIES} ${TAGLIB_LIBRARIES} ${COMMONCPPGNU_LIBRARIES} ${COMMONCPPEXT_LIBRARIES})
+target_link_libraries(locutus ${LIBRARIES})

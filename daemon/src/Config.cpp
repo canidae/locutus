@@ -59,8 +59,8 @@ Config::Config() {
 }
 
 /* methods */
-string Config::getSettingValue(const string& setting) {
-	map<string, string>::iterator s = settings.find(setting);
+string Config::getSettingValue(const string& setting) const {
+	map<string, string>::const_iterator s = settings.find(setting);
 	if (s == settings.end())
 		return "";
 	return s->second;

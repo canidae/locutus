@@ -25,7 +25,12 @@
 #include "Matcher.h"
 #include "Metafile.h"
 #include "MusicBrainz.h"
+#ifdef POSTGRESQL_ENABLED
 #include "PostgreSQL.h"
+#endif
+#ifdef SQLITE_ENABLED
+#include "SQLite.h"
+#endif
 
 extern "C" {
 #include <dirent.h>
@@ -461,8 +466,6 @@ int main(int argc, const char** argv) {
 		}
 	}
 
-	Debug::info() << "Locutus starting" << endl;
-
 	/* connect signals */
 	signal(SIGINT, abort);
 	signal(SIGTERM, quit);
@@ -474,14 +477,25 @@ int main(int argc, const char** argv) {
 
 	/* get configuration */
 	Config config;
-	string db_host = config.getSettingValue("database_host");
-	string db_user = config.getSettingValue("database_user");
-	string db_pass = config.getSettingValue("database_pass");
-	string db_name = config.getSettingValue("database_name");
+	string db_driver = config.getSettingValue("database_driver");
 
 	/* connect to database */
-	Database* database = new PostgreSQL(db_host, db_user, db_pass, db_name);
-	database->init();
+	Database* database = NULL;
+#ifdef POSTGRESQL_ENABLED
+	if (db_driver == "postgresql")
+		database = new PostgreSQL(config);
+#endif /* POSTGRESQL_ENABLED */
+#ifdef SQLITE_ENABLED
+	if (db_driver == "sqlite")
+		database = new SQLite(config);
+#endif /* SQLITE_ENABLED */
+	if (database == NULL) {
+		Debug::error() << "Database driver \"" << db_driver << "\" is not available" << endl;
+		active = false;
+	} else {
+		Debug::info() << "Locutus starting" << endl;
+		database->init();
+	}
 
 	while (active) {
 		/* check whether we should run */

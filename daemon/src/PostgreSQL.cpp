@@ -12,27 +12,29 @@
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 
+#include "PostgreSQL.h"
+
 #include <stdlib.h>
 #include <sstream>
 #include "Album.h"
 #include "Artist.h"
 #include "Comparison.h"
+#include "Config.h"
 #include "Debug.h"
 #include "Metafile.h"
-#include "PostgreSQL.h"
 #include "Track.h"
 
 using namespace std;
 
-PostgreSQL::PostgreSQL(const string& host, const string& user, const string& pass, const string& name) : Database(), pg_result(NULL), got_result(false), album_cache_lifetime(1), run_interval(0) {
+PostgreSQL::PostgreSQL(const Config& config) : Database(), pg_result(NULL), got_result(false), album_cache_lifetime(1), run_interval(0) {
 	string connection_url = "host=";
-	connection_url.append(host);
+	connection_url.append(config.getSettingValue("postgresql_host"));
 	connection_url.append(" user=");
-	connection_url.append(user);
+	connection_url.append(config.getSettingValue("postgresql_username"));
 	connection_url.append(" password=");
-	connection_url.append(pass);
+	connection_url.append(config.getSettingValue("postgresql_password"));
 	connection_url.append(" dbname=");
-	connection_url.append(name);
+	connection_url.append(config.getSettingValue("postgresql_database"));
 	pg_connection = PQconnectdb(connection_url.c_str());
 	if (PQstatus(pg_connection) != CONNECTION_OK) {
 		Debug::error() << "Unable to connect to the database: " << connection_url << endl;
